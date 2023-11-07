@@ -11,11 +11,19 @@ terraform {
   }
 }
 
+# CAUTION: Manage your credentials carefully to avoid disclosure.
+locals {
+  # Read and assign credential JSON string
+  my_gcp_credential = file("credential-gcp.json")
+  # Decode JSON string and get project ID
+  my_gcp_project_id = jsondecode(local.my_gcp_credential).project_id
+}
+
 # Provider block for Google specifies the configuration for the provider
 provider "google" {
-  credentials = file("credential-gcp.json")
+  credentials = local.my_gcp_credential
 
-  project = file("project-gcp.txt")
+  project = local.my_gcp_project_id
   region  = "asia-northeast3"
   zone    = "asia-northeast3-c"
 }
