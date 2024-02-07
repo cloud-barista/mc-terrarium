@@ -1,10 +1,10 @@
 import {
-  to = aws_vpc.test_vpc
+  to = aws_vpc.my-imported-vpc
   id = "xxxxxx"
 }
 
-resource "aws_vpc" "test_vpc" {
-  # name = "my_vpc"
+resource "aws_vpc" "my-imported-vpc" {
+  # name = "my-importe-vpc-name"
   # (other resource arguments...)
 }
 
