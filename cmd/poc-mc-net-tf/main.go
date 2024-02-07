@@ -16,7 +16,6 @@ package main
 
 import (
 	"flag"
-	"os"
 	"strconv"
 	"sync"
 
@@ -26,11 +25,8 @@ import (
 	"github.com/rs/zerolog/log"
 
 	//_ "github.com/go-sql-driver/mysql"
-	"github.com/fsnotify/fsnotify"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/spf13/viper"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/core/common"
+	// _ "github.com/mattn/go-sqlite3"
 
 	restServer "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/server"
 )
@@ -49,14 +45,6 @@ func main() {
 	}
 	log.Debug().Msgf("port number: %s", *port)
 
-	common.SpiderRestUrl = common.NVL(os.Getenv("SPIDER_REST_URL"), "http://localhost:1024/spider")
-	common.DragonflyRestUrl = common.NVL(os.Getenv("DRAGONFLY_REST_URL"), "http://localhost:9090/dragonfly")
-	common.DBUrl = common.NVL(os.Getenv("DB_URL"), "localhost:3306")
-	common.DBDatabase = common.NVL(os.Getenv("DB_DATABASE"), "cb_beetle")
-	common.DBUser = common.NVL(os.Getenv("DB_USER"), "cb_beetle")
-	common.DBPassword = common.NVL(os.Getenv("DB_PASSWORD"), "cb_beetle")
-	common.AutocontrolDurationMs = common.NVL(os.Getenv("AUTOCONTROL_DURATION_MS"), "10000")
-
 	// load the latest configuration from DB (if exist)
 	// fmt.Println("")
 	// fmt.Println("[Update system environment]")
@@ -68,28 +56,28 @@ func main() {
 	//masterConfigInfos = confighandler.GetMasterConfigInfos()
 
 	//Setup database (meta_db/dat/cmbeetle.s3db)
-	log.Info().Msg("setting SQL Database")
-	err := os.MkdirAll("./meta_db/dat/", os.ModePerm)
-	if err != nil {
-		log.Error().Err(err).Msg("error creating directory")
-	}
-	log.Debug().Msgf("database file path: %s", "./meta_db/dat/pocmcnettf.s3db")
+	// log.Info().Msg("setting SQL Database")
+	// err := os.MkdirAll("./meta_db/dat/", os.ModePerm)
+	// if err != nil {
+	// 	log.Error().Err(err).Msg("error creating directory")
+	// }
+	// log.Debug().Msgf("database file path: %s", "./meta_db/dat/pocmcnettf.s3db")
 
 	// Watch config file changes
-	go func() {
-		viper.WatchConfig()
-		viper.OnConfigChange(func(e fsnotify.Event) {
-			log.Debug().Str("file", e.Name).Msg("config file changed")
-			err := viper.ReadInConfig()
-			if err != nil { // Handle errors reading the config file
-				log.Fatal().Err(err).Msg("fatal error in config file")
-			}
-			err = viper.Unmarshal(&common.RuntimeConf)
-			if err != nil {
-				log.Panic().Err(err).Msg("error unmarshaling runtime configuration")
-			}
-		})
-	}()
+	// go func() {
+	// 	viper.WatchConfig()
+	// 	viper.OnConfigChange(func(e fsnotify.Event) {
+	// 		log.Debug().Str("file", e.Name).Msg("config file changed")
+	// 		err := viper.ReadInConfig()
+	// 		if err != nil { // Handle errors reading the config file
+	// 			log.Fatal().Err(err).Msg("fatal error in config file")
+	// 		}
+	// 		err = viper.Unmarshal(&common.RuntimeConf)
+	// 		if err != nil {
+	// 			log.Panic().Err(err).Msg("error unmarshaling runtime configuration")
+	// 		}
+	// 	})
+	// }()
 
 	// Launch API servers (REST)
 	wg := new(sync.WaitGroup)

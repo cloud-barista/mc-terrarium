@@ -1,0 +1,254 @@
+basePath: /mc-net
+definitions:
+  handlers.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.GetUserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.GetUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/models.MyUser'
+        type: array
+    type: object
+  handlers.PatchUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.PatchUserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.UpdateUserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.MyUser:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+info:
+  contact:
+    email: contact-to-cloud-barista@googlegroups.com
+    name: API Support
+    url: http://cloud-barista.github.io
+  description: POC-MC-Net-TF REST API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: POC-MC-Net-TF REST API
+  version: latest
+paths:
+  /sample/users:
+    get:
+      consumes:
+      - application/json
+      description: Get information of all users.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: (sample) This is a sample description for success response
+            in Swagger UI
+          schema:
+            $ref: '#/definitions/handlers.GetUsersResponse'
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+      summary: Get a list of users
+      tags:
+      - '[Sample] Users'
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the given information.
+      parameters:
+      - description: User information
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: (Sample) This is a sample description for success response
+            in Swagger UI
+          schema:
+            $ref: '#/definitions/handlers.GetUserResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            type: object
+      summary: Create a new user
+      tags:
+      - '[Sample] Users'
+  /sample/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user with the given information.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deletion successful
+          schema:
+            type: string
+        "400":
+          description: Invalid Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+      summary: Delete a user
+      tags:
+      - '[Sample] Users'
+    get:
+      consumes:
+      - application/json
+      description: Get information of a user with a specific ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: (Sample) This is a sample description for success response
+            in Swagger UI
+          schema:
+            $ref: '#/definitions/handlers.GetUserResponse'
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+      summary: Get specific user information
+      tags:
+      - '[Sample] Users'
+    patch:
+      consumes:
+      - application/json
+      description: Patch a user with the given information.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User information to update
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.PatchUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: (Sample) This is a sample description for success response
+            in Swagger UI
+          schema:
+            $ref: '#/definitions/handlers.PatchUserResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+      summary: Patch a user
+      tags:
+      - '[Sample] Users'
+    put:
+      consumes:
+      - application/json
+      description: Update a user with the given information.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User information to update
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: (Sample) This is a sample description for success response
+            in Swagger UI
+          schema:
+            $ref: '#/definitions/handlers.UpdateUserResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            type: object
+      summary: Update a user
+      tags:
+      - '[Sample] Users'
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

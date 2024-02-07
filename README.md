@@ -3,6 +3,14 @@
 We will explore the functions and necessary properties such as creation, diary, update, and deletion of resources/services for configuring a multi-cloud network.
 
 
+### Installing swag
+
+If you got an error because of missing swag, install swag:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
 ### Installing OpenTofu
 
 See [Installing OpenTofu](https://opentofu.org/docs/intro/install/)
