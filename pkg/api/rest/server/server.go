@@ -21,7 +21,6 @@ import (
 	"syscall"
 	"time"
 
-	rest_common "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/common"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/middlewares"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/route"
 	"github.com/spf13/viper"
@@ -155,8 +154,8 @@ func RunServer(port string) {
 	e.GET("/mc-net/swagger/*", echoSwagger.WrapHandler)
 
 	// e.GET("/mc-net/swaggerActive", rest_common.RestGetSwagger)
-	e.GET("/mc-net/health", rest_common.RestGetHealth)
-	e.GET("/mc-net/httpVersion", rest_common.RestCheckHTTPVersion)
+	// e.GET("/mc-net/health", rest_common.RestGetHealth)
+	// e.GET("/mc-net/httpVersion", rest_common.RestCheckHTTPVersion)
 
 	// POC-MC-Net-TF API group which has /mc-net as prefix
 	groupBase := e.Group("/mc-net")
@@ -164,14 +163,6 @@ func RunServer(port string) {
 	// Sample API group (for developers to add new API)
 	groupSample := groupBase.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)
-
-	// Recommendation API group
-	groupRecommendation := groupBase.Group("/recommendation")
-	route.RegisterRecommendationRoutes(groupRecommendation)
-
-	// Migration API group
-	groupMigration := groupBase.Group("/migration")
-	route.RegisterMigrationRoutes(groupMigration)
 
 	selfEndpoint := viper.GetString("self.endpoint")
 	apidashboard := " http://" + selfEndpoint + "/mc-net/swagger/index.html"
