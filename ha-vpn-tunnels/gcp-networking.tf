@@ -27,14 +27,14 @@ resource "google_compute_subnetwork" "my-gcp-subnet-2" {
 # Reference: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router
 resource "google_compute_router" "my-gcp-router-main" {
   name = "my-gcp-router-main"
-  # description = "my cloud router"  
+  # description = "my cloud router"
   network = google_compute_network.my-gcp-vpc-network.id
   region  = "asia-northeast3"
 
   bgp {
     # you can choose any number in the private range
     # ASN (Autonomous System Number) you can choose any number in the private range 64512 to 65534 and 4200000000 to 4294967294.
-    asn               = 65530             
+    asn               = 65530
     advertise_mode    = "CUSTOM"
     advertised_groups = ["ALL_SUBNETS"]
 

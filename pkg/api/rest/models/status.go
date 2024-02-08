@@ -2,5 +2,5 @@ package models
 
 type Response struct {
 	Success bool   `json:"success" example:"true"`
-	Message string `json:"message" example:"Any message"`
+	Text    string `json:"text" example:"Any text"`
 }

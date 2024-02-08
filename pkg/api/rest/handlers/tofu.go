@@ -34,11 +34,33 @@ func TofuVersion(c echo.Context) error {
 
 	ret, err := tofu.ExecuteCommand("version")
 	if err != nil {
-		res := models.Response{Success: false, Message: "Failed to get Tofu version"}
+		res := models.Response{Success: false, Text: "Failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.Response{Success: true, Message: ret}
+	res := models.Response{Success: true, Text: ret}
+
+	return c.JSON(http.StatusOK, res)
+}
+
+// TofuShow godc
+// @Summary Show the current state of a saved plan
+// @Description Show the current state of a saved plan
+// @Tags [Tofu] Commands
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Response
+// @Failure 503 {object} models.Response
+// @Router /tofu/show [get]
+func TofuShow(c echo.Context) error {
+
+	ret, err := tofu.ExecuteCommand("show")
+	if err != nil {
+		res := models.Response{Success: false, Text: "Failed to show the current state of a saved plan"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.Response{Success: true, Text: ret}
 
 	return c.JSON(http.StatusOK, res)
 }

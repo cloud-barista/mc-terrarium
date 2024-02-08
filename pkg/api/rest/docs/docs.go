@@ -330,6 +330,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/tofu/show": {
+            "get": {
+                "description": "Show the current state of a saved plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Show the current state of a saved plan",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tofu/version": {
             "get": {
                 "description": "Check Tofu version",
@@ -473,13 +502,13 @@ const docTemplate = `{
         "models.Response": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "Any message"
-                },
                 "success": {
                     "type": "boolean",
                     "example": true
+                },
+                "text": {
+                    "type": "string",
+                    "example": "Any text"
                 }
             }
         }

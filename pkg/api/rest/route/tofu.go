@@ -8,4 +8,5 @@ import (
 // /mc-net/tofu/*
 func RegisterTofuRoutes(g *echo.Group) {
 	g.GET("/version", handlers.TofuVersion)
+	g.GET("/show", handlers.TofuShow)
 }

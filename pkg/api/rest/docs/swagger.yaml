@@ -72,12 +72,12 @@ definitions:
     type: object
   models.Response:
     properties:
-      message:
-        example: Any message
-        type: string
       success:
         example: true
         type: boolean
+      text:
+        example: Any text
+        type: string
     type: object
 info:
   contact:
@@ -300,6 +300,25 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
+  /tofu/show:
+    get:
+      consumes:
+      - application/json
+      description: Show the current state of a saved plan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Show the current state of a saved plan
+      tags:
+      - '[Tofu] Commands'
   /tofu/version:
     get:
       consumes:
