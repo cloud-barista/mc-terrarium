@@ -1,29 +1,39 @@
 # Define the VPC resource block
-resource "aws_vpc" "my-aws-vpc" {
-  cidr_block = "192.168.64.0/18"
+# resource "aws_vpc" "my-aws-vpc" {
+#   cidr_block = "192.168.64.0/18"
 
-  tags = {
-    Name = "my-aws-vpc-name"
-  }
-}
+#   tags = {
+#     Name = "my-aws-vpc-name"
+#   }
+# }
 
 # Define the subnets resource blocks with the desired CIDR blocks and associate them with the route table
-resource "aws_subnet" "my-aws-subnet-1" {
-  vpc_id                  = aws_vpc.my-aws-vpc.id
-  cidr_block              = "192.168.64.0/24"
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "my-aws-subnet-1-name"
-  }
+# resource "aws_subnet" "my-aws-subnet-1" {
+#   vpc_id                  = aws_vpc.my-aws-vpc.id
+#   cidr_block              = "192.168.64.0/24"
+#   map_public_ip_on_launch = true
+#   tags = {
+#     Name = "my-aws-subnet-1-name"
+#   }
+# }
+
+# resource "aws_subnet" "my-aws-subnet-2" {
+#   vpc_id                  = aws_vpc.my-aws-vpc.id
+#   cidr_block              = "192.168.65.0/24"
+#   map_public_ip_on_launch = false
+#   tags = {
+#     Name = "my-aws-subnet-2-name"
+#   }
+# }
+
+variable "my-imported-aws-vpc-id" {
+  type        = string
+  description = "The id of the AWS VPC to use for the HA VPN tunnels."
 }
 
-resource "aws_subnet" "my-aws-subnet-2" {
-  vpc_id                  = aws_vpc.my-aws-vpc.id
-  cidr_block              = "192.168.65.0/24"
-  map_public_ip_on_launch = false
-  tags = {
-    Name = "my-aws-subnet-2-name"
-  }
+variable "my-imported-aws-subnet-id" {
+  type        = string
+  description = "The id of the AWS subnet to use for the HA VPN tunnels."
 }
 
 ##################################################################
@@ -33,7 +43,7 @@ resource "aws_vpn_gateway" "my-aws-vpn-gateway" {
   tags = {
     Name = "my-aws-vpn-gateway-name"
   }
-  vpc_id = aws_vpc.my-aws-vpc.id
+  vpc_id = var.my-imported-aws-vpc-id
 }
 
 // Create a Customer Gateway
@@ -85,7 +95,7 @@ resource "aws_route_table" "my-aws-rt" {
     Name = "my-aws-rt-name"
   }
   
-  vpc_id = aws_vpc.my-aws-vpc.id
+  vpc_id = var.my-imported-aws-vpc-id
   propagating_vgws = [aws_vpn_gateway.my-aws-vpn-gateway.id]
 }
 
@@ -93,6 +103,6 @@ resource "aws_route_table" "my-aws-rt" {
 resource "aws_route_table_association" "my-aws-rta-1" {
   # count = 3
   # subnet_id = element(aws_subnet.main.*.id, count.index)
-  subnet_id = aws_subnet.my-aws-subnet-2.id
+  subnet_id = var.my-imported-aws-subnet-id
   route_table_id = aws_route_table.my-aws-rt.id
 }

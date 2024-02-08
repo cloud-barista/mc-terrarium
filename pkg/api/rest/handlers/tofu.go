@@ -14,8 +14,12 @@ limitations under the License.
 package handlers
 
 import (
+	"encoding/json"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
@@ -111,14 +115,14 @@ func TofuInit(c echo.Context) error {
 	newMainTfPath := workingDir + "/main.tf"
 
 	if _, err := os.Stat(newMainTfPath); os.IsNotExist(err) {
-		templatePath := projectRoot + "/.tofu/template-tfs/ha-vpn-tunnels"
+		templatePath := projectRoot + "/.tofu/template-tfs/init"
 
 		mainTfPath := templatePath + "/main.tf"
 
 		log.Debug().Msgf("mainTfPath: %s", mainTfPath)
 		log.Debug().Msgf("newMainTfPath: %s", newMainTfPath)
 
-		err := tofu.CopyTemplates(mainTfPath, newMainTfPath)
+		err := tofu.CopyTemplateFile(mainTfPath, newMainTfPath)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to copy main.tf to init")
 			res := models.Response{Success: false, Text: "Failed to copy tf files to init"}
@@ -148,4 +152,134 @@ func TofuInit(c echo.Context) error {
 	res := models.Response{Success: true, Text: ret}
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+type TofuConfigVPNTunnelsRequest struct {
+	NamespaceId string           `json:"namespaceId"`
+	TfVars      TfVarsVPNTunnels `json:"tfVars"`
+}
+
+type TfVarsVPNTunnels struct {
+	MyImportedAWSVPCId    string `json:"my-imported-aws-vpc-id"`
+	MyImportedAWSSubnetId string `json:"my-imported-aws-subnet-id"`
+	MyImportedGCPVPCId    string `json:"my-imported-gcp-vpc-id"`
+	MyImportedGCPSubnetId string `json:"my-imported-gcp-subnet-id"`
+}
+
+// TofuConfigVPNTunnels godoc
+// @Summary Create configurations for VPN tunnels
+// @Description Create configurations for VPN tunnels
+// @Tags [Tofu] Commands
+// @Accept  json
+// @Produce  json
+// @Param ConfigVPNTunnels body TofuConfigVPNTunnelsRequest true "Create configurations for VPN tunnels"
+// @Success 201 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 503 {object} models.Response
+// @Router /tofu/config/vpn-tunnels [post]
+func TofuConfigVPNTunnels(c echo.Context) error {
+
+	req := new(TofuConfigVPNTunnelsRequest)
+	if err := c.Bind(req); err != nil {
+		res := models.Response{Success: false, Text: "Invalid request"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+
+	// Check if the working directory exists
+	workingDir := projectRoot + "/.tofu/" + req.NamespaceId
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		res := models.Response{Success: false, Text: "invalid namespaceId"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	// Copy template files to the working directory (overwrite)
+	templateTfsPath := projectRoot + "/.tofu/template-tfs/ha-vpn-tunnels"
+
+	err := CopyFiles(templateTfsPath, workingDir)
+	if err != nil {
+		res := models.Response{Success: false, Text: "Failed to copy template files to working directory"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	// Save the tfVars to a file
+	tfVarsPath := workingDir + "/terraform.tfvars.json"
+	// Note
+	// Terraform also automatically loads a number of variable definitions files
+	// if they are present:
+	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
+	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
+
+	err = SaveTfVarsToFile(req.TfVars, tfVarsPath)
+	if err != nil {
+		res := models.Response{Success: false, Text: "Failed to save tfVars to a file"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.Response{Success: true, Text: "Configurations for VPN tunnels are created successfully"}
+
+	return c.JSON(http.StatusCreated, res)
+}
+
+func CopyFiles(sourceDir, destDir string) error {
+	err := filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(sourceDir, path)
+		if err != nil {
+			return err
+		}
+
+		destPath := filepath.Join(destDir, relPath)
+
+		if info.IsDir() {
+			err := os.MkdirAll(destPath, info.Mode())
+			if err != nil {
+				return err
+			}
+		} else {
+			sourceFile, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer sourceFile.Close()
+
+			destFile, err := os.Create(destPath)
+			if err != nil {
+				return err
+			}
+			defer destFile.Close()
+
+			_, err = io.Copy(destFile, sourceFile)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to copy template files to working directory")
+		return err
+	}
+
+	return nil
+}
+
+func SaveTfVarsToFile(tfVars TfVarsVPNTunnels, filePath string) error {
+	tfVarsBytes, err := json.Marshal(tfVars)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(filePath, tfVarsBytes, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

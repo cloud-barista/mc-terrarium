@@ -40,7 +40,7 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func CopyTemplates(src string, des string) error {
+func CopyTemplateFile(src string, des string) error {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
@@ -66,5 +66,5 @@ func CopyGCPCredentials(des string) error {
 	projectRoot := viper.GetString("pocmcnettf.root")
 	cred := projectRoot + "/.tofu/secrets/credential-gcp.json"
 
-	return CopyTemplates(cred, des)
+	return CopyTemplateFile(cred, des)
 }

@@ -323,6 +323,52 @@
                 }
             }
         },
+        "/tofu/config/vpn-tunnels": {
+            "post": {
+                "description": "Create configurations for VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Create configurations for VPN tunnels",
+                "parameters": [
+                    {
+                        "description": "Create configurations for VPN tunnels",
+                        "name": "ConfigVPNTunnels",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TofuConfigVPNTunnelsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tofu/init": {
             "post": {
                 "description": "Prepare your working directory for other commands",
@@ -493,6 +539,34 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "handlers.TfVarsVPNTunnels": {
+            "type": "object",
+            "properties": {
+                "my-imported-aws-subnet-id": {
+                    "type": "string"
+                },
+                "my-imported-aws-vpc-id": {
+                    "type": "string"
+                },
+                "my-imported-gcp-subnet-id": {
+                    "type": "string"
+                },
+                "my-imported-gcp-vpc-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TofuConfigVPNTunnelsRequest": {
+            "type": "object",
+            "properties": {
+                "namespaceId": {
+                    "type": "string"
+                },
+                "tfVars": {
+                    "$ref": "#/definitions/handlers.TfVarsVPNTunnels"
                 }
             }
         },

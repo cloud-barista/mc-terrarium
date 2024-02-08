@@ -1,25 +1,35 @@
 
 # Create a VPC network
 # Note - This is a VPC network. It doesn't seem to have a CIDR block.
-resource "google_compute_network" "my-gcp-vpc-network" {
-  name                    = "my-gcp-vpc-network-name"
-  auto_create_subnetworks = "false" # Disable auto create subnetwork
-}
+# resource "google_compute_network" "my-gcp-vpc-network" {
+#   name                    = "my-gcp-vpc-network-name"
+#   auto_create_subnetworks = "false" # Disable auto create subnetwork
+# }
 
 # Create the first subnet
-resource "google_compute_subnetwork" "my-gcp-subnet-1" {
-  name          = "my-gcp-subnet-1"
-  ip_cidr_range = "192.168.0.0/24"
-  network       = google_compute_network.my-gcp-vpc-network.id
-  region        = "asia-northeast3"
+# resource "google_compute_subnetwork" "my-gcp-subnet-1" {
+#   name          = "my-gcp-subnet-1"
+#   ip_cidr_range = "192.168.0.0/24"
+#   network       = google_compute_network.my-gcp-vpc-network.id
+#   region        = "asia-northeast3"
+# }
+
+# # Create the second subnet
+# resource "google_compute_subnetwork" "my-gcp-subnet-2" {
+#   name          = "my-gcp-subnet-2"
+#   ip_cidr_range = "192.168.1.0/24"
+#   network       = google_compute_network.my-gcp-vpc-network.id
+#   region        = "asia-northeast3"
+# }
+
+variable "my-imported-gcp-vpc-id" {
+  type        = string
+  description = "The id of the GCP VPC to use for the HA VPN tunnels."
 }
 
-# Create the second subnet
-resource "google_compute_subnetwork" "my-gcp-subnet-2" {
-  name          = "my-gcp-subnet-2"
-  ip_cidr_range = "192.168.1.0/24"
-  network       = google_compute_network.my-gcp-vpc-network.id
-  region        = "asia-northeast3"
+variable "my-imported-gcp-subnet-id" {
+  type        = string
+  description = "The id of the GCP subnet to use for the HA VPN tunnels."
 }
 
 ########################################################

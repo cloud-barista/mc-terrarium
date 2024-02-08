@@ -48,5 +48,3 @@ cmd/poc-mc-net-tf/poc-mc-net-tf
 .tofu/secrets/*
 !.tofu/secrets/.keep
 !.tofu/template-tfs
-
-

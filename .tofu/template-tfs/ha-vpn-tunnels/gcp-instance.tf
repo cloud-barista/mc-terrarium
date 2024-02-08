@@ -13,8 +13,9 @@ resource "google_compute_instance" "my-gcp-vm-instance" {
   }
 
   network_interface {
-    network = google_compute_network.my-gcp-vpc-network.self_link
-    subnetwork = google_compute_subnetwork.my-gcp-subnet-2.self_link  
-    
+    # network = google_compute_network.my-gcp-vpc-network.self_link
+    # subnetwork = google_compute_subnetwork.my-gcp-subnet-2.self_link    
+    network = var.my-imported-gcp-vpc-id
+    subnetwork = var.my-imported-gcp-subnet-id
   }
 }
