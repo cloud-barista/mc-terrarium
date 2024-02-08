@@ -330,7 +330,53 @@ const docTemplate = `{
                 }
             }
         },
-        "/tofu/show": {
+        "/tofu/init": {
+            "post": {
+                "description": "Prepare your working directory for other commands",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Prepare your working directory for other commands",
+                "parameters": [
+                    {
+                        "description": "TofuInitRequest",
+                        "name": "TofuInitRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TofuInitRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tofu/show/{namespaceId}": {
             "get": {
                 "description": "Show the current state of a saved plan",
                 "consumes": [
@@ -453,6 +499,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TofuInitRequest": {
+            "type": "object",
+            "properties": {
+                "namespaceId": {
                     "type": "string"
                 }
             }

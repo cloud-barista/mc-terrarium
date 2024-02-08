@@ -40,3 +40,13 @@ cmd/poc-mc-net-tf/poc-mc-net-tf
 
 # Log files
 *.log
+
+# Files for tofu and infrastructure configurations
+!.tofu/
+.tofu/*
+!.tofu/secrets
+.tofu/secrets/*
+!.tofu/secrets/.keep
+!.tofu/template-tfs
+
+

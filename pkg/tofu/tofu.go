@@ -3,10 +3,13 @@ package tofu
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
 
 // ExecuteCommand executes a given tofu CLI command with arguments and returns the result.
@@ -35,4 +38,33 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 
 	// Return the result
 	return strings.TrimSpace(string(output)), nil
+}
+
+func CopyTemplates(src string, des string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(des)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CopyGCPCredentials(des string) error {
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	cred := projectRoot + "/.tofu/secrets/credential-gcp.json"
+
+	return CopyTemplates(cred, des)
 }
