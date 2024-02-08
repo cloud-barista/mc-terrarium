@@ -43,6 +43,11 @@ definitions:
       name:
         type: string
     type: object
+  handlers.TofuInitRequest:
+    properties:
+      namespaceId:
+        type: string
+    type: object
   handlers.UpdateUserRequest:
     properties:
       email:
@@ -300,7 +305,37 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
-  /tofu/show:
+  /tofu/init:
+    post:
+      consumes:
+      - application/json
+      description: Prepare your working directory for other commands
+      parameters:
+      - description: TofuInitRequest
+        in: body
+        name: TofuInitRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TofuInitRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Prepare your working directory for other commands
+      tags:
+      - '[Tofu] Commands'
+  /tofu/show/{namespaceId}:
     get:
       consumes:
       - application/json
