@@ -21,15 +21,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/middlewares"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/route"
-	"github.com/spf13/viper"
-
 	"crypto/subtle"
 	"fmt"
 	"os"
 
 	"net/http"
+
+	// Black import (_) is for running a package's init() function without using its other contents.
+	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
+	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/logger"
+	"github.com/rs/zerolog/log"
+
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/middlewares"
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/route"
+	"github.com/spf13/viper"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
@@ -38,11 +44,6 @@ import (
 	// echo-swagger middleware
 	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
-
-	// Black import (_) is for running a package's init() function without using its other contents.
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/logger"
-	"github.com/rs/zerolog/log"
 )
 
 //var masterConfigInfos confighandler.MASTERCONFIGTYPE
@@ -154,11 +155,15 @@ func RunServer(port string) {
 	e.GET("/mc-net/swagger/*", echoSwagger.WrapHandler)
 
 	// e.GET("/mc-net/swaggerActive", rest_common.RestGetSwagger)
-	// e.GET("/mc-net/health", rest_common.RestGetHealth)
-	// e.GET("/mc-net/httpVersion", rest_common.RestCheckHTTPVersion)
+	e.GET("/mc-net/health", handlers.Health)
+	e.GET("/mc-net/httpVersion", handlers.HTTPVersion)
 
 	// POC-MC-Net-TF API group which has /mc-net as prefix
 	groupBase := e.Group("/mc-net")
+
+	// Tofu API group
+	groupTofu := groupBase.Group("/tofu")
+	route.RegisterTofuRoutes(groupTofu)
 
 	// Sample API group (for developers to add new API)
 	groupSample := groupBase.Group("/sample")

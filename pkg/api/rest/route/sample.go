@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// /beetle/sample/*
+// /mc-net/sample/*
 func RegisterSampleRoutes(g *echo.Group) {
 	g.GET("/users", handlers.GetUsers)
 	g.GET("/users/:id", handlers.GetUser)
