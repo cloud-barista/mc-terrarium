@@ -30,7 +30,7 @@ import (
 // @Failure 503 {object} models.Response
 // @Router /health [get]
 func Health(c echo.Context) error {
-	res := models.Response{Success: true, Message: "POC-MC-Net-TF API server is running"}
+	res := models.Response{Success: true, Text: "POC-MC-Net-TF API server is running"}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -50,7 +50,7 @@ func HTTPVersion(c echo.Context) error {
 	req := c.Request()
 
 	// Determine the HTTP protocol version of the request
-	res := models.Response{Success: true, Message: req.Proto}
+	res := models.Response{Success: true, Text: req.Proto}
 
 	return c.JSON(http.StatusOK, res)
 }
