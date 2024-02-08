@@ -55,7 +55,7 @@ func main() {
 	// load config
 	//masterConfigInfos = confighandler.GetMasterConfigInfos()
 
-	//Setup database (meta_db/dat/cmbeetle.s3db)
+	//Setup database (meta_db/dat/pocmcnettf.s3db)
 	// log.Info().Msg("setting SQL Database")
 	// err := os.MkdirAll("./meta_db/dat/", os.ModePerm)
 	// if err != nil {
