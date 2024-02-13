@@ -2,12 +2,15 @@
 package tofu
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -67,4 +70,66 @@ func CopyGCPCredentials(des string) error {
 	cred := projectRoot + "/.tofu/secrets/credential-gcp.json"
 
 	return CopyTemplateFile(cred, des)
+}
+
+func CopyFiles(sourceDir, destDir string) error {
+	err := filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(sourceDir, path)
+		if err != nil {
+			return err
+		}
+
+		destPath := filepath.Join(destDir, relPath)
+
+		if info.IsDir() {
+			err := os.MkdirAll(destPath, info.Mode())
+			if err != nil {
+				return err
+			}
+		} else {
+			sourceFile, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer sourceFile.Close()
+
+			destFile, err := os.Create(destPath)
+			if err != nil {
+				return err
+			}
+			defer destFile.Close()
+
+			_, err = io.Copy(destFile, sourceFile)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to copy template files to working directory")
+		return err
+	}
+
+	return nil
+}
+
+func SaveTfVarsToFile(tfVars models.TfVarsVPNTunnels, filePath string) error {
+	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(filePath, tfVarsBytes, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
