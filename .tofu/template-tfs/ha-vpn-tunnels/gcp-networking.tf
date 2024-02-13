@@ -22,23 +22,14 @@
 #   region        = "asia-northeast3"
 # }
 
-variable "my-imported-gcp-vpc-id" {
-  type        = string
-  description = "The id of the GCP VPC to use for the HA VPN tunnels."
-}
-
-variable "my-imported-gcp-subnet-id" {
-  type        = string
-  description = "The id of the GCP subnet to use for the HA VPN tunnels."
-}
-
 ########################################################
 # Create a Cloud Router
 # Reference: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router
 resource "google_compute_router" "my-gcp-router-main" {
   name = "my-gcp-router-main"
   # description = "my cloud router"
-  network = google_compute_network.my-gcp-vpc-network.id
+  # network = google_compute_network.my-gcp-vpc-network.id
+  network = data.google_compute_network.my-imported-gcp-vpc-network.id
   region  = "asia-northeast3"
 
   bgp {
@@ -68,7 +59,8 @@ resource "google_compute_router" "my-gcp-router-main" {
 resource "google_compute_ha_vpn_gateway" "my-gcp-ha-vpn-gateway" {
   # provider = "google-beta"
   name     = "my-gcp-ha-vpn-gateway-name"
-  network  = google_compute_network.my-gcp-vpc-network.self_link
+  # network  = google_compute_network.my-gcp-vpc-network.self_link
+  network = data.google_compute_network.my-imported-gcp-vpc-network.self_link
 }
 
 # Create a peer VPN gateway with peer VPN gateway interfaces

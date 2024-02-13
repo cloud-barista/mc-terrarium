@@ -1,7 +1,7 @@
 resource "google_compute_firewall" "my-gcp-firewall" {
   name    = "my-gcp-firewall"
   # network = google_compute_network.my-gcp-vpc-network.name
-  network = var.my-imported-gcp-vpc-id
+  network =  data.google_compute_network.my-imported-gcp-vpc-network.id
   
   allow {
     protocol = "icmp"

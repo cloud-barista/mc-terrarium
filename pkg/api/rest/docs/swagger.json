@@ -551,10 +551,10 @@
                 "my-imported-aws-vpc-id": {
                     "type": "string"
                 },
-                "my-imported-gcp-subnet-id": {
+                "my-imported-gcp-subnet-name": {
                     "type": "string"
                 },
-                "my-imported-gcp-vpc-id": {
+                "my-imported-gcp-vpc-name": {
                     "type": "string"
                 }
             }

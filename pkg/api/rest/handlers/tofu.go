@@ -16,7 +16,6 @@ package handlers
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -160,10 +159,10 @@ type TofuConfigVPNTunnelsRequest struct {
 }
 
 type TfVarsVPNTunnels struct {
-	MyImportedAWSVPCId    string `json:"my-imported-aws-vpc-id"`
-	MyImportedAWSSubnetId string `json:"my-imported-aws-subnet-id"`
-	MyImportedGCPVPCId    string `json:"my-imported-gcp-vpc-id"`
-	MyImportedGCPSubnetId string `json:"my-imported-gcp-subnet-id"`
+	MyImportedAWSVPCId      string `json:"my-imported-aws-vpc-id"`
+	MyImportedAWSSubnetId   string `json:"my-imported-aws-subnet-id"`
+	MyImportedGCPVPCName    string `json:"my-imported-gcp-vpc-name"`
+	MyImportedGCPSubnetName string `json:"my-imported-gcp-subnet-name"`
 }
 
 // TofuConfigVPNTunnels godoc
@@ -271,12 +270,12 @@ func CopyFiles(sourceDir, destDir string) error {
 }
 
 func SaveTfVarsToFile(tfVars TfVarsVPNTunnels, filePath string) error {
-	tfVarsBytes, err := json.Marshal(tfVars)
+	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(filePath, tfVarsBytes, 0644)
+	err = os.WriteFile(filePath, tfVarsBytes, 0644)
 	if err != nil {
 		return err
 	}
