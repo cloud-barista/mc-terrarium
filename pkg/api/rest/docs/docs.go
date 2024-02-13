@@ -330,6 +330,94 @@ const docTemplate = `{
                 }
             }
         },
+        "/tofu/apply/vpn-tunnels/{namespaceId}": {
+            "post": {
+                "description": "Create or update infrastructure for VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Create or update infrastructure for VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace ID",
+                        "name": "namespaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tofu/cleanup/{namespaceId}": {
+            "delete": {
+                "description": "Cleanup the namespace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Cleanup the namespace",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace ID",
+                        "name": "namespaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tofu/config/vpn-tunnels": {
             "post": {
                 "description": "Create configurations for VPN tunnels",
@@ -357,6 +445,50 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tofu/destroy/vpn-tunnels/{namespaceId}": {
+            "delete": {
+                "description": "Destroy previously-created infrastructure for VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Destroy previously-created infrastructure for VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace ID",
+                        "name": "namespaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
                         }
@@ -422,6 +554,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/tofu/plan/vpn-tunnels/{namespaceId}": {
+            "post": {
+                "description": "Show changes required by the current configuration for VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Tofu] Commands"
+                ],
+                "summary": "Show changes required by the current configuration for VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace ID",
+                        "name": "namespaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tofu/show/{namespaceId}": {
             "get": {
                 "description": "Show the current state of a saved plan",
@@ -435,9 +611,24 @@ const docTemplate = `{
                     "[Tofu] Commands"
                 ],
                 "summary": "Show the current state of a saved plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace ID",
+                        "name": "namespaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
                         }
@@ -549,23 +740,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.TfVarsVPNTunnels": {
-            "type": "object",
-            "properties": {
-                "my-imported-aws-subnet-id": {
-                    "type": "string"
-                },
-                "my-imported-aws-vpc-id": {
-                    "type": "string"
-                },
-                "my-imported-gcp-subnet-name": {
-                    "type": "string"
-                },
-                "my-imported-gcp-vpc-name": {
-                    "type": "string"
-                }
-            }
-        },
         "handlers.TofuConfigVPNTunnelsRequest": {
             "type": "object",
             "properties": {
@@ -573,7 +747,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tfVars": {
-                    "$ref": "#/definitions/handlers.TfVarsVPNTunnels"
+                    "$ref": "#/definitions/models.TfVarsVPNTunnels"
                 }
             }
         },
@@ -637,6 +811,23 @@ const docTemplate = `{
                 "text": {
                     "type": "string",
                     "example": "Any text"
+                }
+            }
+        },
+        "models.TfVarsVPNTunnels": {
+            "type": "object",
+            "properties": {
+                "my-imported-aws-subnet-id": {
+                    "type": "string"
+                },
+                "my-imported-aws-vpc-id": {
+                    "type": "string"
+                },
+                "my-imported-gcp-subnet-name": {
+                    "type": "string"
+                },
+                "my-imported-gcp-vpc-name": {
+                    "type": "string"
                 }
             }
         }

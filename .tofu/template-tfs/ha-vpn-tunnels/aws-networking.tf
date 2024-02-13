@@ -28,7 +28,7 @@
 
 ##################################################################
 
-// Create a VPN Gateway
+# Create a VPN Gateway
 resource "aws_vpn_gateway" "my-aws-vpn-gateway" {
   tags = {
     Name = "my-aws-vpn-gateway-name"
@@ -36,7 +36,7 @@ resource "aws_vpn_gateway" "my-aws-vpn-gateway" {
   vpc_id = var.my-imported-aws-vpc-id
 }
 
-// Create a Customer Gateway
+# Create a Customer Gateway
 resource "aws_customer_gateway" "my-aws-cgw-1" {
   tags = {
     Name = "my-aws-cgw-1-name"
@@ -46,7 +46,7 @@ resource "aws_customer_gateway" "my-aws-cgw-1" {
   type       = "ipsec.1"
 }
 
-// Create a Customer Gateway
+# Create a Customer Gateway
 resource "aws_customer_gateway" "my-aws-cgw-2" {
   tags = {
     Name = "my-aws-cgw-2-name"
@@ -58,7 +58,7 @@ resource "aws_customer_gateway" "my-aws-cgw-2" {
 
 ##################################################################
 
-// Create a VPN Connection between the VPN Gateway and the Customer Gateway
+# Create a VPN Connection between the VPN Gateway and the Customer Gateway
 resource "aws_vpn_connection" "my-aws-cx-1" {
   tags = {
     Name = "my-aws-cx-1-name"
@@ -78,8 +78,11 @@ resource "aws_vpn_connection" "my-aws-cx-2" {
 }
 
 ##################################################################
+# [NOTE] If a Route Table and Route Table Association with a subnet already exist, 
+#        the following code will not work. we have to find a way 
+#        to import them into the state file.
 
-// Create a Route Table and add a route to the VPN Connection
+# Create a Route Table and add a route to the VPN Connection
 resource "aws_route_table" "my-aws-rt" {
   tags = {
     Name = "my-aws-rt-name"
@@ -89,7 +92,7 @@ resource "aws_route_table" "my-aws-rt" {
   propagating_vgws = [aws_vpn_gateway.my-aws-vpn-gateway.id]
 }
 
-// Create a Route Table Association between the Route Table and the Subnet
+# Create a Route Table Association between the Route Table and the Subnet
 resource "aws_route_table_association" "my-aws-rta-1" {
   # count = 3
   # subnet_id = element(aws_subnet.main.*.id, count.index)

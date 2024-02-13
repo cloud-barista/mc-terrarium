@@ -2,12 +2,12 @@
 ## AWS variables
 variable "my-imported-aws-vpc-id" {
   type        = string
-  description = "The id of the AWS VPC to use for the HA VPN tunnels."
+  description = "The ID of the AWS VPC to use for the HA VPN tunnels."
 }
 
 variable "my-imported-aws-subnet-id" {
   type        = string
-  description = "The id of the AWS subnet to use for the HA VPN tunnels."
+  description = "The ID of the AWS subnet to use for the HA VPN tunnels."
 }
 
 ## GCP variables

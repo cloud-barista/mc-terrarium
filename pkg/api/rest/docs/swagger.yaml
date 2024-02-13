@@ -43,23 +43,12 @@ definitions:
       name:
         type: string
     type: object
-  handlers.TfVarsVPNTunnels:
-    properties:
-      my-imported-aws-subnet-id:
-        type: string
-      my-imported-aws-vpc-id:
-        type: string
-      my-imported-gcp-subnet-name:
-        type: string
-      my-imported-gcp-vpc-name:
-        type: string
-    type: object
   handlers.TofuConfigVPNTunnelsRequest:
     properties:
       namespaceId:
         type: string
       tfVars:
-        $ref: '#/definitions/handlers.TfVarsVPNTunnels'
+        $ref: '#/definitions/models.TfVarsVPNTunnels'
     type: object
   handlers.TofuInitRequest:
     properties:
@@ -100,6 +89,17 @@ definitions:
         type: boolean
       text:
         example: Any text
+        type: string
+    type: object
+  models.TfVarsVPNTunnels:
+    properties:
+      my-imported-aws-subnet-id:
+        type: string
+      my-imported-aws-vpc-id:
+        type: string
+      my-imported-gcp-subnet-name:
+        type: string
+      my-imported-gcp-vpc-name:
         type: string
     type: object
 info:
@@ -323,6 +323,64 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
+  /tofu/apply/vpn-tunnels/{namespaceId}:
+    post:
+      consumes:
+      - application/json
+      description: Create or update infrastructure for VPN tunnels
+      parameters:
+      - description: Namespace ID
+        in: path
+        name: namespaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create or update infrastructure for VPN tunnels
+      tags:
+      - '[Tofu] Commands'
+  /tofu/cleanup/{namespaceId}:
+    delete:
+      consumes:
+      - application/json
+      description: Cleanup the namespace
+      parameters:
+      - description: Namespace ID
+        in: path
+        name: namespaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Cleanup the namespace
+      tags:
+      - '[Tofu] Commands'
   /tofu/config/vpn-tunnels:
     post:
       consumes:
@@ -351,6 +409,35 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: Create configurations for VPN tunnels
+      tags:
+      - '[Tofu] Commands'
+  /tofu/destroy/vpn-tunnels/{namespaceId}:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy previously-created infrastructure for VPN tunnels
+      parameters:
+      - description: Namespace ID
+        in: path
+        name: namespaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Destroy previously-created infrastructure for VPN tunnels
       tags:
       - '[Tofu] Commands'
   /tofu/init:
@@ -383,16 +470,55 @@ paths:
       summary: Prepare your working directory for other commands
       tags:
       - '[Tofu] Commands'
-  /tofu/show/{namespaceId}:
-    get:
+  /tofu/plan/vpn-tunnels/{namespaceId}:
+    post:
       consumes:
       - application/json
-      description: Show the current state of a saved plan
+      description: Show changes required by the current configuration for VPN tunnels
+      parameters:
+      - description: Namespace ID
+        in: path
+        name: namespaceId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Show changes required by the current configuration for VPN tunnels
+      tags:
+      - '[Tofu] Commands'
+  /tofu/show/{namespaceId}:
+    get:
+      consumes:
+      - application/json
+      description: Show the current state of a saved plan
+      parameters:
+      - description: Namespace ID
+        in: path
+        name: namespaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/models.Response'
         "503":

@@ -35,8 +35,8 @@ func main() {
 
 	log.Info().Msg("starting POC-MC-Net-TF server")
 
-	// Set the default port number "8056" for the REST API server to listen on
-	port := flag.String("port", "8056", "port number for the restapiserver to listen to")
+	// Set the default port number "8888" for the REST API server to listen on
+	port := flag.String("port", "8888", "port number for the restapiserver to listen to")
 	flag.Parse()
 
 	// Validate port

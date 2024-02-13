@@ -8,7 +8,11 @@ import (
 // /mc-net/tofu/*
 func RegisterTofuRoutes(g *echo.Group) {
 	g.GET("/version", handlers.TofuVersion)
-	g.GET("/show", handlers.TofuShow)
 	g.POST("/init", handlers.TofuInit)
+	g.DELETE("/cleanup/:namespaceId", handlers.TofuCleanup)
+	g.GET("/show/:namespaceId", handlers.TofuShow)
 	g.POST("/config/vpn-tunnels", handlers.TofuConfigVPNTunnels)
+	g.POST("/plan/vpn-tunnels/:namespaceId", handlers.TofuPlanVPNTunnels)
+	g.POST("/apply/vpn-tunnels/:namespaceId", handlers.TofuApplyVPNTunnels)
+	g.DELETE("/destroy/vpn-tunnels/:namespaceId", handlers.TofuDestroyVPNTunnels)
 }
