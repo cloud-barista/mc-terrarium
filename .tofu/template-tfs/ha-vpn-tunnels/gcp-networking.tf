@@ -87,7 +87,7 @@ resource "google_compute_external_vpn_gateway" "my-gcp-peer-vpn-gateway" {
   }
 }
 
-// Create VPN tunnels between the Cloud VPN gateway and the peer VPN gateway
+# Create VPN tunnels between the Cloud VPN gateway and the peer VPN gateway
 resource "google_compute_vpn_tunnel" "my-gcp-vpn-tunnel-1" {
   name                            = "my-gcp-vpn-tunnel-1"
   vpn_gateway                     = google_compute_ha_vpn_gateway.my-gcp-ha-vpn-gateway.self_link
@@ -134,7 +134,7 @@ resource "google_compute_vpn_tunnel" "my-gcp-vpn-tunnel-4" {
 
 ########################################################
 
-// Configure interfaces for the VPN tunnels
+# Configure interfaces for the VPN tunnels
 resource "google_compute_router_interface" "my-gcp-router-interface-1" {
   name       = "interface-1"
   router     = google_compute_router.my-gcp-router-main.name
@@ -164,7 +164,7 @@ resource "google_compute_router_interface" "my-gcp-router-interface-4" {
 }
 
 ########################################################
-// Configure BGP sessions 
+# Configure BGP sessions 
 resource "google_compute_router_peer" "my-gcp-router-peer-1" {
   name                      = "peer-1"
   router                    = google_compute_router.my-gcp-router-main.name
