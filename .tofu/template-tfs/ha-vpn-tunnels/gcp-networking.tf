@@ -1,26 +1,26 @@
 
 # Create a VPC network
 # Note - This is a VPC network. It doesn't seem to have a CIDR block.
-resource "google_compute_network" "my-gcp-vpc-network" {
-  name                    = "my-gcp-vpc-network-name"
-  auto_create_subnetworks = "false" # Disable auto create subnetwork
-}
+# resource "google_compute_network" "my-gcp-vpc-network" {
+#   name                    = "my-gcp-vpc-network-name"
+#   auto_create_subnetworks = "false" # Disable auto create subnetwork
+# }
 
 # Create the first subnet
-resource "google_compute_subnetwork" "my-gcp-subnet-1" {
-  name          = "my-gcp-subnet-1"
-  ip_cidr_range = "192.168.0.0/24"
-  network       = google_compute_network.my-gcp-vpc-network.id
-  region        = "asia-northeast3"
-}
+# resource "google_compute_subnetwork" "my-gcp-subnet-1" {
+#   name          = "my-gcp-subnet-1"
+#   ip_cidr_range = "192.168.0.0/24"
+#   network       = google_compute_network.my-gcp-vpc-network.id
+#   region        = "asia-northeast3"
+# }
 
-# Create the second subnet
-resource "google_compute_subnetwork" "my-gcp-subnet-2" {
-  name          = "my-gcp-subnet-2"
-  ip_cidr_range = "192.168.1.0/24"
-  network       = google_compute_network.my-gcp-vpc-network.id
-  region        = "asia-northeast3"
-}
+# # Create the second subnet
+# resource "google_compute_subnetwork" "my-gcp-subnet-2" {
+#   name          = "my-gcp-subnet-2"
+#   ip_cidr_range = "192.168.1.0/24"
+#   network       = google_compute_network.my-gcp-vpc-network.id
+#   region        = "asia-northeast3"
+# }
 
 ########################################################
 # Create a Cloud Router
@@ -28,7 +28,8 @@ resource "google_compute_subnetwork" "my-gcp-subnet-2" {
 resource "google_compute_router" "my-gcp-router-main" {
   name = "my-gcp-router-main"
   # description = "my cloud router"
-  network = google_compute_network.my-gcp-vpc-network.id
+  # network = google_compute_network.my-gcp-vpc-network.id
+  network = data.google_compute_network.my-imported-gcp-vpc-network.id
   region  = "asia-northeast3"
 
   bgp {
@@ -58,7 +59,8 @@ resource "google_compute_router" "my-gcp-router-main" {
 resource "google_compute_ha_vpn_gateway" "my-gcp-ha-vpn-gateway" {
   # provider = "google-beta"
   name     = "my-gcp-ha-vpn-gateway-name"
-  network  = google_compute_network.my-gcp-vpc-network.self_link
+  # network  = google_compute_network.my-gcp-vpc-network.self_link
+  network = data.google_compute_network.my-imported-gcp-vpc-network.self_link
 }
 
 # Create a peer VPN gateway with peer VPN gateway interfaces

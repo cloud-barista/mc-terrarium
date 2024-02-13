@@ -5,7 +5,8 @@ resource "aws_instance" "my-aws-instance" {
 
   vpc_security_group_ids = [aws_security_group.my-aws-sg.id]
 
-  subnet_id = aws_subnet.my-aws-subnet-2.id
+  # subnet_id = aws_subnet.my-aws-subnet-2.id
+  subnet_id = var.my-imported-aws-subnet-id
 
   tags = {
     Name = "my-aws-instance"

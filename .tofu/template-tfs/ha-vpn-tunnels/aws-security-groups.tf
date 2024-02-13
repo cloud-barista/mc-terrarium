@@ -3,7 +3,8 @@
 resource "aws_security_group" "my-aws-sg"{
   name        = "my-aws-sg"
   description = "for private ec2"
-  vpc_id      = aws_vpc.my-aws-vpc.id
+  # vpc_id      = aws_vpc.my-aws-vpc.id
+  vpc_id      = var.my-imported-aws-vpc-id
 
   egress {
     from_port   = 0

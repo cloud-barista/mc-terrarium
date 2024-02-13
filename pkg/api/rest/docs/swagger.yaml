@@ -43,6 +43,24 @@ definitions:
       name:
         type: string
     type: object
+  handlers.TfVarsVPNTunnels:
+    properties:
+      my-imported-aws-subnet-id:
+        type: string
+      my-imported-aws-vpc-id:
+        type: string
+      my-imported-gcp-subnet-name:
+        type: string
+      my-imported-gcp-vpc-name:
+        type: string
+    type: object
+  handlers.TofuConfigVPNTunnelsRequest:
+    properties:
+      namespaceId:
+        type: string
+      tfVars:
+        $ref: '#/definitions/handlers.TfVarsVPNTunnels'
+    type: object
   handlers.TofuInitRequest:
     properties:
       namespaceId:
@@ -305,6 +323,36 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
+  /tofu/config/vpn-tunnels:
+    post:
+      consumes:
+      - application/json
+      description: Create configurations for VPN tunnels
+      parameters:
+      - description: Create configurations for VPN tunnels
+        in: body
+        name: ConfigVPNTunnels
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TofuConfigVPNTunnelsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create configurations for VPN tunnels
+      tags:
+      - '[Tofu] Commands'
   /tofu/init:
     post:
       consumes:
