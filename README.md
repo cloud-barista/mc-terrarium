@@ -61,16 +61,36 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 
 ### Getting started
 
-#### Build
+#### Source code based installation and exeuction
+
+##### Build
 ```bash
 cd ~/poc-mc-net-tf
 make
 ```
 
-#### Run API server
+##### Run API server binary
 ```bash
 cd ~/poc-mc-net-tf
 make run
+```
+
+#### Container based execution
+
+Check a tag of poc-mc-net-tf container image in cloudbaristaorg/poc-mc-net-tf
+
+##### Run poc-mc-net-tf container
+
+Note - AWS and GCP credentials must be prepared and injected when running a container. (see `--mount type=****`)
+Note - Modify `source="${PWD}"/.tofu/secrets/` to the appropriate path.
+
+```bash
+docker run \
+--mount type=bind,source="${PWD}"/.tofu/secrets/,target=/app/.tofu/secrets/ \
+--mount type=bind,source="${PWD}"/.tofu/secrets/,target=/.aws/ \
+-p 8888:8888 \
+--name poc-mc-net-tf \
+cloudbaristaorg/poc-mc-net-tf:latest
 ```
 
 #### Access Swagger UI
