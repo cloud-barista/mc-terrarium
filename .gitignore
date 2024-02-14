@@ -31,14 +31,14 @@ go.work
 *credential*
 project-gcp.txt
 
-aws
-
 # Binaries
 pkg/poc-mc-net-tf
 pkg/poc-mc-net-tf-arm
 cmd/poc-mc-net-tf/poc-mc-net-tf
 
 # Log files
+log/
+logs/
 *.log
 
 # Files for tofu and infrastructure configurations
