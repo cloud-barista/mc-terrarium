@@ -1,0 +1,33 @@
+.github/
+docs/
+
+# Example files for tofu and infrastructure configurations (e.g. .tf files)
+examples/
+
+# Terrafrom files
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+
+# Secret files
+*credential*
+
+# Binaries
+pkg/poc-mc-net-tf
+pkg/poc-mc-net-tf-arm
+cmd/poc-mc-net-tf/poc-mc-net-tf
+
+# Log files
+log/
+logs/
+*.log
+
+# Files for tofu and infrastructure configurations
+!.tofu/
+.tofu/*
+!.tofu/secrets
+.tofu/secrets/*
+!.tofu/secrets/.keep
+!.tofu/template-tfs
