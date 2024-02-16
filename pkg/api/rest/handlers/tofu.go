@@ -310,7 +310,9 @@ func TofuPlanVPNTunnels(c echo.Context) error {
 	// subcommand: plan
 	ret, err := tofu.ExecuteCommand("-chdir="+workingDir, "plan")
 	if err != nil {
-		res := models.Response{Success: false, Text: "failed to plan"}
+		log.Error().Err(err).Msg("Failed to plan") // error
+		text := fmt.Sprintf("failed to plan\n%s", ret)
+		res := models.Response{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := models.Response{Success: true, Text: ret}
@@ -392,11 +394,33 @@ func TofuDestroyVPNTunnels(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// Remove the state of the imported resources
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{namespaceId}
+	// subcommand: state rm
+	ret, err := tofu.ExecuteCommand("-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
+	if err != nil {
+		text := fmt.Sprintf("failed to destroy: %s", ret)
+		res := models.Response{Success: false, Text: text}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	// Remove the imported resources to prevent destroying them
+	err = tofu.TruncateFile(workingDir + "/imports.tf")
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to truncate imports.tf") // error
+		text := fmt.Sprintf("failed to destroy: %s", err)
+		res := models.Response{Success: false, Text: text}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{namespaceId}
 	// subcommand: destroy
-	ret, err := tofu.ExecuteCommand("-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err = tofu.ExecuteCommand("-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
-		res := models.Response{Success: false, Text: "failed to destroy"}
+		log.Error().Err(err).Msg("Failed to destroy") // error
+		text := fmt.Sprintf("failed to destroy: %s", ret)
+		res := models.Response{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := models.Response{Success: true, Text: ret}

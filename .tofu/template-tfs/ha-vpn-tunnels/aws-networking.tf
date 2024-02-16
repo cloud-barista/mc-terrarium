@@ -83,19 +83,19 @@ resource "aws_vpn_connection" "my-aws-cx-2" {
 #        to import them into the state file.
 
 # Create a Route Table and add a route to the VPN Connection
-resource "aws_route_table" "my-aws-rt" {
-  tags = {
-    Name = "my-aws-rt-name"
-  }
+# resource "aws_route_table" "my-aws-rt" {
+#   tags = {
+#     Name = "my-aws-rt-name"
+#   }
   
-  vpc_id = var.my-imported-aws-vpc-id
-  propagating_vgws = [aws_vpn_gateway.my-aws-vpn-gateway.id]
-}
+#   vpc_id = var.my-imported-aws-vpc-id
+#   propagating_vgws = [aws_vpn_gateway.my-aws-vpn-gateway.id]
+# }
 
-# Create a Route Table Association between the Route Table and the Subnet
-resource "aws_route_table_association" "my-aws-rta-1" {
-  # count = 3
-  # subnet_id = element(aws_subnet.main.*.id, count.index)
-  subnet_id = var.my-imported-aws-subnet-id
-  route_table_id = aws_route_table.my-aws-rt.id
-}
+# # Create a Route Table Association between the Route Table and the Subnet
+# resource "aws_route_table_association" "my-aws-rta-1" {
+#   # count = 3
+#   # subnet_id = element(aws_subnet.main.*.id, count.index)
+#   subnet_id = var.my-imported-aws-subnet-id
+#   route_table_id = aws_route_table.my-aws-rt.id
+# }

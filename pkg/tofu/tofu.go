@@ -133,3 +133,13 @@ func SaveTfVarsToFile(tfVars models.TfVarsVPNTunnels, filePath string) error {
 
 	return nil
 }
+
+func TruncateFile(filename string) error {
+    file, err := os.OpenFile(filename, os.O_TRUNC, 0644)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    return nil
+}

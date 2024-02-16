@@ -10,6 +10,19 @@ variable "my-imported-aws-subnet-id" {
   description = "The ID of the AWS subnet to use for the HA VPN tunnels."
 }
 
+# variable "my-imported-aws-route-table-id" {
+#   type        = string
+#   description = "The ID of the AWS route table to use for the HA VPN tunnels."
+# }
+
+data "aws_route_table" "imported" {
+  subnet_id = var.my-imported-aws-subnet-id
+}
+
+# output "my-imported-aws-route-table-tags" {
+#   value = data.aws_route_table.imported.tags
+# }
+
 ## GCP variables
 # VPC
 variable "my-imported-gcp-vpc-name" {
