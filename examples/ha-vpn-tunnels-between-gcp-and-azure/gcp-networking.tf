@@ -11,7 +11,7 @@ resource "google_compute_subnetwork" "my-gcp-subnet-1" {
   name          = "my-gcp-subnet-1"
   ip_cidr_range = "192.168.0.0/24"
   network       = google_compute_network.my-gcp-vpc-network.id
-  region        = var.gcp-region
+  region        = var.my-gcp-region
 }
 
 # Create the second subnet
@@ -19,7 +19,7 @@ resource "google_compute_subnetwork" "my-gcp-subnet-2" {
   name          = "my-gcp-subnet-2"
   ip_cidr_range = "192.168.1.0/24"
   network       = google_compute_network.my-gcp-vpc-network.id
-  region        = var.gcp-region
+  region        = var.my-gcp-region
 }
 
 ########################################################
@@ -29,12 +29,12 @@ resource "google_compute_router" "my-gcp-router-main" {
   name = "my-gcp-router-main"
   # description = "my cloud router"
   network = google_compute_network.my-gcp-vpc-network.id
-  region  = var.gcp-region
+  region  = var.my-gcp-region
 
   bgp {
     # you can choose any number in the private range
     # ASN (Autonomous System Number) you can choose any number in the private range 64512 to 65534 and 4200000000 to 4294967294.
-    asn               = var.gcp_bgp_asn
+    asn               = var.my-gcp-bgp-asn
     advertise_mode    = "CUSTOM"
     advertised_groups = ["ALL_SUBNETS"]
 
@@ -73,7 +73,7 @@ resource "google_compute_external_vpn_gateway" "my-gcp-peer-vpn-gateway" {
 resource "google_compute_vpn_tunnel" "my-gcp-vpn-tunnel-1" {
   name                            = "my-gcp-vpn-tunnel-1"
   vpn_gateway                     = google_compute_ha_vpn_gateway.my-gcp-ha-vpn-gateway.self_link
-  shared_secret                   = var.shared_secret
+  shared_secret                   = var.my-shared-secret
   peer_external_gateway           = google_compute_external_vpn_gateway.my-gcp-peer-vpn-gateway.self_link
   peer_external_gateway_interface = 0
   router                          = google_compute_router.my-gcp-router-main.name
@@ -84,7 +84,7 @@ resource "google_compute_vpn_tunnel" "my-gcp-vpn-tunnel-1" {
 resource "google_compute_vpn_tunnel" "my-gcp-vpn-tunnel-2" {
   name                            = "my-gcp-vpn-tunnel-2"
   vpn_gateway                     = google_compute_ha_vpn_gateway.my-gcp-ha-vpn-gateway.self_link
-  shared_secret                   = var.shared_secret
+  shared_secret                   = var.my-shared-secret
   peer_external_gateway           = google_compute_external_vpn_gateway.my-gcp-peer-vpn-gateway.self_link
   peer_external_gateway_interface = 1
   router                          = google_compute_router.my-gcp-router-main.name
@@ -115,7 +115,7 @@ resource "google_compute_router_peer" "my-gcp-router-peer-1" {
   name                      = "peer-1"
   router                    = google_compute_router.my-gcp-router-main.name
   peer_ip_address           = "169.254.21.1"
-  peer_asn                  = var.azure_bgp_asn
+  peer_asn                  = var.my-azure-bgp-asn
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.my-gcp-router-interface-1.name
 }
@@ -124,7 +124,7 @@ resource "google_compute_router_peer" "my-gcp-router-peer-2" {
   name                      = "peer-2"
   router                    = google_compute_router.my-gcp-router-main.name
   peer_ip_address           = "169.254.22.1"
-  peer_asn                  = var.azure_bgp_asn
+  peer_asn                  = var.my-azure-bgp-asn
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.my-gcp-router-interface-2.name
 }

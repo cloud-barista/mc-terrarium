@@ -1,6 +1,15 @@
+
+# Randomly select a zone
+resource "random_shuffle" "my-gcp-zones" {
+  input        = data.google_compute_zones.my-gcp-available-zones.names
+  result_count = 1
+}
+
+# Create VM instance
 resource "google_compute_instance" "my-gcp-vm-instance" {
-  name         = "my-gcp-vm-instance"
+  name         = "my-gcp-vm-instance-name"
   machine_type = "f1-micro"
+  zone = random_shuffle.my-gcp-zones.result[0] // Dynamically selected zone
   
 
   boot_disk {

@@ -1,23 +1,25 @@
 # Define the required version of Terraform and the providers that will be used in the project
 terraform {
-  # Required Tofu version
+  # Specify the required Tofu version
   required_version = "1.6.1"
 
+  # Specify the required providers and their versions
   required_providers {
-    # Google provider is specified with its source and version
+    # Google provider
     google = {
       source  = "registry.opentofu.org/hashicorp/google"
       version = "~> 5.2"
     }
 
-    # Azure provider is specified with its source and version
-    azapi = {
-      source  = "azure/azapi"
-      version = "~>1.12"
-    }
+    # The Azure Provider
     azurerm = {
       source = "hashicorp/azurerm"
       version = "~>3.92.0"
+    }
+    # The AzAPI provider
+    azapi = {
+      source  = "azure/azapi"
+      version = "~>1.12"
     }
   }
 }
@@ -26,23 +28,28 @@ terraform {
 # CAUTION: Manage your credentials carefully to avoid disclosure.
 locals {
   # Read and assign credential JSON string
-  my_gcp_credential = file("credential-gcp.json")
+  my-gcp-credential = file("credential-gcp.json")
   # Decode JSON string and get project ID
-  my_gcp_project_id = jsondecode(local.my_gcp_credential).project_id
+  my-gcp-project-id = jsondecode(local.my-gcp-credential).project_id
 }
 
 # Provider block for Google specifies the configuration for the provider
 provider "google" {
-  credentials = local.my_gcp_credential
+  credentials = local.my-gcp-credential
 
-  project = local.my_gcp_project_id
-  region  = var.gcp-region
-  zone    = var.gcp-zone
+  project = local.my-gcp-project-id
+  region  = var.my-gcp-region
 }
 
+# The "random" provider allows the use of randomness within Terraform configurations.
+# It is used to select a zone in a region randomly.
+provider "random" {
+  // Optional configuration for the random provider
+}
+
+# [NOTE]
 # Ref.) Azure Provider: Authenticating using a Service Principal with a Client Secret
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret
-
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
@@ -55,5 +62,5 @@ provider "azurerm" {
 resource "azurerm_resource_group" "my-azure-resource-group" {
   name     = "my-azure-resource-group-name"
   # Default: "koreacentral"
-  location = var.azure-region
+  location = var.my-azure-region
 }
