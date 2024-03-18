@@ -17,7 +17,9 @@ import (
 	"net/http"
 
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // Health godoc
@@ -51,6 +53,30 @@ func HTTPVersion(c echo.Context) error {
 
 	// Determine the HTTP protocol version of the request
 	res := models.Response{Success: true, Text: req.Proto}
+
+	return c.JSON(http.StatusOK, res)
+}
+
+// TofuVersion godoc
+// @Summary Check Tofu version
+// @Description Check Tofu version
+// @Tags [System] Utility
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Response
+// @Failure 503 {object} models.Response
+// @Router /tofuVersion [get]
+func TofuVersion(c echo.Context) error {
+
+	ret, err := tofu.ExecuteCommand("version")
+	if err != nil {
+		res := models.Response{Success: false, Text: "failed to get Tofu version"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.Response{Success: true, Text: ret}
+
+	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)
 }

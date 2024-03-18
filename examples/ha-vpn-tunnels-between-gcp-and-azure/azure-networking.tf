@@ -43,7 +43,7 @@ resource "azurerm_public_ip" "my-azure-public-ip-2" {
 
 # Create Azure VPN Gateway and connections
 resource "azurerm_virtual_network_gateway" "my-azure-vpn-gateway" {
-  name                = "azure-vpn-gateway"
+  name                = "my-azure-vpn-gateway-name"
   location            = var.my-azure-region
   resource_group_name = azurerm_resource_group.my-azure-resource-group.name
 

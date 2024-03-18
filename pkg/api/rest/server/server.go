@@ -157,16 +157,16 @@ func RunServer(port string) {
 	// e.GET("/mc-net/swaggerActive", rest_common.RestGetSwagger)
 	e.GET("/mc-net/health", handlers.Health)
 	e.GET("/mc-net/httpVersion", handlers.HTTPVersion)
+	e.GET("/mc-net/tofuVersion", handlers.TofuVersion)
 
-	// POC-MC-Net-TF API group which has /mc-net as prefix
-	groupBase := e.Group("/mc-net")
-
-	// Tofu API group
-	groupTofu := groupBase.Group("/tofu")
-	route.RegisterTofuRoutes(groupTofu)
+	// A group for Multi-cloud Network APIs which has /mc-net as prefix
+	groupMultiCloudNetwork := e.Group("/mc-net")
+	// Resource Group APIs
+	route.RegisterRoutesForRG(groupMultiCloudNetwork)
+	route.RegisterRoutesForVPN(groupMultiCloudNetwork)
 
 	// Sample API group (for developers to add new API)
-	groupSample := groupBase.Group("/sample")
+	groupSample := groupMultiCloudNetwork.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)
 
 	selfEndpoint := viper.GetString("self.endpoint")
