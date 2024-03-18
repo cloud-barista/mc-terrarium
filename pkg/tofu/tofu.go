@@ -120,7 +120,7 @@ func CopyFiles(sourceDir, destDir string) error {
 	return nil
 }
 
-func SaveTfVarsToFile(tfVars models.TfVarsVPNTunnels, filePath string) error {
+func SaveTfVarsToFile(tfVars models.TfVarsGcpAwsVpnTunnel, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err
@@ -135,11 +135,11 @@ func SaveTfVarsToFile(tfVars models.TfVarsVPNTunnels, filePath string) error {
 }
 
 func TruncateFile(filename string) error {
-    file, err := os.OpenFile(filename, os.O_TRUNC, 0644)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
+	file, err := os.OpenFile(filename, os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
-    return nil
+	return nil
 }

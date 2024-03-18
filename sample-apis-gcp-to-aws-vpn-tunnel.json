@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
-    "collectionName": "tofu-apis",
-    "dateExported": "2024-02-13T08:10:21.237Z",
+    "collectionName": "gcp-to-aws-vpn-tunnel",
+    "dateExported": "2024-03-18T12:55:38.700Z",
     "version": "1.1",
     "folders": [],
     "requests": [
@@ -37,12 +37,12 @@
             "_id": "ecf33e9d-242e-490a-ac1b-8ccd754fd451",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/init",
-            "url": "/tofu/init",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws/init",
+            "url": "/rg/rg-01/vpn/gcp-aws/init",
             "method": "POST",
             "sortNum": 40000,
             "created": "2024-02-13T06:03:16.909Z",
-            "modified": "2024-02-13T06:48:00.631Z",
+            "modified": "2024-03-18T12:06:04.257Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -62,46 +62,22 @@
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"namespaceId\": \"alvin01\"\n}",
+                "raw": "{\n  \"resourceGroupId\": \"rg-01\"\n}",
                 "form": []
             },
-            "tests": []
-        },
-        {
-            "_id": "e458cd60-4f21-4985-984a-03a760fea802",
-            "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
-            "containerId": "",
-            "name": "/tofu/cleanup/:namespaceId",
-            "url": "/tofu/cleanup/alvin01",
-            "method": "DELETE",
-            "sortNum": 45000,
-            "created": "2024-02-13T08:01:21.088Z",
-            "modified": "2024-02-13T08:01:40.153Z",
-            "headers": [
-                {
-                    "name": "Accept",
-                    "value": "*/*",
-                    "isDisabled": true
-                },
-                {
-                    "name": "User-Agent",
-                    "value": "Thunder Client (https://www.thunderclient.com)",
-                    "isDisabled": true
-                }
-            ],
-            "params": [],
+            "reqType": "post",
             "tests": []
         },
         {
             "_id": "717deaa9-66e2-4f06-97ae-20297135aa08",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/config/vpn-tunnels",
-            "url": "/tofu/config/vpn-tunnels",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws/blueprint",
+            "url": "/rg/rg-01/vpn/gcp-aws/blueprint",
             "method": "POST",
             "sortNum": 50000,
             "created": "2024-02-13T06:05:14.740Z",
-            "modified": "2024-02-13T06:48:13.381Z",
+            "modified": "2024-03-18T12:12:51.844Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -121,21 +97,22 @@
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"namespaceId\": \"alvin01\",\n  \"tfVars\": {\n    \"my-imported-aws-subnet-id\": \"subnet-0bf9e99348e2bb2bf\",\n    \"my-imported-aws-vpc-id\": \"vpc-0992c4718d9d3cf43\",\n    \"my-imported-gcp-subnet-name\": \"my-gcp-subnet-2\",\n    \"my-imported-gcp-vpc-name\": \"my-gcp-vpc\"\n  }\n}\n",
+                "raw": "{\n  \"resourceGroupId\": \"rg-01\",\n  \"tfVars\": {\n    \"my-imported-aws-subnet-id\": \"subnet-03dd883fc4f15a663\",\n    \"my-imported-aws-vpc-id\": \"vpc-04a65bbdd243e0a9d\",\n    \"my-imported-gcp-subnet-name\": \"my-gcp-vpc-subnet-02\",\n    \"my-imported-gcp-vpc-name\": \"my-gcp-vpc\"\n  }\n}\n",
                 "form": []
             },
+            "reqType": "post",
             "tests": []
         },
         {
             "_id": "7f235dba-efa0-423e-94b2-361ff52f4465",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/plan/vpn-tunnels/:namespaceId",
-            "url": "/tofu/plan/vpn-tunnels/alvin01",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws/plan",
+            "url": "/rg/rg-01/vpn/gcp-aws/plan",
             "method": "POST",
             "sortNum": 70000,
             "created": "2024-02-13T06:06:56.788Z",
-            "modified": "2024-02-13T06:07:46.801Z",
+            "modified": "2024-03-18T12:06:28.729Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -149,18 +126,19 @@
                 }
             ],
             "params": [],
+            "reqType": "post",
             "tests": []
         },
         {
             "_id": "59f60b69-4d9d-4e57-90f7-b29b515a87e1",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/apply/vpn-tunnels/:namespaceId",
-            "url": "/tofu/apply/vpn-tunnels/alvin01",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws",
+            "url": "/rg/rg-01/vpn/gcp-aws",
             "method": "POST",
             "sortNum": 90000,
             "created": "2024-02-13T06:09:02.892Z",
-            "modified": "2024-02-13T06:09:22.035Z",
+            "modified": "2024-03-18T12:06:56.654Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -174,18 +152,19 @@
                 }
             ],
             "params": [],
+            "reqType": "post",
             "tests": []
         },
         {
             "_id": "8355408a-1bd9-4033-ba09-09304a893517",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/show/vpn-tunnels/:namespaceId",
-            "url": "/tofu/show/alvin01",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws/state",
+            "url": "/rg/rg-01/vpn/gcp-aws/state",
             "method": "GET",
             "sortNum": 100000,
             "created": "2024-02-13T07:33:40.320Z",
-            "modified": "2024-02-13T07:48:57.111Z",
+            "modified": "2024-03-18T12:23:00.537Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -199,18 +178,19 @@
                 }
             ],
             "params": [],
+            "reqType": "get",
             "tests": []
         },
         {
             "_id": "71c34203-fb23-4f5b-9ab6-bba708824000",
             "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
             "containerId": "",
-            "name": "/tofu/destory/vpn-tunnels/:namespaceId",
-            "url": "/tofu/destroy/vpn-tunnels/alvin01",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws",
+            "url": "/rg/rg-01/vpn/gcp-aws",
             "method": "DELETE",
             "sortNum": 110000,
             "created": "2024-02-13T07:34:10.693Z",
-            "modified": "2024-02-13T07:52:06.141Z",
+            "modified": "2024-03-18T12:07:44.309Z",
             "headers": [
                 {
                     "name": "Accept",
@@ -224,6 +204,33 @@
                 }
             ],
             "params": [],
+            "reqType": "del",
+            "tests": []
+        },
+        {
+            "_id": "e458cd60-4f21-4985-984a-03a760fea802",
+            "colId": "fa1436cf-64fa-4225-8a7a-929fe930dd51",
+            "containerId": "",
+            "name": "/rg/:resourceGroupId/vpn/gcp-aws/clear",
+            "url": "/rg/rg-01/vpn/gcp-aws/clear",
+            "method": "DELETE",
+            "sortNum": 120000,
+            "created": "2024-02-13T08:01:21.088Z",
+            "modified": "2024-03-18T12:06:09.310Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "*/*",
+                    "isDisabled": true
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "reqType": "del",
             "tests": []
         }
     ],

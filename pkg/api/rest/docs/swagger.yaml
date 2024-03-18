@@ -1,5 +1,13 @@
 basePath: /mc-net
 definitions:
+  handlers.CreateBluprintOfGcpAwsVpnRequest:
+    properties:
+      resourceGroupId:
+        default: rg-01
+        type: string
+      tfVars:
+        $ref: '#/definitions/models.TfVarsGcpAwsVpnTunnel'
+    type: object
   handlers.CreateUserRequest:
     properties:
       email:
@@ -25,6 +33,12 @@ definitions:
           $ref: '#/definitions/models.MyUser'
         type: array
     type: object
+  handlers.InitGcpAndAwsForVpnTunnelRequest:
+    properties:
+      resourceGroupId:
+        default: rg-01
+        type: string
+    type: object
   handlers.PatchUserRequest:
     properties:
       email:
@@ -41,18 +55,6 @@ definitions:
       id:
         type: integer
       name:
-        type: string
-    type: object
-  handlers.TofuConfigVPNTunnelsRequest:
-    properties:
-      namespaceId:
-        type: string
-      tfVars:
-        $ref: '#/definitions/models.TfVarsVPNTunnels'
-    type: object
-  handlers.TofuInitRequest:
-    properties:
-      namespaceId:
         type: string
     type: object
   handlers.UpdateUserRequest:
@@ -91,7 +93,7 @@ definitions:
         example: Any text
         type: string
     type: object
-  models.TfVarsVPNTunnels:
+  models.TfVarsGcpAwsVpnTunnel:
     properties:
       my-imported-aws-subnet-id:
         type: string
@@ -157,6 +159,251 @@ paths:
       summary: Check HTTP version of incoming request
       tags:
       - '[System] Utility'
+  /rg/{resourceGroupId}:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directories and configuration files
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Clear the entire directories and configuration files
+      tags:
+      - '[ResourceGroup] Resource group'
+  /rg/{resourceGroupId}/vpn/gcp-aws:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy network resources that were used to configure GCP as an
+        AWS VPN tunnel
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Destroy network resources that were used to configure GCP as an AWS
+        VPN tunnel
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+    post:
+      consumes:
+      - application/json
+      description: Create network resources for VPN tunnel in GCP and AWS
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create network resources for VPN tunnel in GCP and AWS
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/blueprint:
+    post:
+      consumes:
+      - application/json
+      description: Create a blueprint to configure GCP to AWS VPN tunnels
+      parameters:
+      - description: Parameters requied to create a blueprint to configure GCP to
+          AWS VPN tunnels
+        in: body
+        name: ParamsForBlueprint
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a blueprint to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/init:
+    post:
+      consumes:
+      - application/json
+      description: Initialize GCP and AWS to configure VPN tunnels
+      parameters:
+      - description: Init GCP and AWS
+        in: body
+        name: InitCSPs
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.InitGcpAndAwsForVpnTunnelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Initialize GCP and AWS to configure VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/plan:
+    post:
+      consumes:
+      - application/json
+      description: Show changes required by the current blueprint to configure GCP
+        to AWS VPN tunnels
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Show changes required by the current blueprint to configure GCP to
+        AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/state:
+    get:
+      consumes:
+      - application/json
+      description: Get the current state of a saved plan to configure GCP to AWS VPN
+        tunnels
+      parameters:
+      - default: rg-01
+        description: Resource group ID
+        in: path
+        name: ResourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the current state of a saved plan to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
   /sample/users:
     get:
       consumes:
@@ -323,212 +570,7 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
-  /tofu/apply/vpn-tunnels/{namespaceId}:
-    post:
-      consumes:
-      - application/json
-      description: Create or update infrastructure for VPN tunnels
-      parameters:
-      - description: Namespace ID
-        in: path
-        name: namespaceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Create or update infrastructure for VPN tunnels
-      tags:
-      - '[Tofu] Commands'
-  /tofu/cleanup/{namespaceId}:
-    delete:
-      consumes:
-      - application/json
-      description: Cleanup the namespace
-      parameters:
-      - description: Namespace ID
-        in: path
-        name: namespaceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Cleanup the namespace
-      tags:
-      - '[Tofu] Commands'
-  /tofu/config/vpn-tunnels:
-    post:
-      consumes:
-      - application/json
-      description: Create configurations for VPN tunnels
-      parameters:
-      - description: Create configurations for VPN tunnels
-        in: body
-        name: ConfigVPNTunnels
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.TofuConfigVPNTunnelsRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Create configurations for VPN tunnels
-      tags:
-      - '[Tofu] Commands'
-  /tofu/destroy/vpn-tunnels/{namespaceId}:
-    delete:
-      consumes:
-      - application/json
-      description: Destroy previously-created infrastructure for VPN tunnels
-      parameters:
-      - description: Namespace ID
-        in: path
-        name: namespaceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Destroy previously-created infrastructure for VPN tunnels
-      tags:
-      - '[Tofu] Commands'
-  /tofu/init:
-    post:
-      consumes:
-      - application/json
-      description: Prepare your working directory for other commands
-      parameters:
-      - description: TofuInitRequest
-        in: body
-        name: TofuInitRequest
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.TofuInitRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Prepare your working directory for other commands
-      tags:
-      - '[Tofu] Commands'
-  /tofu/plan/vpn-tunnels/{namespaceId}:
-    post:
-      consumes:
-      - application/json
-      description: Show changes required by the current configuration for VPN tunnels
-      parameters:
-      - description: Namespace ID
-        in: path
-        name: namespaceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Show changes required by the current configuration for VPN tunnels
-      tags:
-      - '[Tofu] Commands'
-  /tofu/show/{namespaceId}:
-    get:
-      consumes:
-      - application/json
-      description: Show the current state of a saved plan
-      parameters:
-      - description: Namespace ID
-        in: path
-        name: namespaceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Show the current state of a saved plan
-      tags:
-      - '[Tofu] Commands'
-  /tofu/version:
+  /tofuVersion:
     get:
       consumes:
       - application/json
@@ -546,7 +588,7 @@ paths:
             $ref: '#/definitions/models.Response'
       summary: Check Tofu version
       tags:
-      - '[Tofu] Commands'
+      - '[System] Utility'
 securityDefinitions:
   BasicAuth:
     type: basic
