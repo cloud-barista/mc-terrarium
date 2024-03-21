@@ -25,8 +25,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+// ////////////////////////////////////////////////////
+// GCP and AWS
 type InitGcpAndAwsForVpnTunnelRequest struct {
-	ResourceGroupId string `json:"resourceGroupId" default:"rg-01"`
+	ResourceGroupId string `json:"resourceGroupId" default:"tofu-rg-01"`
 }
 
 // InitGcpAndAwsForVpn godoc
@@ -97,11 +99,11 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 200 {object} models.Response "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-aws/ [delete]
+// @Router /rg/{resourceGroupId}/vpn/gcp-aws/clear [delete]
 func ClearGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
@@ -139,7 +141,7 @@ func ClearGcpAwsVpn(c echo.Context) error {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 200 {object} models.Response "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
@@ -177,7 +179,7 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 }
 
 type CreateBluprintOfGcpAwsVpnRequest struct {
-	ResourceGroupId string                       `json:"resourceGroupId" default:"rg-01"`
+	ResourceGroupId string                       `json:"resourceGroupId" default:"tofu-rg-01"`
 	TfVars          models.TfVarsGcpAwsVpnTunnel `json:"tfVars"`
 }
 
@@ -218,7 +220,7 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
 
-	err := tofu.SaveTfVarsToFile(req.TfVars, tfVarsPath)
+	err := tofu.SaveGcpAwsTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to save tfVars to a file"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -237,7 +239,7 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 200 {object} models.Response "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
@@ -282,7 +284,7 @@ func CheckBluprintOfGcpAwsVpn(c echo.Context) error {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 201 {object} models.Response "Created"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
@@ -325,7 +327,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 200 {object} models.Response "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"

@@ -3,10 +3,20 @@ definitions:
   handlers.CreateBluprintOfGcpAwsVpnRequest:
     properties:
       resourceGroupId:
-        default: rg-01
+        default: tofu-rg-01
         type: string
       tfVars:
         $ref: '#/definitions/models.TfVarsGcpAwsVpnTunnel'
+    type: object
+  handlers.CreateBluprintOfGcpAzureVpnRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/models.TfVarsGcpAzureVpnTunnel'
+    type: object
+  handlers.CreateBluprintOfTestEnvRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/models.TfVarsTestEnv'
     type: object
   handlers.CreateUserRequest:
     properties:
@@ -36,7 +46,7 @@ definitions:
   handlers.InitGcpAndAwsForVpnTunnelRequest:
     properties:
       resourceGroupId:
-        default: rg-01
+        default: tofu-rg-01
         type: string
     type: object
   handlers.PatchUserRequest:
@@ -104,6 +114,42 @@ definitions:
       my-imported-gcp-vpc-name:
         type: string
     type: object
+  models.TfVarsGcpAzureVpnTunnel:
+    properties:
+      azure-gateway-subnet-name:
+        default: GatewaySubnet
+        type: string
+      azure-region:
+        default: koreacentral
+        type: string
+      azure-resource-group-name:
+        default: tofu-rg-01
+        type: string
+      azure-virtual-network-name:
+        default: tofu-azure-vnet
+        type: string
+      gcp-region:
+        default: asia-northeast3
+        type: string
+      gcp-vpc-network-name:
+        default: tofu-gcp-vpc
+        type: string
+      gcp-vpc-subnetwork-name:
+        default: tofu-gcp-subnet-1
+        type: string
+    type: object
+  models.TfVarsTestEnv:
+    properties:
+      azure-region:
+        default: koreacentral
+        type: string
+      azure-resource-group-name:
+        default: tofu-rg-01
+        type: string
+      gcp-region:
+        default: asia-northeast3
+        type: string
+    type: object
 info:
   contact:
     email: contact-to-cloud-barista@googlegroups.com
@@ -165,7 +211,7 @@ paths:
       - application/json
       description: Clear the entire directories and configuration files
       parameters:
-      - default: rg-01
+      - default: tofu-rg-01
         description: Resource group ID
         in: path
         name: ResourceGroupId
@@ -196,10 +242,10 @@ paths:
       description: Destroy network resources that were used to configure GCP as an
         AWS VPN tunnel
       parameters:
-      - default: rg-01
+      - default: tofu-rg-01
         description: Resource group ID
         in: path
-        name: ResourceGroupId
+        name: resourceGroupId
         required: true
         type: string
       produces:
@@ -226,10 +272,10 @@ paths:
       - application/json
       description: Create network resources for VPN tunnel in GCP and AWS
       parameters:
-      - default: rg-01
+      - default: tofu-rg-01
         description: Resource group ID
         in: path
-        name: ResourceGroupId
+        name: resourceGroupId
         required: true
         type: string
       produces:
@@ -248,36 +294,6 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: Create network resources for VPN tunnel in GCP and AWS
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/:
-    delete:
-      consumes:
-      - application/json
-      description: Clear the entire directory and configuration files
-      parameters:
-      - default: rg-01
-        description: Resource group ID
-        in: path
-        name: ResourceGroupId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.Response'
-      summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-aws/blueprint:
@@ -309,6 +325,36 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: Create a blueprint to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/clear:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-aws/init:
@@ -348,10 +394,10 @@ paths:
       description: Show changes required by the current blueprint to configure GCP
         to AWS VPN tunnels
       parameters:
-      - default: rg-01
+      - default: tofu-rg-01
         description: Resource group ID
         in: path
-        name: ResourceGroupId
+        name: resourceGroupId
         required: true
         type: string
       produces:
@@ -380,10 +426,10 @@ paths:
       description: Get the current state of a saved plan to configure GCP to AWS VPN
         tunnels
       parameters:
-      - default: rg-01
+      - default: tofu-rg-01
         description: Resource group ID
         in: path
-        name: ResourceGroupId
+        name: resourceGroupId
         required: true
         type: string
       produces:
@@ -404,6 +450,228 @@ paths:
       summary: Get the current state of a saved plan to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy network resources that were used to configure GCP as an
+        Azure VPN tunnel
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Destroy network resources that were used to configure GCP as an Azure
+        VPN tunnel
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+    post:
+      consumes:
+      - application/json
+      description: Create network resources for VPN tunnel in GCP and Azure
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create network resources for VPN tunnel in GCP and Azure
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/blueprint:
+    post:
+      consumes:
+      - application/json
+      description: Create a blueprint to configure GCP to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Parameters requied to create a blueprint to configure GCP to
+          Azure VPN tunnels
+        in: body
+        name: ParamsForBlueprint
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateBluprintOfGcpAzureVpnRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a blueprint to configure GCP to Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/clear:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/init:
+    post:
+      consumes:
+      - application/json
+      description: Initialize GCP and Azure to configure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Initialize GCP and Azure to configure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/plan:
+    post:
+      consumes:
+      - application/json
+      description: Show changes required by the current blueprint to configure GCP
+        to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Show changes required by the current blueprint to configure GCP to
+        Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/state:
+    get:
+      consumes:
+      - application/json
+      description: Get the current state of a saved plan to configure GCP to Azure
+        VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the current state of a saved plan to configure GCP to Azure VPN
+        tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
   /sample/users:
     get:
       consumes:
@@ -570,6 +838,174 @@ paths:
       summary: Update a user
       tags:
       - '[Sample] Users'
+  /test-env:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy test environment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Destroy test environment
+      tags:
+      - '[Test env] Test environment management'
+    post:
+      consumes:
+      - application/json
+      description: Create test environment
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/blueprint:
+    post:
+      consumes:
+      - application/json
+      description: Create a blueprint to configure test environment
+      parameters:
+      - description: Parameters requied to create a blueprint to configure test environment
+        in: body
+        name: ParamsForBlueprint
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateBluprintOfTestEnvRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a blueprint to configure test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/clear:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/init:
+    post:
+      consumes:
+      - application/json
+      description: Initialize test environment
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Initialize test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/plan:
+    post:
+      consumes:
+      - application/json
+      description: Show changes required by the current blueprint to configure test
+        environment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Show changes required by the current blueprint to configure test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/state:
+    get:
+      consumes:
+      - application/json
+      description: Get the current state of a saved plan of test environment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the current state of a saved plan of test environment
+      tags:
+      - '[Test env] Test environment management'
   /tofuVersion:
     get:
       consumes:

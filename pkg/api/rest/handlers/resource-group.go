@@ -30,7 +30,7 @@ import (
 // @Tags [ResourceGroup] Resource group
 // @Accept  json
 // @Produce  json
-// @Param ResourceGroupId path string true "Resource group ID" default(rg-01)
+// @Param ResourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 200 {object} models.Response "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
