@@ -17,4 +17,12 @@ func RegisterRoutesForVPN(g *echo.Group) {
 	g.DELETE("/rg/:resourceGroupId/vpn/gcp-aws", handlers.DestroyGcpAwsVpn)
 
 	// GCP and Azure
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/init", handlers.InitGcpAndAzureForVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure/clear", handlers.ClearGcpAzureVpn)
+	g.GET("/rg/:resourceGroupId/vpn/gcp-azure/state", handlers.GetStateOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/blueprint", handlers.CreateBluprintOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/plan", handlers.CheckBluprintOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure", handlers.CreateGcpAzureVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure", handlers.DestroyGcpAzureVpn)
+
 }

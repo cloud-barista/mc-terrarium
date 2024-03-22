@@ -43,7 +43,7 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func CopyTemplateFile(src string, des string) error {
+func CopyFile(src string, des string) error {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
@@ -69,7 +69,15 @@ func CopyGCPCredentials(des string) error {
 	projectRoot := viper.GetString("pocmcnettf.root")
 	cred := projectRoot + "/.tofu/secrets/credential-gcp.json"
 
-	return CopyTemplateFile(cred, des)
+	return CopyFile(cred, des)
+}
+
+func CopyAzureCredentials(des string) error {
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	cred := projectRoot + "/.tofu/secrets/credential-azure.env"
+
+	return CopyFile(cred, des)
 }
 
 func CopyFiles(sourceDir, destDir string) error {
@@ -120,7 +128,35 @@ func CopyFiles(sourceDir, destDir string) error {
 	return nil
 }
 
-func SaveTfVarsToFile(tfVars models.TfVarsGcpAwsVpnTunnel, filePath string) error {
+func SaveGcpAwsTfVarsToFile(tfVars models.TfVarsGcpAwsVpnTunnel, filePath string) error {
+	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(filePath, tfVarsBytes, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SaveGcpAzureTfVarsToFile(tfVars models.TfVarsGcpAzureVpnTunnel, filePath string) error {
+	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(filePath, tfVarsBytes, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SaveTestEnvTfVarsToFile(tfVars models.TfVarsTestEnv, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err

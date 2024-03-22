@@ -162,6 +162,7 @@ func RunServer(port string) {
 	// A group for Multi-cloud Network APIs which has /mc-net as prefix
 	groupMultiCloudNetwork := e.Group("/mc-net")
 	// Resource Group APIs
+	route.RegisterRoutesForTestEnv(groupMultiCloudNetwork)
 	route.RegisterRoutesForRG(groupMultiCloudNetwork)
 	route.RegisterRoutesForVPN(groupMultiCloudNetwork)
 
