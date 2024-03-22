@@ -68,7 +68,7 @@ func HTTPVersion(c echo.Context) error {
 // @Router /tofuVersion [get]
 func TofuVersion(c echo.Context) error {
 
-	ret, err := tofu.ExecuteCommand("version")
+	ret, err := tofu.ExecuteTofuCommand("version")
 	if err != nil {
 		res := models.Response{Success: false, Text: "failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)
