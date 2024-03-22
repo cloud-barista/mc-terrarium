@@ -1,11 +1,11 @@
 resource "azurerm_network_interface" "nic_1" {
-  name                = "nic_1_name"
+  name                = "nic-1-name"
   location            = data.azurerm_resource_group.injected_rg.location
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.injected_gw_subnet.id
+    subnet_id                     = data.azurerm_subnet.injected_subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -18,7 +18,7 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 
 # Create a virtual machine
 resource "azurerm_linux_virtual_machine" "vm_1" {
-  name                = "vm_1-name"
+  name                = "vm-1-name"
   resource_group_name = data.azurerm_resource_group.injected_rg.name
   location            = data.azurerm_resource_group.injected_rg.location
   size                = "Standard_F2"

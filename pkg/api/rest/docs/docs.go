@@ -1488,6 +1488,10 @@ const docTemplate = `{
                     "type": "string",
                     "default": "tofu-rg-01"
                 },
+                "azure-subnet-name": {
+                    "type": "string",
+                    "default": "tofu-azure-subnet-0"
+                },
                 "azure-virtual-network-name": {
                     "type": "string",
                     "default": "tofu-azure-vnet"

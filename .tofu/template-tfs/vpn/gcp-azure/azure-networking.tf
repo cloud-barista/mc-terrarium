@@ -24,7 +24,7 @@
 
 # Create public IP addresses
 resource "azurerm_public_ip" "vpn_gw_pub_ip_1" {
-  name                = "vpn_gw_pub_ip_1_name"
+  name                = "vpn-gw-pub-ip-1-name"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
   allocation_method   = "Static"
@@ -33,7 +33,7 @@ resource "azurerm_public_ip" "vpn_gw_pub_ip_1" {
 }
 
 resource "azurerm_public_ip" "vpn_gw_pub_ip_2" {
-  name                = "vpn_gw_pub_ip_2_name"
+  name                = "vpn-gw-pub-ip-2-name"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
   allocation_method   = "Static"
@@ -43,7 +43,7 @@ resource "azurerm_public_ip" "vpn_gw_pub_ip_2" {
 
 # Create Azure VPN Gateway and connections
 resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
-  name                = "vpn_gw_1_name"
+  name                = "vpn-gw-1-name"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 
@@ -87,7 +87,7 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
 }
 
 resource "azurerm_local_network_gateway" "peer_gw_1" {
-  name                = "gcp_side_gateway_1"
+  name                = "gcp-side-gateway-1"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 
@@ -101,7 +101,7 @@ resource "azurerm_local_network_gateway" "peer_gw_1" {
 }
 
 resource "azurerm_local_network_gateway" "peer_gw_2" {
-  name                = "gcp_side_gateway_2"
+  name                = "gcp-side-gateway-2"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 
@@ -115,7 +115,7 @@ resource "azurerm_local_network_gateway" "peer_gw_2" {
 }
 
 resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_1" {
-  name                = "gcp_and_azure_connection_1"
+  name                = "gcp-and-azure-connection-1"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 
@@ -129,7 +129,7 @@ resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_1" {
 }
 
 resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_2" {
-  name                = "gcp_and_azure_connection_2"
+  name                = "gcp-and-azure-connection-2"
   location            = var.azure-region
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 

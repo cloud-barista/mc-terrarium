@@ -11,6 +11,7 @@ type TfVarsGcpAzureVpnTunnel struct {
 	AzureRegion             string `json:"azure-region" default:"koreacentral"`
 	AzureResourceGroupName  string `json:"azure-resource-group-name" default:"tofu-rg-01"`
 	AzureVirtualNetworkName string `json:"azure-virtual-network-name" default:"tofu-azure-vnet"`
+	AzureSubnetName         string `json:"azure-subnet-name" default:"tofu-azure-subnet-0"`
 	AzureGatewaySubnetName  string `json:"azure-gateway-subnet-name" default:"GatewaySubnet"`
 	GcpRegion               string `json:"gcp-region" default:"asia-northeast3"`
 	GcpVpcNetworkName       string `json:"gcp-vpc-network-name" default:"tofu-gcp-vpc"`

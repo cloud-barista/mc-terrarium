@@ -1,6 +1,6 @@
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg_1" {
-  name                = "nsg_1_name"
+  name                = "nsg-1-name"
   location            = data.azurerm_resource_group.injected_rg.location
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 

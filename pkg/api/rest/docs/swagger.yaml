@@ -125,6 +125,9 @@ definitions:
       azure-resource-group-name:
         default: tofu-rg-01
         type: string
+      azure-subnet-name:
+        default: tofu-azure-subnet-0
+        type: string
       azure-virtual-network-name:
         default: tofu-azure-vnet
         type: string

@@ -35,6 +35,18 @@ data "azurerm_virtual_network" "injected_vnet" {
   resource_group_name = data.azurerm_resource_group.injected_rg.name
 }
 
+variable "azure-subnet-name" {
+  type        = string
+  description = "Subnet name in MS Azure"
+  default     = ".tofu/tofu-rg-01/vpn/gcp-azure/azure-variables.tf .tofu/tofu-rg-01/vpn/gcp-azure/azure-virtual-machine.tf"
+}
+
+data "azurerm_subnet" "injected_subnet" {
+  name                 = var.azure-subnet-name
+  virtual_network_name = data.azurerm_virtual_network.injected_vnet.name
+  resource_group_name  = data.azurerm_resource_group.injected_rg.name
+}
+
 variable "azure-gateway-subnet-name" {
   type        = string
   description = "Gateway subnet name in MS Azure. Must be GatewaySubnet."

@@ -7,7 +7,7 @@ resource "random_shuffle" "gcp_zones_in_region" {
 
 # Create VM instance
 resource "google_compute_instance" "vm_instance_1" {
-  name         = "vm_instance_1-name"
+  name         = "vm-instance-1-name"
   machine_type = "f1-micro"
   zone = random_shuffle.gcp_zones_in_region.result[0] // Dynamically selected zone
   
