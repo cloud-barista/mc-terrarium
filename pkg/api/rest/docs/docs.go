@@ -326,13 +326,12 @@ const docTemplate = `{
                 "summary": "Initialize GCP and AWS to configure VPN tunnels",
                 "parameters": [
                     {
-                        "description": "Init GCP and AWS",
-                        "name": "InitCSPs",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.InitGcpAndAwsForVpnTunnelRequest"
-                        }
+                        "type": "string",
+                        "default": "tofu-rg-01",
+                        "description": "Resource group ID",
+                        "name": "resourceGroupId",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1361,15 +1360,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.MyUser"
                     }
-                }
-            }
-        },
-        "handlers.InitGcpAndAwsForVpnTunnelRequest": {
-            "type": "object",
-            "properties": {
-                "resourceGroupId": {
-                    "type": "string",
-                    "default": "tofu-rg-01"
                 }
             }
         },

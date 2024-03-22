@@ -37,21 +37,28 @@ type InitGcpAndAwsForVpnTunnelRequest struct {
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
-// @Param InitCSPs body InitGcpAndAwsForVpnTunnelRequest true "Init GCP and AWS"
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Success 201 {object} models.Response "Created"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/init [post]
 func InitGcpAndAwsForVpn(c echo.Context) error {
 
-	req := new(InitGcpAndAwsForVpnTunnelRequest)
-	if err := c.Bind(req); err != nil {
-		res := models.Response{Success: false, Text: "Invalid request"}
+	rgId := c.Param("resourceGroupId")
+	if rgId == "" {
+		res := models.Response{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// @Param InitCSPs body InitGcpAndAwsForVpnTunnelRequest true "Init GCP and AWS"
+	// req := new(InitGcpAndAwsForVpnTunnelRequest)
+	// if err := c.Bind(req); err != nil {
+	// 	res := models.Response{Success: false, Text: "Invalid request"}
+	// 	return c.JSON(http.StatusBadRequest, res)
+	// }
+
 	projectRoot := viper.GetString("pocmcnettf.root")
-	workingDir := projectRoot + "/.tofu/" + req.ResourceGroupId + "/vpn/gcp-aws"
+	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
@@ -81,7 +88,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommand("-chdir="+workingDir, "init")
+	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "init")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -166,7 +173,7 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand("-chdir="+workingDir, "show")
+	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "show")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to show the current state of a saved plan"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -264,7 +271,7 @@ func CheckBluprintOfGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommand("-chdir="+workingDir, "plan")
+	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
@@ -309,7 +316,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommand("-chdir="+workingDir, "apply", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to deploy network resources to configure GCP to AWS VPN tunnels"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -353,7 +360,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Remove the state of the imported resources
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: state rm
-	ret, err := tofu.ExecuteTofuCommand("-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
+	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
 	if err != nil {
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
 		res := models.Response{Success: false, Text: text}
@@ -372,7 +379,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}
 	// subcommand: destroy
-	ret, err = tofu.ExecuteTofuCommand("-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err = tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
