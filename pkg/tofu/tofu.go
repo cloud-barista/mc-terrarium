@@ -2,6 +2,7 @@
 package tofu
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,13 +16,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-// ExecuteCommand executes a given tofu CLI command with arguments and returns the result.
+// ExecuteTofuCommand executes a given tofu CLI command with arguments and returns the result.
 // It also logs the full command being executed.
 // Example usage:
-// - ExecuteCommand("version")
-// - ExecuteCommand("apply", "-var=\"image_id=ami-abc123\"")
-// - ExecuteCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
-func ExecuteCommand(command string, args ...string) (string, error) {
+// - ExecuteTofuCommand("version")
+// - ExecuteTofuCommand("apply", "-var=\"image_id=ami-abc123\"")
+// - ExecuteTofuCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
+func ExecuteTofuCommand(command string, args ...string) (string, error) {
 
 	tf := "tofu"
 	// Combine the command and arguments
@@ -29,18 +30,61 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 	fullCommand := fmt.Sprintf("%s %s", tf, strings.Join(cmdArgs, " "))
 	log.Debug().Msgf("Executing command: %s", fullCommand)
 
+	// Prepare buffer to capture output
+	var outputBuffer bytes.Buffer
+
+	var logFile *os.File
+	var err error
+	runningLogFile := ""
+
+	// Setup logging to a file if -chdir was specified
+	arg := cmdArgs[0]
+	if strings.HasPrefix(arg, "-chdir=") {
+		path := strings.SplitN(arg, "=", 2)[1]
+		runningLogFile = path + "/running.log" // Specify the log file name
+	}
+
+	if runningLogFile != "" {
+		logFile, err = os.OpenFile(runningLogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Error().Msgf("Failed to open log file: %v", err)
+			return "", err
+		}
+		defer logFile.Close()
+	}
+
 	// Execute the command
 	cmd := exec.Command(tf, cmdArgs...)
-	output, err := cmd.CombinedOutput()
+
+	if logFile != nil {
+		// Redirect command output to both log file, os.Stdout, and outputBuffer
+		cmd.Stdout = io.MultiWriter(os.Stdout, logFile, &outputBuffer)
+		cmd.Stderr = io.MultiWriter(os.Stderr, logFile, &outputBuffer)
+	} else {
+		// If no log file, capture output directly to outputBuffer
+		cmd.Stdout = &outputBuffer
+		cmd.Stderr = &outputBuffer
+	}
+
+	err = cmd.Run()
+	output := outputBuffer.String()
 	if err != nil {
 		log.Error().Msgf("Failed to execute command: %s", fullCommand)
-		return "", err
+		return output, err
 	}
 
 	log.Debug().Msgf("Command output: %s", output)
 
+	// output, err := cmd.CombinedOutput()
+	// if err != nil {
+	// 	log.Error().Msgf("Failed to execute command: %s", fullCommand)
+	// 	return "", err
+	// }
+
+	// log.Debug().Msgf("Command output: %s", output)
+
 	// Return the result
-	return strings.TrimSpace(string(output)), nil
+	return strings.TrimSpace(output), nil
 }
 
 func CopyFile(src string, des string) error {
