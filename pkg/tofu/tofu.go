@@ -4,17 +4,38 @@ package tofu
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
+
+// Manage the running status of tofu commands.
+var requestStatusMap = make(map[string]string)
+var mapMutex = &sync.Mutex{}
+
+// Set the running status for a given rgId.
+func setRunningStatus(rgId, status string) {
+	mapMutex.Lock()
+	defer mapMutex.Unlock()
+	requestStatusMap[rgId] = status
+}
+
+// Get the running status for a given rgId.
+func getRunningStatus(rgId string) (status string, exists bool) {
+	mapMutex.Lock()
+	defer mapMutex.Unlock()
+	status, exists = requestStatusMap[rgId]
+	return
+}
 
 // ExecuteTofuCommand executes a given tofu CLI command with arguments and returns the result.
 // It also logs the full command being executed.
@@ -22,69 +43,71 @@ import (
 // - ExecuteTofuCommand("version")
 // - ExecuteTofuCommand("apply", "-var=\"image_id=ami-abc123\"")
 // - ExecuteTofuCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
-func ExecuteTofuCommand(command string, args ...string) (string, error) {
+// ExecuteTofuCommand executes a given tofu CLI command with arguments asynchronously.
+func ExecuteTofuCommand(rgId string, args ...string) (string, error) {
+	currentStatus, exists := getRunningStatus(rgId)
+	if exists && currentStatus == "Running" {
+		return "", errors.New("A previous request is still in progress")
+	}
+	setRunningStatus(rgId, "Running")
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				setRunningStatus(rgId, "Failed")
+			}
+		}()
+
+		// Execute the command and setup
+		if err := executeCommand(args); err != nil {
+			log.Error().Msgf("Command execution failed: %v", err)
+			setRunningStatus(rgId, "Failed")
+			return
+		}
+		setRunningStatus(rgId, "Success")
+	}()
+
+	return "Request in progress. Please use the status check API.", nil
+}
+
+// executeCommand executes the tofu command with given arguments.
+func executeCommand(args []string) error {
+	var logFile *os.File
+	var outputBuffer bytes.Buffer
+	var err error
 
 	tf := "tofu"
-	// Combine the command and arguments
-	cmdArgs := append([]string{command}, args...)
-	fullCommand := fmt.Sprintf("%s %s", tf, strings.Join(cmdArgs, " "))
+	fullCommand := fmt.Sprintf("%s %s", tf, strings.Join(args, " "))
 	log.Debug().Msgf("Executing command: %s", fullCommand)
 
-	// Prepare buffer to capture output
-	var outputBuffer bytes.Buffer
-
-	var logFile *os.File
-	var err error
-	runningLogFile := ""
-
-	// Setup logging to a file if -chdir was specified
-	arg := cmdArgs[0]
+	arg := args[0]
 	if strings.HasPrefix(arg, "-chdir=") {
 		path := strings.SplitN(arg, "=", 2)[1]
-		runningLogFile = path + "/running.log" // Specify the log file name
-	}
-
-	if runningLogFile != "" {
+		runningLogFile := path + "/running.log"
 		logFile, err = os.OpenFile(runningLogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			log.Error().Msgf("Failed to open log file: %v", err)
-			return "", err
+			return fmt.Errorf("Failed to open log file: %v", err)
 		}
 		defer logFile.Close()
 	}
 
-	// Execute the command
-	cmd := exec.Command(tf, cmdArgs...)
-
+	cmd := exec.Command(tf, args...)
 	if logFile != nil {
-		// Redirect command output to both log file, os.Stdout, and outputBuffer
 		cmd.Stdout = io.MultiWriter(os.Stdout, logFile, &outputBuffer)
 		cmd.Stderr = io.MultiWriter(os.Stderr, logFile, &outputBuffer)
 	} else {
-		// If no log file, capture output directly to outputBuffer
 		cmd.Stdout = &outputBuffer
 		cmd.Stderr = &outputBuffer
 	}
 
-	err = cmd.Run()
-	output := outputBuffer.String()
-	if err != nil {
-		log.Error().Msgf("Failed to execute command: %s", fullCommand)
-		return output, err
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("Failed to execute command: %s. Error: %v", fullCommand, err)
 	}
 
-	log.Debug().Msgf("Command output: %s", output)
-
-	// output, err := cmd.CombinedOutput()
-	// if err != nil {
-	// 	log.Error().Msgf("Failed to execute command: %s", fullCommand)
-	// 	return "", err
-	// }
-
-	// log.Debug().Msgf("Command output: %s", output)
-
-	// Return the result
-	return strings.TrimSpace(output), nil
+	if logFile == nil {
+		log.Debug().Msgf("Command output: %s", outputBuffer.String())
+	}
+	return nil
 }
 
 func CopyFile(src string, des string) error {

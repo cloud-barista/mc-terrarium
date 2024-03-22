@@ -43,12 +43,6 @@ definitions:
           $ref: '#/definitions/models.MyUser'
         type: array
     type: object
-  handlers.InitGcpAndAwsForVpnTunnelRequest:
-    properties:
-      resourceGroupId:
-        default: tofu-rg-01
-        type: string
-    type: object
   handlers.PatchUserRequest:
     properties:
       email:
@@ -366,12 +360,12 @@ paths:
       - application/json
       description: Initialize GCP and AWS to configure VPN tunnels
       parameters:
-      - description: Init GCP and AWS
-        in: body
-        name: InitCSPs
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
         required: true
-        schema:
-          $ref: '#/definitions/handlers.InitGcpAndAwsForVpnTunnelRequest'
+        type: string
       produces:
       - application/json
       responses:
