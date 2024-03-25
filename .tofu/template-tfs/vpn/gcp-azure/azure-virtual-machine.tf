@@ -1,7 +1,14 @@
+
+data "azurerm_subnet" "injected_subnet" {
+  name                 = var.azure-subnet-name
+  virtual_network_name = data.azurerm_virtual_network.injected_vnet.name
+  resource_group_name  = var.azure-resource-group-name
+}
+
 resource "azurerm_network_interface" "nic_1" {
   name                = "nic-1-name"
-  location            = data.azurerm_resource_group.injected_rg.location
-  resource_group_name = data.azurerm_resource_group.injected_rg.name
+  location            = var.azure-region
+  resource_group_name = var.azure-resource-group-name
 
   ip_configuration {
     name                          = "internal"
@@ -19,8 +26,8 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 # Create a virtual machine
 resource "azurerm_linux_virtual_machine" "vm_1" {
   name                = "vm-1-name"
-  resource_group_name = data.azurerm_resource_group.injected_rg.name
-  location            = data.azurerm_resource_group.injected_rg.location
+  resource_group_name = var.azure-resource-group-name
+  location            = var.azure-region
   size                = "Standard_F2"
   admin_username      = "adminuser" # Ensure this matches Azure's expected default path
   network_interface_ids = [

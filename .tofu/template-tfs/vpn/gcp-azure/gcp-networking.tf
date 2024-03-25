@@ -22,19 +22,24 @@
 #   region        = var.gcp-region
 # }
 
+data "google_compute_network" "injected_vpc_network" {
+  name = var.gcp-vpc-network-name
+}
+
+
 ########################################################
 # Create a Cloud Router
 # Reference: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router
 resource "google_compute_router" "gcp_router_1" {
   name = "gcp-router-1-name"
   # description = "my cloud router"
-  network = data.google_compute_network.injected_vpc_network.id
-  region  = var.gcp-region
+  network = data.google_compute_network.injected_vpc_network.name
+  # region  = var.gcp-region
 
   bgp {
     # you can choose any number in the private range
     # ASN (Autonomous System Number) you can choose any number in the private range 64512 to 65534 and 4200000000 to 4294967294.
-    asn               = var.gcp_bgp_asn
+    asn               = var.gcp-bgp-asn
     advertise_mode    = "CUSTOM"
     advertised_groups = ["ALL_SUBNETS"]
 
@@ -47,7 +52,7 @@ resource "google_compute_router" "gcp_router_1" {
 resource "google_compute_ha_vpn_gateway" "ha_vpn_gw_1" {
   # provider = "google-beta"
   name     = "ha-vpn-gw-1-name"
-  network  = data.google_compute_network.injected_vpc_network.self_link
+  network  = data.google_compute_network.injected_vpc_network.name
 }
 
 ########################################################
@@ -59,10 +64,12 @@ resource "google_compute_external_vpn_gateway" "peer_vpn_gw_1" {
   name            = "azure-side-vpn-gw-1"
   redundancy_type = "TWO_IPS_REDUNDANCY"
   description     = "VPN gateway on Azure side"
+
   interface {
     id         = 0
     ip_address = azurerm_public_ip.vpn_gw_pub_ip_1.ip_address
   }
+  
   interface {
     id         = 1
     ip_address = azurerm_public_ip.vpn_gw_pub_ip_2.ip_address
@@ -73,8 +80,8 @@ resource "google_compute_external_vpn_gateway" "peer_vpn_gw_1" {
 resource "google_compute_vpn_tunnel" "gcp_and_azure_tunnel_1" {
   name                            = "gcp-and-azure-tunnel-1"
   vpn_gateway                     = google_compute_ha_vpn_gateway.ha_vpn_gw_1.self_link
-  # shared_secret                   = var.preshared_secret
-  shared_secret                   = azurerm_virtual_network_gateway_connection.gcp_and_azure_cnx_1.shared_key
+  shared_secret                   = var.preshared-secret
+  # shared_secret                   = azurerm_virtual_network_gateway_connection.gcp_and_azure_cnx_1.shared_key
   peer_external_gateway           = google_compute_external_vpn_gateway.peer_vpn_gw_1.self_link
   peer_external_gateway_interface = 0
   router                          = google_compute_router.gcp_router_1.name
@@ -85,8 +92,8 @@ resource "google_compute_vpn_tunnel" "gcp_and_azure_tunnel_1" {
 resource "google_compute_vpn_tunnel" "gcp_and_azure_tunnel_2" {
   name                            = "gcp-and-azure-tunnel-2"
   vpn_gateway                     = google_compute_ha_vpn_gateway.ha_vpn_gw_1.self_link
-  # shared_secret                   = var.preshared_secret
-  shared_secret                   = azurerm_virtual_network_gateway_connection.gcp_and_azure_cnx_2.shared_key
+  shared_secret                   = var.preshared-secret
+  # shared_secret                   = azurerm_virtual_network_gateway_connection.gcp_and_azure_cnx_2.shared_key
   peer_external_gateway           = google_compute_external_vpn_gateway.peer_vpn_gw_1.self_link
   peer_external_gateway_interface = 1
   router                          = google_compute_router.gcp_router_1.name
@@ -121,7 +128,7 @@ resource "google_compute_router_peer" "bgp_session_1" {
   router                    = google_compute_router.gcp_router_1.name
   # peer_ip_address           = "169.254.21.1"
   peer_ip_address           = azurerm_virtual_network_gateway.vpn_gw_1.bgp_settings[0].peering_addresses[0].apipa_addresses[0]
-  # peer_asn                  = var.azure_bgp_asn
+  # peer_asn                  = var.azure-bgp-asn
   peer_asn                  = azurerm_virtual_network_gateway.vpn_gw_1.bgp_settings[0].asn
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.interface_for_tunnel_1.name
@@ -132,7 +139,7 @@ resource "google_compute_router_peer" "bgp_session_2" {
   router                    = google_compute_router.gcp_router_1.name
   # peer_ip_address           = "169.254.22.1"
   peer_ip_address           = azurerm_virtual_network_gateway.vpn_gw_1.bgp_settings[0].peering_addresses[1].apipa_addresses[0]
-  # peer_asn                  = var.azure_bgp_asn
+  # peer_asn                  = var.azure-bgp-asn
   peer_asn                  = azurerm_virtual_network_gateway.vpn_gw_1.bgp_settings[0].asn
   advertised_route_priority = 100
   interface                 = google_compute_router_interface.interface_for_tunnel_2.name
