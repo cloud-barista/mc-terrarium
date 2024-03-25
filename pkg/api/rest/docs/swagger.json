@@ -394,6 +394,58 @@
                 }
             }
         },
+        "/rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status": {
+            "get": {
+                "description": "Get the status of the request to configure GCP to AWS VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Get the status of the request to configure GCP to AWS VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tofu-rg-01",
+                        "description": "Resource group ID",
+                        "name": "resourceGroupId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/rg/{resourceGroupId}/vpn/gcp-aws/state": {
             "get": {
                 "description": "Get the current state of a saved plan to configure GCP to AWS VPN tunnels",
@@ -690,6 +742,58 @@
                         "default": "tofu-rg-01",
                         "description": "Resource group ID",
                         "name": "resourceGroupId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status": {
+            "get": {
+                "description": "Get the status of the request to configure GCP to Azure VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Get the status of the request to configure GCP to Azure VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tofu-rg-01",
+                        "description": "Resource group ID",
+                        "name": "resourceGroupId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
                         "in": "path",
                         "required": true
                     }
