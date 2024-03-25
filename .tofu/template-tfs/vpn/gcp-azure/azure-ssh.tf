@@ -1,3 +1,7 @@
+data "azurerm_resource_group" "injected_rg" {
+  name = var.azure-resource-group-name
+}
+
 # Generate SSH key pair
 resource "random_pet" "ssh_key_name" {
   prefix    = "ssh"
@@ -7,7 +11,7 @@ resource "random_pet" "ssh_key_name" {
 resource "azapi_resource" "azure_ssh_public_key" {
   type      = "Microsoft.Compute/sshPublicKeys@2022-11-01"
   name      = random_pet.ssh_key_name.id
-  location  = data.azurerm_resource_group.injected_rg.location
+  location  = var.azure-region
   parent_id = data.azurerm_resource_group.injected_rg.id
 }
 

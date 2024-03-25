@@ -1,8 +1,8 @@
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg_1" {
   name                = "nsg-1-name"
-  location            = data.azurerm_resource_group.injected_rg.location
-  resource_group_name = data.azurerm_resource_group.injected_rg.name
+  location            = var.azure-region
+  resource_group_name = var.azure-resource-group-name
 
   security_rule {
     name                       = "SSH"

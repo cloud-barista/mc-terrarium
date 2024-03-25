@@ -1,4 +1,13 @@
 
+// Fetch the available zones in the region
+data "google_compute_zones" "gcp_available_zones" {
+  region = var.gcp-region 
+}
+
+data "google_compute_subnetwork" "injected_vpc_subnetwork" {
+  name = var.gcp-vpc-subnetwork-name
+}
+
 # Randomly select a zone
 resource "random_shuffle" "gcp_zones_in_region" {
   input        = data.google_compute_zones.gcp_available_zones.names

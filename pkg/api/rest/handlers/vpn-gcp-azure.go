@@ -336,8 +336,9 @@ func CreateGcpAzureVpn(c echo.Context) error {
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		errMsg := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
+		log.Error().Err(err).Msg(errMsg) // error
+		res := models.Response{Success: false, Text: errMsg}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -345,7 +346,8 @@ func CreateGcpAzureVpn(c echo.Context) error {
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to deploy network resources to configure GCP to Azure VPN tunnels"}
+		log.Error().Err(err).Msg("Failed due to previous request in progress") // error
+		res := models.Response{Success: false, Text: "Failed due to previous request in progress"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := models.Response{Success: true, Text: ret}
