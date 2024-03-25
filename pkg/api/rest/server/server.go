@@ -35,6 +35,8 @@ import (
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/middlewares"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/route"
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
+
 	"github.com/spf13/viper"
 
 	// REST API (echo)
@@ -89,6 +91,17 @@ const (
 // @securityDefinitions.basic BasicAuth
 func RunServer(port string) {
 
+	log.Info().Msg("Setting Tofu command utility")
+	if err := tofu.LoadRunningStatusMap(); err != nil {
+		log.Warn().Msg(err.Error())
+	}
+
+	defer func() {
+		if err := tofu.SaveRunningStatusMap(); err != nil {
+			log.Error().Err(err).Msg("Failed to save running status map")
+		}
+	}()
+
 	log.Info().Msg("Setting POC-MC-Net-TF REST API server")
 
 	e := echo.New()
@@ -99,9 +112,14 @@ func RunServer(port string) {
 	// Custom logger middleware with zerolog
 	e.Use(middlewares.Zerologger())
 
+	// Recover middleware recovers from panics anywhere in the chain, and handles the control to the centralized HTTP error handler.
 	e.Use(middleware.Recover())
+
 	// limit the application to 20 requests/sec using the default in-memory store
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(20)))
+
+	// Add a request ID to the context of each request
+	e.Use(middleware.RequestID())
 
 	e.HideBanner = true
 	//e.colorer.Printf(banner, e.colorer.Red("v"+Version), e.colorer.Blue(website))

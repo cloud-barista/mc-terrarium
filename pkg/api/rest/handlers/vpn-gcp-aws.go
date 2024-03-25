@@ -57,6 +57,9 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 	// 	return c.JSON(http.StatusBadRequest, res)
 	// }
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -88,7 +91,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "init")
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -161,6 +164,9 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -173,7 +179,7 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "show")
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "show")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to show the current state of a saved plan"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -259,6 +265,9 @@ func CheckBluprintOfGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -271,7 +280,7 @@ func CheckBluprintOfGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "plan")
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
@@ -304,6 +313,9 @@ func CreateGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -316,7 +328,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "apply", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to deploy network resources to configure GCP to AWS VPN tunnels"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -347,6 +359,9 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -360,7 +375,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Remove the state of the imported resources
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: state rm
-	ret, err := tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
 	if err != nil {
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
 		res := models.Response{Success: false, Text: text}
@@ -379,7 +394,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}
 	// subcommand: destroy
-	ret, err = tofu.ExecuteTofuCommand(rgId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err = tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
@@ -391,4 +406,56 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+// GetRequestStatusOfGcpAwsVpn godoc
+// @Summary Get the status of the request to configure GCP to AWS VPN tunnels
+// @Description Get the status of the request to configure GCP to AWS VPN tunnels
+// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Accept  json
+// @Produce  json
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param requestId path string true "Request ID"
+// @Success 200 {object} models.Response "OK"
+// @Failure 400 {object} models.Response "Bad Request"
+// @Failure 503 {object} models.Response "Service Unavailable"
+// @Router /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status [get]
+func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
+
+	rgId := c.Param("resourceGroupId")
+	if rgId == "" {
+		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	reqId := c.Param("requestId")
+	if reqId == "" {
+		res := models.Response{Success: false, Text: "Require the request ID"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		errMsg := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
+		log.Error().Err(err).Msg(errMsg) // debug
+		res := models.Response{Success: false, Text: errMsg}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
+
+	// Check the statusReport of the request
+	statusReport, err := tofu.GetRunningStatus(rgId, statusLogFile)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get the status of the request") // error
+		res := models.Response{Success: false, Text: "Failed to get the status of the request"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.Response{Success: true, Text: statusReport}
+
+	log.Debug().Msgf("%+v", res) // debug
+
+	return c.JSON(http.StatusOK, res)
 }

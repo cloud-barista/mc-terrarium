@@ -18,9 +18,49 @@ import (
 	"github.com/spf13/viper"
 )
 
+const statusFilePath = "runningStatusMap.db"
+
 // Manage the running status of tofu commands.
 var requestStatusMap = make(map[string]string)
 var mapMutex = &sync.Mutex{}
+
+// Save the running status map to file
+func SaveRunningStatusMap() error {
+	mapMutex.Lock()
+	defer mapMutex.Unlock()
+
+	file, err := os.Create(statusFilePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(requestStatusMap); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Load the running status map from file
+func LoadRunningStatusMap() error {
+	mapMutex.Lock()
+	defer mapMutex.Unlock()
+
+	file, err := os.Open(statusFilePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&requestStatusMap); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Set the running status for a given rgId.
 func setRunningStatus(rgId, status string) {
@@ -37,17 +77,73 @@ func getRunningStatus(rgId string) (status string, exists bool) {
 	return
 }
 
+func GetTofuVersion() (string, error) {
+
+	var outputBuffer bytes.Buffer
+
+	tf := "tofu"
+	args := []string{"version"}
+	fullCommand := fmt.Sprintf("%s %s", tf, args)
+	log.Debug().Msgf("Executing command: %s", fullCommand)
+
+	cmd := exec.Command(tf, args...)
+	cmd.Stdout = io.MultiWriter(os.Stdout, &outputBuffer)
+	cmd.Stderr = io.MultiWriter(os.Stderr, &outputBuffer)
+
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("failed to execute command: %s. Error: %v", fullCommand, err)
+	}
+
+	return outputBuffer.String(), nil
+}
+
 // ExecuteTofuCommand executes a given tofu CLI command with arguments and returns the result.
 // It also logs the full command being executed.
 // Example usage:
 // - ExecuteTofuCommand("version")
 // - ExecuteTofuCommand("apply", "-var=\"image_id=ami-abc123\"")
 // - ExecuteTofuCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
-// ExecuteTofuCommand executes a given tofu CLI command with arguments asynchronously.
-func ExecuteTofuCommand(rgId string, args ...string) (string, error) {
+func ExecuteTofuCommand(rgId, reqId string, args ...string) (string, error) {
+
 	currentStatus, exists := getRunningStatus(rgId)
 	if exists && currentStatus == "Running" {
-		return "", errors.New("A previous request is still in progress")
+		return "", errors.New("a previous request is still in progress")
+	}
+	setRunningStatus(rgId, "Running")
+
+	defer func() {
+		if r := recover(); r != nil {
+			setRunningStatus(rgId, "Failed")
+		}
+	}()
+
+	// Execute the command and setup
+	output, err := executeCommand(reqId, args)
+	if err != nil {
+		log.Error().Msgf("Command execution failed: %v", err)
+		setRunningStatus(rgId, "Failed")
+		return "", err
+	}
+	// log.Debug().Msgf("Command output: %s", output)
+	setRunningStatus(rgId, "Success")
+
+	// log.Debug().Msgf("Command output: %s", output)
+
+	// Return the result
+	return output, nil
+}
+
+// ExecuteTofuCommandAsync executes a given tofu CLI command with arguments and returns the result.
+// It also logs the full command being executed.
+// Example usage:
+// - ExecuteTofuCommandAsync("version")
+// - ExecuteTofuCommandAsync("apply", "-var=\"image_id=ami-abc123\"")
+// - ExecuteTofuCommandAsync("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
+// ExecuteTofuCommandAsync executes a given tofu CLI command with arguments asynchronously.
+func ExecuteTofuCommandAsync(rgId string, reqId string, args ...string) (string, error) {
+	currentStatus, exists := getRunningStatus(rgId)
+	if exists && currentStatus == "Running" {
+		return "", errors.New("a previous request is still in progress")
 	}
 	setRunningStatus(rgId, "Running")
 
@@ -59,19 +155,22 @@ func ExecuteTofuCommand(rgId string, args ...string) (string, error) {
 		}()
 
 		// Execute the command and setup
-		if err := executeCommand(args); err != nil {
+		_, err := executeCommand(reqId, args)
+		if err != nil {
 			log.Error().Msgf("Command execution failed: %v", err)
 			setRunningStatus(rgId, "Failed")
 			return
 		}
+		// log.Debug().Msgf("Command output: %s", output)
 		setRunningStatus(rgId, "Success")
 	}()
 
-	return "Request in progress. Please use the status check API.", nil
+	res := fmt.Sprintf("Request (reqId: %s) in progress. Please use the status check API with the request ID.", reqId)
+	return res, nil
 }
 
 // executeCommand executes the tofu command with given arguments.
-func executeCommand(args []string) error {
+func executeCommand(reqId string, args []string) (string, error) {
 	var logFile *os.File
 	var outputBuffer bytes.Buffer
 	var err error
@@ -83,10 +182,17 @@ func executeCommand(args []string) error {
 	arg := args[0]
 	if strings.HasPrefix(arg, "-chdir=") {
 		path := strings.SplitN(arg, "=", 2)[1]
-		runningLogFile := path + "/running.log"
+		// Create the runningLogs directory path
+		logDir := fmt.Sprintf("%s/runningLogs", path)
+		// Create the directory if it does not exist
+		if err := os.MkdirAll(logDir, 0755); err != nil {
+			return "", fmt.Errorf("failed to create log directory: %v", err)
+		}
+		// Set the log file path
+		runningLogFile := fmt.Sprintf("%s/%s.log", logDir, reqId)
 		logFile, err = os.OpenFile(runningLogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			return fmt.Errorf("Failed to open log file: %v", err)
+			return "", fmt.Errorf("failed to open log file: %v", err)
 		}
 		defer logFile.Close()
 	}
@@ -101,13 +207,41 @@ func executeCommand(args []string) error {
 	}
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("Failed to execute command: %s. Error: %v", fullCommand, err)
+		return "", fmt.Errorf("failed to execute command: %s. Error: %v", fullCommand, err)
 	}
 
-	if logFile == nil {
-		log.Debug().Msgf("Command output: %s", outputBuffer.String())
+	// if logFile != nil {
+	// 	log.Debug().Msgf("Command output is also logged to: %s", logFile.Name())
+	// }
+
+	return outputBuffer.String(), nil
+}
+
+func GetRunningStatus(rgId, statusLogFile string) (string, error) {
+
+	status, exists := getRunningStatus(rgId)
+	if !exists {
+		return "", errors.New("no request found")
 	}
-	return nil
+	log.Debug().Msgf("Request status: %s", status)
+
+	_, err := os.Stat(statusLogFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", errors.New("status log file does not exist")
+		}
+		return "", fmt.Errorf("failed to check status log file: %v", err)
+	}
+
+	// Read the status from the log file
+	statusBytes, err := os.ReadFile(statusLogFile)
+	if err != nil {
+		return "", fmt.Errorf("failed to read status log file: %v", err)
+	}
+
+	statusReport := fmt.Sprintf("[Request status: %s]\n%s", status, string(statusBytes))
+
+	return statusReport, nil
 }
 
 func CopyFile(src string, des string) error {

@@ -416,6 +416,41 @@ paths:
         AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get the status of the request to configure GCP to AWS VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the status of the request to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-aws/state:
     get:
       consumes:
@@ -635,6 +670,41 @@ paths:
             $ref: '#/definitions/models.Response'
       summary: Show changes required by the current blueprint to configure GCP to
         Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get the status of the request to configure GCP to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the status of the request to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-azure/state:
