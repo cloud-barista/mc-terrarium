@@ -1,7 +1,7 @@
-resource "google_compute_firewall" "firewall_1" {
-  name    = "firewall-1"
-  network = data.google_compute_network.injected_vpc_network.name
-
+resource "google_compute_firewall" "test_firewall" {
+  name    = "tofu-gcp-firewall"
+  network = google_compute_network.test_vpc_network.id
+  
   allow {
     protocol = "icmp"
   }

@@ -1,11 +1,6 @@
-
 // Fetch the available zones in the region
 data "google_compute_zones" "gcp_available_zones" {
   region = var.gcp-region 
-}
-
-data "google_compute_subnetwork" "injected_vpc_subnetwork" {
-  name = var.gcp-vpc-subnetwork-name
 }
 
 # Randomly select a zone
@@ -14,12 +9,12 @@ resource "random_shuffle" "gcp_zones_in_region" {
   result_count = 1
 }
 
-# Create VM instance
-resource "google_compute_instance" "vm_instance_1" {
-  name         = "vm-instance-1-name"
+# Define a VM instance
+resource "google_compute_instance" "test_vm_instance" {
+  name         = "tofu-gcp-vm-instance"
   machine_type = "f1-micro"
+
   zone = random_shuffle.gcp_zones_in_region.result[0] // Dynamically selected zone
-  
 
   boot_disk {
     auto_delete = true
@@ -32,7 +27,7 @@ resource "google_compute_instance" "vm_instance_1" {
   }
 
   network_interface {
-    network = data.google_compute_network.injected_vpc_network.self_link
-    subnetwork = data.google_compute_subnetwork.injected_vpc_subnetwork.self_link  
+    network = google_compute_network.test_vpc_network.self_link
+    subnetwork = google_compute_subnetwork.test_subnetwork_1.self_link
   }
 }

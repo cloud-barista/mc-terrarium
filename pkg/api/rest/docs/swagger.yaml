@@ -99,28 +99,30 @@ definitions:
     type: object
   models.TfVarsGcpAwsVpnTunnel:
     properties:
-      my-imported-aws-subnet-id:
+      aws-region:
+        default: ap-northeast-2
         type: string
-      my-imported-aws-vpc-id:
+      aws-subnet-id:
         type: string
-      my-imported-gcp-subnet-name:
+      aws-vpc-id:
         type: string
-      my-imported-gcp-vpc-name:
+      gcp-region:
+        default: asia-northeast3
+        type: string
+      gcp-vpc-network-name:
+        default: tofu-gcp-vpc
         type: string
     type: object
   models.TfVarsGcpAzureVpnTunnel:
     properties:
-      azure-gateway-subnet-name:
-        default: GatewaySubnet
+      azure-gateway-subnet-cidr-block:
+        default: 192.168.130.0/24
         type: string
       azure-region:
         default: koreacentral
         type: string
       azure-resource-group-name:
         default: tofu-rg-01
-        type: string
-      azure-subnet-name:
-        default: tofu-azure-subnet-0
         type: string
       azure-virtual-network-name:
         default: tofu-azure-vnet
@@ -131,12 +133,12 @@ definitions:
       gcp-vpc-network-name:
         default: tofu-gcp-vpc
         type: string
-      gcp-vpc-subnetwork-name:
-        default: tofu-gcp-subnet-1
-        type: string
     type: object
   models.TfVarsTestEnv:
     properties:
+      aws-region:
+        default: ap-northeast-2
+        type: string
       azure-region:
         default: koreacentral
         type: string
@@ -1048,6 +1050,35 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: Show changes required by the current blueprint to configure test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/request/{requestId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get the status of the request to configure test environment
+      parameters:
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get the status of the request to configure test environment
       tags:
       - '[Test env] Test environment management'
   /test-env/state:

@@ -1,62 +1,64 @@
 
-## AWS variables
-variable "my-imported-aws-vpc-id" {
+#######################################################################
+# Amazon Web Services (AWS)
+variable "aws-region" {
   type        = string
-  description = "The ID of the AWS VPC to use for the HA VPN tunnels."
+  description = "A region in AWS."
+  default     = "ap-northeast-2"
+  # AWS regions mapping list:
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 }
 
-variable "my-imported-aws-subnet-id" {
+variable "aws-vpc-id" {
   type        = string
-  description = "The ID of the AWS subnet to use for the HA VPN tunnels."
+  description = "The VPC ID in AWS."
 }
 
-# variable "my-imported-aws-route-table-id" {
+variable "aws-subnet-id" {
+  type        = string
+  description = "The subnet ID in AWS."
+}
+
+#######################################################################
+# Google Cloud Platform (GCP)
+variable "gcp-region" {
+  type        = string
+  description = "A region in GCP"
+  default     = "asia-northeast3"  
+}
+
+variable "gcp-vpc-network-name" {
+  type        = string
+  description = "The VPC network name in GCP"
+  default     = "tofu-gcp-vpc"
+}
+
+# variable "gcp-subnetwork-name" {
 #   type        = string
-#   description = "The ID of the AWS route table to use for the HA VPN tunnels."
+#   description = "The subnetwork name in GCP"
 # }
 
-data "aws_route_table" "imported" {
-  subnet_id = var.my-imported-aws-subnet-id
+variable "gcp-bgp-asn" {
+  type        = string
+  description = "Autonomous System Number(ASN) for Border Gateway Protocol(BGP) in GCP"
+  default     = "65530"
 }
 
-# output "my-imported-aws-route-table-tags" {
-#   value = data.aws_route_table.imported.tags
+
+
+# output "my-imported-gcp-vpc-id" {
+#   value = data.google_compute_network.my-imported-gcp-vpc-network.id
 # }
 
-## GCP variables
-# VPC
-variable "my-imported-gcp-vpc-name" {
-  type        = string
-  description = "The name of the GCP VPC to use for the HA VPN tunnels."
-}
-
-data "google_compute_network" "my-imported-gcp-vpc-network" {
-  name = var.my-imported-gcp-vpc-name
-}
-
-output "my-imported-gcp-vpc-id" {
-  value = data.google_compute_network.my-imported-gcp-vpc-network.id
-}
-
-output "my-imported-gcp-vpc-self-link" {
-  value = data.google_compute_network.my-imported-gcp-vpc-network.self_link
-}
-
-# Subnet
-variable "my-imported-gcp-subnet-name" {
-  type        = string
-  description = "The name of the GCP subnet to use for the HA VPN tunnels."
-}
-
-data "google_compute_subnetwork" "my-imported-gcp-vpc-subnetwork" {
-  name = var.my-imported-gcp-subnet-name
-}
+# output "my-imported-gcp-vpc-self-link" {
+#   value = data.google_compute_network.my-imported-gcp-vpc-network.self_link
+# }
 
 # Unused
 # output "my-imported-gcp-vpc-subnetwork-id" {
 #   value = data.google_compute_subnetwork.my-imported-gcp-vpc-subnetwork.id
 # }
 
-output "my-imported-gcp-vpc-subnetwork-self-link" {
-  value = data.google_compute_subnetwork.my-imported-gcp-vpc-subnetwork.self_link
-}
+# output "my-imported-gcp-vpc-subnetwork-self-link" {
+#   value = data.google_compute_subnetwork.my-imported-gcp-vpc-subnetwork.self_link
+# }

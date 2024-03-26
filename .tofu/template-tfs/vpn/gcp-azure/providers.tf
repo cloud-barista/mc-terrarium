@@ -8,13 +8,13 @@ terraform {
     # Google provider
     google = {
       source  = "registry.opentofu.org/hashicorp/google"
-      version = "~> 5.2"
+      version = "~>5.21"
     }
 
     # The Azure Provider
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~>3.92.0"
+      version = "~>3.97.0"
     }
     # The AzAPI provider
     azapi = {
@@ -39,12 +39,6 @@ provider "google" {
 
   project = local.my-gcp-project-id
   region  = var.gcp-region
-}
-
-# The "random" provider allows the use of randomness within Terraform configurations.
-# It is used to select a zone in a region randomly.
-provider "random" {
-  // Optional configuration for the random provider
 }
 
 # [NOTE]

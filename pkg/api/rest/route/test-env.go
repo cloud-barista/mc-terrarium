@@ -14,4 +14,5 @@ func RegisterRoutesForTestEnv(g *echo.Group) {
 	g.POST("/test-env/plan", handlers.CheckBluprintOfTestEnv)
 	g.POST("/test-env", handlers.CreateTestEnv)
 	g.DELETE("/test-env", handlers.DestroyTestEnv)
+	g.GET("/test-env/request/:requestId/status", handlers.GetRequestStatusOfTestEnv)
 }

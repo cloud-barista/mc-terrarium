@@ -8,13 +8,19 @@ terraform {
     # Google provider
     google = {
       source  = "registry.opentofu.org/hashicorp/google"
-      version = "~> 5.2"
+      version = "~>5.21"
+    }
+
+    # AWS provider is specified with its source and version
+    aws = {
+      source  = "registry.opentofu.org/hashicorp/aws"
+      version = "~>5.42"
     }
 
     # The Azure Provider
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~>3.92.0"
+      version = "~>3.97.0"
     }
     # The AzAPI provider
     azapi = {
@@ -42,9 +48,22 @@ provider "google" {
 }
 
 # The "random" provider allows the use of randomness within Terraform configurations.
-# It is used to select a zone in a region randomly.
+# It is used to select a zone in a GCP region randomly.
 provider "random" {
   // Optional configuration for the random provider
+}
+
+# Provider block for AWS specifies the configuration for the provider
+provider "aws" {
+  region = var.aws-region
+}
+
+module "ubuntu_22_04_latest" {
+  source = "github.com/andreswebs/terraform-aws-ami-ubuntu"
+}
+
+locals {
+  ami_id = module.ubuntu_22_04_latest.ami_id
 }
 
 # [NOTE]

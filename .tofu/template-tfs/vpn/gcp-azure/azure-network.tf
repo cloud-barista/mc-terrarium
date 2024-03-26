@@ -1,37 +1,14 @@
-
-# Create a virtual network
-# resource "azurerm_virtual_network" "my-azure-vnet" {
-#   name                = "my-azure-vnet-name"
-#   address_space       = ["192.168.128.0/18"]
-#   location            = azurerm_resource_group.injected_rg.location
-#   resource_group_name = azurerm_resource_group.injected_rg.name
-# }
-
-# # Create subnets
-# resource "azurerm_subnet" "my-azure-subnet" {
-#   name                 = "my-azure-subnet-1"
-#   resource_group_name  = azurerm_resource_group.injected_rg.name
-#   virtual_network_name = azurerm_virtual_network.injected_vnet.name
-#   address_prefixes     = ["192.168.128.0/24"]
-# }
-
-# resource "azurerm_subnet" "my-azure-gw-subnet" {
-#   name                 = "GatewaySubnet"
-#   resource_group_name  = azurerm_resource_group.injected_rg.name
-#   virtual_network_name = azurerm_virtual_network.injected_vnet.name
-#   address_prefixes     = ["192.168.129.0/24"]
-# }
-
 # Azure existing virtual network and subnet
 data "azurerm_virtual_network" "injected_vnet" {
   name                = var.azure-virtual-network-name
   resource_group_name = var.azure-resource-group-name
 }
 
-data "azurerm_subnet" "injected_gw_subnet" {
-  name                 = var.azure-gateway-subnet-name
+resource "azurerm_subnet" "gw_subnet" {
+  name                 = "GatewaySubnet"
   resource_group_name  = var.azure-resource-group-name
-  virtual_network_name = data.azurerm_virtual_network.injected_vnet.name  
+  virtual_network_name = data.azurerm_virtual_network.injected_vnet.name
+  address_prefixes     = [var.azure-gateway-subnet-cidr-block]
 }
 
 # Create public IP addresses
@@ -69,14 +46,14 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
   ip_configuration {
     name                          = "vnetGatewayConfig1"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = data.azurerm_subnet.injected_gw_subnet.id
+    subnet_id                     = azurerm_subnet.gw_subnet.id
     public_ip_address_id          = azurerm_public_ip.vpn_gw_pub_ip_1.id
   }
 
   ip_configuration {
     name                          = "vnetGatewayConfig2"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = data.azurerm_subnet.injected_gw_subnet.id
+    subnet_id                     = azurerm_subnet.gw_subnet.id
     public_ip_address_id          = azurerm_public_ip.vpn_gw_pub_ip_2.id
   }
 
@@ -98,6 +75,10 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
 
 }
 
+########################################################
+# From here, GCP's resources are required.
+########################################################
+
 resource "azurerm_local_network_gateway" "peer_gw_1" {
   name                = "gcp-side-gateway-1"
   location            = var.azure-region
@@ -107,7 +88,7 @@ resource "azurerm_local_network_gateway" "peer_gw_1" {
 
   bgp_settings {
     asn                 = var.gcp-bgp-asn
-    bgp_peering_address = google_compute_router_peer.bgp_session_1.ip_address
+    bgp_peering_address = google_compute_router_peer.router_peer_1.ip_address
   }
 }
 
@@ -120,7 +101,7 @@ resource "azurerm_local_network_gateway" "peer_gw_2" {
 
   bgp_settings {
     asn                 = var.gcp-bgp-asn 
-    bgp_peering_address = google_compute_router_peer.bgp_session_2.ip_address
+    bgp_peering_address = google_compute_router_peer.router_peer_2.ip_address
   }
 }
 
