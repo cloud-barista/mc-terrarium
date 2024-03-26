@@ -6,13 +6,13 @@ terraform {
     # AWS provider is specified with its source and version
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.21"
+      version = "~>5.42"
     }
 
     # Google provider is specified with its source and version
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.2"
+      version = "~>5.21"
     }
   }
 }

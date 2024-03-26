@@ -7,7 +7,7 @@ terraform {
     # Google provider is specified with its source and version
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.2"
+      version = "~>5.21"
     }
   }
 }
