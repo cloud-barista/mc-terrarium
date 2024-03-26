@@ -40,6 +40,9 @@ import (
 // @Router /test-env/init [post]
 func InitTestEnv(c echo.Context) error {
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -79,7 +82,7 @@ func InitTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", "-chdir="+workingDir, "init")
+	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -138,6 +141,9 @@ func ClearTestEnv(c echo.Context) error {
 // @Router /test-env/state [get]
 func GetStateOfTestEnv(c echo.Context) error {
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -150,7 +156,7 @@ func GetStateOfTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", "-chdir="+workingDir, "show")
+	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to show the current state of a saved plan"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -228,6 +234,9 @@ func CreateBluprintOfTestEnv(c echo.Context) error {
 // @Router /test-env/plan [post]
 func CheckBluprintOfTestEnv(c echo.Context) error {
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -240,7 +249,7 @@ func CheckBluprintOfTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", "-chdir="+workingDir, "plan")
+	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
@@ -266,6 +275,9 @@ func CheckBluprintOfTestEnv(c echo.Context) error {
 // @Router /test-env [post]
 func CreateTestEnv(c echo.Context) error {
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -278,7 +290,7 @@ func CreateTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", "-chdir="+workingDir, "apply", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to deploy test environment"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -302,6 +314,9 @@ func CreateTestEnv(c echo.Context) error {
 // @Router /test-env [delete]
 func DestroyTestEnv(c echo.Context) error {
 
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
@@ -315,7 +330,7 @@ func DestroyTestEnv(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// subcommand: destroy
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
@@ -327,4 +342,48 @@ func DestroyTestEnv(c echo.Context) error {
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+// GetRequestStatusOfTestEnv godoc
+// @Summary Get the status of the request to configure test environment
+// @Description Get the status of the request to configure test environment
+// @Tags [Test env] Test environment management
+// @Accept  json
+// @Produce  json
+// @Param requestId path string true "Request ID"
+// @Success 200 {object} models.Response "OK"
+// @Failure 400 {object} models.Response "Bad Request"
+// @Failure 503 {object} models.Response "Service Unavailable"
+// @Router /test-env/request/{requestId}/status [get]
+func GetRequestStatusOfTestEnv(c echo.Context) error {
+
+	reqId := c.Param("requestId")
+	if reqId == "" {
+		res := models.Response{Success: false, Text: "Require the request ID"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	// Check if the working directory exists
+	workingDir := projectRoot + "/.tofu/test-env"
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		text := "Not exist test environment"
+		res := models.Response{Success: false, Text: text}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
+
+	// Check the statusReport of the request
+	statusReport, err := tofu.GetRunningStatus("test-env", statusLogFile)
+	if err != nil {
+		res := models.Response{Success: false, Text: "Failed to get the status of the request"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.Response{Success: true, Text: statusReport}
+
+	log.Debug().Msgf("%+v", res) // debug
+
+	return c.JSON(http.StatusOK, res)
 }
