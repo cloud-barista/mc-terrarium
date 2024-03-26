@@ -58,6 +58,14 @@ provider "aws" {
   region = var.aws-region
 }
 
+module "ubuntu_22_04_latest" {
+  source = "github.com/andreswebs/terraform-aws-ami-ubuntu"
+}
+
+locals {
+  ami_id = module.ubuntu_22_04_latest.ami_id
+}
+
 # [NOTE]
 # Ref.) Azure Provider: Authenticating using a Service Principal with a Client Secret
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret
