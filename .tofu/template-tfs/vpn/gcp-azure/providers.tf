@@ -41,12 +41,6 @@ provider "google" {
   region  = var.gcp-region
 }
 
-# The "random" provider allows the use of randomness within Terraform configurations.
-# It is used to select a zone in a region randomly.
-provider "random" {
-  // Optional configuration for the random provider
-}
-
 # [NOTE]
 # Ref.) Azure Provider: Authenticating using a Service Principal with a Client Secret
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret

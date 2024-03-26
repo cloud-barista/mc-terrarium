@@ -20,23 +20,22 @@ terraform {
 
 # Provider block for AWS specifies the configuration for the provider
 provider "aws" {
-  region = "ap-northeast-2"
+  region = var.aws-region
 }
 
 # Provider block for Google specifies the configuration for the provider
 # CAUTION: Manage your credentials carefully to avoid disclosure.
 locals {
   # Read and assign credential JSON string
-  my_gcp_credential = file("credential-gcp.json")
+  my-gcp-credential = file("credential-gcp.json")
   # Decode JSON string and get project ID
-  my_gcp_project_id = jsondecode(local.my_gcp_credential).project_id
+  my-gcp-project-id = jsondecode(local.my-gcp-credential).project_id
 }
 
 # Provider block for Google specifies the configuration for the provider
 provider "google" {
-  credentials = local.my_gcp_credential
+  credentials = local.my-gcp-credential
 
-  project = local.my_gcp_project_id
-  region  = "asia-northeast3"
-  zone    = "asia-northeast3-c"
+  project = local.my-gcp-project-id
+  region  = var.gcp-region
 }

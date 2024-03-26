@@ -1,8 +1,8 @@
 # Create Network Security Group and rule
-resource "azurerm_network_security_group" "nsg_1" {
-  name                = "nsg-1-name"
-  location            = var.azure-region
-  resource_group_name = var.azure-resource-group-name
+resource "azurerm_network_security_group" "test_nsg_1" {
+  name                = "tofu-nsg-1-name"
+  location            = azurerm_resource_group.test_rg.location
+  resource_group_name = azurerm_resource_group.test_rg.name
 
   security_rule {
     name                       = "SSH"

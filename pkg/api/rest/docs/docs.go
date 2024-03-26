@@ -1334,6 +1334,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/test-env/request/{requestId}/status": {
+            "get": {
+                "description": "Get the status of the request to configure test environment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test env] Test environment management"
+                ],
+                "summary": "Get the status of the request to configure test environment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/test-env/state": {
             "get": {
                 "description": "Get the current state of a saved plan of test environment",
@@ -1553,26 +1597,32 @@ const docTemplate = `{
         "models.TfVarsGcpAwsVpnTunnel": {
             "type": "object",
             "properties": {
-                "my-imported-aws-subnet-id": {
+                "aws-region": {
+                    "type": "string",
+                    "default": "ap-northeast-2"
+                },
+                "aws-subnet-id": {
                     "type": "string"
                 },
-                "my-imported-aws-vpc-id": {
+                "aws-vpc-id": {
                     "type": "string"
                 },
-                "my-imported-gcp-subnet-name": {
-                    "type": "string"
+                "gcp-region": {
+                    "type": "string",
+                    "default": "asia-northeast3"
                 },
-                "my-imported-gcp-vpc-name": {
-                    "type": "string"
+                "gcp-vpc-network-name": {
+                    "type": "string",
+                    "default": "tofu-gcp-vpc"
                 }
             }
         },
         "models.TfVarsGcpAzureVpnTunnel": {
             "type": "object",
             "properties": {
-                "azure-gateway-subnet-name": {
+                "azure-gateway-subnet-cidr-block": {
                     "type": "string",
-                    "default": "GatewaySubnet"
+                    "default": "192.168.130.0/24"
                 },
                 "azure-region": {
                     "type": "string",
@@ -1581,10 +1631,6 @@ const docTemplate = `{
                 "azure-resource-group-name": {
                     "type": "string",
                     "default": "tofu-rg-01"
-                },
-                "azure-subnet-name": {
-                    "type": "string",
-                    "default": "tofu-azure-subnet-0"
                 },
                 "azure-virtual-network-name": {
                     "type": "string",
@@ -1597,16 +1643,16 @@ const docTemplate = `{
                 "gcp-vpc-network-name": {
                     "type": "string",
                     "default": "tofu-gcp-vpc"
-                },
-                "gcp-vpc-subnetwork-name": {
-                    "type": "string",
-                    "default": "tofu-gcp-subnet-1"
                 }
             }
         },
         "models.TfVarsTestEnv": {
             "type": "object",
             "properties": {
+                "aws-region": {
+                    "type": "string",
+                    "default": "ap-northeast-2"
+                },
                 "azure-region": {
                     "type": "string",
                     "default": "koreacentral"

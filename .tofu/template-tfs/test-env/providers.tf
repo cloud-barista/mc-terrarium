@@ -11,6 +11,12 @@ terraform {
       version = "~> 5.2"
     }
 
+    # AWS provider is specified with its source and version
+    aws = {
+      source  = "registry.opentofu.org/hashicorp/aws"
+      version = "~> 5.21"
+    }
+
     # The Azure Provider
     azurerm = {
       source = "hashicorp/azurerm"
@@ -42,9 +48,14 @@ provider "google" {
 }
 
 # The "random" provider allows the use of randomness within Terraform configurations.
-# It is used to select a zone in a region randomly.
+# It is used to select a zone in a GCP region randomly.
 provider "random" {
   // Optional configuration for the random provider
+}
+
+# Provider block for AWS specifies the configuration for the provider
+provider "aws" {
+  region = var.aws-region
 }
 
 # [NOTE]

@@ -375,7 +375,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Remove the state of the imported resources
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
 	// subcommand: state rm
-	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.my-imported-aws-route-table")
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.imported_route_table")
 	if err != nil {
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
 		res := models.Response{Success: false, Text: text}
