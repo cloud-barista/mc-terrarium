@@ -44,6 +44,7 @@ COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/scripts/ /app
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/cmd/poc-mc-net-tf/poc-mc-net-tf /app/
 
 RUN ./scripts/install-tofu.sh
+RUN apt-get update && apt-get install -y git
 
 # Setting various environment variables required by the application
 ENV POCMCNETTF_ROOT=/app \

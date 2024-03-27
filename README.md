@@ -60,8 +60,8 @@ See [Set and view configuration settings using commands](https://docs.aws.amazon
 
     ```
     [default]
-    aws_access_key_id = A2KXXXXXXXXXXX4XXXSD
-    aws_secret_access_key = AB2YjR92sdflkj4D34XXXXXXXXXXXXXXXXXXXXXX
+    AWS_ACCESS_KEY_ID=A2KXXXXXXXXXXX4XXXSD
+    AWS_SECRET_ACCESS_KEY=AB2YjR92sdflkj4D34XXXXXXXXXXXXXXXXXXXXXX
     ```
 
 </details>
@@ -150,13 +150,20 @@ Check a tag of poc-mc-net-tf container image in cloudbaristaorg/poc-mc-net-tf
 
 ##### Run poc-mc-net-tf container
 
-Note - AWS and GCP credentials must be prepared and injected when running a container. (see `--mount type=****`)
+Note - Credentials for AWS, Azure, and GCP must be prepared and injected when running a container.
+
 Note - Modify `source="${PWD}"/.tofu/secrets/` to the appropriate path.
+
+Note - About credential injection:
+  * Set AWS credenttal as environment variable: `--env-file "${PWD}"/.tofu/secrets/credentials`
+  * Set Azure credential as environment variable: `--env-file "${PWD}"/.tofu/secrets/credential-azure.env`
+  * Mount GCP credential file: `--mount type=bind,source="${PWD}"/.tofu/secrets/,target=/app/.tofu/secrets/`  
 
 ```bash
 docker run \
+--env-file "${PWD}"/.tofu/secrets/credentials \
+--env-file "${PWD}"/.tofu/secrets/credential-azure.env \
 --mount type=bind,source="${PWD}"/.tofu/secrets/,target=/app/.tofu/secrets/ \
---mount type=bind,source="${PWD}"/.tofu/secrets/,target=/.aws/ \
 -p 8888:8888 \
 --name poc-mc-net-tf \
 cloudbaristaorg/poc-mc-net-tf:latest
@@ -169,23 +176,17 @@ You can find the default username and apssword to access to API dashboard when t
 URL: http://localhost:8888/mc-net/swagger/index.html
 
 Note - You can find API documentation on Swagger UI.
-Note - For testing API, you can import Thunder Client collection (`thunder-collection_tofu-apis.json`).
-This has been exported Thunder Client on VSCode.
 
 ---
 
 ### Appendix
 
-**Current APIs**
-
-![image](https://github.com/cloud-barista/poc-mc-net-tf/assets/7975459/2128613a-bb40-410f-8ddd-4c49156e62cd)
-
-**Example order of calls**
-1. GET /tofu/version
-2. POST /tofu/init (This will take some times.)
-3. POST /tofu/config/vpn-tunnels
-4. POST /tofu/plan/vpn-tunnels/{namespaceId}
-5. POST /tofu/apply/vpn-tunnels/{namespaceId} (This will take at least 3 minutes.)
-6. GET /tofu/show/{namespaceId}
-7. DELETE /tofu/destroy/vpn-tunnels/{namespaceId} (This will take some times.)
-8. DELETE /tofu/cleanup/{namespaceId}
+**The example of API call sequence**
+1. POST /rg/{resourceGroupId}/vpn/gcp-azure/init
+2. POST /rg/{resourceGroupId}/vpn/gcp-azure/blueprint
+3. POST /rg/{resourceGroupId}/vpn/gcp-azure/plan
+4. POST /rg/{resourceGroupId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
+5. GET /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status (Check the above API status)
+6. GET /rg/{resourceGroupId}/vpn/gcp-azure/state (Check the resource status on CSPs)
+7. DELETE /rg/{resourceGroupId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
+8. DELETE /rg/{resourceGroupId}/vpn/gcp-azure/clear
