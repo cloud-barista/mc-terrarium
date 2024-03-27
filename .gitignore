@@ -44,8 +44,10 @@ logs/
 
 # Files for tofu and infrastructure configurations
 !.tofu/
-.tofu/*
-!.tofu/secrets
-.tofu/secrets/*
-!.tofu/secrets/.keep
-!.tofu/template-tfs
+.tofu/**
+!.tofu/.keep
+
+!secrets
+secrets/**
+!secrets/.keep
+!secrets/README.md

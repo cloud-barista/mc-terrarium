@@ -71,7 +71,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 	}
 
 	// Copy template files to the working directory (overwrite)
-	templateTfsPath := projectRoot + "/.tofu/template-tfs/vpn/gcp-aws"
+	templateTfsPath := projectRoot + "/templates/vpn/gcp-aws"
 
 	err := tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
