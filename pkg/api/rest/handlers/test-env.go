@@ -54,7 +54,7 @@ func InitTestEnv(c echo.Context) error {
 	}
 
 	// Copy template files to the working directory (overwrite)
-	templateTfsPath := projectRoot + "/.tofu/template-tfs/test-env"
+	templateTfsPath := projectRoot + "/templates/test-env"
 
 	err := tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {

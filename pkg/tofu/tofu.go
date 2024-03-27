@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const statusFilePath = "runningStatusMap.db"
+const statusFile = "runningStatusMap.db"
 
 // Manage the running status of tofu commands.
 var requestStatusMap = make(map[string]string)
@@ -26,6 +26,10 @@ var mapMutex = &sync.Mutex{}
 
 // Save the running status map to file
 func SaveRunningStatusMap() error {
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
+
 	mapMutex.Lock()
 	defer mapMutex.Unlock()
 
@@ -45,6 +49,10 @@ func SaveRunningStatusMap() error {
 
 // Load the running status map from file
 func LoadRunningStatusMap() error {
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
+
 	mapMutex.Lock()
 	defer mapMutex.Unlock()
 
@@ -268,7 +276,7 @@ func CopyFile(src string, des string) error {
 func CopyGCPCredentials(des string) error {
 
 	projectRoot := viper.GetString("pocmcnettf.root")
-	cred := projectRoot + "/.tofu/secrets/credential-gcp.json"
+	cred := projectRoot + "/secrets/credential-gcp.json"
 
 	return CopyFile(cred, des)
 }
@@ -276,7 +284,7 @@ func CopyGCPCredentials(des string) error {
 func CopyAzureCredentials(des string) error {
 
 	projectRoot := viper.GetString("pocmcnettf.root")
-	cred := projectRoot + "/.tofu/secrets/credential-azure.env"
+	cred := projectRoot + "/secrets/credential-azure.env"
 
 	return CopyFile(cred, des)
 }

@@ -39,6 +39,8 @@ WORKDIR /app
 # Assets, scripts, and configuration files are copied excluding credentials.conf
 # which should be specified in .dockerignore
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/.tofu/ /app/.tofu/
+COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/templates/ /app/templates/
+COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/secrets/ /app/secrets/
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/conf/ /app/conf/
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/scripts/ /app/scripts/
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/cmd/poc-mc-net-tf/poc-mc-net-tf /app/
@@ -48,7 +50,7 @@ RUN apt-get update && apt-get install -y git
 
 # Setting various environment variables required by the application
 ENV POCMCNETTF_ROOT=/app \
-    LOGFILE_PATH=poc-mc-net-tf.log \
+    LOGFILE_PATH=/app/.tofu/poc-mc-net-tf.log \
     LOGFILE_MAXSIZE=10 \
     LOGFILE_MAXBACKUPS=3 \
     LOGFILE_MAXAGE=30 \

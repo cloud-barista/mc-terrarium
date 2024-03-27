@@ -79,7 +79,7 @@ See [How to install the Azure CLI](https://learn.microsoft.com/en-us/cli/azure/i
 See [Create a service principal for use with Microsoft Purview](https://learn.microsoft.com/en-us/purview/create-service-principal-azure)
 See [Create an Azure service principal with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/azure-cli-sp-tutorial-1?tabs=bash)
 
-3. Store MS Azure credential `.tofu/secrets/credential-azure.env`
+3. Store MS Azure credential `secrets/credential-azure.env`
 
 <details>
   <summary>Click to see sample</summary>
@@ -95,7 +95,7 @@ See [Create an Azure service principal with Azure CLI](https://learn.microsoft.c
 
 4. Run
 ```bash
-source .tofu/secrets/credential-azure.env
+source secrets/credential-azure.env
 az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID"
 ```
 
@@ -105,7 +105,7 @@ az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenan
 
 See [Service account credentials](https://developers.google.com/workspace/guides/create-credentials#service-account)
 
-2. Store your GCP credential `.tofu/secrets/credential-gcp.json`
+2. Store your GCP credential `secrets/credential-gcp.json`
 
 <details>
   <summary>Click to see sample</summary>
@@ -152,18 +152,19 @@ Check a tag of poc-mc-net-tf container image in cloudbaristaorg/poc-mc-net-tf
 
 Note - Credentials for AWS, Azure, and GCP must be prepared and injected when running a container.
 
-Note - Modify `source="${PWD}"/.tofu/secrets/` to the appropriate path.
+Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
 
 Note - About credential injection:
-  * Set AWS credenttal as environment variable: `--env-file "${PWD}"/.tofu/secrets/credentials`
-  * Set Azure credential as environment variable: `--env-file "${PWD}"/.tofu/secrets/credential-azure.env`
-  * Mount GCP credential file: `--mount type=bind,source="${PWD}"/.tofu/secrets/,target=/app/.tofu/secrets/`  
+  * Set AWS credenttal as environment variable: `--env-file "${PWD}"/secrets/credentials`
+  * Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
+  * Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/`  
 
 ```bash
+
 docker run \
---env-file "${PWD}"/.tofu/secrets/credentials \
---env-file "${PWD}"/.tofu/secrets/credential-azure.env \
---mount type=bind,source="${PWD}"/.tofu/secrets/,target=/app/.tofu/secrets/ \
+--env-file "${PWD}"/secrets/credentials \
+--env-file "${PWD}"/secrets/credential-azure.env \
+--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/ \
 -p 8888:8888 \
 --name poc-mc-net-tf \
 cloudbaristaorg/poc-mc-net-tf:latest
@@ -171,7 +172,7 @@ cloudbaristaorg/poc-mc-net-tf:latest
 
 #### Access Swagger UI
 
-You can find the default username and apssword to access to API dashboard when the API server runs.
+You can find the default username and password to access to API dashboard when the API server runs.
 
 URL: http://localhost:8888/mc-net/swagger/index.html
 
