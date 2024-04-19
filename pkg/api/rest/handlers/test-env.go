@@ -14,6 +14,7 @@ limitations under the License.
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
+	"github.com/tidwall/gjson"
 )
 
 // ////////////////////////////////////////////////////
@@ -136,6 +138,7 @@ func ClearTestEnv(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} models.Response "OK"
+// @Success 200 {object} models.ResponseResources "OK"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /test-env/state [get]
@@ -156,13 +159,30 @@ func GetStateOfTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show")
+	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to show the current state of a saved plan"}
+		log.Error().Err(err).Msg("Failed to show the output from a state or plan file") // error
+		res := models.Response{Success: false, Text: "Failed to show the output from a state or plan file"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.Response{Success: true, Text: ret}
+	// Parse the resources from the output
+	resourcesString := gjson.Get(ret, "values.root_module.resources").String()
+	if resourcesString == "" {
+		log.Debug().Msgf("resourcesString: %s", resourcesString) // debug
+		res := models.Response{Success: false, Text: "not found resources"}
+		return c.JSON(http.StatusOK, res)
+	}
+
+	var resources []interface{}
+	err = json.Unmarshal([]byte(resourcesString), &resources)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to unmarshal resources") // error
+		res := models.Response{Success: false, Text: "Failed to unmarshal resources"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.ResponseResources{Success: true, Resources: resources}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)

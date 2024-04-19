@@ -480,7 +480,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Response"
+                            "$ref": "#/definitions/models.ResponseResources"
                         }
                     },
                     "400": {
@@ -1395,7 +1395,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Response"
+                            "$ref": "#/definitions/models.ResponseResources"
                         }
                     },
                     "400": {
@@ -1591,6 +1591,19 @@ const docTemplate = `{
                 "text": {
                     "type": "string",
                     "example": "Any text"
+                }
+            }
+        },
+        "models.ResponseResources": {
+            "type": "object",
+            "properties": {
+                "resources": {
+                    "type": "array",
+                    "items": {}
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
