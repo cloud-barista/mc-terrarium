@@ -97,6 +97,15 @@ definitions:
         example: Any text
         type: string
     type: object
+  models.ResponseResources:
+    properties:
+      resources:
+        items: {}
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
   models.TfVarsGcpAwsVpnTunnel:
     properties:
       aws-region:
@@ -472,7 +481,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseResources'
         "400":
           description: Bad Request
           schema:
@@ -1092,7 +1101,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseResources'
         "400":
           description: Bad Request
           schema:
