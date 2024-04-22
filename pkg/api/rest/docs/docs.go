@@ -235,6 +235,14 @@ const docTemplate = `{
                 "summary": "Create a blueprint to configure GCP to AWS VPN tunnels",
                 "parameters": [
                     {
+                        "type": "string",
+                        "default": "tofu-rg-01",
+                        "description": "Resource group ID",
+                        "name": "resourceGroupId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Parameters requied to create a blueprint to configure GCP to AWS VPN tunnels",
                         "name": "ParamsForBlueprint",
                         "in": "body",
@@ -1447,10 +1455,6 @@ const docTemplate = `{
         "handlers.CreateBluprintOfGcpAwsVpnRequest": {
             "type": "object",
             "properties": {
-                "resourceGroupId": {
-                    "type": "string",
-                    "default": "tofu-rg-01"
-                },
                 "tfVars": {
                     "$ref": "#/definitions/models.TfVarsGcpAwsVpnTunnel"
                 }
@@ -1612,21 +1616,30 @@ const docTemplate = `{
             "properties": {
                 "aws-region": {
                     "type": "string",
-                    "default": "ap-northeast-2"
+                    "default": "ap-northeast-2",
+                    "example": "ap-northeast-2"
                 },
                 "aws-subnet-id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "subnet-xxxxx"
                 },
                 "aws-vpc-id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vpc-xxxxx"
                 },
                 "gcp-region": {
                     "type": "string",
-                    "default": "asia-northeast3"
+                    "default": "asia-northeast3",
+                    "example": "asia-northeast3"
                 },
                 "gcp-vpc-network-name": {
                     "type": "string",
-                    "default": "tofu-gcp-vpc"
+                    "default": "tofu-gcp-vpc",
+                    "example": "tofu-gcp-vpc"
+                },
+                "resource-group-id": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -1635,27 +1648,37 @@ const docTemplate = `{
             "properties": {
                 "azure-gateway-subnet-cidr-block": {
                     "type": "string",
-                    "default": "192.168.130.0/24"
+                    "default": "192.168.130.0/24",
+                    "example": "192.168.130.0/24"
                 },
                 "azure-region": {
                     "type": "string",
-                    "default": "koreacentral"
+                    "default": "koreacentral",
+                    "example": "koreacentral"
                 },
                 "azure-resource-group-name": {
                     "type": "string",
-                    "default": "tofu-rg-01"
+                    "default": "tofu-rg-01",
+                    "example": "tofu-rg-01"
                 },
                 "azure-virtual-network-name": {
                     "type": "string",
-                    "default": "tofu-azure-vnet"
+                    "default": "tofu-azure-vnet",
+                    "example": "tofu-azure-vnet"
                 },
                 "gcp-region": {
                     "type": "string",
-                    "default": "asia-northeast3"
+                    "default": "asia-northeast3",
+                    "example": "asia-northeast3"
                 },
                 "gcp-vpc-network-name": {
                     "type": "string",
-                    "default": "tofu-gcp-vpc"
+                    "default": "tofu-gcp-vpc",
+                    "example": "tofu-gcp-vpc"
+                },
+                "resource-group-id": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -1664,19 +1687,23 @@ const docTemplate = `{
             "properties": {
                 "aws-region": {
                     "type": "string",
-                    "default": "ap-northeast-2"
+                    "default": "ap-northeast-2",
+                    "example": "ap-northeast-2"
                 },
                 "azure-region": {
                     "type": "string",
-                    "default": "koreacentral"
+                    "default": "koreacentral",
+                    "example": "koreacentral"
                 },
                 "azure-resource-group-name": {
                     "type": "string",
-                    "default": "tofu-rg-01"
+                    "default": "tofu-rg-01",
+                    "example": "tofu-rg-01"
                 },
                 "gcp-region": {
                     "type": "string",
-                    "default": "asia-northeast3"
+                    "default": "asia-northeast3",
+                    "example": "asia-northeast3"
                 }
             }
         }

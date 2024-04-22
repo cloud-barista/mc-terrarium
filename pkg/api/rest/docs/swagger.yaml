@@ -2,9 +2,6 @@ basePath: /mc-net
 definitions:
   handlers.CreateBluprintOfGcpAwsVpnRequest:
     properties:
-      resourceGroupId:
-        default: tofu-rg-01
-        type: string
       tfVars:
         $ref: '#/definitions/models.TfVarsGcpAwsVpnTunnel'
     type: object
@@ -110,52 +107,73 @@ definitions:
     properties:
       aws-region:
         default: ap-northeast-2
+        example: ap-northeast-2
         type: string
       aws-subnet-id:
+        example: subnet-xxxxx
         type: string
       aws-vpc-id:
+        example: vpc-xxxxx
         type: string
       gcp-region:
         default: asia-northeast3
+        example: asia-northeast3
         type: string
       gcp-vpc-network-name:
         default: tofu-gcp-vpc
+        example: tofu-gcp-vpc
+        type: string
+      resource-group-id:
+        example: ""
         type: string
     type: object
   models.TfVarsGcpAzureVpnTunnel:
     properties:
       azure-gateway-subnet-cidr-block:
         default: 192.168.130.0/24
+        example: 192.168.130.0/24
         type: string
       azure-region:
         default: koreacentral
+        example: koreacentral
         type: string
       azure-resource-group-name:
         default: tofu-rg-01
+        example: tofu-rg-01
         type: string
       azure-virtual-network-name:
         default: tofu-azure-vnet
+        example: tofu-azure-vnet
         type: string
       gcp-region:
         default: asia-northeast3
+        example: asia-northeast3
         type: string
       gcp-vpc-network-name:
         default: tofu-gcp-vpc
+        example: tofu-gcp-vpc
+        type: string
+      resource-group-id:
+        example: ""
         type: string
     type: object
   models.TfVarsTestEnv:
     properties:
       aws-region:
         default: ap-northeast-2
+        example: ap-northeast-2
         type: string
       azure-region:
         default: koreacentral
+        example: koreacentral
         type: string
       azure-resource-group-name:
         default: tofu-rg-01
+        example: tofu-rg-01
         type: string
       gcp-region:
         default: asia-northeast3
+        example: asia-northeast3
         type: string
     type: object
 info:
@@ -310,6 +328,12 @@ paths:
       - application/json
       description: Create a blueprint to configure GCP to AWS VPN tunnels
       parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
       - description: Parameters requied to create a blueprint to configure GCP to
           AWS VPN tunnels
         in: body

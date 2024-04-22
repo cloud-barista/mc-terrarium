@@ -1,3 +1,13 @@
+variable "resource-group-id" {
+  type        = string
+  description = "Unique ID to distinguish and manage infrastructure."
+
+  validation {
+    condition     = var.resource-group-id != ""
+    error_message = "The resource group ID must be set"
+  }
+}
+
 #######################################################################
 # Google Cloud Platform (GCP)
 variable "gcp-region" {
