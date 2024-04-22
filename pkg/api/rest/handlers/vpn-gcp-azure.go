@@ -216,7 +216,7 @@ type CreateBluprintOfGcpAzureVpnRequest struct {
 	TfVars models.TfVarsGcpAzureVpnTunnel `json:"tfVars"`
 }
 
-// CreateBluprintOfGcpAzureVpn godoc
+// CreateBlueprintOfGcpAzureVpn godoc
 // @Summary Create a blueprint to configure GCP to Azure VPN tunnels
 // @Description Create a blueprint to configure GCP to Azure VPN tunnels
 // @Tags [VPN] GCP to Azure VPN tunnel configuration
@@ -228,7 +228,7 @@ type CreateBluprintOfGcpAzureVpnRequest struct {
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-azure/blueprint [post]
-func CreateBluprintOfGcpAzureVpn(c echo.Context) error {
+func CreateBlueprintOfGcpAzureVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
@@ -260,6 +260,11 @@ func CreateBluprintOfGcpAzureVpn(c echo.Context) error {
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
 
+	if req.TfVars.ResourceGroupId == "" {
+		log.Warn().Msgf("Resource group ID is not set. Using path param: %s", rgId) // warn
+		req.TfVars.ResourceGroupId = rgId
+	}
+
 	err := tofu.SaveGcpAzureTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
 		res := models.Response{Success: false, Text: "Failed to save tfVars to a file"}
@@ -273,7 +278,7 @@ func CreateBluprintOfGcpAzureVpn(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// CheckBluprintOfGcpAzureVpn godoc
+// CheckBlueprintOfGcpAzureVpn godoc
 // @Summary Show changes required by the current blueprint to configure GCP to Azure VPN tunnels
 // @Description Show changes required by the current blueprint to configure GCP to Azure VPN tunnels
 // @Tags [VPN] GCP to Azure VPN tunnel configuration
@@ -284,7 +289,7 @@ func CreateBluprintOfGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-azure/plan [post]
-func CheckBluprintOfGcpAzureVpn(c echo.Context) error {
+func CheckBlueprintOfGcpAzureVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {

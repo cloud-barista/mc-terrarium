@@ -203,7 +203,7 @@ type CreateBluprintOfTestEnvRequest struct {
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /test-env/blueprint [post]
-func CreateBluprintOfTestEnv(c echo.Context) error {
+func CreateBlueprintOfTestEnv(c echo.Context) error {
 
 	req := new(CreateBluprintOfTestEnvRequest)
 	if err := c.Bind(req); err != nil {
@@ -242,7 +242,7 @@ func CreateBluprintOfTestEnv(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// CheckBluprintOfTestEnv godoc
+// CheckBlueprintOfTestEnv godoc
 // @Summary Show changes required by the current blueprint to configure test environment
 // @Description Show changes required by the current blueprint to configure test environment
 // @Tags [Test env] Test environment management
@@ -252,7 +252,7 @@ func CreateBluprintOfTestEnv(c echo.Context) error {
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /test-env/plan [post]
-func CheckBluprintOfTestEnv(c echo.Context) error {
+func CheckBlueprintOfTestEnv(c echo.Context) error {
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)

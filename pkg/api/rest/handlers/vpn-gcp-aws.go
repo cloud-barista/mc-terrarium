@@ -204,22 +204,28 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 }
 
 type CreateBluprintOfGcpAwsVpnRequest struct {
-	ResourceGroupId string                       `json:"resourceGroupId" default:"tofu-rg-01"`
-	TfVars          models.TfVarsGcpAwsVpnTunnel `json:"tfVars"`
+	TfVars models.TfVarsGcpAwsVpnTunnel `json:"tfVars"`
 }
 
-// CreateBluprintOfGcpAwsVpn godoc
+// CreateBlueprintOfGcpAwsVpn godoc
 // @Summary Create a blueprint to configure GCP to AWS VPN tunnels
 // @Description Create a blueprint to configure GCP to AWS VPN tunnels
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Param ParamsForBlueprint body CreateBluprintOfGcpAwsVpnRequest true "Parameters requied to create a blueprint to configure GCP to AWS VPN tunnels"
 // @Success 201 {object} models.Response "Created"
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/blueprint [post]
-func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
+func CreateBlueprintOfGcpAwsVpn(c echo.Context) error {
+
+	rgId := c.Param("resourceGroupId")
+	if rgId == "" {
+		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
 
 	req := new(CreateBluprintOfGcpAwsVpnRequest)
 	if err := c.Bind(req); err != nil {
@@ -230,9 +236,9 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 	projectRoot := viper.GetString("pocmcnettf.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + req.ResourceGroupId + "/vpn/gcp-aws"
+	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		text := fmt.Sprintf("Not exist resource groupe (id: %v)", req.ResourceGroupId)
+		text := fmt.Sprintf("Not exist resource groupe (id: %v)", rgId)
 		res := models.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -244,6 +250,11 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 	// if they are present:
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
+
+	if req.TfVars.ResourceGroupId == "" {
+		log.Warn().Msgf("Resource group ID is not set. Using path param: %s", rgId) // warn
+		req.TfVars.ResourceGroupId = rgId
+	}
 
 	err := tofu.SaveGcpAwsTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
@@ -258,7 +269,7 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// CheckBluprintOfGcpAwsVpn godoc
+// CheckBlueprintOfGcpAwsVpn godoc
 // @Summary Show changes required by the current blueprint to configure GCP to AWS VPN tunnels
 // @Description Show changes required by the current blueprint to configure GCP to AWS VPN tunnels
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
@@ -269,7 +280,7 @@ func CreateBluprintOfGcpAwsVpn(c echo.Context) error {
 // @Failure 400 {object} models.Response "Bad Request"
 // @Failure 503 {object} models.Response "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/plan [post]
-func CheckBluprintOfGcpAwsVpn(c echo.Context) error {
+func CheckBlueprintOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
