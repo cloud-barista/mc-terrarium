@@ -45,7 +45,7 @@ COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/conf/ /app/co
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/scripts/ /app/scripts/
 COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/cmd/poc-mc-net-tf/poc-mc-net-tf /app/
 
-RUN ./scripts/install-tofu.sh
+RUN ./scripts/install-tofu-1.6.2.sh
 RUN apt-get update && apt-get install -y git
 
 # Setting various environment variables required by the application
