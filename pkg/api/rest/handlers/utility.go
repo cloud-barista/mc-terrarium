@@ -28,11 +28,11 @@ import (
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.Response
-// @Failure 503 {object} models.Response
+// @Success 200 {object} models.ResponseText
+// @Failure 503 {object} models.ResponseText
 // @Router /health [get]
 func Health(c echo.Context) error {
-	res := models.Response{Success: true, Text: "POC-MC-Net-TF API server is running"}
+	res := models.ResponseText{Success: true, Text: "POC-MC-Net-TF API server is running"}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -43,16 +43,16 @@ func Health(c echo.Context) error {
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.Response
-// @Failure 404 {object} models.Response
-// @Failure 500 {object} models.Response
+// @Success 200 {object} models.ResponseText
+// @Failure 404 {object} models.ResponseText
+// @Failure 500 {object} models.ResponseText
 // @Router /httpVersion [get]
 func HTTPVersion(c echo.Context) error {
 	// Access the *http.Request object from the echo.Context
 	req := c.Request()
 
 	// Determine the HTTP protocol version of the request
-	res := models.Response{Success: true, Text: req.Proto}
+	res := models.ResponseText{Success: true, Text: req.Proto}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -63,18 +63,18 @@ func HTTPVersion(c echo.Context) error {
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.Response
-// @Failure 503 {object} models.Response
+// @Success 200 {object} models.ResponseText
+// @Failure 503 {object} models.ResponseText
 // @Router /tofuVersion [get]
 func TofuVersion(c echo.Context) error {
 
 	ret, err := tofu.GetTofuVersion()
 	if err != nil {
-		res := models.Response{Success: false, Text: "failed to get Tofu version"}
+		res := models.ResponseText{Success: false, Text: "failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.Response{Success: true, Text: ret}
+	res := models.ResponseText{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 

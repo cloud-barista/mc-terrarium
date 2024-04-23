@@ -31,15 +31,15 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param ResourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.Response "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 200 {object} models.ResponseText "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId} [delete]
 func ClearResourceGroup(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -49,18 +49,18 @@ func ClearResourceGroup(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	err := os.RemoveAll(workingDir)
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to clear entire directories and configuration files"}
+		res := models.ResponseText{Success: false, Text: "Failed to clear entire directories and configuration files"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	text := fmt.Sprintf("Successfully cleared all in the resource group (id: %v)", rgId)
-	res := models.Response{Success: true, Text: text}
+	res := models.ResponseText{Success: true, Text: text}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)

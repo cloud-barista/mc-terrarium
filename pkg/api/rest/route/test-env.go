@@ -9,7 +9,8 @@ import (
 func RegisterRoutesForTestEnv(g *echo.Group) {
 	g.POST("/test-env/init", handlers.InitTestEnv)
 	g.DELETE("/test-env/clear", handlers.ClearTestEnv)
-	g.GET("/test-env/state", handlers.GetStateOfTestEnv)
+	g.GET("/test-env/resource/info", handlers.GetAllResouceInfoOfTestEnv)
+	g.GET("/test-env/resource/id", handlers.GetAllResouceIdOfTestEnv)
 	g.POST("/test-env/blueprint", handlers.CreateBlueprintOfTestEnv)
 	g.POST("/test-env/plan", handlers.CheckBlueprintOfTestEnv)
 	g.POST("/test-env", handlers.CreateTestEnv)
