@@ -85,7 +85,25 @@ definitions:
       name:
         type: string
     type: object
-  models.Response:
+  models.ResponseList:
+    properties:
+      list:
+        items: {}
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.ResponseObject:
+    properties:
+      object:
+        additionalProperties: true
+        type: object
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.ResponseText:
     properties:
       success:
         example: true
@@ -93,15 +111,6 @@ definitions:
       text:
         example: Any text
         type: string
-    type: object
-  models.ResponseResources:
-    properties:
-      resources:
-        items: {}
-        type: array
-      success:
-        example: true
-        type: boolean
     type: object
   models.TfVarsGcpAwsVpnTunnel:
     properties:
@@ -199,11 +208,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Check API server is running
       tags:
       - '[System] Utility'
@@ -219,15 +228,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Check HTTP version of incoming request
       tags:
       - '[System] Utility'
@@ -249,15 +258,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Clear the entire directories and configuration files
       tags:
       - '[ResourceGroup] Resource group'
@@ -280,15 +289,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Destroy network resources that were used to configure GCP as an AWS
         VPN tunnel
       tags:
@@ -310,15 +319,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and AWS
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -347,15 +356,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create a blueprint to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -377,15 +386,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -407,15 +416,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Initialize GCP and AWS to configure VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -438,15 +447,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Show changes required by the current blueprint to configure GCP to
         AWS VPN tunnels
       tags:
@@ -474,24 +483,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Get the status of the request to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/state:
+  /rg/{resourceGroupId}/vpn/gcp-aws/resource/id:
     get:
       consumes:
       - application/json
-      description: Get the current state of a saved plan to configure GCP to AWS VPN
-        tunnels
+      description: Get all resource IDs to configure GCP to AWS VPN tunnels
       parameters:
       - default: tofu-rg-01
         description: Resource group ID
@@ -505,16 +513,46 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseResources'
+            $ref: '#/definitions/models.ResponseObject'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
-      summary: Get the current state of a saved plan to configure GCP to AWS VPN tunnels
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource IDs to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/resource/info:
+    get:
+      consumes:
+      - application/json
+      description: Get all resource info to configure GCP to AWS VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource info to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-azure:
@@ -536,15 +574,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Destroy network resources that were used to configure GCP as an Azure
         VPN tunnel
       tags:
@@ -566,15 +604,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and Azure
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -603,15 +641,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create a blueprint to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -633,15 +671,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -663,15 +701,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Initialize GCP and Azure to configure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -694,15 +732,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Show changes required by the current blueprint to configure GCP to
         Azure VPN tunnels
       tags:
@@ -730,24 +768,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Get the status of the request to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/state:
+  /rg/{resourceGroupId}/vpn/gcp-azure/resource/id:
     get:
       consumes:
       - application/json
-      description: Get the current state of a saved plan to configure GCP to Azure
-        VPN tunnels
+      description: Get all resource IDs to configure GCP to Azure VPN tunnels
       parameters:
       - default: tofu-rg-01
         description: Resource group ID
@@ -761,17 +798,46 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseObject'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
-      summary: Get the current state of a saved plan to configure GCP to Azure VPN
-        tunnels
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource IDs to configure GCP to Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/resource/info:
+    get:
+      consumes:
+      - application/json
+      description: Get all resource info to configure GCP to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource info to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
   /sample/users:
@@ -951,15 +1017,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Destroy test environment
       tags:
       - '[Test env] Test environment management'
@@ -973,15 +1039,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create test environment
       tags:
       - '[Test env] Test environment management'
@@ -1003,15 +1069,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Create a blueprint to configure test environment
       tags:
       - '[Test env] Test environment management'
@@ -1026,15 +1092,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[Test env] Test environment management'
@@ -1049,15 +1115,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Initialize test environment
       tags:
       - '[Test env] Test environment management'
@@ -1073,15 +1139,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Show changes required by the current blueprint to configure test environment
       tags:
       - '[Test env] Test environment management'
@@ -1102,39 +1168,62 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Get the status of the request to configure test environment
       tags:
       - '[Test env] Test environment management'
-  /test-env/state:
+  /test-env/resource/id:
     get:
       consumes:
       - application/json
-      description: Get the current state of a saved plan of test environment
+      description: Get all resource IDs of test environment
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseResources'
+            $ref: '#/definitions/models.ResponseObject'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
-      summary: Get the current state of a saved plan of test environment
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource IDs of test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/resource/info:
+    get:
+      consumes:
+      - application/json
+      description: Get all resource info of test environment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource info of test environment
       tags:
       - '[Test env] Test environment management'
   /tofuVersion:
@@ -1148,11 +1237,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseText'
       summary: Check Tofu version
       tags:
       - '[System] Utility'

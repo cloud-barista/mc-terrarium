@@ -19,7 +19,3 @@ resource "azapi_resource_action" "test_azure_ssh_public_key_gen" {
 
   response_export_values = ["publicKey", "privateKey"]
 }
-
-output "key-data" {
-  value = jsondecode(azapi_resource_action.test_azure_ssh_public_key_gen.output).publicKey
-}

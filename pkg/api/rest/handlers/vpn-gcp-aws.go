@@ -40,15 +40,15 @@ type InitGcpAndAwsForVpnTunnelRequest struct {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 201 {object} models.Response "Created"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 201 {object} models.ResponseText "Created"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/init [post]
 func InitGcpAndAwsForVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -67,7 +67,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
-			res := models.Response{Success: false, Text: "Failed to create directory"}
+			res := models.ResponseText{Success: false, Text: "Failed to create directory"}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 	}
@@ -77,7 +77,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 
 	err := tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to copy template files to working directory"}
+		res := models.ResponseText{Success: false, Text: "Failed to copy template files to working directory"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -87,7 +87,7 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 	err = tofu.CopyGCPCredentials(credentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy gcp credentials to init")
-		res := models.Response{Success: false, Text: "Failed to copy gcp credentials to init"}
+		res := models.ResponseText{Success: false, Text: "Failed to copy gcp credentials to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -95,10 +95,10 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to init"}
+		res := models.ResponseText{Success: false, Text: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := models.Response{Success: true, Text: ret}
+	res := models.ResponseText{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -112,15 +112,15 @@ func InitGcpAndAwsForVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.Response "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 200 {object} models.ResponseText "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/clear [delete]
 func ClearGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -130,39 +130,39 @@ func ClearGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	err := os.RemoveAll(workingDir)
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to clear entire directory and configuration files"}
+		res := models.ResponseText{Success: false, Text: "Failed to clear entire directory and configuration files"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	text := fmt.Sprintf("Successfully cleared all in the resource group (id: %v)", rgId)
-	res := models.Response{Success: true, Text: text}
+	res := models.ResponseText{Success: true, Text: text}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)
 }
 
-// GetStateOfGcpAwsVpn godoc
-// @Summary Get the current state of a saved plan to configure GCP to AWS VPN tunnels
-// @Description Get the current state of a saved plan to configure GCP to AWS VPN tunnels
+// GetAllResourceInfoOfGcpAwsVpn godoc
+// @Summary Get all resource info to configure GCP to AWS VPN tunnels
+// @Description Get all resource info to configure GCP to AWS VPN tunnels
 // @Tags [VPN] GCP to AWS VPN tunnel configuration
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.ResponseResources "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-aws/state [get]
-func GetStateOfGcpAwsVpn(c echo.Context) error {
+// @Success 200 {object} models.ResponseList "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
+// @Router /rg/{resourceGroupId}/vpn/gcp-aws/resource/info [get]
+func GetAllResourceInfoOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -175,7 +175,7 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -183,21 +183,82 @@ func GetStateOfGcpAwsVpn(c echo.Context) error {
 	// show: subcommand
 	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "show", "-json")
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to show the output from a state or plan file"}
+		res := models.ResponseText{Success: false, Text: "Failed to show the output from a state or plan file"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	// Parse the resources from the output
 	resourcesString := gjson.Get(ret, "values.root_module.resources").String()
+	if resourcesString == "" {
+		log.Debug().Msgf("resourcesString: %s", resourcesString) // debug
+		res := models.ResponseText{Success: false, Text: "not found resources"}
+		return c.JSON(http.StatusOK, res)
+	}
 
-	var resources []interface{}
-	err = json.Unmarshal([]byte(resourcesString), &resources)
+	var resourceInfoList []interface{}
+	err = json.Unmarshal([]byte(resourcesString), &resourceInfoList)
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to unmarshal resources"}
+		log.Error().Err(err).Msg("") // error
+		res := models.ResponseText{Success: false, Text: "Failed to unmarshal resources"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.ResponseResources{Success: true, Resources: resources}
+	res := models.ResponseList{Success: true, List: resourceInfoList}
+	log.Debug().Msgf("%+v", res) // debug
+
+	return c.JSON(http.StatusOK, res)
+}
+
+// GetAllResourceIdOfGcpAwsVpn godoc
+// @Summary Get all resource IDs to configure GCP to AWS VPN tunnels
+// @Description Get all resource IDs to configure GCP to AWS VPN tunnels
+// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Accept  json
+// @Produce  json
+// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Success 200 {object} models.ResponseObject "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
+// @Router /rg/{resourceGroupId}/vpn/gcp-aws/resource/id [get]
+func GetAllResourceIdOfGcpAwsVpn(c echo.Context) error {
+
+	rgId := c.Param("resourceGroupId")
+	if rgId == "" {
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	// Get the request ID
+	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
+	projectRoot := viper.GetString("pocmcnettf.root")
+
+	// Check if the working directory exists
+	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
+		res := models.ResponseText{Success: false, Text: text}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+	// show: subcommand
+	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "output", "-json")
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to read the output variables from a TF state file") // error
+		res := models.ResponseText{Success: false, Text: "Failed to read the output variables from a TF state file"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	var resourceIds map[string]interface{}
+	err = json.Unmarshal([]byte(ret), &resourceIds)
+	if err != nil {
+		log.Error().Err(err).Msg("") // error
+		res := models.ResponseText{Success: false, Text: "Failed to unmarshal resource IDs"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := models.ResponseObject{Success: true, Object: resourceIds}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)
@@ -215,21 +276,21 @@ type CreateBluprintOfGcpAwsVpnRequest struct {
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Param ParamsForBlueprint body CreateBluprintOfGcpAwsVpnRequest true "Parameters requied to create a blueprint to configure GCP to AWS VPN tunnels"
-// @Success 201 {object} models.Response "Created"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 201 {object} models.ResponseText "Created"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/blueprint [post]
 func CreateBlueprintOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	req := new(CreateBluprintOfGcpAwsVpnRequest)
 	if err := c.Bind(req); err != nil {
-		res := models.Response{Success: false, Text: "Invalid request"}
+		res := models.ResponseText{Success: false, Text: "Invalid request"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -239,7 +300,7 @@ func CreateBlueprintOfGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource groupe (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -258,11 +319,11 @@ func CreateBlueprintOfGcpAwsVpn(c echo.Context) error {
 
 	err := tofu.SaveGcpAwsTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to save tfVars to a file"}
+		res := models.ResponseText{Success: false, Text: "Failed to save tfVars to a file"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.Response{Success: true, Text: "Successfully created a blueprint to configure GCP to AWS VPN tunnels"}
+	res := models.ResponseText{Success: true, Text: "Successfully created a blueprint to configure GCP to AWS VPN tunnels"}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -276,15 +337,15 @@ func CreateBlueprintOfGcpAwsVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.Response "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 200 {object} models.ResponseText "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/plan [post]
 func CheckBlueprintOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -297,7 +358,7 @@ func CheckBlueprintOfGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -307,10 +368,10 @@ func CheckBlueprintOfGcpAwsVpn(c echo.Context) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := models.Response{Success: true, Text: ret}
+	res := models.ResponseText{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -324,15 +385,15 @@ func CheckBlueprintOfGcpAwsVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 201 {object} models.Response "Created"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 201 {object} models.ResponseText "Created"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws [post]
 func CreateGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resouce group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resouce group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -345,7 +406,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -353,10 +414,10 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
-		res := models.Response{Success: false, Text: "Failed to deploy network resources to configure GCP to AWS VPN tunnels"}
+		res := models.ResponseText{Success: false, Text: "Failed to deploy network resources to configure GCP to AWS VPN tunnels"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := models.Response{Success: true, Text: ret}
+	res := models.ResponseText{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -370,15 +431,15 @@ func CreateGcpAwsVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.Response "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 200 {object} models.ResponseText "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws [delete]
 func DestroyGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -391,7 +452,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -401,7 +462,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.imported_route_table")
 	if err != nil {
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -410,7 +471,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to truncate imports.tf") // error
 		text := fmt.Sprintf("failed to destroy: %s", err)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -421,10 +482,10 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
-		res := models.Response{Success: false, Text: text}
+		res := models.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := models.Response{Success: true, Text: ret}
+	res := models.ResponseText{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -439,21 +500,21 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Param requestId path string true "Request ID"
-// @Success 200 {object} models.Response "OK"
-// @Failure 400 {object} models.Response "Bad Request"
-// @Failure 503 {object} models.Response "Service Unavailable"
+// @Success 200 {object} models.ResponseText "OK"
+// @Failure 400 {object} models.ResponseText "Bad Request"
+// @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status [get]
 func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.Response{Success: false, Text: "Require the resource group ID"}
+		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	reqId := c.Param("requestId")
 	if reqId == "" {
-		res := models.Response{Success: false, Text: "Require the request ID"}
+		res := models.ResponseText{Success: false, Text: "Require the request ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -462,7 +523,7 @@ func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		errMsg := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
 		log.Error().Err(err).Msg(errMsg) // debug
-		res := models.Response{Success: false, Text: errMsg}
+		res := models.ResponseText{Success: false, Text: errMsg}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -472,11 +533,11 @@ func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 	statusReport, err := tofu.GetRunningStatus(rgId, statusLogFile)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get the status of the request") // error
-		res := models.Response{Success: false, Text: "Failed to get the status of the request"}
+		res := models.ResponseText{Success: false, Text: "Failed to get the status of the request"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.Response{Success: true, Text: statusReport}
+	res := models.ResponseText{Success: true, Text: statusReport}
 
 	log.Debug().Msgf("%+v", res) // debug
 
