@@ -17,24 +17,30 @@ import (
 	"net/http"
 
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
 
-// Health godoc
-// @Summary Check API server is running
-// @Description Check API server is running
+// Readyz func is for checking mc-net server is ready.
+// Readyz godoc
+// @Summary Check mc-net server is ready
+// @Description Check mc-net server is ready
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} models.ResponseText
 // @Failure 503 {object} models.ResponseText
-// @Router /health [get]
-func Health(c echo.Context) error {
-	res := models.ResponseText{Success: true, Text: "POC-MC-Net-TF API server is running"}
-
-	return c.JSON(http.StatusOK, res)
+// @Router /readyz [get]
+func Readyz(c echo.Context) error {
+	res := models.ResponseText{}
+	res.Text = "mc-net server is ready"
+	if !readyz.IsReady() {
+		res.Text = "mc-net server is NOT ready"
+		return c.JSON(http.StatusServiceUnavailable, &res)
+	}
+	return c.JSON(http.StatusOK, &res)
 }
 
 // HTTPVersion godoc
