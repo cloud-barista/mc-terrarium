@@ -35,11 +35,13 @@ import (
 // @Router /readyz [get]
 func Readyz(c echo.Context) error {
 	res := models.ResponseText{}
-	res.Text = "mc-net server is ready"
 	if !readyz.IsReady() {
+		res.Success = false
 		res.Text = "mc-net server is NOT ready"
 		return c.JSON(http.StatusServiceUnavailable, &res)
 	}
+	res.Success = true
+	res.Text = "mc-net server is ready"
 	return c.JSON(http.StatusOK, &res)
 }
 
