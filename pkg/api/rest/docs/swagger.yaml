@@ -197,25 +197,6 @@ info:
   title: POC-MC-Net-TF REST API
   version: latest
 paths:
-  /health:
-    get:
-      consumes:
-      - application/json
-      description: Check API server is running
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Check API server is running
-      tags:
-      - '[System] Utility'
   /httpVersion:
     get:
       consumes:
@@ -238,6 +219,25 @@ paths:
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Check HTTP version of incoming request
+      tags:
+      - '[System] Utility'
+  /readyz:
+    get:
+      consumes:
+      - application/json
+      description: Check mc-net server is ready
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Check mc-net server is ready
       tags:
       - '[System] Utility'
   /rg/{resourceGroupId}:

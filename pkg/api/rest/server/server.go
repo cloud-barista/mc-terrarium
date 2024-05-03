@@ -46,6 +46,8 @@ import (
 	// echo-swagger middleware
 	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
+
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
 )
 
 //var masterConfigInfos confighandler.MASTERCONFIGTYPE
@@ -145,7 +147,7 @@ func RunServer(port string) {
 		e.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
 			// Skip authentication for some routes that do not require authentication
 			Skipper: func(c echo.Context) bool {
-				if c.Path() == "/mc-net/health" ||
+				if c.Path() == "/mc-net/readyz" ||
 					c.Path() == "/mc-net/httpVersion" {
 					return true
 				}
@@ -170,10 +172,16 @@ func RunServer(port string) {
 	fmt.Println("\n \n ")
 
 	// Route for system management
-	e.GET("/mc-net/swagger/*", echoSwagger.WrapHandler)
-
+	swaggerRedirect := func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, "/mc-net/api/index.html")
+	}
+	e.GET("/mc-net/api", swaggerRedirect)
+	e.GET("/mc-net/api/", swaggerRedirect)
+	e.GET("/mc-net/api/*", echoSwagger.WrapHandler)
+	// e.GET("/mc-net/swagger/*", echoSwagger.WrapHandler)
 	// e.GET("/mc-net/swaggerActive", rest_common.RestGetSwagger)
-	e.GET("/mc-net/health", handlers.Health)
+
+	e.GET("/mc-net/readyz", handlers.Readyz)
 	e.GET("/mc-net/httpVersion", handlers.HTTPVersion)
 	e.GET("/mc-net/tofuVersion", handlers.TofuVersion)
 
@@ -189,7 +197,7 @@ func RunServer(port string) {
 	route.RegisterSampleRoutes(groupSample)
 
 	selfEndpoint := viper.GetString("self.endpoint")
-	apidashboard := " http://" + selfEndpoint + "/mc-net/swagger/index.html"
+	apidashboard := " http://" + selfEndpoint + "/mc-net/api"
 
 	if enableAuth {
 		fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + ")")
@@ -230,6 +238,7 @@ func RunServer(port string) {
 
 	log.Info().Msg("starting POC-MC-Net-TF REST API server")
 	port = fmt.Sprintf(":%s", port)
+	readyz.SetReady(true)
 	if err := e.Start(port); err != nil && err != http.ErrServerClosed {
 		e.Logger.Panic("shuttig down the server")
 	}

@@ -29,7 +29,13 @@ import (
 	// _ "github.com/mattn/go-sqlite3"
 
 	restServer "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/server"
+
+	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
 )
+
+func init() {
+	readyz.SetReady(false)
+}
 
 func main() {
 
