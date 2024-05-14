@@ -5,12 +5,12 @@ definitions:
       tfVars:
         $ref: '#/definitions/models.TfVarsGcpAwsVpnTunnel'
     type: object
-  handlers.CreateBluprintOfGcpAzureVpnRequest:
+  handlers.CreateInfracodeOfGcpAzureVpnRequest:
     properties:
       tfVars:
         $ref: '#/definitions/models.TfVarsGcpAzureVpnTunnel'
     type: object
-  handlers.CreateBluprintOfTestEnvRequest:
+  handlers.CreateInfracodeOfTestEnvRequest:
     properties:
       tfVars:
         $ref: '#/definitions/models.TfVarsTestEnv'
@@ -105,6 +105,18 @@ definitions:
     type: object
   models.ResponseText:
     properties:
+      success:
+        example: true
+        type: boolean
+      text:
+        example: Any text
+        type: string
+    type: object
+  models.ResponseTextWithDetails:
+    properties:
+      details:
+        example: Any details
+        type: string
       success:
         example: true
         type: boolean
@@ -298,12 +310,58 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Destroy network resources that were used to configure GCP as an AWS
         VPN tunnel
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+    get:
+      consumes:
+      - application/json
+      description: Get resource info to configure GCP to AWS VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      - description: custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseObject'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get resource info to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
     post:
@@ -327,9 +385,13 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/models.ResponseTextWithDetails'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseText'
         "503":
@@ -337,47 +399,6 @@ paths:
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and AWS
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/blueprint:
-    post:
-      consumes:
-      - application/json
-      description: Create a blueprint to configure GCP to AWS VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Parameters requied to create a blueprint to configure GCP to
-          AWS VPN tunnels
-        in: body
-        name: ParamsForBlueprint
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest'
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Create a blueprint to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-aws/clear:
@@ -407,6 +428,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
@@ -414,11 +439,135 @@ paths:
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/init:
+  /rg/{resourceGroupId}/vpn/gcp-aws/infracode:
     post:
       consumes:
       - application/json
-      description: Initialize GCP and AWS to configure VPN tunnels
+      description: Create the infracode to configure GCP to AWS VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Parameters requied to create the infracode to configure GCP to
+          AWS VPN tunnels
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Create the infracode to configure GCP to AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/plan:
+    post:
+      consumes:
+      - application/json
+      description: Check and show changes by the current infracode to configure GCP
+        to AWS VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Check and show changes by the current infracode to configure GCP to
+        AWS VPN tunnels
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of a specific request by its ID
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Check the status of a specific request by its ID
+      tags:
+      - '[VPN] GCP to AWS VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-aws/terrarium:
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
       parameters:
       - default: tofu-rg-01
         description: Resource group ID
@@ -441,154 +590,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Initialize GCP and AWS to configure VPN tunnels
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/plan:
-    post:
-      consumes:
-      - application/json
-      description: Show changes required by the current blueprint to configure GCP
-        to AWS VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
-      summary: Show changes required by the current blueprint to configure GCP to
-        AWS VPN tunnels
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status:
-    get:
-      consumes:
-      - application/json
-      description: Get the status of the request to configure GCP to AWS VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Request ID
-        in: path
-        name: requestId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get the status of the request to configure GCP to AWS VPN tunnels
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/resource/id:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource IDs to configure GCP to AWS VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseObject'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource IDs to configure GCP to AWS VPN tunnels
-      tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/resource/info:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource info to configure GCP to AWS VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseList'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource info to configure GCP to AWS VPN tunnels
+      summary: Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-azure:
@@ -619,6 +629,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
@@ -648,9 +662,13 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/models.ResponseTextWithDetails'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseText'
         "503":
@@ -658,47 +676,6 @@ paths:
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and Azure
-      tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/blueprint:
-    post:
-      consumes:
-      - application/json
-      description: Create a blueprint to configure GCP to Azure VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Parameters requied to create a blueprint to configure GCP to
-          Azure VPN tunnels
-        in: body
-        name: ParamsForBlueprint
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.CreateBluprintOfGcpAzureVpnRequest'
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Create a blueprint to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
   /rg/{resourceGroupId}/vpn/gcp-azure/clear:
@@ -728,6 +705,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
@@ -735,11 +716,178 @@ paths:
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/init:
+  /rg/{resourceGroupId}/vpn/gcp-azure/infracode:
     post:
       consumes:
       - application/json
-      description: Initialize GCP and Azure to configure VPN tunnels
+      description: Create the infracode to configure GCP to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Parameters requied to create the infracode to configure GCP to
+          Azure VPN tunnels
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateInfracodeOfGcpAzureVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Create the infracode to configure GCP to Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/plan:
+    post:
+      consumes:
+      - application/json
+      description: Check and show changes by the current infracode to configure GCP
+        to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseTextWithDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Check and show changes by the current infracode to configure GCP to
+        Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of a specific request by its ID
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Check the status of a specific request by its ID
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/resource/info:
+    get:
+      consumes:
+      - application/json
+      description: Get resource info to configure GCP to Azure VPN tunnels
+      parameters:
+      - default: tofu-rg-01
+        description: Resource group ID
+        in: path
+        name: resourceGroupId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseObject'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get resource info to configure GCP to Azure VPN tunnels
+      tags:
+      - '[VPN] GCP to Azure VPN tunnel configuration'
+  /rg/{resourceGroupId}/vpn/gcp-azure/terrarium:
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
       parameters:
       - default: tofu-rg-01
         description: Resource group ID
@@ -762,154 +910,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Initialize GCP and Azure to configure VPN tunnels
-      tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/plan:
-    post:
-      consumes:
-      - application/json
-      description: Show changes required by the current blueprint to configure GCP
-        to Azure VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseText'
         "503":
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
-      summary: Show changes required by the current blueprint to configure GCP to
-        Azure VPN tunnels
-      tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status:
-    get:
-      consumes:
-      - application/json
-      description: Get the status of the request to configure GCP to Azure VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Request ID
-        in: path
-        name: requestId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get the status of the request to configure GCP to Azure VPN tunnels
-      tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/resource/id:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource IDs to configure GCP to Azure VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseObject'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource IDs to configure GCP to Azure VPN tunnels
-      tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/resource/info:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource info to configure GCP to Azure VPN tunnels
-      parameters:
-      - default: tofu-rg-01
-        description: Resource group ID
-        in: path
-        name: resourceGroupId
-        required: true
-        type: string
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseList'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource info to configure GCP to Azure VPN tunnels
+      summary: Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
   /sample/users:
@@ -1101,6 +1110,34 @@ paths:
       summary: Destroy test environment
       tags:
       - '[Test env] Test environment management'
+    get:
+      consumes:
+      - application/json
+      description: Get all resource info of test environment
+      parameters:
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Get all resource info of test environment
+      tags:
+      - '[Test env] Test environment management'
     post:
       consumes:
       - application/json
@@ -1121,36 +1158,6 @@ paths:
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Create test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/blueprint:
-    post:
-      consumes:
-      - application/json
-      description: Create a blueprint to configure test environment
-      parameters:
-      - description: Parameters requied to create a blueprint to configure test environment
-        in: body
-        name: ParamsForBlueprint
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.CreateBluprintOfTestEnvRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Create a blueprint to configure test environment
       tags:
       - '[Test env] Test environment management'
   /test-env/clear:
@@ -1176,11 +1183,19 @@ paths:
       summary: Clear the entire directory and configuration files
       tags:
       - '[Test env] Test environment management'
-  /test-env/init:
+  /test-env/infracode:
     post:
       consumes:
       - application/json
-      description: Initialize test environment
+      description: Create the infracode to configure test environment
+      parameters:
+      - description: Parameters requied to create the infracode to configure test
+          environment
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateInfracodeOfTestEnvRequest'
       produces:
       - application/json
       responses:
@@ -1196,15 +1211,37 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
-      summary: Initialize test environment
+      summary: Create the infracode to configure test environment
+      tags:
+      - '[Test env] Test environment management'
+  /test-env/init:
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for test environment
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseText'
+      summary: Initialize a multi-cloud terrarium for test environment
       tags:
       - '[Test env] Test environment management'
   /test-env/plan:
     post:
       consumes:
       - application/json
-      description: Show changes required by the current blueprint to configure test
-        environment
+      description: Check the infracode and show changes of test environment
       produces:
       - application/json
       responses:
@@ -1220,7 +1257,7 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
-      summary: Show changes required by the current blueprint to configure test environment
+      summary: Check the infracode and show changes of test environment
       tags:
       - '[Test env] Test environment management'
   /test-env/request/{requestId}/status:
@@ -1250,52 +1287,6 @@ paths:
           schema:
             $ref: '#/definitions/models.ResponseText'
       summary: Get the status of the request to configure test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/resource/id:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource IDs of test environment
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseObject'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource IDs of test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/resource/info:
-    get:
-      consumes:
-      - application/json
-      description: Get all resource info of test environment
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseList'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/models.ResponseText'
-      summary: Get all resource info of test environment
       tags:
       - '[Test env] Test environment management'
   /tofuVersion:

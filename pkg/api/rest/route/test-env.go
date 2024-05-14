@@ -7,12 +7,11 @@ import (
 
 // /mc-net/test-env/...
 func RegisterRoutesForTestEnv(g *echo.Group) {
-	g.POST("/test-env/init", handlers.InitTestEnv)
+	g.POST("/test-env/init", handlers.InitTerrariumForTestEnv)
 	g.DELETE("/test-env/clear", handlers.ClearTestEnv)
-	g.GET("/test-env/resource/info", handlers.GetAllResouceInfoOfTestEnv)
-	g.GET("/test-env/resource/id", handlers.GetAllResouceIdOfTestEnv)
-	g.POST("/test-env/blueprint", handlers.CreateBlueprintOfTestEnv)
-	g.POST("/test-env/plan", handlers.CheckBlueprintOfTestEnv)
+	g.GET("/test-env", handlers.GetResouceInfoOfTestEnv)
+	g.POST("/test-env/infracode", handlers.CreateInfracodeOfTestEnv)
+	g.POST("/test-env/plan", handlers.CheckInfracodeOfTestEnv)
 	g.POST("/test-env", handlers.CreateTestEnv)
 	g.DELETE("/test-env", handlers.DestroyTestEnv)
 	g.GET("/test-env/request/:requestId/status", handlers.GetRequestStatusOfTestEnv)
