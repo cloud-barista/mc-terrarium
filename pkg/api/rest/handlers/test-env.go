@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
 	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
@@ -30,9 +31,9 @@ import (
 // ////////////////////////////////////////////////////
 // Test env
 
-// InitTestEnv godoc
-// @Summary Initialize test environment
-// @Description Initialize test environment
+// InitTerrariumForTestEnv godoc
+// @Summary Initialize a multi-cloud terrarium for test environment
+// @Description Initialize a multi-cloud terrarium for test environment
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
@@ -40,7 +41,7 @@ import (
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /test-env/init [post]
-func InitTestEnv(c echo.Context) error {
+func InitTerrariumForTestEnv(c echo.Context) error {
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
@@ -131,17 +132,42 @@ func ClearTestEnv(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// GetAllResouceInfoOfTestEnv godoc
+// GetResouceInfoOfTestEnv godoc
 // @Summary Get all resource info of test environment
 // @Description Get all resource info of test environment
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
+// @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Success 200 {object} models.ResponseList "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
-// @Router /test-env/resource/info [get]
-func GetAllResouceInfoOfTestEnv(c echo.Context) error {
+// @Router /test-env [get]
+func GetResouceInfoOfTestEnv(c echo.Context) error {
+
+	// Use this struct like the enum
+	var DetailOptions = struct {
+		Refined string
+		Raw     string
+	}{
+		Refined: "refined",
+		Raw:     "raw",
+	}
+
+	// valid detail options
+	validDetailOptions := map[string]bool{
+		DetailOptions.Refined: true,
+		DetailOptions.Raw:     true,
+	}
+
+	detail := c.QueryParam("detail")
+	detail = strings.ToLower(detail)
+
+	if detail == "" || !validDetailOptions[detail] {
+		err := fmt.Errorf("invalid detail (%s), use the default (%s)", detail, DetailOptions.Refined)
+		log.Warn().Msg(err.Error())
+		detail = DetailOptions.Refined
+	}
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
@@ -151,107 +177,128 @@ func GetAllResouceInfoOfTestEnv(c echo.Context) error {
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		text := "Not exist test environment"
-		res := models.ResponseText{Success: false, Text: text}
-		return c.JSON(http.StatusBadRequest, res)
-	}
-
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
-	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to show the output from a state or plan file") // error
-		res := models.ResponseText{Success: false, Text: "Failed to show the output from a state or plan file"}
+		err2 := fmt.Errorf("working directory dose not exist")
+		log.Warn().Err(err).Msg(err2.Error())
+		res := models.ResponseText{
+			Success: false,
+			Text:    err2.Error(),
+		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Parse the resources from the output
-	resourcesString := gjson.Get(ret, "values.root_module.resources").String()
-	if resourcesString == "" {
-		log.Debug().Msgf("resourcesString: %s", resourcesString) // debug
-		res := models.ResponseText{Success: false, Text: "not found resources"}
+	// Get the resource info by the detail option
+	switch detail {
+	case DetailOptions.Refined:
+		// Code for handling "refined" detail option
+
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// show: subcommand
+		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
+		if err != nil {
+			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
+			log.Error().Err(err).Msg(err2.Error())
+			res := models.ResponseText{
+				Success: false,
+				Text:    err2.Error(),
+			}
+			return c.JSON(http.StatusInternalServerError, res)
+		}
+
+		var resourceInfo map[string]interface{}
+		err = json.Unmarshal([]byte(ret), &resourceInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("") // error
+			res := models.ResponseText{
+				Success: false,
+				Text:    "failed to unmarshal resource info",
+			}
+			return c.JSON(http.StatusInternalServerError, res)
+		}
+
+		res := models.ResponseObject{
+			Success: true,
+			Object:  resourceInfo,
+		}
+		log.Debug().Msgf("%+v", res) // debug
+
 		return c.JSON(http.StatusOK, res)
-	}
 
-	var resources []interface{}
-	err = json.Unmarshal([]byte(resourcesString), &resources)
-	if err != nil {
-		log.Error().Err(err).Msg("") // error
-		res := models.ResponseText{Success: false, Text: "Failed to unmarshal resources"}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
+	case DetailOptions.Raw:
+		// Code for handling "raw" detail option
 
-	res := models.ResponseList{Success: true, List: resources}
-	log.Debug().Msgf("%+v", res) // debug
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// show: subcommand
+		// Get resource info from the state or plan file
+		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
+		if err != nil {
+			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
+			log.Error().Err(err).Msg(err2.Error()) // error
+			res := models.ResponseText{
+				Success: false,
+				Text:    err2.Error(),
+			}
+			return c.JSON(http.StatusInternalServerError, res)
+		}
 
-	return c.JSON(http.StatusOK, res)
-}
+		// Parse the resource info
+		resourcesString := gjson.Get(ret, "values.root_module.resources").String()
+		if resourcesString == "" {
+			err2 := fmt.Errorf("could not find resource info (rgId: %s)", "test-env")
+			log.Warn().Msg(err2.Error())
+			res := models.ResponseText{
+				Success: false,
+				Text:    err2.Error(),
+			}
+			return c.JSON(http.StatusOK, res)
+		}
 
-// GetAllResouceIdOfTestEnv godoc
-// @Summary Get all resource IDs of test environment
-// @Description Get all resource IDs of test environment
-// @Tags [Test env] Test environment management
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} models.ResponseObject "OK"
-// @Failure 400 {object} models.ResponseText "Bad Request"
-// @Failure 503 {object} models.ResponseText "Service Unavailable"
-// @Router /test-env/resource/id [get]
-func GetAllResouceIdOfTestEnv(c echo.Context) error {
+		var resourceInfoList []interface{}
+		err = json.Unmarshal([]byte(resourcesString), &resourceInfoList)
+		if err != nil {
+			log.Error().Err(err).Msg("") // error
+			res := models.ResponseText{
+				Success: false,
+				Text:    "failed to unmarshal resource info",
+			}
+			return c.JSON(http.StatusInternalServerError, res)
+		}
 
-	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+		res := models.ResponseList{
+			Success: true,
+			List:    resourceInfoList,
+		}
+		log.Debug().Msgf("%+v", res) // debug
 
-	projectRoot := viper.GetString("pocmcnettf.root")
-
-	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
-	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		text := "Not exist test environment"
-		res := models.ResponseText{Success: false, Text: text}
+		return c.JSON(http.StatusOK, res)
+	default:
+		err2 := fmt.Errorf("invalid detail option (%s)", detail)
+		log.Warn().Err(err2).Msg("") // warn
+		res := models.ResponseText{
+			Success: false,
+			Text:    err2.Error(),
+		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
-
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
-	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to read the output variables from a TF state file") // error
-		res := models.ResponseText{Success: false, Text: "Failed to read the output variables from a TF state file"}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	var resourceIds map[string]interface{}
-	err = json.Unmarshal([]byte(ret), &resourceIds)
-	if err != nil {
-		res := models.ResponseText{Success: false, Text: "Failed to unmarshal resource IDs"}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	res := models.ResponseObject{Success: true, Object: resourceIds}
-	log.Debug().Msgf("%+v", res) // debug
-
-	return c.JSON(http.StatusOK, res)
 }
 
-type CreateBluprintOfTestEnvRequest struct {
+type CreateInfracodeOfTestEnvRequest struct {
 	TfVars models.TfVarsTestEnv `json:"tfVars"`
 }
 
-// CreateBluprintOfGcpAzureVpn godoc
-// @Summary Create a blueprint to configure test environment
-// @Description Create a blueprint to configure test environment
+// CreateInfrcodeOfGcpAzureVpn godoc
+// @Summary Create the infracode to configure test environment
+// @Description Create the infracode to configure test environment
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Param ParamsForBlueprint body CreateBluprintOfTestEnvRequest true "Parameters requied to create a blueprint to configure test environment"
+// @Param ParamsForInfracode body CreateInfracodeOfTestEnvRequest true "Parameters requied to create the infracode to configure test environment"
 // @Success 201 {object} models.ResponseText "Created"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
-// @Router /test-env/blueprint [post]
-func CreateBlueprintOfTestEnv(c echo.Context) error {
+// @Router /test-env/infracode [post]
+func CreateInfracodeOfTestEnv(c echo.Context) error {
 
-	req := new(CreateBluprintOfTestEnvRequest)
+	req := new(CreateInfracodeOfTestEnvRequest)
 	if err := c.Bind(req); err != nil {
 		res := models.ResponseText{Success: false, Text: "Invalid request"}
 		return c.JSON(http.StatusBadRequest, res)
@@ -281,24 +328,24 @@ func CreateBlueprintOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := models.ResponseText{Success: true, Text: "Successfully created a blueprint to configure test environment"}
+	res := models.ResponseText{Success: true, Text: "Successfully created the infracode to configure test environment"}
 
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusCreated, res)
 }
 
-// CheckBlueprintOfTestEnv godoc
-// @Summary Show changes required by the current blueprint to configure test environment
-// @Description Show changes required by the current blueprint to configure test environment
+// CheckInfracodeOfTestEnv godoc
+// @Summary Check the infracode and show changes of test environment
+// @Description Check the infracode and show changes of test environment
 // @Tags [Test env] Test environment management
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Success 200 {object} models.ResponseText "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
 // @Router /test-env/plan [post]
-func CheckBlueprintOfTestEnv(c echo.Context) error {
+func CheckInfracodeOfTestEnv(c echo.Context) error {
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)

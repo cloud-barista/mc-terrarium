@@ -2,7 +2,6 @@
 
 We will explore the functions and necessary properties such as creation, diary, update, and deletion of resources/services for configuring a multi-cloud network.
 
-
 ### Prerequisites
 
 #### Install OpenTofu
@@ -31,6 +30,7 @@ rm install-opentofu.sh
 #### Get source code
 
 In this readme, `~/poc-mc-net-tf` is used as the default directory.
+
 ```bash
 git clone https://github.com/cloud-barista/poc-mc-net-tf.git ~/poc-mc-net-tf
 ```
@@ -94,6 +94,7 @@ See [Create an Azure service principal with Azure CLI](https://learn.microsoft.c
 </details>
 
 4. Run
+
 ```bash
 source secrets/credential-azure.env
 az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID"
@@ -127,18 +128,19 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 
 </details>
 
-
 ### Getting started
 
 #### Source code based installation and exeuction
 
 ##### Build
+
 ```bash
 cd ~/poc-mc-net-tf
 make
 ```
 
 ##### Run API server binary
+
 ```bash
 cd ~/poc-mc-net-tf
 make run
@@ -155,9 +157,10 @@ Note - Credentials for AWS, Azure, and GCP must be prepared and injected when ru
 Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
 
 Note - About credential injection:
-  * Set AWS credenttal as environment variable: `--env-file "${PWD}"/secrets/credentials`
-  * Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
-  * Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/`  
+
+- Set AWS credenttal as environment variable: `--env-file "${PWD}"/secrets/credentials`
+- Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
+- Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/`
 
 ```bash
 
@@ -183,11 +186,12 @@ Note - You can find API documentation on Swagger UI.
 ### Appendix
 
 **The example of API call sequence**
-1. POST /rg/{resourceGroupId}/vpn/gcp-azure/init
-2. POST /rg/{resourceGroupId}/vpn/gcp-azure/blueprint
+
+1. POST /rg/{resourceGroupId}/vpn/gcp-azure/terrarium
+2. POST /rg/{resourceGroupId}/vpn/gcp-azure/infracode
 3. POST /rg/{resourceGroupId}/vpn/gcp-azure/plan
 4. POST /rg/{resourceGroupId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
 5. GET /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status (Check the above API status)
-6. GET /rg/{resourceGroupId}/vpn/gcp-azure/state (Check the resource status on CSPs)
+6. GET /rg/{resourceGroupId}/vpn/gcp-azure (Get resource info with detail (refined, raw))
 7. DELETE /rg/{resourceGroupId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
 8. DELETE /rg/{resourceGroupId}/vpn/gcp-azure/clear
