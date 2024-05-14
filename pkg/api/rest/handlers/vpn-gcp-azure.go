@@ -41,6 +41,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} models.ResponseText "Created"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -121,6 +122,7 @@ func InitGcpAndAzureForVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseText "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -163,6 +165,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseList "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -225,6 +228,7 @@ func GetAllResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseObject "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -285,6 +289,7 @@ type CreateBluprintOfGcpAzureVpnRequest struct {
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Param ParamsForBlueprint body CreateBluprintOfGcpAzureVpnRequest true "Parameters requied to create a blueprint to configure GCP to Azure VPN tunnels"
+// @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} models.ResponseText "Created"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -346,6 +351,7 @@ func CreateBlueprintOfGcpAzureVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseText "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -394,6 +400,7 @@ func CheckBlueprintOfGcpAzureVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} models.ResponseText "Created"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -442,6 +449,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseText "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"
@@ -492,6 +500,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
 // @Param requestId path string true "Request ID"
+// @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} models.ResponseText "OK"
 // @Failure 400 {object} models.ResponseText "Bad Request"
 // @Failure 503 {object} models.ResponseText "Service Unavailable"

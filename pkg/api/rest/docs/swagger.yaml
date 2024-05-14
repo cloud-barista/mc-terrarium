@@ -283,6 +283,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -312,6 +316,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -350,6 +358,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -379,6 +391,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -410,6 +426,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -440,6 +460,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -477,6 +501,10 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -507,6 +535,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -536,6 +568,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -568,6 +604,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -597,6 +637,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -635,6 +679,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/handlers.CreateBluprintOfGcpAzureVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -664,6 +712,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -695,6 +747,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -725,6 +781,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json
@@ -762,6 +822,10 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -792,6 +856,10 @@ paths:
         name: resourceGroupId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       produces:
       - application/json
       responses:
@@ -821,6 +889,10 @@ paths:
         in: path
         name: resourceGroupId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
         type: string
       produces:
       - application/json

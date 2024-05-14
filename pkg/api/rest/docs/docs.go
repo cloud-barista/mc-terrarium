@@ -153,6 +153,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -196,6 +202,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -250,6 +262,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -295,6 +313,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -340,6 +364,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -385,6 +415,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -437,6 +473,12 @@ const docTemplate = `{
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -482,6 +524,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -527,6 +575,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -572,6 +626,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -615,6 +675,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -669,6 +735,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.CreateBluprintOfGcpAzureVpnRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -714,6 +786,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -759,6 +837,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -804,6 +888,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -856,6 +946,12 @@ const docTemplate = `{
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -901,6 +997,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -946,6 +1048,12 @@ const docTemplate = `{
                         "name": "resourceGroupId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
