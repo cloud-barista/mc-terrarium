@@ -32,9 +32,9 @@ go.work
 project-gcp.txt
 
 # Binaries
-pkg/poc-mc-net-tf
-pkg/poc-mc-net-tf-arm
-cmd/poc-mc-net-tf/poc-mc-net-tf
+pkg/mc-terrarium
+pkg/mc-terrarium-arm
+cmd/mc-terrarium/mc-terrarium
 
 # Log files
 log/

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -135,10 +135,10 @@ func getLogFileConfig() (string, int, int, int, bool) {
 	// Set config values
 	logFilePath := viper.GetString("logfile.path")
 
-	// Default: poc-mc-net-tf.log
+	// Default: mc-terrarium.log
 	if logFilePath == "" {
-		log.Warn().Msg("LOGFILE_PATH is not set. Using default value: poc-mc-net-tf.log")
-		logFilePath = "poc-mc-net-tf.log"
+		log.Warn().Msg("LOGFILE_PATH is not set. Using default value: mc-terrarium.log")
+		logFilePath = "mc-terrarium.log"
 	}
 
 	// Default: 10 MB

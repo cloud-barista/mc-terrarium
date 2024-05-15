@@ -11,8 +11,8 @@ FROM golang:1.21.4-alpine AS builder
 RUN apk add --no-cache sqlite-libs sqlite-dev build-base
 
 # Copying only necessary files for the build
-COPY . /go/src/github.com/cloud-barista/poc-mc-net-tf
-WORKDIR /go/src/github.com/cloud-barista/poc-mc-net-tf
+COPY . /go/src/github.com/cloud-barista/mc-terrarium
+WORKDIR /go/src/github.com/cloud-barista/mc-terrarium
 # COPY go.mod go.sum go.work go.work.sum ./
 RUN go mod download
 # COPY .tofu ./.tofu
@@ -22,7 +22,7 @@ RUN go mod download
 
 # Building the Go application with specific flags
 # Note - "make prod" executes the command, 
-# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-s -w' -o poc-mc-net-tf"
+# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-s -w' -o mc-terrarium"
 RUN make prod
 
 #############################################################
@@ -38,19 +38,19 @@ WORKDIR /app
 # Copying necessary files from the builder stage to the production stage
 # Assets, scripts, and configuration files are copied excluding credentials.conf
 # which should be specified in .dockerignore
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/.tofu/ /app/.tofu/
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/templates/ /app/templates/
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/secrets/ /app/secrets/
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/conf/ /app/conf/
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/scripts/ /app/scripts/
-COPY --from=builder /go/src/github.com/cloud-barista/poc-mc-net-tf/cmd/poc-mc-net-tf/poc-mc-net-tf /app/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/.tofu/ /app/.tofu/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/templates/ /app/templates/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/conf/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/scripts/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 
 RUN ./scripts/install-tofu-1.6.2.sh
 RUN apt-get update && apt-get install -y git
 
 # Setting various environment variables required by the application
-ENV POCMCNETTF_ROOT=/app \
-    LOGFILE_PATH=/app/.tofu/poc-mc-net-tf.log \
+ENV MCTERRARIUM_ROOT=/app \
+    LOGFILE_PATH=/app/.tofu/mc-terrarium.log \
     LOGFILE_MAXSIZE=10 \
     LOGFILE_MAXBACKUPS=3 \
     LOGFILE_MAXAGE=30 \
@@ -71,7 +71,7 @@ ENV POCMCNETTF_ROOT=/app \
     API_DOC_PATH=/app/pkg/api/rest/docs/swagger.json
 
 # Setting the entrypoint for the application
-ENTRYPOINT [ "/app/poc-mc-net-tf" ]
+ENTRYPOINT [ "/app/mc-terrarium" ]
 
 # Exposing the port that the application will run on
 EXPOSE 8888

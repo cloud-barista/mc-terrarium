@@ -17,7 +17,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
 	"github.com/labstack/echo/v4"
 )
 

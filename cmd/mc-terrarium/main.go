@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package main is the starting point of POC-MC-Net-TF
+// Package main is the starting point of mc-terrarium
 package main
 
 import (
@@ -20,17 +20,17 @@ import (
 	"sync"
 
 	// Black import (_) is for running a package's init() function without using its other contents.
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/logger"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
 	"github.com/rs/zerolog/log"
 
 	//_ "github.com/go-sql-driver/mysql"
 
 	// _ "github.com/mattn/go-sqlite3"
 
-	restServer "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/server"
+	restServer "github.com/cloud-barista/mc-terrarium/pkg/api/rest/server"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
+	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 )
 
 func init() {
@@ -39,7 +39,7 @@ func init() {
 
 func main() {
 
-	log.Info().Msg("starting POC-MC-Net-TF server")
+	log.Info().Msg("starting mc-terrarium server")
 
 	// Set the default port number "8888" for the REST API server to listen on
 	port := flag.String("port", "8888", "port number for the restapiserver to listen to")
@@ -61,13 +61,13 @@ func main() {
 	// load config
 	//masterConfigInfos = confighandler.GetMasterConfigInfos()
 
-	//Setup database (meta_db/dat/pocmcnettf.s3db)
+	//Setup database (meta_db/dat/mcterrarium.s3db)
 	// log.Info().Msg("setting SQL Database")
 	// err := os.MkdirAll("./meta_db/dat/", os.ModePerm)
 	// if err != nil {
 	// 	log.Error().Err(err).Msg("error creating directory")
 	// }
-	// log.Debug().Msgf("database file path: %s", "./meta_db/dat/pocmcnettf.s3db")
+	// log.Debug().Msgf("database file path: %s", "./meta_db/dat/mcterrarium.s3db")
 
 	// Watch config file changes
 	// go func() {

@@ -1,12 +1,12 @@
 ## Set system endpoints
-pocmcnettf:
+mcterrarium:
   root: # To be set in runtime
 
 cbstore:
-  root: # To be set in runtime (based on pocmcnettf.root)
+  root: # To be set in runtime (based on mcterrarium.root)
 
 cblog:
-  root: # To be set in runtime (based on pocmcnettf.root)
+  root: # To be set in runtime (based on mcterrarium.root)
 
 # cbspider:
 #   callmethod: REST
@@ -20,8 +20,8 @@ cblog:
 
 ## Logger configuration
 logfile:
-  # Set log file path (default logfile path: ./poc-mc-net-tf.log) 
-  path: ./poc-mc-net-tf.log
+  # Set log file path (default logfile path: ./mc-terrarium.log) 
+  path: ./mc-terrarium.log
   maxsize: 10
   maxbackups: 3
   maxage: 30
@@ -68,5 +68,5 @@ self:
 ## Environment variables that you don't need to touch
 # Swagger UI API document file path 
 apidoc:
-  # export APIDOC_PATH=$pocmcnettf_ROOT/src/api/rest/docs/swagger.json
-  path: # To be set in runtime (based on pocmcnettf.root)
+  # export APIDOC_PATH=$MCTERRARIUM_ROOT/src/api/rest/docs/swagger.json
+  path: # To be set in runtime (based on mcterrarium.root)

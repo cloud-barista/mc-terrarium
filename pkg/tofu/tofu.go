@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -27,7 +27,7 @@ var mapMutex = &sync.Mutex{}
 // Save the running status map to file
 func SaveRunningStatusMap() error {
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
 
 	mapMutex.Lock()
@@ -50,7 +50,7 @@ func SaveRunningStatusMap() error {
 // Load the running status map from file
 func LoadRunningStatusMap() error {
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
 
 	mapMutex.Lock()
@@ -275,7 +275,7 @@ func CopyFile(src string, des string) error {
 
 func CopyGCPCredentials(des string) error {
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	cred := projectRoot + "/secrets/credential-gcp.json"
 
 	return CopyFile(cred, des)
@@ -283,7 +283,7 @@ func CopyGCPCredentials(des string) error {
 
 func CopyAzureCredentials(des string) error {
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	cred := projectRoot + "/secrets/credential-azure.env"
 
 	return CopyFile(cred, des)

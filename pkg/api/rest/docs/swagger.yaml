@@ -1,4 +1,4 @@
-basePath: /mc-net
+basePath: /terrarium
 definitions:
   handlers.CreateBluprintOfGcpAwsVpnRequest:
     properties:
@@ -202,11 +202,12 @@ info:
     email: contact-to-cloud-barista@googlegroups.com
     name: API Support
     url: http://cloud-barista.github.io
-  description: POC-MC-Net-TF REST API
+  description: Multi-Cloud Terrarium (mc-terrarium) aims to provide an enriched environment
+    for multi-cloud infrastructure.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: POC-MC-Net-TF REST API
+  title: Multi-Cloud Terrarium  REST API
   version: latest
 paths:
   /httpVersion:
@@ -237,7 +238,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Check mc-net server is ready
+      description: Check mc-terrarium server is ready
       produces:
       - application/json
       responses:
@@ -249,7 +250,7 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/models.ResponseText'
-      summary: Check mc-net server is ready
+      summary: Check mc-terrarium server is ready
       tags:
       - '[System] Utility'
   /rg/{resourceGroupId}:

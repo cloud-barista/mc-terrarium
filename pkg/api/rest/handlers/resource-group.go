@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -43,7 +43,7 @@ func ClearResourceGroup(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId
