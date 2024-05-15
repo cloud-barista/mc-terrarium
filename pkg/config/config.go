@@ -47,11 +47,11 @@ func Init() {
 	viper.AutomaticEnv()
 
 	// Values set in runtime
-	if viper.GetString("pocmcnettf.root") == "" {
+	if viper.GetString("mcterrarium.root") == "" {
 		fmt.Println("find project root by using project name")
 		log.Println("find project root by using project name")
 
-		projectName := "poc-mc-net-tf"
+		projectName := "mc-terrarium"
 		// Get the executable path
 		execPath, err := os.Executable()
 		if err != nil {
@@ -69,7 +69,7 @@ func Init() {
 		log.Printf("project root directory: %s\n", projectRoot)
 
 		// Set the binary path
-		viper.Set("pocmcnettf.root", projectRoot)
+		viper.Set("mcterrarium.root", projectRoot)
 		viper.Set("apidoc.path", projectRoot+"/pkg/api/rest/docs/swagger.json")
 	}
 

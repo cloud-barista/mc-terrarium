@@ -16,17 +16,17 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
 
-// Readyz func is for checking mc-net server is ready.
+// Readyz func is for checking mc-terrarium server is ready.
 // Readyz godoc
-// @Summary Check mc-net server is ready
-// @Description Check mc-net server is ready
+// @Summary Check mc-terrarium server is ready
+// @Description Check mc-terrarium server is ready
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
@@ -37,11 +37,11 @@ func Readyz(c echo.Context) error {
 	res := models.ResponseText{}
 	if !readyz.IsReady() {
 		res.Success = false
-		res.Text = "mc-net server is NOT ready"
+		res.Text = "mc-terrarium server is NOT ready"
 		return c.JSON(http.StatusServiceUnavailable, &res)
 	}
 	res.Success = true
-	res.Text = "mc-net server is ready"
+	res.Text = "mc-terrarium server is ready"
 	return c.JSON(http.StatusOK, &res)
 }
 

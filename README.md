@@ -1,6 +1,14 @@
-## Proof of concepts related to multi-cloud networks
+## Multi-Cloud Terrarium
 
-We will explore the functions and necessary properties such as creation, diary, update, and deletion of resources/services for configuring a multi-cloud network.
+Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment (i.e., infrastructure terrarium) and features to enrich multi-cloud infrastructure.
+
+The infrastructure terrarium consists of:
+- <ins>information of cloud resources/services</ins>, which is created and managed by Cloud-Barista,
+- <ins>TF configuration files</ins>, which specify resources/services to be add, and
+- <ins>OpenTofu</ins>, which create and manage resources on cloud platforms.
+- and so on.
+
+mc-terrarium currently provides features for multi-cloud network, such as site-to-site VPN. This will gradually evolve to enable you to build the multi-cloud infrastructure you need.
 
 ### Prerequisites
 
@@ -29,10 +37,10 @@ rm install-opentofu.sh
 
 #### Get source code
 
-In this readme, `~/poc-mc-net-tf` is used as the default directory.
+In this readme, `~/mc-terrarium` is used as the default directory.
 
 ```bash
-git clone https://github.com/cloud-barista/poc-mc-net-tf.git ~/poc-mc-net-tf
+git clone https://github.com/cloud-barista/mc-terrarium.git ~/mc-terrarium
 ```
 
 #### Install swag
@@ -135,22 +143,22 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 ##### Build
 
 ```bash
-cd ~/poc-mc-net-tf
+cd ~/mc-terrarium
 make
 ```
 
 ##### Run API server binary
 
 ```bash
-cd ~/poc-mc-net-tf
+cd ~/mc-terrarium
 make run
 ```
 
 #### Container based execution
 
-Check a tag of poc-mc-net-tf container image in cloudbaristaorg/poc-mc-net-tf
+Check a tag of mc-terrarium container image in cloudbaristaorg/mc-terrarium
 
-##### Run poc-mc-net-tf container
+##### Run mc-terrarium container
 
 Note - Credentials for AWS, Azure, and GCP must be prepared and injected when running a container.
 
@@ -169,15 +177,15 @@ docker run \
 --env-file "${PWD}"/secrets/credential-azure.env \
 --mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/ \
 -p 8888:8888 \
---name poc-mc-net-tf \
-cloudbaristaorg/poc-mc-net-tf:latest
+--name mc-terrarium \
+cloudbaristaorg/mc-terrarium:latest
 ```
 
 #### Access Swagger UI
 
 You can find the default username and password to access to API dashboard when the API server runs.
 
-URL: http://localhost:8888/mc-net/swagger/index.html
+URL: http://localhost:8888/terrarium/swagger/index.html
 
 Note - You can find API documentation on Swagger UI.
 

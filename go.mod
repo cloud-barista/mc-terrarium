@@ -1,4 +1,4 @@
-module github.com/cloud-barista/poc-mc-net-tf
+module github.com/cloud-barista/mc-terrarium
 
 go 1.21.4
 

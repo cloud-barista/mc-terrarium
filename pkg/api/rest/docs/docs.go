@@ -60,7 +60,7 @@ const docTemplate = `{
         },
         "/readyz": {
             "get": {
-                "description": "Check mc-net server is ready",
+                "description": "Check mc-terrarium server is ready",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,7 +70,7 @@ const docTemplate = `{
                 "tags": [
                     "[System] Utility"
                 ],
-                "summary": "Check mc-net server is ready",
+                "summary": "Check mc-terrarium server is ready",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1948,10 +1948,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "latest",
 	Host:             "",
-	BasePath:         "/mc-net",
+	BasePath:         "/terrarium",
 	Schemes:          []string{},
-	Title:            "POC-MC-Net-TF REST API",
-	Description:      "POC-MC-Net-TF REST API",
+	Title:            "Multi-Cloud Terrarium  REST API",
+	Description:      "Multi-Cloud Terrarium (mc-terrarium) aims to provide an enriched environment for multi-cloud infrastructure.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

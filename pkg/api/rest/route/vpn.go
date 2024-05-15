@@ -1,11 +1,11 @@
 package route
 
 import (
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
 	"github.com/labstack/echo/v4"
 )
 
-// /mc-net/rg/:rgId/vpn/...
+// /terrarium/rg/:rgId/vpn/...
 func RegisterRoutesForVPN(g *echo.Group) {
 	// GCP and AWS
 	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/init", handlers.InitTerrariumForGcpAwsVpn)

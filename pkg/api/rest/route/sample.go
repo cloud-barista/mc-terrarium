@@ -1,11 +1,11 @@
 package route
 
 import (
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
 	"github.com/labstack/echo/v4"
 )
 
-// /mc-net/sample/*
+// /terrarium/sample/*
 func RegisterSampleRoutes(g *echo.Group) {
 	g.GET("/users", handlers.GetUsers)
 	g.GET("/users/:id", handlers.GetUser)

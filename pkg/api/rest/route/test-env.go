@@ -1,11 +1,11 @@
 package route
 
 import (
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
 	"github.com/labstack/echo/v4"
 )
 
-// /mc-net/test-env/...
+// /terrarium/test-env/...
 func RegisterRoutesForTestEnv(g *echo.Group) {
 	g.POST("/test-env/init", handlers.InitTerrariumForTestEnv)
 	g.DELETE("/test-env/clear", handlers.ClearTestEnv)

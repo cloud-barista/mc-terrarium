@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "POC-MC-Net-TF REST API",
-        "title": "POC-MC-Net-TF REST API",
+        "description": "Multi-Cloud Terrarium (mc-terrarium) aims to provide an enriched environment for multi-cloud infrastructure.",
+        "title": "Multi-Cloud Terrarium  REST API",
         "contact": {
             "name": "API Support",
             "url": "http://cloud-barista.github.io",
@@ -14,7 +14,7 @@
         },
         "version": "latest"
     },
-    "basePath": "/mc-net",
+    "basePath": "/terrarium",
     "paths": {
         "/httpVersion": {
             "get": {
@@ -53,7 +53,7 @@
         },
         "/readyz": {
             "get": {
-                "description": "Check mc-net server is ready",
+                "description": "Check mc-terrarium server is ready",
                 "consumes": [
                     "application/json"
                 ],
@@ -63,7 +63,7 @@
                 "tags": [
                     "[System] Utility"
                 ],
-                "summary": "Check mc-net server is ready",
+                "summary": "Check mc-terrarium server is ready",
                 "responses": {
                     "200": {
                         "description": "OK",

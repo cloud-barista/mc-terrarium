@@ -20,8 +20,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -46,7 +46,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
@@ -83,7 +83,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
 	if err != nil {
@@ -109,7 +109,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 // @Router /test-env/clear [delete]
 func ClearTestEnv(c echo.Context) error {
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -172,7 +172,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -191,7 +191,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	case DetailOptions.Refined:
 		// Code for handling "refined" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
 		// show: subcommand
 		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
 		if err != nil {
@@ -226,7 +226,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	case DetailOptions.Raw:
 		// Code for handling "raw" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
 		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
@@ -304,7 +304,7 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -350,7 +350,7 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -360,7 +360,7 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
 	// subcommand: plan
 	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
@@ -391,7 +391,7 @@ func CreateTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -401,7 +401,7 @@ func CreateTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
@@ -430,7 +430,7 @@ func DestroyTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
@@ -441,7 +441,7 @@ func DestroyTestEnv(c echo.Context) error {
 	}
 
 	// Destroy the infrastructure
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
 	// subcommand: destroy
 	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
@@ -476,7 +476,7 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {

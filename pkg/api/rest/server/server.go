@@ -28,14 +28,14 @@ import (
 	"net/http"
 
 	// Black import (_) is for running a package's init() function without using its other contents.
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/logger"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
 	"github.com/rs/zerolog/log"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/handlers"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/middlewares"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/route"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/route"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 
 	"github.com/spf13/viper"
 
@@ -44,10 +44,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	// echo-swagger middleware
-	_ "github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/docs"
+	_ "github.com/cloud-barista/mc-terrarium/pkg/api/rest/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/readyz"
+	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 )
 
 //var masterConfigInfos confighandler.MASTERCONFIGTYPE
@@ -61,7 +61,7 @@ const (
 )
 
 const (
-	website = " https://github.com/cloud-barista/poc-mc-net-tf"
+	website = " https://github.com/cloud-barista/mc-terrarium"
 	banner  = `    
 
  ██████╗ ███████╗ █████╗ ██████╗ ██╗   ██╗
@@ -77,9 +77,9 @@ const (
 
 // RunServer func start Rest API server
 
-// @title POC-MC-Net-TF REST API
+// @title Multi-Cloud Terrarium  REST API
 // @version latest
-// @description POC-MC-Net-TF REST API
+// @description Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment to enrich multi-cloud infrastructure.
 
 // @contact.name API Support
 // @contact.url http://cloud-barista.github.io
@@ -88,7 +88,7 @@ const (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @BasePath /mc-net
+// @BasePath /terrarium
 
 // @securityDefinitions.basic BasicAuth
 func RunServer(port string) {
@@ -104,7 +104,7 @@ func RunServer(port string) {
 		}
 	}()
 
-	log.Info().Msg("Setting POC-MC-Net-TF REST API server")
+	log.Info().Msg("Setting mc-terrarium REST API server")
 
 	e := echo.New()
 
@@ -147,8 +147,8 @@ func RunServer(port string) {
 		e.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
 			// Skip authentication for some routes that do not require authentication
 			Skipper: func(c echo.Context) bool {
-				if c.Path() == "/mc-net/readyz" ||
-					c.Path() == "/mc-net/httpVersion" {
+				if c.Path() == "/terrarium/readyz" ||
+					c.Path() == "/terrarium/httpVersion" {
 					return true
 				}
 				return false
@@ -173,20 +173,20 @@ func RunServer(port string) {
 
 	// Route for system management
 	swaggerRedirect := func(c echo.Context) error {
-		return c.Redirect(http.StatusMovedPermanently, "/mc-net/api/index.html")
+		return c.Redirect(http.StatusMovedPermanently, "/terrarium/api/index.html")
 	}
-	e.GET("/mc-net/api", swaggerRedirect)
-	e.GET("/mc-net/api/", swaggerRedirect)
-	e.GET("/mc-net/api/*", echoSwagger.WrapHandler)
-	// e.GET("/mc-net/swagger/*", echoSwagger.WrapHandler)
-	// e.GET("/mc-net/swaggerActive", rest_common.RestGetSwagger)
+	e.GET("/terrarium/api", swaggerRedirect)
+	e.GET("/terrarium/api/", swaggerRedirect)
+	e.GET("/terrarium/api/*", echoSwagger.WrapHandler)
+	// e.GET("/terrarium/swagger/*", echoSwagger.WrapHandler)
+	// e.GET("/terrarium/swaggerActive", rest_common.RestGetSwagger)
 
-	e.GET("/mc-net/readyz", handlers.Readyz)
-	e.GET("/mc-net/httpVersion", handlers.HTTPVersion)
-	e.GET("/mc-net/tofuVersion", handlers.TofuVersion)
+	e.GET("/terrarium/readyz", handlers.Readyz)
+	e.GET("/terrarium/httpVersion", handlers.HTTPVersion)
+	e.GET("/terrarium/tofuVersion", handlers.TofuVersion)
 
-	// A group for Multi-cloud Network APIs which has /mc-net as prefix
-	groupMultiCloudNetwork := e.Group("/mc-net")
+	// A group for Multi-cloud Network APIs which has /terrarium as prefix
+	groupMultiCloudNetwork := e.Group("/terrarium")
 	// Resource Group APIs
 	route.RegisterRoutesForTestEnv(groupMultiCloudNetwork)
 	route.RegisterRoutesForRG(groupMultiCloudNetwork)
@@ -197,7 +197,7 @@ func RunServer(port string) {
 	route.RegisterSampleRoutes(groupSample)
 
 	selfEndpoint := viper.GetString("self.endpoint")
-	apidashboard := " http://" + selfEndpoint + "/mc-net/api"
+	apidashboard := " http://" + selfEndpoint + "/terrarium/api"
 
 	if enableAuth {
 		fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + ")")
@@ -226,8 +226,8 @@ func RunServer(port string) {
 		// Block until a signal is triggered
 		<-gracefulShutdownContext.Done()
 
-		fmt.Println("\n[Stop] POC-MC-Net-TF REST API server")
-		log.Info().Msg("stopping POC-MC-Net-TF REST API server")
+		fmt.Println("\n[Stop] mc-terrarium REST API server")
+		log.Info().Msg("stopping mc-terrarium REST API server")
 		ctx, cancel := context.WithTimeout(context.TODO(), 3*time.Second)
 		defer cancel()
 
@@ -236,7 +236,7 @@ func RunServer(port string) {
 		}
 	}(&wg)
 
-	log.Info().Msg("starting POC-MC-Net-TF REST API server")
+	log.Info().Msg("starting mc-terrarium REST API server")
 	port = fmt.Sprintf(":%s", port)
 	readyz.SetReady(true)
 	if err := e.Start(port); err != nil && err != http.ErrServerClosed {

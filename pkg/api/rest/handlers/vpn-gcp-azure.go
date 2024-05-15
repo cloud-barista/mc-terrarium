@@ -20,8 +20,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/api/rest/models"
-	"github.com/cloud-barista/poc-mc-net-tf/pkg/tofu"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -60,7 +60,7 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
@@ -116,7 +116,7 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
@@ -164,7 +164,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -255,7 +255,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -274,7 +274,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	case DetailOptions.Refined:
 		// Code for handling "refined" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
 		// show: subcommand
 		ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "output", "-json")
 		if err != nil {
@@ -309,7 +309,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	case DetailOptions.Raw:
 		// Code for handling "raw" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
 		ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "show", "-json")
@@ -407,7 +407,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -485,7 +485,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -499,7 +499,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
 	// subcommand: plan
 	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
@@ -553,7 +553,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -567,7 +567,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
@@ -620,7 +620,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
@@ -635,7 +635,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Destroy the infrastructure
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/poc-mc-net-tf/.tofu/{resourceGroupId}
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}
 	// subcommand: destroy
 	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
@@ -695,7 +695,7 @@ func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("pocmcnettf.root")
+	projectRoot := viper.GetString("mcterrarium.root")
 	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")

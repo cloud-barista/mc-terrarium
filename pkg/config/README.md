@@ -14,13 +14,13 @@ The below configurations are compatible in this project.
 
 - `setup.env` contains:
     ```
-    export LOGFILE_PATH=poc-mc-net-tf.log
+    export LOGFILE_PATH=mc-terrarium.log
     ```
 
 - `config.yaml` has:
     ```yaml
     logfile:
-        path: ./poc-mc-net-tf.log
+        path: ./mc-terrarium.log
     ```
 
 #### How to use it
@@ -35,7 +35,7 @@ import (
     // other packages
 
     // Loads configurations from setup.env and config.yaml
-    _ "github.com/cloud-barista/poc-mc-net-tf/pkg/config"
+    _ "github.com/cloud-barista/mc-terrarium/pkg/config"
 )
 
 func main() {

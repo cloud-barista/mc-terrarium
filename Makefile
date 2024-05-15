@@ -1,20 +1,20 @@
 default:
-	cd cmd/poc-mc-net-tf && $(MAKE)
+	cd cmd/mc-terrarium && $(MAKE)
 
 cc:
-	cd cmd/poc-mc-net-tf && $(MAKE)
+	cd cmd/mc-terrarium && $(MAKE)
 
 run:
-	cd cmd/poc-mc-net-tf && $(MAKE) run
+	cd cmd/mc-terrarium && $(MAKE) run
 
 runwithport:
-	cd cmd/poc-mc-net-tf && $(MAKE) runwithport --port=$(PORT)
+	cd cmd/mc-terrarium && $(MAKE) runwithport --port=$(PORT)
 
 clean:
-	cd cmd/poc-mc-net-tf && $(MAKE) clean
+	cd cmd/mc-terrarium && $(MAKE) clean
 
 prod:
-	cd cmd/poc-mc-net-tf && $(MAKE) prod
+	cd cmd/mc-terrarium && $(MAKE) prod
 
 source-model:
 	cd pkg/api/rest/model && $(MAKE) source-model
