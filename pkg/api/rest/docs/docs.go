@@ -486,7 +486,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status": {
+        "/rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}": {
             "get": {
                 "description": "Check the status of a specific request by its ID",
                 "consumes": [
@@ -893,7 +893,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status": {
+        "/rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}": {
             "get": {
                 "description": "Check the status of a specific request by its ID",
                 "consumes": [
