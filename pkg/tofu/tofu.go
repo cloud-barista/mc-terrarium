@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -337,7 +337,7 @@ func CopyFiles(sourceDir, destDir string) error {
 	return nil
 }
 
-func SaveGcpAwsTfVarsToFile(tfVars models.TfVarsGcpAwsVpnTunnel, filePath string) error {
+func SaveGcpAwsTfVarsToFile(tfVars model.TfVarsGcpAwsVpnTunnel, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err
@@ -351,7 +351,7 @@ func SaveGcpAwsTfVarsToFile(tfVars models.TfVarsGcpAwsVpnTunnel, filePath string
 	return nil
 }
 
-func SaveGcpAzureTfVarsToFile(tfVars models.TfVarsGcpAzureVpnTunnel, filePath string) error {
+func SaveGcpAzureTfVarsToFile(tfVars model.TfVarsGcpAzureVpnTunnel, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err
@@ -365,7 +365,7 @@ func SaveGcpAzureTfVarsToFile(tfVars models.TfVarsGcpAzureVpnTunnel, filePath st
 	return nil
 }
 
-func SaveTestEnvTfVarsToFile(tfVars models.TfVarsTestEnv, filePath string) error {
+func SaveTestEnvTfVarsToFile(tfVars model.TfVarsTestEnv, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err

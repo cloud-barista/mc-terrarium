@@ -1,4 +1,4 @@
-package models
+package model
 
 type TfVarsGcpAwsVpnTunnel struct {
 	ResourceGroupId   string `json:"resource-group-id,omitempty" default:"" example:""`

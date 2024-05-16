@@ -11,14 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package handlers
+package handler
 
 import (
 	"fmt"
 	"net/http"
 	"os"
 
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -31,15 +31,15 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param ResourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Success 200 {object} models.ResponseText "OK"
-// @Failure 400 {object} models.ResponseText "Bad Request"
-// @Failure 503 {object} models.ResponseText "Service Unavailable"
+// @Success 200 {object} model.ResponseText "OK"
+// @Failure 400 {object} model.ResponseText "Bad Request"
+// @Failure 503 {object} model.ResponseText "Service Unavailable"
 // @Router /rg/{resourceGroupId} [delete]
 func ClearResourceGroup(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")
 	if rgId == "" {
-		res := models.ResponseText{Success: false, Text: "Require the resource group ID"}
+		res := model.ResponseText{Success: false, Text: "Require the resource group ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -49,18 +49,18 @@ func ClearResourceGroup(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/" + rgId
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := fmt.Sprintf("Not exist resource group (id: %v)", rgId)
-		res := models.ResponseText{Success: false, Text: text}
+		res := model.ResponseText{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	err := os.RemoveAll(workingDir)
 	if err != nil {
-		res := models.ResponseText{Success: false, Text: "Failed to clear entire directories and configuration files"}
+		res := model.ResponseText{Success: false, Text: "Failed to clear entire directories and configuration files"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	text := fmt.Sprintf("Successfully cleared all in the resource group (id: %v)", rgId)
-	res := models.ResponseText{Success: true, Text: text}
+	res := model.ResponseText{Success: true, Text: text}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)

@@ -1,4 +1,4 @@
-package models
+package model
 
 type TfVarsTestEnv struct {
 	AzureRegion            string `json:"azure-region" default:"koreacentral" example:"koreacentral"`
