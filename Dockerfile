@@ -46,7 +46,7 @@ COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 
 RUN apt-get update && apt-get install -y git
-RUN ./scripts/install-tofu-1.6.2.sh
+RUN ./scripts/install-tofu-1.7.1.sh
 
 # Setting various environment variables required by the application
 ENV MCTERRARIUM_ROOT=/app \
