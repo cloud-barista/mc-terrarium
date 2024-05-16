@@ -391,7 +391,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.CreateInfracodeOfGcpAwsVpnRequest"
+                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAwsVpnRequest"
                         }
                     },
                     {
@@ -798,7 +798,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.CreateInfracodeOfGcpAzureVpnRequest"
+                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAzureVpnRequest"
                         }
                     },
                     {
@@ -1480,7 +1480,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.CreateInfracodeOfTestEnvRequest"
+                            "$ref": "#/definitions/model.CreateInfracodeOfTestEnvRequest"
                         }
                     }
                 ],
@@ -1651,30 +1651,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handler.CreateInfracodeOfGcpAwsVpnRequest": {
-            "type": "object",
-            "properties": {
-                "tfVars": {
-                    "$ref": "#/definitions/model.TfVarsGcpAwsVpnTunnel"
-                }
-            }
-        },
-        "handler.CreateInfracodeOfGcpAzureVpnRequest": {
-            "type": "object",
-            "properties": {
-                "tfVars": {
-                    "$ref": "#/definitions/model.TfVarsGcpAzureVpnTunnel"
-                }
-            }
-        },
-        "handler.CreateInfracodeOfTestEnvRequest": {
-            "type": "object",
-            "properties": {
-                "tfVars": {
-                    "$ref": "#/definitions/model.TfVarsTestEnv"
-                }
-            }
-        },
         "handler.CreateUserRequest": {
             "type": "object",
             "properties": {
@@ -1767,6 +1743,30 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.CreateInfracodeOfGcpAwsVpnRequest": {
+            "type": "object",
+            "properties": {
+                "tfVars": {
+                    "$ref": "#/definitions/model.TfVarsGcpAwsVpnTunnel"
+                }
+            }
+        },
+        "model.CreateInfracodeOfGcpAzureVpnRequest": {
+            "type": "object",
+            "properties": {
+                "tfVars": {
+                    "$ref": "#/definitions/model.TfVarsGcpAzureVpnTunnel"
+                }
+            }
+        },
+        "model.CreateInfracodeOfTestEnvRequest": {
+            "type": "object",
+            "properties": {
+                "tfVars": {
+                    "$ref": "#/definitions/model.TfVarsTestEnv"
                 }
             }
         },

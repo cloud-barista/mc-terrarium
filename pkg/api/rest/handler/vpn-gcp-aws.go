@@ -348,10 +348,6 @@ func GetResourceInfoOfGcpAwsVpn(c echo.Context) error {
 	}
 }
 
-type CreateInfracodeOfGcpAwsVpnRequest struct {
-	TfVars model.TfVarsGcpAwsVpnTunnel `json:"tfVars"`
-}
-
 // CreateInfracodeOfGcpAwsVpn godoc
 // @Summary Create the infracode to configure GCP to AWS VPN tunnels
 // @Description Create the infracode to configure GCP to AWS VPN tunnels
@@ -359,7 +355,7 @@ type CreateInfracodeOfGcpAwsVpnRequest struct {
 // @Accept  json
 // @Produce  json
 // @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
-// @Param ParamsForInfracode body CreateInfracodeOfGcpAwsVpnRequest true "Parameters requied to create the infracode to configure GCP to AWS VPN tunnels"
+// @Param ParamsForInfracode body model.CreateInfracodeOfGcpAwsVpnRequest true "Parameters requied to create the infracode to configure GCP to AWS VPN tunnels"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.ResponseText "Created"
 // @Failure 400 {object} model.ResponseText "Bad Request"
@@ -380,7 +376,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	req := new(CreateInfracodeOfGcpAwsVpnRequest)
+	req := new(model.CreateInfracodeOfGcpAwsVpnRequest)
 	if err := c.Bind(req); err != nil {
 		err2 := fmt.Errorf("invalid request format, %v", err)
 		log.Warn().Err(err).Msg("invalid request format")

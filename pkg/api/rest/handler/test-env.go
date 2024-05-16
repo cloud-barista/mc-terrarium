@@ -281,24 +281,20 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	}
 }
 
-type CreateInfracodeOfTestEnvRequest struct {
-	TfVars model.TfVarsTestEnv `json:"tfVars"`
-}
-
 // CreateInfrcodeOfGcpAzureVpn godoc
 // @Summary Create the infracode to configure test environment
 // @Description Create the infracode to configure test environment
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Param ParamsForInfracode body CreateInfracodeOfTestEnvRequest true "Parameters requied to create the infracode to configure test environment"
+// @Param ParamsForInfracode body model.CreateInfracodeOfTestEnvRequest true "Parameters requied to create the infracode to configure test environment"
 // @Success 201 {object} model.ResponseText "Created"
 // @Failure 400 {object} model.ResponseText "Bad Request"
 // @Failure 503 {object} model.ResponseText "Service Unavailable"
 // @Router /test-env/infracode [post]
 func CreateInfracodeOfTestEnv(c echo.Context) error {
 
-	req := new(CreateInfracodeOfTestEnvRequest)
+	req := new(model.CreateInfracodeOfTestEnvRequest)
 	if err := c.Bind(req); err != nil {
 		res := model.ResponseText{Success: false, Text: "Invalid request"}
 		return c.JSON(http.StatusBadRequest, res)
