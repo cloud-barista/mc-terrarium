@@ -11,13 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package handlers
+package handler
 
 import (
 	"net/http"
 	"strconv"
 
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/models"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/labstack/echo/v4"
 )
 
@@ -25,7 +25,7 @@ import (
 // No RequestBody required for "GET /users"
 
 type GetUsersResponse struct {
-	Users []models.MyUser `json:"users"`
+	Users []model.MyUser `json:"users"`
 }
 
 // GetUsers godoc
@@ -40,7 +40,7 @@ type GetUsersResponse struct {
 func GetUsers(c echo.Context) error {
 
 	// In this example, hardcoded data is returned
-	users := []models.MyUser{
+	users := []model.MyUser{
 		{ID: 1, Name: "John Doe", Email: "john@example.com"},
 		{ID: 2, Name: "Anne Jacqueline Hathaway", Email: "Anne@example.com"},
 		{ID: 3, Name: "Robert John Downey Jr.", Email: "Robert@example.com"},
@@ -54,7 +54,7 @@ func GetUsers(c echo.Context) error {
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type GetUserResponse struct {
-	models.MyUser
+	model.MyUser
 }
 
 // GetUser godoc
@@ -79,20 +79,20 @@ func GetUser(c echo.Context) error {
 	}
 
 	// In this example, hardcoded data is returned
-	user := models.MyUser{ID: 1, Name: "John Doe", Email: "john@example.com"}
+	user := model.MyUser{ID: 1, Name: "John Doe", Email: "john@example.com"}
 	return c.JSON(http.StatusOK, user)
 }
 
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type CreateUserRequest struct {
-	models.MyUser
+	model.MyUser
 }
 
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type CreateUserResponse struct {
-	models.MyUser
+	model.MyUser
 }
 
 // CreateUser godoc
@@ -106,7 +106,7 @@ type CreateUserResponse struct {
 // @Failure 400 {object} object "Invalid Request"
 // @Router /sample/users [post]
 func CreateUser(c echo.Context) error {
-	u := new(models.MyUser)
+	u := new(model.MyUser)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid Request")
 	}
@@ -120,13 +120,13 @@ func CreateUser(c echo.Context) error {
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type UpdateUserRequest struct {
-	models.MyUser
+	model.MyUser
 }
 
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type UpdateUserResponse struct {
-	models.MyUser
+	model.MyUser
 }
 
 // UpdateUser godoc
@@ -146,7 +146,7 @@ func UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "Invalid ID format")
 	}
 
-	u := new(models.MyUser)
+	u := new(model.MyUser)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid request")
 	}
@@ -160,13 +160,13 @@ func UpdateUser(c echo.Context) error {
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type PatchUserRequest struct {
-	models.MyUser
+	model.MyUser
 }
 
 // [Note]
 // Struct Embedding is used to inherit the fields of MyUser
 type PatchUserResponse struct {
-	models.MyUser
+	model.MyUser
 }
 
 // PatchUser godoc
@@ -187,7 +187,7 @@ func PatchUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "Invalid ID format")
 	}
 
-	u := new(models.MyUser)
+	u := new(model.MyUser)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid request")
 	}
@@ -223,7 +223,7 @@ func DeleteUser(c echo.Context) error {
 
 	// Implement user update logic (this is a simple example)
 	// In this example, hardcoded data is returned
-	user := models.MyUser{ID: 1, Name: "John Doe", Email: "john@example.com"}
+	user := model.MyUser{ID: 1, Name: "John Doe", Email: "john@example.com"}
 	if id != user.ID {
 		return c.JSON(http.StatusNotFound, "User not found")
 	}

@@ -1,21 +1,21 @@
 basePath: /terrarium
 definitions:
-  handlers.CreateBluprintOfGcpAwsVpnRequest:
+  handler.CreateInfracodeOfGcpAwsVpnRequest:
     properties:
       tfVars:
-        $ref: '#/definitions/models.TfVarsGcpAwsVpnTunnel'
+        $ref: '#/definitions/model.TfVarsGcpAwsVpnTunnel'
     type: object
-  handlers.CreateInfracodeOfGcpAzureVpnRequest:
+  handler.CreateInfracodeOfGcpAzureVpnRequest:
     properties:
       tfVars:
-        $ref: '#/definitions/models.TfVarsGcpAzureVpnTunnel'
+        $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
     type: object
-  handlers.CreateInfracodeOfTestEnvRequest:
+  handler.CreateInfracodeOfTestEnvRequest:
     properties:
       tfVars:
-        $ref: '#/definitions/models.TfVarsTestEnv'
+        $ref: '#/definitions/model.TfVarsTestEnv'
     type: object
-  handlers.CreateUserRequest:
+  handler.CreateUserRequest:
     properties:
       email:
         type: string
@@ -24,7 +24,7 @@ definitions:
       name:
         type: string
     type: object
-  handlers.GetUserResponse:
+  handler.GetUserResponse:
     properties:
       email:
         type: string
@@ -33,14 +33,14 @@ definitions:
       name:
         type: string
     type: object
-  handlers.GetUsersResponse:
+  handler.GetUsersResponse:
     properties:
       users:
         items:
-          $ref: '#/definitions/models.MyUser'
+          $ref: '#/definitions/model.MyUser'
         type: array
     type: object
-  handlers.PatchUserRequest:
+  handler.PatchUserRequest:
     properties:
       email:
         type: string
@@ -49,7 +49,7 @@ definitions:
       name:
         type: string
     type: object
-  handlers.PatchUserResponse:
+  handler.PatchUserResponse:
     properties:
       email:
         type: string
@@ -58,7 +58,7 @@ definitions:
       name:
         type: string
     type: object
-  handlers.UpdateUserRequest:
+  handler.UpdateUserRequest:
     properties:
       email:
         type: string
@@ -67,7 +67,7 @@ definitions:
       name:
         type: string
     type: object
-  handlers.UpdateUserResponse:
+  handler.UpdateUserResponse:
     properties:
       email:
         type: string
@@ -76,7 +76,7 @@ definitions:
       name:
         type: string
     type: object
-  models.MyUser:
+  model.MyUser:
     properties:
       email:
         type: string
@@ -85,7 +85,7 @@ definitions:
       name:
         type: string
     type: object
-  models.ResponseList:
+  model.ResponseList:
     properties:
       list:
         items: {}
@@ -94,7 +94,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  models.ResponseObject:
+  model.ResponseObject:
     properties:
       object:
         additionalProperties: true
@@ -103,7 +103,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  models.ResponseText:
+  model.ResponseText:
     properties:
       success:
         example: true
@@ -112,7 +112,7 @@ definitions:
         example: Any text
         type: string
     type: object
-  models.ResponseTextWithDetails:
+  model.ResponseTextWithDetails:
     properties:
       details:
         example: Any details
@@ -124,7 +124,7 @@ definitions:
         example: Any text
         type: string
     type: object
-  models.TfVarsGcpAwsVpnTunnel:
+  model.TfVarsGcpAwsVpnTunnel:
     properties:
       aws-region:
         default: ap-northeast-2
@@ -148,7 +148,7 @@ definitions:
         example: ""
         type: string
     type: object
-  models.TfVarsGcpAzureVpnTunnel:
+  model.TfVarsGcpAzureVpnTunnel:
     properties:
       azure-gateway-subnet-cidr-block:
         default: 192.168.130.0/24
@@ -178,7 +178,7 @@ definitions:
         example: ""
         type: string
     type: object
-  models.TfVarsTestEnv:
+  model.TfVarsTestEnv:
     properties:
       aws-region:
         default: ap-northeast-2
@@ -202,8 +202,8 @@ info:
     email: contact-to-cloud-barista@googlegroups.com
     name: API Support
     url: http://cloud-barista.github.io
-  description: Multi-Cloud Terrarium (mc-terrarium) aims to provide an enriched environment
-    for multi-cloud infrastructure.
+  description: Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment
+    to enrich multi-cloud infrastructure.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -222,15 +222,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check HTTP version of incoming request
       tags:
       - '[System] Utility'
@@ -245,11 +245,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check mc-terrarium server is ready
       tags:
       - '[System] Utility'
@@ -271,15 +271,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Clear the entire directories and configuration files
       tags:
       - '[ResourceGroup] Resource group'
@@ -306,19 +306,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Destroy network resources that were used to configure GCP as an AWS
         VPN tunnel
       tags:
@@ -349,19 +349,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseObject'
+            $ref: '#/definitions/model.ResponseObject'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Get resource info to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -386,19 +386,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and AWS
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -424,19 +424,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -458,7 +458,7 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateBluprintOfGcpAwsVpnRequest'
+          $ref: '#/definitions/handler.CreateInfracodeOfGcpAwsVpnRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -469,19 +469,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create the infracode to configure GCP to AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -508,19 +508,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check and show changes by the current infracode to configure GCP to
         AWS VPN tunnels
       tags:
@@ -548,19 +548,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check the status of a specific request by its ID
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -586,19 +586,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
@@ -625,19 +625,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Destroy network resources that were used to configure GCP as an Azure
         VPN tunnel
       tags:
@@ -663,19 +663,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create network resources for VPN tunnel in GCP and Azure
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -701,19 +701,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -735,7 +735,7 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateInfracodeOfGcpAzureVpnRequest'
+          $ref: '#/definitions/handler.CreateInfracodeOfGcpAzureVpnRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -746,19 +746,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create the infracode to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -785,19 +785,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseTextWithDetails'
+            $ref: '#/definitions/model.ResponseTextWithDetails'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check and show changes by the current infracode to configure GCP to
         Azure VPN tunnels
       tags:
@@ -825,19 +825,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check the status of a specific request by its ID
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -868,19 +868,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseObject'
+            $ref: '#/definitions/model.ResponseObject'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Get resource info to configure GCP to Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -906,19 +906,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
@@ -934,7 +934,7 @@ paths:
           description: (sample) This is a sample description for success response
             in Swagger UI
           schema:
-            $ref: '#/definitions/handlers.GetUsersResponse'
+            $ref: '#/definitions/handler.GetUsersResponse'
         "404":
           description: User Not Found
           schema:
@@ -952,7 +952,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateUserRequest'
+          $ref: '#/definitions/handler.CreateUserRequest'
       produces:
       - application/json
       responses:
@@ -960,7 +960,7 @@ paths:
           description: (Sample) This is a sample description for success response
             in Swagger UI
           schema:
-            $ref: '#/definitions/handlers.GetUserResponse'
+            $ref: '#/definitions/handler.GetUserResponse'
         "400":
           description: Invalid Request
           schema:
@@ -1014,7 +1014,7 @@ paths:
           description: (Sample) This is a sample description for success response
             in Swagger UI
           schema:
-            $ref: '#/definitions/handlers.GetUserResponse'
+            $ref: '#/definitions/handler.GetUserResponse'
         "404":
           description: User Not Found
           schema:
@@ -1037,7 +1037,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handlers.PatchUserRequest'
+          $ref: '#/definitions/handler.PatchUserRequest'
       produces:
       - application/json
       responses:
@@ -1045,7 +1045,7 @@ paths:
           description: (Sample) This is a sample description for success response
             in Swagger UI
           schema:
-            $ref: '#/definitions/handlers.PatchUserResponse'
+            $ref: '#/definitions/handler.PatchUserResponse'
         "400":
           description: Invalid Request
           schema:
@@ -1072,7 +1072,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handlers.UpdateUserRequest'
+          $ref: '#/definitions/handler.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -1080,7 +1080,7 @@ paths:
           description: (Sample) This is a sample description for success response
             in Swagger UI
           schema:
-            $ref: '#/definitions/handlers.UpdateUserResponse'
+            $ref: '#/definitions/handler.UpdateUserResponse'
         "400":
           description: Invalid Request
           schema:
@@ -1099,15 +1099,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Destroy test environment
       tags:
       - '[Test env] Test environment management'
@@ -1127,15 +1127,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseList'
+            $ref: '#/definitions/model.ResponseList'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Get all resource info of test environment
       tags:
       - '[Test env] Test environment management'
@@ -1149,15 +1149,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create test environment
       tags:
       - '[Test env] Test environment management'
@@ -1172,15 +1172,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Clear the entire directory and configuration files
       tags:
       - '[Test env] Test environment management'
@@ -1196,22 +1196,22 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateInfracodeOfTestEnvRequest'
+          $ref: '#/definitions/handler.CreateInfracodeOfTestEnvRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Create the infracode to configure test environment
       tags:
       - '[Test env] Test environment management'
@@ -1226,15 +1226,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Initialize a multi-cloud terrarium for test environment
       tags:
       - '[Test env] Test environment management'
@@ -1249,15 +1249,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check the infracode and show changes of test environment
       tags:
       - '[Test env] Test environment management'
@@ -1278,15 +1278,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Get the status of the request to configure test environment
       tags:
       - '[Test env] Test environment management'
@@ -1301,11 +1301,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseText'
+            $ref: '#/definitions/model.ResponseText'
       summary: Check Tofu version
       tags:
       - '[System] Utility'

@@ -32,8 +32,8 @@ import (
 	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
 	"github.com/rs/zerolog/log"
 
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/custommiddleware"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/route"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 
@@ -112,7 +112,7 @@ func RunServer(port string) {
 	// e.Use(middleware.Logger()) // default logger middleware in echo
 
 	// Custom logger middleware with zerolog
-	e.Use(middlewares.Zerologger())
+	e.Use(custommiddleware.Zerologger())
 
 	// Recover middleware recovers from panics anywhere in the chain, and handles the control to the centralized HTTP error handler.
 	e.Use(middleware.Recover())
@@ -181,9 +181,9 @@ func RunServer(port string) {
 	// e.GET("/terrarium/swagger/*", echoSwagger.WrapHandler)
 	// e.GET("/terrarium/swaggerActive", rest_common.RestGetSwagger)
 
-	e.GET("/terrarium/readyz", handlers.Readyz)
-	e.GET("/terrarium/httpVersion", handlers.HTTPVersion)
-	e.GET("/terrarium/tofuVersion", handlers.TofuVersion)
+	e.GET("/terrarium/readyz", handler.Readyz)
+	e.GET("/terrarium/httpVersion", handler.HTTPVersion)
+	e.GET("/terrarium/tofuVersion", handler.TofuVersion)
 
 	// A group for Multi-cloud Network APIs which has /terrarium as prefix
 	groupMultiCloudNetwork := e.Group("/terrarium")

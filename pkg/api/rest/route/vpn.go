@@ -1,29 +1,29 @@
 package route
 
 import (
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handlers"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
 	"github.com/labstack/echo/v4"
 )
 
 // /terrarium/rg/:rgId/vpn/...
 func RegisterRoutesForVPN(g *echo.Group) {
 	// GCP and AWS
-	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/init", handlers.InitTerrariumForGcpAwsVpn)
-	g.DELETE("/rg/:resourceGroupId/vpn/gcp-aws/clear", handlers.ClearGcpAwsVpn)
-	g.GET("/rg/:resourceGroupId/vpn/gcp-aws", handlers.GetResourceInfoOfGcpAwsVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/infracode", handlers.CreateInfracodeOfGcpAwsVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/plan", handlers.CheckInfracodeOfGcpAwsVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-aws", handlers.CreateGcpAwsVpn)
-	g.DELETE("/rg/:resourceGroupId/vpn/gcp-aws", handlers.DestroyGcpAwsVpn)
-	g.GET("/rg/:resourceGroupId/vpn/gcp-aws/request/:requestId/status", handlers.GetRequestStatusOfGcpAwsVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/init", handler.InitTerrariumForGcpAwsVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-aws/clear", handler.ClearGcpAwsVpn)
+	g.GET("/rg/:resourceGroupId/vpn/gcp-aws", handler.GetResourceInfoOfGcpAwsVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/infracode", handler.CreateInfracodeOfGcpAwsVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-aws/plan", handler.CheckInfracodeOfGcpAwsVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-aws", handler.CreateGcpAwsVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-aws", handler.DestroyGcpAwsVpn)
+	g.GET("/rg/:resourceGroupId/vpn/gcp-aws/request/:requestId/status", handler.GetRequestStatusOfGcpAwsVpn)
 
 	// GCP and Azure
-	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/init", handlers.InitTerrariumForGcpAzureVpn)
-	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure/clear", handlers.ClearGcpAzureVpn)
-	g.GET("/rg/:resourceGroupId/vpn/gcp-azure/resource/info", handlers.GetResourceInfoOfGcpAzureVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/infracode", handlers.CreateInfracodeOfGcpAzureVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/plan", handlers.CheckInfracodeOfGcpAzureVpn)
-	g.POST("/rg/:resourceGroupId/vpn/gcp-azure", handlers.CreateGcpAzureVpn)
-	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure", handlers.DestroyGcpAzureVpn)
-	g.GET("/rg/:resourceGroupId/vpn/gcp-azure/request/:requestId/status", handlers.GetRequestStatusOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/init", handler.InitTerrariumForGcpAzureVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure/clear", handler.ClearGcpAzureVpn)
+	g.GET("/rg/:resourceGroupId/vpn/gcp-azure/resource/info", handler.GetResourceInfoOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/infracode", handler.CreateInfracodeOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure/plan", handler.CheckInfracodeOfGcpAzureVpn)
+	g.POST("/rg/:resourceGroupId/vpn/gcp-azure", handler.CreateGcpAzureVpn)
+	g.DELETE("/rg/:resourceGroupId/vpn/gcp-azure", handler.DestroyGcpAzureVpn)
+	g.GET("/rg/:resourceGroupId/vpn/gcp-azure/request/:requestId/status", handler.GetRequestStatusOfGcpAzureVpn)
 }

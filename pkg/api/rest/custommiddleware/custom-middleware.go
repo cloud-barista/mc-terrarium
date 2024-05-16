@@ -1,4 +1,4 @@
-package middlewares
+package custommiddleware
 
 import (
 	"github.com/labstack/echo/v4"
