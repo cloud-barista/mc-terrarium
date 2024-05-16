@@ -1,20 +1,5 @@
 basePath: /terrarium
 definitions:
-  handler.CreateInfracodeOfGcpAwsVpnRequest:
-    properties:
-      tfVars:
-        $ref: '#/definitions/model.TfVarsGcpAwsVpnTunnel'
-    type: object
-  handler.CreateInfracodeOfGcpAzureVpnRequest:
-    properties:
-      tfVars:
-        $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
-    type: object
-  handler.CreateInfracodeOfTestEnvRequest:
-    properties:
-      tfVars:
-        $ref: '#/definitions/model.TfVarsTestEnv'
-    type: object
   handler.CreateUserRequest:
     properties:
       email:
@@ -75,6 +60,21 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  model.CreateInfracodeOfGcpAwsVpnRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsGcpAwsVpnTunnel'
+    type: object
+  model.CreateInfracodeOfGcpAzureVpnRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
+    type: object
+  model.CreateInfracodeOfTestEnvRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsTestEnv'
     type: object
   model.MyUser:
     properties:
@@ -458,7 +458,7 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handler.CreateInfracodeOfGcpAwsVpnRequest'
+          $ref: '#/definitions/model.CreateInfracodeOfGcpAwsVpnRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -735,7 +735,7 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handler.CreateInfracodeOfGcpAzureVpnRequest'
+          $ref: '#/definitions/model.CreateInfracodeOfGcpAzureVpnRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -1196,7 +1196,7 @@ paths:
         name: ParamsForInfracode
         required: true
         schema:
-          $ref: '#/definitions/handler.CreateInfracodeOfTestEnvRequest'
+          $ref: '#/definitions/model.CreateInfracodeOfTestEnvRequest'
       produces:
       - application/json
       responses:
