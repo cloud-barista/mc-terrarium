@@ -14,7 +14,7 @@ chmod +x install-opentofu.sh
 # Please inspect the downloaded script
 
 # Run the installer:
-./install-opentofu.sh --install-method deb --opentofu-version 1.6.2
+./install-opentofu.sh --install-method deb --opentofu-version 1.7.1
 
 # Remove the installer:
 rm install-opentofu.sh
