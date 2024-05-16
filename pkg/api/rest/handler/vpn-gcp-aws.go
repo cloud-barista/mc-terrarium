@@ -114,7 +114,7 @@ func InitTerrariumForGcpAwsVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully initialized an infrastructure terrarium",
+		Text:    "the infrastructure terrarium is successfully initialized",
 		Detail:  ret,
 	}
 
@@ -386,6 +386,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
+	log.Debug().Msgf("%+v", req) // debug
 
 	projectRoot := viper.GetString("mcterrarium.root")
 
@@ -427,7 +428,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Text:    "Successfully created the infracode to configure GCP to AWS VPN tunnels",
+		Text:    "the infracode to configure GCP to AWS VPN tunnels is Successfully created",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug
@@ -493,7 +494,7 @@ func CheckInfracodeOfGcpAwsVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully completed the infracode checking process",
+		Text:    "the infracode checking process is successfully completed",
 		Detail:  ret,
 	}
 
@@ -559,7 +560,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully accepted the request to deploy resource (currently being processed)",
+		Text:    "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
 		Detail:  ret,
 	}
 
@@ -654,7 +655,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully accepted the request to destroy the resouces (currently being processed)",
+		Text:    "the request (id: " + reqId + ") is successfully accepted and still destroying resource",
 		Detail:  ret,
 	}
 
@@ -675,7 +676,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status [get]
+// @Router /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId} [get]
 func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")

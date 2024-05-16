@@ -504,7 +504,7 @@ paths:
         AWS VPN tunnels
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}/status:
+  /rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}:
     get:
       consumes:
       - application/json
@@ -781,7 +781,7 @@ paths:
         Azure VPN tunnels
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration'
-  /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status:
+  /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}:
     get:
       consumes:
       - application/json

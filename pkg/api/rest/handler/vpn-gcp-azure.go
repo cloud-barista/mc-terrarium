@@ -130,7 +130,7 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully initialized an infrastructure terrarium",
+		Text:    "the infrastructure terrarium is successfully initialized",
 		Detail:  ret,
 	}
 
@@ -443,7 +443,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Text:    "Successfully created the infracode to configure GCP to Azure VPN tunnels",
+		Text:    "the infracode to configure GCP to Azure VPN tunnels is Successfully created",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug
@@ -510,7 +510,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Text:    "successfully completed the infracode checking process",
+		Text:    "the infracode checking process is successfully completed",
 		Detail:  ret,
 	}
 
@@ -574,9 +574,10 @@ func CreateGcpAzureVpn(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
+
 	res := model.Response{
 		Success: true,
-		Text:    "resource deployment request has been accepted and is currently being processed",
+		Text:    "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
 		Detail:  ret,
 	}
 
@@ -644,7 +645,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully accepted the request to destroy the resouces (currently being processed)",
+		Text:    "the request (id: " + reqId + ") is successfully accepted and still destroying resource",
 		Detail:  ret,
 	}
 
@@ -665,7 +666,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}/status [get]
+// @Router /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId} [get]
 func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 
 	rgId := c.Param("resourceGroupId")

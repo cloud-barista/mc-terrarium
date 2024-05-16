@@ -39,7 +39,7 @@ variable "gcp-region" {
 variable "gcp-vpc-network-name" {
   type        = string
   description = "The VPC network name in GCP"
-  default     = "tofu-gcp-vpc"
+  default     = "terrarium-vpc01"
 }
 
 # variable "gcp-subnetwork-name" {
