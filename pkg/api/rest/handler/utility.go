@@ -30,11 +30,11 @@ import (
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.ResponseText
-// @Failure 503 {object} model.ResponseText
+// @Success 200 {object} model.Response
+// @Failure 503 {object} model.Response
 // @Router /readyz [get]
 func Readyz(c echo.Context) error {
-	res := model.ResponseText{}
+	res := model.Response{}
 	if !readyz.IsReady() {
 		res.Success = false
 		res.Text = "mc-terrarium server is NOT ready"
@@ -51,16 +51,16 @@ func Readyz(c echo.Context) error {
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.ResponseText
-// @Failure 404 {object} model.ResponseText
-// @Failure 500 {object} model.ResponseText
+// @Success 200 {object} model.Response
+// @Failure 404 {object} model.Response
+// @Failure 500 {object} model.Response
 // @Router /httpVersion [get]
 func HTTPVersion(c echo.Context) error {
 	// Access the *http.Request object from the echo.Context
 	req := c.Request()
 
 	// Determine the HTTP protocol version of the request
-	res := model.ResponseText{Success: true, Text: req.Proto}
+	res := model.Response{Success: true, Text: req.Proto}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -71,18 +71,18 @@ func HTTPVersion(c echo.Context) error {
 // @Tags [System] Utility
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.ResponseText
-// @Failure 503 {object} model.ResponseText
+// @Success 200 {object} model.Response
+// @Failure 503 {object} model.Response
 // @Router /tofuVersion [get]
 func TofuVersion(c echo.Context) error {
 
 	ret, err := tofu.GetTofuVersion()
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "failed to get Tofu version"}
+		res := model.Response{Success: false, Text: "failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.ResponseText{Success: true, Text: ret}
+	res := model.Response{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 

@@ -40,19 +40,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -75,13 +75,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -114,19 +114,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -172,25 +172,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseObject"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -227,25 +227,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -282,25 +282,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -339,25 +339,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -405,25 +405,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -462,25 +462,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -520,25 +520,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -577,25 +577,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -634,25 +634,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -689,25 +689,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -746,25 +746,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -812,25 +812,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -869,25 +869,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseTextWithDetails"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -927,25 +927,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -991,25 +991,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseObject"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1048,25 +1048,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1341,19 +1341,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseList"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1374,19 +1374,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1407,19 +1407,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1442,19 +1442,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1488,19 +1488,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1523,19 +1523,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1558,19 +1558,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1602,19 +1602,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1637,13 +1637,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseText"
+                            "$ref": "#/definitions/model.Response"
                         }
                     }
                 }
@@ -1784,51 +1784,20 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ResponseList": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {}
-                },
-                "success": {
-                    "type": "boolean",
-                    "example": true
-                }
-            }
-        },
-        "model.ResponseObject": {
-            "type": "object",
-            "properties": {
-                "object": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "success": {
-                    "type": "boolean",
-                    "example": true
-                }
-            }
-        },
-        "model.ResponseText": {
-            "type": "object",
-            "properties": {
-                "success": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "text": {
-                    "type": "string",
-                    "example": "Any text"
-                }
-            }
-        },
-        "model.ResponseTextWithDetails": {
+        "model.Response": {
             "type": "object",
             "properties": {
                 "details": {
                     "type": "string",
                     "example": "Any details"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {}
+                },
+                "object": {
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "success": {
                     "type": "boolean",

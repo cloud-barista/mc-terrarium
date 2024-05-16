@@ -37,9 +37,9 @@ import (
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Success 201 {object} model.ResponseText "Created"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 201 {object} model.Response "Created"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env/init [post]
 func InitTerrariumForTestEnv(c echo.Context) error {
 
@@ -51,7 +51,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
-			res := model.ResponseText{Success: false, Text: "Failed to create directory"}
+			res := model.Response{Success: false, Text: "Failed to create directory"}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 	}
@@ -61,7 +61,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 
 	err := tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to copy template files to working directory"}
+		res := model.Response{Success: false, Text: "Failed to copy template files to working directory"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -71,7 +71,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	err = tofu.CopyGCPCredentials(gcpCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy gcp credentials to init")
-		res := model.ResponseText{Success: false, Text: "Failed to copy gcp credentials to init"}
+		res := model.Response{Success: false, Text: "Failed to copy gcp credentials to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -79,7 +79,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	err = tofu.CopyAzureCredentials(azureCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy azure credentials to init")
-		res := model.ResponseText{Success: false, Text: "Failed to copy azure credentials to init"}
+		res := model.Response{Success: false, Text: "Failed to copy azure credentials to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -87,10 +87,14 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to init"}
+		res := model.Response{Success: false, Text: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.ResponseText{Success: true, Text: ret}
+	res := model.Response{
+		Success: true,
+		Text:    "successfully initialized the multi-cloud terrarium for test environment",
+		Detail:  ret,
+	}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -103,9 +107,9 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.ResponseText "OK"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 200 {object} model.Response "OK"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env/clear [delete]
 func ClearTestEnv(c echo.Context) error {
 
@@ -115,18 +119,18 @@ func ClearTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test-env"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	err := os.RemoveAll(workingDir)
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to clear entire directory and configuration files"}
+		res := model.Response{Success: false, Text: "Failed to clear entire directory and configuration files"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	text := "Successfully cleared all in the test environment"
-	res := model.ResponseText{Success: true, Text: text}
+	res := model.Response{Success: true, Text: text}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)
@@ -139,9 +143,9 @@ func ClearTestEnv(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
-// @Success 200 {object} model.ResponseList "OK"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 200 {object} model.Response "OK"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env [get]
 func GetResouceInfoOfTestEnv(c echo.Context) error {
 
@@ -179,7 +183,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
-		res := model.ResponseText{
+		res := model.Response{
 			Success: false,
 			Text:    err2.Error(),
 		}
@@ -197,7 +201,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
-			res := model.ResponseText{
+			res := model.Response{
 				Success: false,
 				Text:    err2.Error(),
 			}
@@ -208,15 +212,16 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		err = json.Unmarshal([]byte(ret), &resourceInfo)
 		if err != nil {
 			log.Error().Err(err).Msg("") // error
-			res := model.ResponseText{
+			res := model.Response{
 				Success: false,
 				Text:    "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
-		res := model.ResponseObject{
+		res := model.Response{
 			Success: true,
+			Text:    "refined resource info (map)",
 			Object:  resourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
@@ -233,7 +238,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
 			log.Error().Err(err).Msg(err2.Error()) // error
-			res := model.ResponseText{
+			res := model.Response{
 				Success: false,
 				Text:    err2.Error(),
 			}
@@ -245,7 +250,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		if resourcesString == "" {
 			err2 := fmt.Errorf("could not find resource info (rgId: %s)", "test-env")
 			log.Warn().Msg(err2.Error())
-			res := model.ResponseText{
+			res := model.Response{
 				Success: false,
 				Text:    err2.Error(),
 			}
@@ -256,15 +261,16 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		err = json.Unmarshal([]byte(resourcesString), &resourceInfoList)
 		if err != nil {
 			log.Error().Err(err).Msg("") // error
-			res := model.ResponseText{
+			res := model.Response{
 				Success: false,
 				Text:    "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
-		res := model.ResponseList{
+		res := model.Response{
 			Success: true,
+			Text:    "raw resource info (list)",
 			List:    resourceInfoList,
 		}
 		log.Debug().Msgf("%+v", res) // debug
@@ -273,7 +279,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	default:
 		err2 := fmt.Errorf("invalid detail option (%s)", detail)
 		log.Warn().Err(err2).Msg("") // warn
-		res := model.ResponseText{
+		res := model.Response{
 			Success: false,
 			Text:    err2.Error(),
 		}
@@ -288,15 +294,15 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param ParamsForInfracode body model.CreateInfracodeOfTestEnvRequest true "Parameters requied to create the infracode to configure test environment"
-// @Success 201 {object} model.ResponseText "Created"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 201 {object} model.Response "Created"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env/infracode [post]
 func CreateInfracodeOfTestEnv(c echo.Context) error {
 
 	req := new(model.CreateInfracodeOfTestEnvRequest)
 	if err := c.Bind(req); err != nil {
-		res := model.ResponseText{Success: false, Text: "Invalid request"}
+		res := model.Response{Success: false, Text: "Invalid request"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -306,7 +312,7 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -320,11 +326,11 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 
 	err := tofu.SaveTestEnvTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to save tfVars to a file"}
+		res := model.Response{Success: false, Text: "Failed to save tfVars to a file"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.ResponseText{Success: true, Text: "Successfully created the infracode to configure test environment"}
+	res := model.Response{Success: true, Text: "Successfully created the infracode to configure test environment"}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -337,9 +343,9 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 // @Tags [Test env] Test environment management
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.ResponseText "OK"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 200 {object} model.Response "OK"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env/plan [post]
 func CheckInfracodeOfTestEnv(c echo.Context) error {
 
@@ -352,7 +358,7 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environemt"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -362,10 +368,10 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.ResponseText{Success: true, Text: ret}
+	res := model.Response{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -378,9 +384,9 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Success 201 {object} model.ResponseText "Created"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 201 {object} model.Response "Created"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env [post]
 func CreateTestEnv(c echo.Context) error {
 
@@ -393,7 +399,7 @@ func CreateTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -401,10 +407,10 @@ func CreateTestEnv(c echo.Context) error {
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to deploy test environment"}
+		res := model.Response{Success: false, Text: "Failed to deploy test environment"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.ResponseText{Success: true, Text: ret}
+	res := model.Response{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -417,9 +423,9 @@ func CreateTestEnv(c echo.Context) error {
 // @Tags [Test env] Test environment management
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.ResponseText "OK"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 200 {object} model.Response "OK"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env [delete]
 func DestroyTestEnv(c echo.Context) error {
 
@@ -432,7 +438,7 @@ func DestroyTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -443,10 +449,10 @@ func DestroyTestEnv(c echo.Context) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.ResponseText{Success: true, Text: ret}
+	res := model.Response{Success: true, Text: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -460,15 +466,15 @@ func DestroyTestEnv(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param requestId path string true "Request ID"
-// @Success 200 {object} model.ResponseText "OK"
-// @Failure 400 {object} model.ResponseText "Bad Request"
-// @Failure 503 {object} model.ResponseText "Service Unavailable"
+// @Success 200 {object} model.Response "OK"
+// @Failure 400 {object} model.Response "Bad Request"
+// @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /test-env/request/{requestId}/status [get]
 func GetRequestStatusOfTestEnv(c echo.Context) error {
 
 	reqId := c.Param("requestId")
 	if reqId == "" {
-		res := model.ResponseText{Success: false, Text: "Require the request ID"}
+		res := model.Response{Success: false, Text: "Require the request ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -477,7 +483,7 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 	workingDir := projectRoot + "/.tofu/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.ResponseText{Success: false, Text: text}
+		res := model.Response{Success: false, Text: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -486,11 +492,11 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 	// Check the statusReport of the request
 	statusReport, err := tofu.GetRunningStatus("test-env", statusLogFile)
 	if err != nil {
-		res := model.ResponseText{Success: false, Text: "Failed to get the status of the request"}
+		res := model.Response{Success: false, Text: "Failed to get the status of the request"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.ResponseText{Success: true, Text: statusReport}
+	res := model.Response{Success: true, Text: statusReport}
 
 	log.Debug().Msgf("%+v", res) // debug
 
