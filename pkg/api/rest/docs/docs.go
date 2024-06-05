@@ -87,991 +87,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/rg/{resourceGroupId}": {
-            "delete": {
-                "description": "Clear the entire directories and configuration files",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[ResourceGroup] Resource group"
-                ],
-                "summary": "Clear the entire directories and configuration files",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "ResourceGroupId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws": {
-            "get": {
-                "description": "Get resource info to configure GCP to AWS VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Get resource info to configure GCP to AWS VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "refined",
-                        "description": "Resource info by detail (refined, raw)",
-                        "name": "detail",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create network resources for VPN tunnel in GCP and AWS",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Create network resources for VPN tunnel in GCP and AWS",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Destroy network resources that were used to configure GCP as an AWS VPN tunnel",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Destroy network resources that were used to configure GCP as an AWS VPN tunnel",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/clear": {
-            "delete": {
-                "description": "Clear the entire directory and configuration files",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Clear the entire directory and configuration files",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/infracode": {
-            "post": {
-                "description": "Create the infracode to configure GCP to AWS VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Create the infracode to configure GCP to AWS VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Parameters requied to create the infracode to configure GCP to AWS VPN tunnels",
-                        "name": "ParamsForInfracode",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAwsVpnRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/plan": {
-            "post": {
-                "description": "Check and show changes by the current infracode to configure GCP to AWS VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Check and show changes by the current infracode to configure GCP to AWS VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/request/{requestId}": {
-            "get": {
-                "description": "Check the status of a specific request by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Check the status of a specific request by its ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Request ID",
-                        "name": "requestId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-aws/terrarium": {
-            "post": {
-                "description": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure": {
-            "post": {
-                "description": "Create network resources for VPN tunnel in GCP and Azure",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Create network resources for VPN tunnel in GCP and Azure",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/clear": {
-            "delete": {
-                "description": "Clear the entire directory and configuration files",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Clear the entire directory and configuration files",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/infracode": {
-            "post": {
-                "description": "Create the infracode to configure GCP to Azure VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Create the infracode to configure GCP to Azure VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Parameters requied to create the infracode to configure GCP to Azure VPN tunnels",
-                        "name": "ParamsForInfracode",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAzureVpnRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/plan": {
-            "post": {
-                "description": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId}": {
-            "get": {
-                "description": "Check the status of a specific request by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Check the status of a specific request by its ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Request ID",
-                        "name": "requestId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/resource/info": {
-            "get": {
-                "description": "Get resource info to configure GCP to Azure VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Get resource info to configure GCP to Azure VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "refined",
-                        "description": "Resource info by detail (refined, raw)",
-                        "name": "detail",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/rg/{resourceGroupId}/vpn/gcp-azure/terrarium": {
-            "post": {
-                "description": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tofu-rg-01",
-                        "description": "Resource group ID",
-                        "name": "resourceGroupId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/sample/users": {
             "get": {
                 "description": "Get information of all users.",
@@ -1648,6 +663,1116 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/tr": {
+            "get": {
+                "description": "Read all terrarium",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Terrarium] An environment to enrich the multi-cloud infrastructure"
+                ],
+                "summary": "Read all terrarium",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TerrariumInfo"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Issue/create a terrarium",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Terrarium] An environment to enrich the multi-cloud infrastructure"
+                ],
+                "summary": "Issue/create a terrarium",
+                "parameters": [
+                    {
+                        "description": "Information for a new terrarium",
+                        "name": "TerrariumInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TerrariumInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}": {
+            "get": {
+                "description": "Read a terrarium",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Terrarium] An environment to enrich the multi-cloud infrastructure"
+                ],
+                "summary": "Read a terrarium",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.TerrariumInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Erase the entire terrarium including directories and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Terrarium] An environment to enrich the multi-cloud infrastructure"
+                ],
+                "summary": "Erase the entire terrarium including directories and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws": {
+            "get": {
+                "description": "Get resource info to configure GCP to AWS VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Get resource info to configure GCP to AWS VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create network resources for VPN tunnel in GCP and AWS",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Create network resources for VPN tunnel in GCP and AWS",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Destroy network resources that were used to configure GCP as an AWS VPN tunnel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Destroy network resources that were used to configure GCP as an AWS VPN tunnel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws/clear": {
+            "delete": {
+                "description": "Clear the entire directory and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Clear the entire directory and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws/env": {
+            "post": {
+                "description": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws/infracode": {
+            "post": {
+                "description": "Create the infracode to configure GCP to AWS VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Create the infracode to configure GCP to AWS VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create the infracode to configure GCP to AWS VPN tunnels",
+                        "name": "ParamsForInfracode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAwsVpnRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws/plan": {
+            "post": {
+                "description": "Check and show changes by the current infracode to configure GCP to AWS VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Check and show changes by the current infracode to configure GCP to AWS VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-aws/request/{requestId}": {
+            "get": {
+                "description": "Check the status of a specific request by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Check the status of a specific request by its ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure": {
+            "post": {
+                "description": "Create network resources for VPN tunnel in GCP and Azure",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Create network resources for VPN tunnel in GCP and Azure",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/clear": {
+            "delete": {
+                "description": "Clear the entire directory and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Clear the entire directory and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/env": {
+            "post": {
+                "description": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/infracode": {
+            "post": {
+                "description": "Create the infracode to configure GCP to Azure VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Create the infracode to configure GCP to Azure VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create the infracode to configure GCP to Azure VPN tunnels",
+                        "name": "ParamsForInfracode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateInfracodeOfGcpAzureVpnRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/plan": {
+            "post": {
+                "description": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/request/{requestId}": {
+            "get": {
+                "description": "Check the status of a specific request by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Check the status of a specific request by its ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/gcp-azure/resource/info": {
+            "get": {
+                "description": "Get resource info to configure GCP to Azure VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration"
+                ],
+                "summary": "Get resource info to configure GCP to Azure VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1787,25 +1912,40 @@ const docTemplate = `{
         "model.Response": {
             "type": "object",
             "properties": {
+                "data": {},
                 "details": {
                     "type": "string",
                     "example": "Any details"
                 },
-                "list": {
-                    "type": "array",
-                    "items": {}
+                "message": {
+                    "type": "string",
+                    "example": "Any message"
                 },
-                "object": {
-                    "type": "object",
-                    "additionalProperties": true
+                "status": {
+                    "type": "integer",
+                    "example": 200
                 },
                 "success": {
                     "type": "boolean",
                     "example": true
-                },
-                "text": {
+                }
+            }
+        },
+        "model.TerrariumInfo": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "description": {
                     "type": "string",
-                    "example": "Any text"
+                    "default": "This terrarium enriches ...",
+                    "example": "This terrarium enriches ..."
+                },
+                "id": {
+                    "type": "string",
+                    "default": "tr01",
+                    "example": "tr01"
                 }
             }
         },
@@ -1832,10 +1972,10 @@ const docTemplate = `{
                 },
                 "gcp-vpc-network-name": {
                     "type": "string",
-                    "default": "tofu-gcp-vpc",
-                    "example": "tofu-gcp-vpc"
+                    "default": "tr-gcp-vpc",
+                    "example": "tr-gcp-vpc"
                 },
-                "resource-group-id": {
+                "terrarium-id": {
                     "type": "string",
                     "example": ""
                 }
@@ -1856,13 +1996,13 @@ const docTemplate = `{
                 },
                 "azure-resource-group-name": {
                     "type": "string",
-                    "default": "tofu-rg-01",
-                    "example": "tofu-rg-01"
+                    "default": "tr-rg-01",
+                    "example": "tr-rg-01"
                 },
                 "azure-virtual-network-name": {
                     "type": "string",
-                    "default": "tofu-azure-vnet",
-                    "example": "tofu-azure-vnet"
+                    "default": "tr-azure-vnet",
+                    "example": "tr-azure-vnet"
                 },
                 "gcp-region": {
                     "type": "string",
@@ -1871,10 +2011,10 @@ const docTemplate = `{
                 },
                 "gcp-vpc-network-name": {
                     "type": "string",
-                    "default": "tofu-gcp-vpc",
-                    "example": "tofu-gcp-vpc"
+                    "default": "tr-gcp-vpc",
+                    "example": "tr-gcp-vpc"
                 },
-                "resource-group-id": {
+                "terrarium-id": {
                     "type": "string",
                     "example": ""
                 }
@@ -1895,8 +2035,8 @@ const docTemplate = `{
                 },
                 "azure-resource-group-name": {
                     "type": "string",
-                    "default": "tofu-rg-01",
-                    "example": "tofu-rg-01"
+                    "default": "tr-rg-01",
+                    "example": "tr-rg-01"
                 },
                 "gcp-region": {
                     "type": "string",

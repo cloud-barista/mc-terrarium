@@ -1,10 +1,10 @@
-variable "resource-group-id" {
+variable "terrarium-id" {
   type        = string
   description = "Unique ID to distinguish and manage infrastructure."
 
   validation {
-    condition     = var.resource-group-id != ""
-    error_message = "The resource group ID must be set"
+    condition     = var.terrarium-id != ""
+    error_message = "The terrarium ID must be set"
   }
 }
 
@@ -19,13 +19,13 @@ variable "gcp-region" {
 variable "gcp-vpc-network-name" {
   type        = string
   description = "The VPC network name in GCP."  
-  default = "tofu-gcp-vpc"
+  default = "tr-gcp-vpc"
 }
 
 # variable "gcp-vpc-subnetwork-name" {
 #   type        = string
 #   description = "The subnet name in GCP"
-#   default = "tofu-gcp-subnet-1"  
+#   default = "tr-gcp-subnet-1"  
 # }
 
 variable "gcp-bgp-asn" {
@@ -47,14 +47,14 @@ variable "azure-region" {
 
 variable "azure-resource-group-name" {
   type        = string
-  default     = "tofu-rg-01"
+  default     = "tr-rg-01"
   description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
 }
 
 variable "azure-virtual-network-name" {
   type        = string
   description = "A virtual network name in MS Azure."
-  default     = "tofu-azure-vnet"
+  default     = "tr-azure-vnet"
 }
 
 variable "azure-gateway-subnet-cidr-block" {
@@ -66,7 +66,7 @@ variable "azure-gateway-subnet-cidr-block" {
 # variable "azure-subnet-name" {
 #   type        = string
 #   description = "Subnet name in MS Azure"
-#   default     = ".tofu/tofu-rg-01/vpn/gcp-azure/azure-variables.tf .tofu/tofu-rg-01/vpn/gcp-azure/azure-virtual-machine.tf"
+#   default     = ".terrarium/tr-rg-01/vpn/gcp-azure/azure-variables.tf .terrarium/tr-rg-01/vpn/gcp-azure/azure-virtual-machine.tf"
 # }
 
 # variable "azure-gateway-subnet-name" {

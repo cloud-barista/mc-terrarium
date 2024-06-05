@@ -28,6 +28,6 @@ variable "azure-region" {
 
 variable "azure-resource-group-name" {
   type        = string
-  default     = "tofu-rg-01"
+  default     = "tr-rg-01"
   description = "A resource group name in an Azure subscription."
 }

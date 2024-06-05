@@ -47,11 +47,11 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
 	projectRoot := viper.GetString("mcterrarium.root")
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
-			res := model.Response{Success: false, Text: "Failed to create directory"}
+			res := model.Response{Success: false, Message: "Failed to create directory"}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 	}
@@ -61,7 +61,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 
 	err := tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to copy template files to working directory"}
+		res := model.Response{Success: false, Message: "Failed to copy template files to working directory"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -71,7 +71,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	err = tofu.CopyGCPCredentials(gcpCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy gcp credentials to init")
-		res := model.Response{Success: false, Text: "Failed to copy gcp credentials to init"}
+		res := model.Response{Success: false, Message: "Failed to copy gcp credentials to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -79,20 +79,20 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	err = tofu.CopyAzureCredentials(azureCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy azure credentials to init")
-		res := model.Response{Success: false, Text: "Failed to copy azure credentials to init"}
+		res := model.Response{Success: false, Message: "Failed to copy azure credentials to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to init"}
+		res := model.Response{Success: false, Message: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "successfully initialized the multi-cloud terrarium for test environment",
+		Message: "successfully initialized the multi-cloud terrarium for test environment",
 		Detail:  ret,
 	}
 
@@ -116,21 +116,21 @@ func ClearTestEnv(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test-env"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	err := os.RemoveAll(workingDir)
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to clear entire directory and configuration files"}
+		res := model.Response{Success: false, Message: "Failed to clear entire directory and configuration files"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	text := "Successfully cleared all in the test environment"
-	res := model.Response{Success: true, Text: text}
+	res := model.Response{Success: true, Message: text}
 	log.Debug().Msgf("%+v", res) // debug
 
 	return c.JSON(http.StatusOK, res)
@@ -179,13 +179,13 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -195,7 +195,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	case DetailOptions.Refined:
 		// Code for handling "refined" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
 		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
 		if err != nil {
@@ -203,7 +203,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 			log.Error().Err(err).Msg(err2.Error())
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
@@ -214,15 +214,15 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 			log.Error().Err(err).Msg("") // error
 			res := model.Response{
 				Success: false,
-				Text:    "failed to unmarshal resource info",
+				Message: "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
 		res := model.Response{
 			Success: true,
-			Text:    "refined resource info (map)",
-			Object:  resourceInfo,
+			Message: "refined resource info (map)",
+			Data:    resourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -231,7 +231,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	case DetailOptions.Raw:
 		// Code for handling "raw" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
 		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
@@ -240,7 +240,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 			log.Error().Err(err).Msg(err2.Error()) // error
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
@@ -248,11 +248,11 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		// Parse the resource info
 		resourcesString := gjson.Get(ret, "values.root_module.resources").String()
 		if resourcesString == "" {
-			err2 := fmt.Errorf("could not find resource info (rgId: %s)", "test-env")
+			err2 := fmt.Errorf("could not find resource info (trId: %s)", "test-env")
 			log.Warn().Msg(err2.Error())
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusOK, res)
 		}
@@ -263,15 +263,15 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 			log.Error().Err(err).Msg("") // error
 			res := model.Response{
 				Success: false,
-				Text:    "failed to unmarshal resource info",
+				Message: "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
 		res := model.Response{
 			Success: true,
-			Text:    "raw resource info (list)",
-			List:    resourceInfoList,
+			Message: "raw resource info (list)",
+			Data:    resourceInfoList,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -281,7 +281,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		log.Warn().Err(err2).Msg("") // warn
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -302,17 +302,17 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 
 	req := new(model.CreateInfracodeOfTestEnvRequest)
 	if err := c.Bind(req); err != nil {
-		res := model.Response{Success: false, Text: "Invalid request"}
+		res := model.Response{Success: false, Message: "Invalid request"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -326,11 +326,11 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 
 	err := tofu.SaveTestEnvTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to save tfVars to a file"}
+		res := model.Response{Success: false, Message: "Failed to save tfVars to a file"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.Response{Success: true, Text: "Successfully created the infracode to configure test environment"}
+	res := model.Response{Success: true, Message: "Successfully created the infracode to configure test environment"}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -355,23 +355,23 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environemt"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: plan
 	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.Response{Success: true, Text: ret}
+	res := model.Response{Success: true, Message: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -396,21 +396,21 @@ func CreateTestEnv(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: apply
 	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to deploy test environment"}
+		res := model.Response{Success: false, Message: "Failed to deploy test environment"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.Response{Success: true, Text: ret}
+	res := model.Response{Success: true, Message: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -435,24 +435,24 @@ func DestroyTestEnv(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	// Destroy the infrastructure
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/test-env
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: destroy
 	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.Response{Success: true, Text: ret}
+	res := model.Response{Success: true, Message: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -474,16 +474,16 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 
 	reqId := c.Param("requestId")
 	if reqId == "" {
-		res := model.Response{Success: false, Text: "Require the request ID"}
+		res := model.Response{Success: false, Message: "Require the request ID"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	projectRoot := viper.GetString("mcterrarium.root")
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/test-env"
+	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		text := "Not exist test environment"
-		res := model.Response{Success: false, Text: text}
+		res := model.Response{Success: false, Message: text}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -492,11 +492,11 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 	// Check the statusReport of the request
 	statusReport, err := tofu.GetRunningStatus("test-env", statusLogFile)
 	if err != nil {
-		res := model.Response{Success: false, Text: "Failed to get the status of the request"}
+		res := model.Response{Success: false, Message: "Failed to get the status of the request"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.Response{Success: true, Text: statusReport}
+	res := model.Response{Success: true, Message: statusReport}
 
 	log.Debug().Msgf("%+v", res) // debug
 

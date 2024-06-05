@@ -25,9 +25,9 @@ logs/
 *.log
 
 # Files for tofu and infrastructure configurations
-!.tofu/
-.tofu/**
-!.tofu/.keep
+!.terrarium/
+.terrarium/**
+!.terrarium/.keep
 
 !secrets
 secrets/**

@@ -1,6 +1,6 @@
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "test_nsg_1" {
-  name                = "tofu-nsg-1-name"
+  name                = "tr-nsg-1-name"
   location            = azurerm_resource_group.test_rg.location
   resource_group_name = azurerm_resource_group.test_rg.name
 

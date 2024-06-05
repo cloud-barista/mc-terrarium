@@ -1,5 +1,5 @@
 resource "azurerm_network_interface" "test_nic_1" {
-  name                = "tofu-nic-1-name"
+  name                = "tr-nic-1-name"
   location            = azurerm_resource_group.test_rg.location
   resource_group_name = azurerm_resource_group.test_rg.name
 
@@ -18,7 +18,7 @@ resource "azurerm_network_interface_security_group_association" "test_nic_nsg_as
 
 # Create a virtual machine
 resource "azurerm_linux_virtual_machine" "test_vm_1" {
-  name                = "tofu-vm-1-name"
+  name                = "tr-vm-1-name"
   resource_group_name = azurerm_resource_group.test_rg.name
   location            = azurerm_resource_group.test_rg.location
   size                = "Standard_F2"

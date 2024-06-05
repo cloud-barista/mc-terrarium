@@ -1,10 +1,10 @@
-variable "resource-group-id" {
+variable "terrarium-id" {
   type        = string
   description = "Unique ID to distinguish and manage infrastructure."
 
   validation {
-    condition     = var.resource-group-id != ""
-    error_message = "The resource group ID must be set"
+    condition     = var.terrarium-id != ""
+    error_message = "The terrarium ID must be set"
   }
 }
 
