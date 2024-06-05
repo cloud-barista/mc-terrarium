@@ -173,7 +173,7 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/gcp-azure/clear [delete]
+// @Router /tr/{trId}/vpn/gcp-azure/env [delete]
 func ClearGcpAzureVpn(c echo.Context) error {
 
 	trId := c.Param("trId")
@@ -322,7 +322,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 		res := model.Response{
 			Success: true,
 			Message: "refined read resource info (map)",
-			Data:    resourceInfo,
+			Object:  resourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -371,7 +371,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 		res := model.Response{
 			Success: true,
 			Message: "raw read resource info (list)",
-			Data:    resourceInfoList,
+			List:    resourceInfoList,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 

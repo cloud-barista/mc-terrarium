@@ -110,7 +110,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /test-env/clear [delete]
+// @Router /test-env/env [delete]
 func ClearTestEnv(c echo.Context) error {
 
 	projectRoot := viper.GetString("mcterrarium.root")
@@ -222,7 +222,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		res := model.Response{
 			Success: true,
 			Message: "refined resource info (map)",
-			Data:    resourceInfo,
+			Object:  resourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -271,7 +271,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		res := model.Response{
 			Success: true,
 			Message: "raw resource info (list)",
-			Data:    resourceInfoList,
+			List:    resourceInfoList,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 

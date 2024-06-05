@@ -440,7 +440,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/test-env/clear": {
+        "/test-env/env": {
             "delete": {
                 "description": "Clear the entire directory and configuration files",
                 "consumes": [
@@ -1008,63 +1008,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/tr/{trId}/vpn/gcp-aws/clear": {
-            "delete": {
-                "description": "Clear the entire directory and configuration files",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
-                ],
-                "summary": "Clear the entire directory and configuration files",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tr01",
-                        "description": "Terrarium ID",
-                        "name": "trId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/tr/{trId}/vpn/gcp-aws/env": {
             "post": {
                 "description": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
@@ -1097,6 +1040,61 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Clear the entire directory and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to AWS VPN tunnel configuration"
+                ],
+                "summary": "Clear the entire directory and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1477,63 +1475,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/tr/{trId}/vpn/gcp-azure/clear": {
-            "delete": {
-                "description": "Clear the entire directory and configuration files",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
-                ],
-                "summary": "Clear the entire directory and configuration files",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tr01",
-                        "description": "Terrarium ID",
-                        "name": "trId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/tr/{trId}/vpn/gcp-azure/env": {
             "post": {
                 "description": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
@@ -1566,6 +1507,61 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Clear the entire directory and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                ],
+                "summary": "Clear the entire directory and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1910,14 +1906,21 @@ const docTemplate = `{
         "model.Response": {
             "type": "object",
             "properties": {
-                "data": {},
                 "details": {
                     "type": "string",
                     "example": "Any details"
                 },
+                "list": {
+                    "type": "array",
+                    "items": {}
+                },
                 "message": {
                     "type": "string",
                     "example": "Any message"
+                },
+                "object": {
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "status": {
                     "type": "integer",
