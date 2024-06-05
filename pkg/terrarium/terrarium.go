@@ -136,3 +136,14 @@ func UpdateTerrariumInfo(trInfo model.TerrariumInfo) error {
 
 	return nil
 }
+
+func DeleteTerrariumInfo(trId string) error {
+
+	_, exists := getTerrariumInfo(trId)
+	if !exists {
+		return fmt.Errorf("not existed the terrarium (trId: %s)", trId)
+	}
+	terrariumInfoMap.Delete(trId)
+
+	return nil
+}

@@ -203,4 +203,4 @@ Note - You can find API documentation on Swagger UI.
 5. GET /tr/{trId}/vpn/gcp-azure/request/{requestId}/status (Check the above API status)
 6. GET /tr/{trId}/vpn/gcp-azure (Get resource info with detail (refined, raw))
 7. DELETE /tr/{trId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
-8. DELETE /tr/{trId}/vpn/gcp-azure/clear
+8. DELETE /tr/{trId}/vpn/gcp-azure/env

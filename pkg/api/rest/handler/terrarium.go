@@ -63,7 +63,7 @@ func IssueTerrarium(c echo.Context) error {
 	err := terrarium.IssueTerrarium(*reqTrInfo)
 
 	if err != nil {
-		res := model.Response{Success: false, Message: "failed to create a terrarium"}
+		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
@@ -155,6 +155,12 @@ func EraseTerrarium(c echo.Context) error {
 	err := os.RemoveAll(workingDir)
 	if err != nil {
 		res := model.Response{Success: false, Message: "failed to erase the entire terrarium"}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	err = terrarium.DeleteTerrariumInfo(trId)
+	if err != nil {
+		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 

@@ -8,7 +8,7 @@ import (
 // /terrarium/test-env/...
 func RegisterRoutesForTestEnv(g *echo.Group) {
 	g.POST("/test-env/init", handler.InitTerrariumForTestEnv)
-	g.DELETE("/test-env/clear", handler.ClearTestEnv)
+	g.DELETE("/test-env/env", handler.ClearTestEnv)
 	g.GET("/test-env", handler.GetResouceInfoOfTestEnv)
 	g.POST("/test-env/infracode", handler.CreateInfracodeOfTestEnv)
 	g.POST("/test-env/plan", handler.CheckInfracodeOfTestEnv)

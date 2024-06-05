@@ -9,7 +9,7 @@ import (
 func RegisterRoutesForVPN(g *echo.Group) {
 	// GCP and AWS
 	g.POST("/tr/:trId/vpn/gcp-aws/env", handler.InitEnvForGcpAwsVpn)
-	g.DELETE("/tr/:trId/vpn/gcp-aws/clear", handler.ClearGcpAwsVpn)
+	g.DELETE("/tr/:trId/vpn/gcp-aws/env", handler.ClearGcpAwsVpn)
 	g.GET("/tr/:trId/vpn/gcp-aws", handler.GetResourceInfoOfGcpAwsVpn)
 	g.POST("/tr/:trId/vpn/gcp-aws/infracode", handler.CreateInfracodeOfGcpAwsVpn)
 	g.POST("/tr/:trId/vpn/gcp-aws/plan", handler.CheckInfracodeOfGcpAwsVpn)
@@ -19,7 +19,7 @@ func RegisterRoutesForVPN(g *echo.Group) {
 
 	// GCP and Azure
 	g.POST("/tr/:trId/vpn/gcp-azure/env", handler.InitEnvForGcpAzureVpn)
-	g.DELETE("/tr/:trId/vpn/gcp-azure/clear", handler.ClearGcpAzureVpn)
+	g.DELETE("/tr/:trId/vpn/gcp-azure/env", handler.ClearGcpAzureVpn)
 	g.GET("/tr/:trId/vpn/gcp-azure", handler.GetResourceInfoOfGcpAzureVpn)
 	g.POST("/tr/:trId/vpn/gcp-azure/infracode", handler.CreateInfracodeOfGcpAzureVpn)
 	g.POST("/tr/:trId/vpn/gcp-azure/plan", handler.CheckInfracodeOfGcpAzureVpn)

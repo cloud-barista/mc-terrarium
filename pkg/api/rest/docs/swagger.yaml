@@ -87,13 +87,18 @@ definitions:
     type: object
   model.Response:
     properties:
-      data: {}
       details:
         example: Any details
         type: string
+      list:
+        items: {}
+        type: array
       message:
         example: Any message
         type: string
+      object:
+        additionalProperties: true
+        type: object
       status:
         example: 200
         type: integer
@@ -484,7 +489,7 @@ paths:
       summary: Create test environment
       tags:
       - '[Test env] Test environment management'
-  /test-env/clear:
+  /test-env/env:
     delete:
       consumes:
       - application/json
@@ -866,7 +871,7 @@ paths:
       summary: Create network resources for VPN tunnel in GCP and AWS
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
-  /tr/{trId}/vpn/gcp-aws/clear:
+  /tr/{trId}/vpn/gcp-aws/env:
     delete:
       consumes:
       - application/json
@@ -904,7 +909,6 @@ paths:
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to AWS VPN tunnel configuration'
-  /tr/{trId}/vpn/gcp-aws/env:
     post:
       consumes:
       - application/json
@@ -1185,7 +1189,7 @@ paths:
       summary: Create network resources for VPN tunnel in GCP and Azure
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
-  /tr/{trId}/vpn/gcp-azure/clear:
+  /tr/{trId}/vpn/gcp-azure/env:
     delete:
       consumes:
       - application/json
@@ -1223,7 +1227,6 @@ paths:
       summary: Clear the entire directory and configuration files
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
-  /tr/{trId}/vpn/gcp-azure/env:
     post:
       consumes:
       - application/json
