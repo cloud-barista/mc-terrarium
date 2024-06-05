@@ -30,6 +30,7 @@ import (
 	// Black import (_) is for running a package's init() function without using its other contents.
 	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
 	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
+	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/rs/zerolog/log"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/custommiddleware"
@@ -93,6 +94,7 @@ const (
 // @securityDefinitions.basic BasicAuth
 func RunServer(port string) {
 
+	// Load and set tofu command utility
 	log.Info().Msg("Setting Tofu command utility")
 	if err := tofu.LoadRunningStatusMap(); err != nil {
 		log.Warn().Msg(err.Error())
@@ -101,6 +103,18 @@ func RunServer(port string) {
 	defer func() {
 		if err := tofu.SaveRunningStatusMap(); err != nil {
 			log.Error().Err(err).Msg("Failed to save running status map")
+		}
+	}()
+
+	// Load and set terrarium info map
+	log.Info().Msg("load and set terrarium info map")
+	if err := terrarium.LoadTerrariumInfoMap(); err != nil {
+		log.Warn().Msg(err.Error())
+	}
+
+	defer func() {
+		if err := terrarium.SaveTerrariumInfoMap(); err != nil {
+			log.Error().Err(err).Msg("failed to save terrarium infor map")
 		}
 	}()
 

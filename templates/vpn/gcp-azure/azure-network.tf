@@ -13,7 +13,7 @@ resource "azurerm_subnet" "gw_subnet" {
 
 # Create public IP addresses
 resource "azurerm_public_ip" "vpn_gw_pub_ip_1" {
-  name                = "${var.resource-group-id}-vpn-gw-pub-ip-1"
+  name                = "${var.terrarium-id}-vpn-gw-pub-ip-1"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
   allocation_method   = "Static"
@@ -22,7 +22,7 @@ resource "azurerm_public_ip" "vpn_gw_pub_ip_1" {
 }
 
 resource "azurerm_public_ip" "vpn_gw_pub_ip_2" {
-  name                = "${var.resource-group-id}-vpn-gw-pub-ip-2"
+  name                = "${var.terrarium-id}-vpn-gw-pub-ip-2"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
   allocation_method   = "Static"
@@ -32,7 +32,7 @@ resource "azurerm_public_ip" "vpn_gw_pub_ip_2" {
 
 # Create Azure VPN Gateway and connections
 resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
-  name                = "${var.resource-group-id}-vpn-gw-1"
+  name                = "${var.terrarium-id}-vpn-gw-1"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
 
@@ -44,14 +44,14 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
   sku           = var.azure_vpn_sku
 
   ip_configuration {
-    name                          = "${var.resource-group-id}-vnetGatewayConfig1"
+    name                          = "${var.terrarium-id}-vnetGatewayConfig1"
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = azurerm_subnet.gw_subnet.id
     public_ip_address_id          = azurerm_public_ip.vpn_gw_pub_ip_1.id
   }
 
   ip_configuration {
-    name                          = "${var.resource-group-id}-vnetGatewayConfig2"
+    name                          = "${var.terrarium-id}-vnetGatewayConfig2"
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = azurerm_subnet.gw_subnet.id
     public_ip_address_id          = azurerm_public_ip.vpn_gw_pub_ip_2.id
@@ -62,12 +62,12 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
     peer_weight = 100
 
     peering_addresses {
-      ip_configuration_name = "${var.resource-group-id}-vnetGatewayConfig1"
+      ip_configuration_name = "${var.terrarium-id}-vnetGatewayConfig1"
       apipa_addresses       = ["169.254.21.1"]
     }
 
     peering_addresses {
-      ip_configuration_name = "${var.resource-group-id}-vnetGatewayConfig2"
+      ip_configuration_name = "${var.terrarium-id}-vnetGatewayConfig2"
       apipa_addresses       = ["169.254.22.1"]
     }
 
@@ -80,7 +80,7 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
 ########################################################
 
 resource "azurerm_local_network_gateway" "peer_gw_1" {
-  name                = "${var.resource-group-id}-gcp-side-gateway-1"
+  name                = "${var.terrarium-id}-gcp-side-gateway-1"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
 
@@ -93,7 +93,7 @@ resource "azurerm_local_network_gateway" "peer_gw_1" {
 }
 
 resource "azurerm_local_network_gateway" "peer_gw_2" {
-  name                = "${var.resource-group-id}-gcp-side-gateway-2"
+  name                = "${var.terrarium-id}-gcp-side-gateway-2"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
 
@@ -106,7 +106,7 @@ resource "azurerm_local_network_gateway" "peer_gw_2" {
 }
 
 resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_1" {
-  name                = "${var.resource-group-id}-connection-1"
+  name                = "${var.terrarium-id}-connection-1"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
 
@@ -120,7 +120,7 @@ resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_1" {
 }
 
 resource "azurerm_virtual_network_gateway_connection" "gcp_and_azure_cnx_2" {
-  name                = "${var.resource-group-id}-connection-2"
+  name                = "${var.terrarium-id}-connection-2"
   location            = var.azure-region
   resource_group_name = var.azure-resource-group-name
 

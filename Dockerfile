@@ -15,7 +15,7 @@ COPY . /go/src/github.com/cloud-barista/mc-terrarium
 WORKDIR /go/src/github.com/cloud-barista/mc-terrarium
 # COPY go.mod go.sum go.work go.work.sum ./
 RUN go mod download
-# COPY .tofu ./.tofu
+# COPY .terrarium ./.terrarium
 # COPY cmd ./cmd
 # COPY conf ./conf
 # COPY pkg ./pkg
@@ -38,7 +38,7 @@ WORKDIR /app
 # Copying necessary files from the builder stage to the production stage
 # Assets, scripts, and configuration files are copied excluding credentials.conf
 # which should be specified in .dockerignore
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/.tofu/ /app/.tofu/
+COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/.terrarium/ /app/.terrarium/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/templates/ /app/templates/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/conf/
@@ -50,7 +50,7 @@ RUN ./scripts/install-tofu-1.7.1.sh
 
 # Setting various environment variables required by the application
 ENV MCTERRARIUM_ROOT=/app \
-    LOGFILE_PATH=/app/.tofu/mc-terrarium.log \
+    LOGFILE_PATH=/app/.terrarium/mc-terrarium.log \
     LOGFILE_MAXSIZE=10 \
     LOGFILE_MAXBACKUPS=3 \
     LOGFILE_MAXAGE=30 \

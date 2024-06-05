@@ -37,11 +37,11 @@ func Readyz(c echo.Context) error {
 	res := model.Response{}
 	if !readyz.IsReady() {
 		res.Success = false
-		res.Text = "mc-terrarium server is NOT ready"
+		res.Message = "mc-terrarium server is NOT ready"
 		return c.JSON(http.StatusServiceUnavailable, &res)
 	}
 	res.Success = true
-	res.Text = "mc-terrarium server is ready"
+	res.Message = "mc-terrarium server is ready"
 	return c.JSON(http.StatusOK, &res)
 }
 
@@ -60,7 +60,7 @@ func HTTPVersion(c echo.Context) error {
 	req := c.Request()
 
 	// Determine the HTTP protocol version of the request
-	res := model.Response{Success: true, Text: req.Proto}
+	res := model.Response{Success: true, Message: req.Proto}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -78,11 +78,11 @@ func TofuVersion(c echo.Context) error {
 
 	ret, err := tofu.GetTofuVersion()
 	if err != nil {
-		res := model.Response{Success: false, Text: "failed to get Tofu version"}
+		res := model.Response{Success: false, Message: "failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	res := model.Response{Success: true, Text: ret}
+	res := model.Response{Success: true, Message: ret}
 
 	log.Debug().Msgf("%+v", res) // debug
 

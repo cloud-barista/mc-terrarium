@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "test_firewall" {
-  name    = "tofu-gcp-firewall"
+  name    = "tr-gcp-firewall"
   network = google_compute_network.test_vpc_network.id
   
   allow {

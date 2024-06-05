@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -31,28 +32,28 @@ import (
 // ////////////////////////////////////////////////////
 // GCP and Azure
 
-// InitTerrariumForGcpAzureVpn godoc
+// InitEnvForGcpAzureVpn godoc
 // @Summary Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
 // @Description Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept json
 // @Produce json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/terrarium [post]
-func InitTerrariumForGcpAzureVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/gcp-azure/env [post]
+func InitEnvForGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -60,8 +61,29 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
+	// Set the enrichments
+	enrichments := "vpn/gcp-azure"
+
+	// Read and set the enrichments to terrarium information
+	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	if err != nil {
+		err2 := fmt.Errorf("failed to read terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	trInfo.Enrichments = enrichments
+	err = terrarium.UpdateTerrariumInfo(trInfo)
+	if err != nil {
+		err2 := fmt.Errorf("failed to update terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
 	projectRoot := viper.GetString("mcterrarium.root")
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
@@ -69,22 +91,22 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 			log.Error().Err(err).Msg(err2.Error())
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 	}
 
 	// Copy template files to the working directory (overwrite)
-	templateTfsPath := projectRoot + "/templates/vpn/gcp-azure"
+	templateTfsPath := projectRoot + "/templates/" + enrichments
 
-	err := tofu.CopyFiles(templateTfsPath, workingDir)
+	err = tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to working directory")
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -98,7 +120,7 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -111,26 +133,26 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-azure
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "init")
+	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		err2 := fmt.Errorf("failed to initialize an infrastructure terrarium")
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "the infrastructure terrarium is successfully initialized",
+		Message: "the infrastructure terrarium is successfully initialized",
 		Detail:  ret,
 	}
 
@@ -142,25 +164,25 @@ func InitTerrariumForGcpAzureVpn(c echo.Context) error {
 // ClearGcpAzureVpn godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/clear [delete]
+// @Router /tr/{trId}/vpn/gcp-azure/clear [delete]
 func ClearGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -168,13 +190,13 @@ func ClearGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -185,7 +207,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -193,7 +215,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 	text := "successfully remove all in the working directory"
 	res := model.Response{
 		Success: true,
-		Text:    text,
+		Message: text,
 	}
 	log.Debug().Msgf("%+v", res) // debug
 
@@ -203,26 +225,26 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // GetResourceInfoOfGcpAzureVpn godoc
 // @Summary Get resource info to configure GCP to Azure VPN tunnels
 // @Description Get resource info to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/resource/info [get]
+// @Router /tr/{trId}/vpn/gcp-azure [get]
 func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -257,13 +279,13 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -273,15 +295,15 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	case DetailOptions.Refined:
 		// Code for handling "refined" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
-		ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "output", "-json")
+		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
@@ -292,15 +314,15 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 			log.Error().Err(err).Msg("") // error
 			res := model.Response{
 				Success: false,
-				Text:    "failed to unmarshal resource info",
+				Message: "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
 		res := model.Response{
 			Success: true,
-			Text:    "refined read resource info (map)",
-			Object:  resourceInfo,
+			Message: "refined read resource info (map)",
+			Data:    resourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -309,16 +331,16 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	case DetailOptions.Raw:
 		// Code for handling "raw" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
-		ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "show", "-json")
+		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
 			log.Error().Err(err).Msg(err2.Error()) // error
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
@@ -326,11 +348,11 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 		// Parse the resource info
 		resourcesString := gjson.Get(ret, "values.root_module.resources").String()
 		if resourcesString == "" {
-			err2 := fmt.Errorf("could not find resource info (rgId: %s)", rgId)
+			err2 := fmt.Errorf("could not find resource info (trId: %s)", trId)
 			log.Warn().Msg(err2.Error())
 			res := model.Response{
 				Success: false,
-				Text:    err2.Error(),
+				Message: err2.Error(),
 			}
 			return c.JSON(http.StatusOK, res)
 		}
@@ -341,15 +363,15 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 			log.Error().Err(err).Msg("") // error
 			res := model.Response{
 				Success: false,
-				Text:    "failed to unmarshal resource info",
+				Message: "failed to unmarshal resource info",
 			}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
 
 		res := model.Response{
 			Success: true,
-			Text:    "raw read resource info (list)",
-			List:    resourceInfoList,
+			Message: "raw read resource info (list)",
+			Data:    resourceInfoList,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 
@@ -359,7 +381,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 		log.Warn().Err(err2).Msg("") // warn
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -368,26 +390,26 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // CreateInfracodeOfGcpAzureVpn godoc
 // @Summary Create the infracode to configure GCP to Azure VPN tunnels
 // @Description Create the infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ParamsForInfracode body model.CreateInfracodeOfGcpAzureVpnRequest true "Parameters requied to create the infracode to configure GCP to Azure VPN tunnels"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/infracode [post]
+// @Router /tr/{trId}/vpn/gcp-azure/infracode [post]
 func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -398,7 +420,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 		log.Warn().Err(err).Msg("invalid request format")
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -406,13 +428,13 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -425,9 +447,9 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
 
-	if req.TfVars.ResourceGroupId == "" {
-		log.Warn().Msgf("resource group ID is not set, Use path param: %s", rgId) // warn
-		req.TfVars.ResourceGroupId = rgId
+	if req.TfVars.TerrariumId == "" {
+		log.Warn().Msgf("terrarium ID is not set, Use path param: %s", trId) // warn
+		req.TfVars.TerrariumId = trId
 	}
 
 	err := tofu.SaveGcpAzureTfVarsToFile(req.TfVars, tfVarsPath)
@@ -436,14 +458,14 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	res := model.Response{
 		Success: true,
-		Text:    "the infracode to configure GCP to Azure VPN tunnels is Successfully created",
+		Message: "the infracode to configure GCP to Azure VPN tunnels is Successfully created",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug
@@ -454,25 +476,25 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CheckInfracodeOfGcpAzureVpn godoc
 // @Summary Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
 // @Description Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/plan [post]
+// @Router /tr/{trId}/vpn/gcp-azure/plan [post]
 func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -483,26 +505,26 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-azure
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommand(rgId, reqId, "-chdir="+workingDir, "plan")
+	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		err2 := fmt.Errorf("encountered an issue during the infracode checking process")
 		log.Error().Err(err).Msg(err2.Error()) // error
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 			Detail:  ret,
 		}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -510,7 +532,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Text:    "the infracode checking process is successfully completed",
+		Message: "the infracode checking process is successfully completed",
 		Detail:  ret,
 	}
 
@@ -522,25 +544,25 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CreateGcpAzureVpn godoc
 // @Summary Create network resources for VPN tunnel in GCP and Azure
 // @Description Create network resources for VPN tunnel in GCP and Azure
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure [post]
+// @Router /tr/{trId}/vpn/gcp-azure [post]
 func CreateGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -551,33 +573,33 @@ func CreateGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}/vpn/gcp-azure
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-azure
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommandAsync(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	res := model.Response{
 		Success: true,
-		Text:    "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
+		Message: "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
 		Detail:  ret,
 	}
 
@@ -589,26 +611,26 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // DestroyGcpAzureVpn godoc
 // @Summary Destroy network resources that were used to configure GCP as an Azure VPN tunnel
 // @Description Destroy network resources that were used to configure GCP as an Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure [delete]
+// @Router /tr/{trId}/vpn/gcp-azure [delete]
 func DestroyGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -619,33 +641,33 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	projectRoot := viper.GetString("mcterrarium.root")
 
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	// Destroy the infrastructure
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.tofu/{resourceGroupId}
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}
 	// subcommand: destroy
-	ret, err := tofu.ExecuteTofuCommandAsync(rgId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommandAsync(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 	res := model.Response{
 		Success: true,
-		Text:    "the request (id: " + reqId + ") is successfully accepted and still destroying resource",
+		Message: "the request (id: " + reqId + ") is successfully accepted and still destroying resource",
 		Detail:  ret,
 	}
 
@@ -657,25 +679,25 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // GetRequestStatusOfGcpAzureVpn godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
-// @Param resourceGroupId path string true "Resource group ID" default(tofu-rg-01)
+// @Param trId path string true "Terrarium ID" default(tr01)
 // @Param requestId path string true "Request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /rg/{resourceGroupId}/vpn/gcp-azure/request/{requestId} [get]
+// @Router /tr/{trId}/vpn/gcp-azure/request/{requestId} [get]
 func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 
-	rgId := c.Param("resourceGroupId")
-	if rgId == "" {
-		err := fmt.Errorf("invalid request, resource groud ID (rgId: %s) is required", rgId)
+	trId := c.Param("trId")
+	if trId == "" {
+		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
@@ -686,19 +708,19 @@ func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err.Error(),
+			Message: err.Error(),
 		}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	projectRoot := viper.GetString("mcterrarium.root")
-	workingDir := projectRoot + "/.tofu/" + rgId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
@@ -706,20 +728,20 @@ func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
 
 	// Check the statusReport of the request
-	statusReport, err := tofu.GetRunningStatus(rgId, statusLogFile)
+	statusReport, err := tofu.GetRunningStatus(trId, statusLogFile)
 	if err != nil {
 		err2 := fmt.Errorf("failed to get the status of the request")
 		log.Error().Err(err).Msg(err2.Error()) // error
 		res := model.Response{
 			Success: false,
-			Text:    err2.Error(),
+			Message: err2.Error(),
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	res := model.Response{
 		Success: true,
-		Text:    "the status of a specific request",
+		Message: "the status of a specific request",
 		Detail:  statusReport,
 	}
 

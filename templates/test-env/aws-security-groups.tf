@@ -1,7 +1,7 @@
 # Define a security group
 # Private EC2 SG
 resource "aws_security_group" "test_sg"{
-  name        = "tofu-aws-sg"
+  name        = "tr-aws-sg"
   description = "for private ec2"
   vpc_id      = aws_vpc.test_vpc.id
 
@@ -13,7 +13,7 @@ resource "aws_security_group" "test_sg"{
   }
 
   tags = {
-    Name = "tofu-aws-sg"
+    Name = "tr-aws-sg"
   }
 }
 

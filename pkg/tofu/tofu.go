@@ -18,30 +18,36 @@ import (
 	"github.com/spf13/viper"
 )
 
-const statusFile = "runningStatusMap.db"
+const (
+	statusFileName = "runningStatusMap.db"
+	terrariumDir   = ".terrarium"
+)
 
 // Manage the running status of tofu commands.
-var requestStatusMap = make(map[string]string)
-var mapMutex = &sync.Mutex{}
+var requestStatusMap sync.Map
 
 // Save the running status map to file
 func SaveRunningStatusMap() error {
-
 	projectRoot := viper.GetString("mcterrarium.root")
-	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
+	statusFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, statusFileName)
 
-	mapMutex.Lock()
-	defer mapMutex.Unlock()
-
+	// Create the file to store the running status map
 	file, err := os.Create(statusFilePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create status file: %w", err)
 	}
 	defer file.Close()
 
+	// Encode sync.Map to a JSON file
+	tempMap := make(map[string]string)
+	requestStatusMap.Range(func(key, value interface{}) bool {
+		tempMap[key.(string)] = value.(string)
+		return true
+	})
+
 	encoder := json.NewEncoder(file)
-	if err := encoder.Encode(requestStatusMap); err != nil {
-		return err
+	if err := encoder.Encode(tempMap); err != nil {
+		return fmt.Errorf("failed to encode status map: %w", err)
 	}
 
 	return nil
@@ -49,40 +55,46 @@ func SaveRunningStatusMap() error {
 
 // Load the running status map from file
 func LoadRunningStatusMap() error {
-
 	projectRoot := viper.GetString("mcterrarium.root")
-	statusFilePath := fmt.Sprintf("%s/.tofu/%s", projectRoot, statusFile)
+	statusFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, statusFileName)
 
-	mapMutex.Lock()
-	defer mapMutex.Unlock()
+	// Check and open the status file
+	if _, err := os.Stat(statusFilePath); os.IsNotExist(err) {
+		return fmt.Errorf("status file does not exist: %w", err)
+	}
 
 	file, err := os.Open(statusFilePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open status file: %w", err)
 	}
 	defer file.Close()
 
+	// Decode JSON file to sync.Map
+	var tempMap map[string]string
 	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&requestStatusMap); err != nil {
-		return err
+	if err := decoder.Decode(&tempMap); err != nil {
+		return fmt.Errorf("failed to decode status map: %w", err)
+	}
+
+	for key, value := range tempMap {
+		requestStatusMap.Store(key, value)
 	}
 
 	return nil
 }
 
-// Set the running status for a given rgId.
-func setRunningStatus(rgId, status string) {
-	mapMutex.Lock()
-	defer mapMutex.Unlock()
-	requestStatusMap[rgId] = status
+// Set the running status for a given trId.
+func setRunningStatus(trId, status string) {
+	requestStatusMap.Store(trId, status)
 }
 
-// Get the running status for a given rgId.
-func getRunningStatus(rgId string) (status string, exists bool) {
-	mapMutex.Lock()
-	defer mapMutex.Unlock()
-	status, exists = requestStatusMap[rgId]
-	return
+// Get the running status for a given trId.
+func getRunningStatus(trId string) (string, bool) {
+	value, exists := requestStatusMap.Load(trId)
+	if !exists {
+		return "", false
+	}
+	return value.(string), true
 }
 
 func GetTofuVersion() (string, error) {
@@ -111,17 +123,17 @@ func GetTofuVersion() (string, error) {
 // - ExecuteTofuCommand("version")
 // - ExecuteTofuCommand("apply", "-var=\"image_id=ami-abc123\"")
 // - ExecuteTofuCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
-func ExecuteTofuCommand(rgId, reqId string, args ...string) (string, error) {
+func ExecuteTofuCommand(trId, reqId string, args ...string) (string, error) {
 
-	currentStatus, exists := getRunningStatus(rgId)
+	currentStatus, exists := getRunningStatus(trId)
 	if exists && currentStatus == "Running" {
 		return "", errors.New("a previous request is still in progress")
 	}
-	setRunningStatus(rgId, "Running")
+	setRunningStatus(trId, "Running")
 
 	defer func() {
 		if r := recover(); r != nil {
-			setRunningStatus(rgId, "Failed")
+			setRunningStatus(trId, "Failed")
 		}
 	}()
 
@@ -129,11 +141,11 @@ func ExecuteTofuCommand(rgId, reqId string, args ...string) (string, error) {
 	output, err := executeCommand(reqId, args)
 	if err != nil {
 		log.Error().Msgf("Command execution failed: %v", err)
-		setRunningStatus(rgId, "Failed")
+		setRunningStatus(trId, "Failed")
 		return "", err
 	}
 	// log.Debug().Msgf("Command output: %s", output)
-	setRunningStatus(rgId, "Success")
+	setRunningStatus(trId, "Success")
 
 	// log.Debug().Msgf("Command output: %s", output)
 
@@ -148,17 +160,17 @@ func ExecuteTofuCommand(rgId, reqId string, args ...string) (string, error) {
 // - ExecuteTofuCommandAsync("apply", "-var=\"image_id=ami-abc123\"")
 // - ExecuteTofuCommandAsync("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
 // ExecuteTofuCommandAsync executes a given tofu CLI command with arguments asynchronously.
-func ExecuteTofuCommandAsync(rgId string, reqId string, args ...string) (string, error) {
-	currentStatus, exists := getRunningStatus(rgId)
+func ExecuteTofuCommandAsync(trId string, reqId string, args ...string) (string, error) {
+	currentStatus, exists := getRunningStatus(trId)
 	if exists && currentStatus == "Running" {
 		return "", errors.New("a previous request is still in progress")
 	}
-	setRunningStatus(rgId, "Running")
+	setRunningStatus(trId, "Running")
 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				setRunningStatus(rgId, "Failed")
+				setRunningStatus(trId, "Failed")
 			}
 		}()
 
@@ -166,11 +178,11 @@ func ExecuteTofuCommandAsync(rgId string, reqId string, args ...string) (string,
 		_, err := executeCommand(reqId, args)
 		if err != nil {
 			log.Error().Msgf("Command execution failed: %v", err)
-			setRunningStatus(rgId, "Failed")
+			setRunningStatus(trId, "Failed")
 			return
 		}
 		// log.Debug().Msgf("Command output: %s", output)
-		setRunningStatus(rgId, "Success")
+		setRunningStatus(trId, "Success")
 	}()
 
 	res := fmt.Sprintf("Request (reqId: %s) in progress. Please use the status check API with the request ID.", reqId)
@@ -225,9 +237,9 @@ func executeCommand(reqId string, args []string) (string, error) {
 	return outputBuffer.String(), nil
 }
 
-func GetRunningStatus(rgId, statusLogFile string) (string, error) {
+func GetRunningStatus(trId, statusLogFile string) (string, error) {
 
-	status, exists := getRunningStatus(rgId)
+	status, exists := getRunningStatus(trId)
 	if !exists {
 		return "", errors.New("no request found")
 	}

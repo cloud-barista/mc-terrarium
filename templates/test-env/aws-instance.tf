@@ -8,6 +8,6 @@ resource "aws_instance" "test_ec2_instance" {
   subnet_id = aws_subnet.test_subnet_1.id
   
   tags = {
-    Name = "tofu-aws-ec2-instance"
+    Name = "tr-aws-ec2-instance"
   }
 }
