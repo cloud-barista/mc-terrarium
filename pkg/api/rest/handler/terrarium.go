@@ -26,7 +26,7 @@ import (
 )
 
 // IssueTerrarium godoc
-// @Summary Issue/create a terrarium 
+// @Summary Issue/create a terrarium
 // @Description Issue/create a terrarium
 // @Tags [Terrarium] An environment to enrich the multi-cloud infrastructure
 // @Accept  json
@@ -67,7 +67,7 @@ func IssueTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	trInfo, err := terrarium.ReadTerrarium(trId)
+	trInfo, err := terrarium.ReadTerrariumInfo(trId)
 	if err != nil {
 		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
 		res := model.Response{Success: true, Message: text}
@@ -89,7 +89,7 @@ func IssueTerrarium(c echo.Context) error {
 // @Router /tr [get]
 func ReadAllTerrarium(c echo.Context) error {
 
-	trInfoList, _ := terrarium.ReadAllTerrarium()
+	trInfoList, _ := terrarium.ReadAllTerrariumInfo()
 
 	return c.JSON(http.StatusOK, trInfoList)
 }
@@ -113,7 +113,7 @@ func ReadTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	trInfo, err := terrarium.ReadTerrarium(trId)
+	trInfo, err := terrarium.ReadTerrariumInfo(trId)
 	if err != nil {
 		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
 		res := model.Response{Success: true, Message: text}

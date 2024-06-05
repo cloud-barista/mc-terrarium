@@ -20,7 +20,7 @@ func RegisterRoutesForVPN(g *echo.Group) {
 	// GCP and Azure
 	g.POST("/tr/:trId/vpn/gcp-azure/env", handler.InitEnvForGcpAzureVpn)
 	g.DELETE("/tr/:trId/vpn/gcp-azure/clear", handler.ClearGcpAzureVpn)
-	g.GET("/tr/:trId/vpn/gcp-azure/resource/info", handler.GetResourceInfoOfGcpAzureVpn)
+	g.GET("/tr/:trId/vpn/gcp-azure", handler.GetResourceInfoOfGcpAzureVpn)
 	g.POST("/tr/:trId/vpn/gcp-azure/infracode", handler.CreateInfracodeOfGcpAzureVpn)
 	g.POST("/tr/:trId/vpn/gcp-azure/plan", handler.CheckInfracodeOfGcpAzureVpn)
 	g.POST("/tr/:trId/vpn/gcp-azure", handler.CreateGcpAzureVpn)

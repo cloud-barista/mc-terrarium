@@ -109,19 +109,30 @@ func IssueTerrarium(trInfo model.TerrariumInfo) error {
 	return nil
 }
 
-func ReadTerrarium(trId string) (model.TerrariumInfo, error) {
+func ReadTerrariumInfo(trId string) (model.TerrariumInfo, error) {
 
 	trInfo, exists := getTerrariumInfo(trId)
 	if !exists {
-		return model.TerrariumInfo{}, fmt.Errorf("the terrarium (trId: %s) not exist", trId)
+		return model.TerrariumInfo{}, fmt.Errorf("not existed the terrarium (trId: %s)", trId)
 	}
 
 	return trInfo, nil
 }
 
-func ReadAllTerrarium() ([]model.TerrariumInfo, error) {
+func ReadAllTerrariumInfo() ([]model.TerrariumInfo, error) {
 
 	trInfoList := getAllTerrariumInfo()
 
 	return trInfoList, nil
+}
+
+func UpdateTerrariumInfo(trInfo model.TerrariumInfo) error {
+
+	_, exists := getTerrariumInfo(trInfo.Id)
+	if !exists {
+		return fmt.Errorf("not existed the terrarium (trId: %s)", trInfo.Id)
+	}
+	setTerrariumInfo(trInfo)
+
+	return nil
 }

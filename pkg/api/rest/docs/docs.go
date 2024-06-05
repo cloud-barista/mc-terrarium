@@ -1304,6 +1304,68 @@ const docTemplate = `{
             }
         },
         "/tr/{trId}/vpn/gcp-azure": {
+            "get": {
+                "description": "Get resource info to configure GCP to Azure VPN tunnels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                ],
+                "summary": "Get resource info to configure GCP to Azure VPN tunnels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create network resources for VPN tunnel in GCP and Azure",
                 "consumes": [
@@ -1313,7 +1375,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Create network resources for VPN tunnel in GCP and Azure",
                 "parameters": [
@@ -1368,7 +1430,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
                 "parameters": [
@@ -1425,7 +1487,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -1482,7 +1544,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
                 "parameters": [
@@ -1539,7 +1601,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Create the infracode to configure GCP to Azure VPN tunnels",
                 "parameters": [
@@ -1605,7 +1667,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
                 "parameters": [
@@ -1662,7 +1724,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
+                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -1680,70 +1742,6 @@ const docTemplate = `{
                         "name": "requestId",
                         "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/tr/{trId}/vpn/gcp-azure/resource/info": {
-            "get": {
-                "description": "Get resource info to configure GCP to Azure VPN tunnels",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration"
-                ],
-                "summary": "Get resource info to configure GCP to Azure VPN tunnels",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tr01",
-                        "description": "Terrarium ID",
-                        "name": "trId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "refined",
-                        "description": "Resource info by detail (refined, raw)",
-                        "name": "detail",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1941,6 +1939,9 @@ const docTemplate = `{
                     "type": "string",
                     "default": "This terrarium enriches ...",
                     "example": "This terrarium enriches ..."
+                },
+                "enrichments": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string",

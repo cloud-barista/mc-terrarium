@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -60,8 +61,29 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
+	// Set the enrichments
+	enrichments := "vpn/gcp-aws"
+
+	// Read and set the enrichments to terrarium information
+	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	if err != nil {
+		err2 := fmt.Errorf("failed to read terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	trInfo.Enrichments = enrichments
+	err = terrarium.UpdateTerrariumInfo(trInfo)
+	if err != nil {
+		err2 := fmt.Errorf("failed to update terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
 	projectRoot := viper.GetString("mcterrarium.root")
-	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
@@ -73,9 +95,9 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	}
 
 	// Copy template files to the working directory (overwrite)
-	templateTfsPath := projectRoot + "/templates/vpn/gcp-aws"
+	templateTfsPath := projectRoot + "/templates/" + enrichments
 
-	err := tofu.CopyFiles(templateTfsPath, workingDir)
+	err = tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to working directory")
 		log.Error().Err(err).Msg(err2.Error())

@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -34,7 +35,7 @@ import (
 // InitEnvForGcpAzureVpn godoc
 // @Summary Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
 // @Description Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -60,8 +61,29 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
+	// Set the enrichments
+	enrichments := "vpn/gcp-azure"
+
+	// Read and set the enrichments to terrarium information
+	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	if err != nil {
+		err2 := fmt.Errorf("failed to read terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	trInfo.Enrichments = enrichments
+	err = terrarium.UpdateTerrariumInfo(trInfo)
+	if err != nil {
+		err2 := fmt.Errorf("failed to update terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
 	projectRoot := viper.GetString("mcterrarium.root")
-	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
 		if err != nil {
@@ -76,9 +98,9 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Copy template files to the working directory (overwrite)
-	templateTfsPath := projectRoot + "/templates/vpn/gcp-azure"
+	templateTfsPath := projectRoot + "/templates/" + enrichments
 
-	err := tofu.CopyFiles(templateTfsPath, workingDir)
+	err = tofu.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to working directory")
 		log.Error().Err(err).Msg(err2.Error())
@@ -142,7 +164,7 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 // ClearGcpAzureVpn godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -203,7 +225,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // GetResourceInfoOfGcpAzureVpn godoc
 // @Summary Get resource info to configure GCP to Azure VPN tunnels
 // @Description Get resource info to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -213,7 +235,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/gcp-azure/resource/info [get]
+// @Router /tr/{trId}/vpn/gcp-azure [get]
 func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 
 	trId := c.Param("trId")
@@ -368,7 +390,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // CreateInfracodeOfGcpAzureVpn godoc
 // @Summary Create the infracode to configure GCP to Azure VPN tunnels
 // @Description Create the infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -454,7 +476,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CheckInfracodeOfGcpAzureVpn godoc
 // @Summary Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
 // @Description Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -522,7 +544,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CreateGcpAzureVpn godoc
 // @Summary Create network resources for VPN tunnel in GCP and Azure
 // @Description Create network resources for VPN tunnel in GCP and Azure
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -589,7 +611,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // DestroyGcpAzureVpn godoc
 // @Summary Destroy network resources that were used to configure GCP as an Azure VPN tunnel
 // @Description Destroy network resources that were used to configure GCP as an Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -657,7 +679,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // GetRequestStatusOfGcpAzureVpn godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [VPN] GCP to Azure VPN tunnel configuration
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
