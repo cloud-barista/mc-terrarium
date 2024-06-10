@@ -655,7 +655,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}
 	// subcommand: destroy
-	ret, err := tofu.ExecuteTofuCommandAsync(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -667,7 +667,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	}
 	res := model.Response{
 		Success: true,
-		Message: "the request (id: " + reqId + ") is successfully accepted and still destroying resource",
+		Message: "the destroying process is successfully completed (trId: " + trId + ", enrichments: vpn/gcp-aws)",
 		Detail:  ret,
 	}
 
