@@ -164,7 +164,7 @@ func EraseTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	text := fmt.Sprintf("successfully erased the entire terrarium (id: %v)", trId)
+	text := fmt.Sprintf("successfully erased the entire terrarium (trId: %v)", trId)
 	res := model.Response{Success: true, Message: text}
 	log.Debug().Msgf("%+v", res) // debug
 
