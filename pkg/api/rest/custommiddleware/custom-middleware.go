@@ -1,13 +1,32 @@
 package custommiddleware
 
 import (
+	"strings"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
 )
 
-func Zerologger() echo.MiddlewareFunc {
+func Zerologger(skipPatterns [][]string) echo.MiddlewareFunc {
 	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		Skipper: func(c echo.Context) bool {
+			path := c.Request().URL.Path
+			query := c.Request().URL.RawQuery
+			for _, patterns := range skipPatterns {
+				isAllMatched := true
+				for _, pattern := range patterns {
+					if !strings.Contains(path+query, pattern) {
+						isAllMatched = false
+						break
+					}
+				}
+				if isAllMatched {
+					return true
+				}
+			}
+			return false
+		},
 		LogError:         true,
 		LogRequestID:     true,
 		LogRemoteIP:      true,
