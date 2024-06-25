@@ -64,6 +64,8 @@ const (
 const (
 	website = " https://github.com/cloud-barista/mc-terrarium"
 	banner  = `    
+ ________________________________________________
+ 
 
  ██████╗ ███████╗ █████╗ ██████╗ ██╗   ██╗
  ██╔══██╗██╔════╝██╔══██╗██╔══██╗╚██╗ ██╔╝
@@ -71,8 +73,16 @@ const (
  ██╔══██╗██╔══╝  ██╔══██║██║  ██║  ╚██╔╝  
  ██║  ██║███████╗██║  ██║██████╔╝   ██║   
  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   
-
- Computing Infrastructure Migration Technology
+ 
+████████╗███████╗██████╗ ██████╗  █████╗ ██████╗ ██╗██╗   ██╗███╗   ███╗
+╚══██╔══╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║██║   ██║████╗ ████║
+   ██║   █████╗  ██████╔╝██████╔╝███████║██████╔╝██║██║   ██║██╔████╔██║
+   ██║   ██╔══╝  ██╔══██╗██╔══██╗██╔══██║██╔══██╗██║██║   ██║██║╚██╔╝██║
+   ██║   ███████╗██║  ██║██║  ██║██║  ██║██║  ██║██║╚██████╔╝██║ ╚═╝ ██║
+   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝     ╚═╝
+ 
+ 
+ Mutli-cloud Infrastructure Enrichment Technology
  ________________________________________________`
 )
 
@@ -125,8 +135,13 @@ func RunServer(port string) {
 	// Middleware
 	// e.Use(middleware.Logger()) // default logger middleware in echo
 
+	APILogSkipPatterns := [][]string{
+		{"/terrarium/api"},
+		// {"/mcis", "option=status"},
+	}
+
 	// Custom logger middleware with zerolog
-	e.Use(custommiddleware.Zerologger())
+	e.Use(custommiddleware.Zerologger(APILogSkipPatterns))
 
 	// Recover middleware recovers from panics anywhere in the chain, and handles the control to the centralized HTTP error handler.
 	e.Use(middleware.Recover())
@@ -178,12 +193,12 @@ func RunServer(port string) {
 		}))
 	}
 
-	fmt.Println("\n \n ")
+	fmt.Print("\n ")
 	fmt.Print(banner)
-	fmt.Println("\n ")
-	fmt.Println("\n ")
+	fmt.Print("\n\n")
+	fmt.Println(" Website/repository: ")
 	fmt.Printf(infoColor, website)
-	fmt.Println("\n \n ")
+	fmt.Print("\n\n")
 
 	// Route for system management
 	swaggerRedirect := func(c echo.Context) error {
@@ -214,7 +229,7 @@ func RunServer(port string) {
 	apidashboard := " http://" + selfEndpoint + "/terrarium/api"
 
 	if enableAuth {
-		fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + ")")
+		fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + "): ")
 	}
 	fmt.Printf(noticeColor, apidashboard)
 	fmt.Println("\n ")
