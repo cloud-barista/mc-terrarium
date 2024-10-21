@@ -1,7 +1,7 @@
 # Define the required version of Terraform and the providers that will be used in the project
 terraform {
   # Required Tofu version
-  required_version = "~>1.7.1"
+  required_version = "~>1.8.3"
 
   required_providers {
     # AWS provider is specified with its source and version

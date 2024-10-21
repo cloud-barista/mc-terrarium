@@ -3,7 +3,7 @@
 ##############################################################
 
 # Using a specific version of golang based on alpine for building the application
-FROM golang:1.21.4-alpine AS builder
+FROM golang:1.23.0-alpine AS builder
 
 # Installing necessary packages
 # sqlite-libs and sqlite-dev for SQLite support
@@ -30,7 +30,7 @@ RUN make prod
 ##############################################################
 
 # Using the latest Ubuntu image for the production stage
-FROM ubuntu:latest as prod
+FROM ubuntu:22.04 as prod
 
 # Setting the working directory for the application
 WORKDIR /app
@@ -46,7 +46,7 @@ COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 
 RUN apt-get update && apt-get install -y git
-RUN ./scripts/install-tofu-1.7.1.sh
+RUN ./scripts/install-tofu.sh 1.8.3
 
 # Setting various environment variables required by the application
 ENV MCTERRARIUM_ROOT=/app \
