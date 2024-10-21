@@ -1,4 +1,4 @@
-package custommiddleware
+package middlewares
 
 import (
 	"strings"
@@ -33,7 +33,7 @@ func Zerologger(skipPatterns [][]string) echo.MiddlewareFunc {
 		LogHost:          true,
 		LogMethod:        true,
 		LogURI:           true,
-		LogUserAgent:     true,
+		LogUserAgent:     false,
 		LogStatus:        true,
 		LogLatency:       true,
 		LogContentLength: true,
@@ -44,12 +44,12 @@ func Zerologger(skipPatterns [][]string) echo.MiddlewareFunc {
 				log.Info().
 					Str("id", v.RequestID).
 					Str("remote_ip", v.RemoteIP).
-					Str("host", v.Host).
+					// Str("host", v.Host).
 					Str("method", v.Method).
 					Str("URI", v.URI).
-					Str("user_agent", v.UserAgent).
+					// Str("user_agent", v.UserAgent).
 					Int("status", v.Status).
-					Int64("latency", v.Latency.Nanoseconds()).
+					// Int64("latency", v.Latency.Nanoseconds()).
 					Str("latency_human", v.Latency.String()).
 					Str("bytes_in", v.ContentLength).
 					Int64("bytes_out", v.ResponseSize).
@@ -59,12 +59,12 @@ func Zerologger(skipPatterns [][]string) echo.MiddlewareFunc {
 					Err(v.Error).
 					Str("id", v.RequestID).
 					Str("remote_ip", v.RemoteIP).
-					Str("host", v.Host).
+					// Str("host", v.Host).
 					Str("method", v.Method).
 					Str("URI", v.URI).
-					Str("user_agent", v.UserAgent).
+					// Str("user_agent", v.UserAgent).
 					Int("status", v.Status).
-					Int64("latency", v.Latency.Nanoseconds()).
+					// Int64("latency", v.Latency.Nanoseconds()).
 					Str("latency_human", v.Latency.String()).
 					Str("bytes_in", v.ContentLength).
 					Int64("bytes_out", v.ResponseSize).

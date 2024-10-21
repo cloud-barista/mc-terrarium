@@ -3,7 +3,7 @@
 ##############################################################
 
 # Using a specific version of golang based on alpine for building the application
-FROM golang:1.21.4-alpine AS builder
+FROM golang:1.23.0-alpine AS builder
 
 # Installing necessary packages
 # sqlite-libs and sqlite-dev for SQLite support
@@ -30,7 +30,7 @@ RUN make prod
 ##############################################################
 
 # Using the latest Ubuntu image for the production stage
-FROM ubuntu:latest as prod
+FROM ubuntu:22.04 AS prod
 
 # Setting the working directory for the application
 WORKDIR /app
@@ -46,29 +46,38 @@ COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 
 RUN apt-get update && apt-get install -y git
-RUN ./scripts/install-tofu-1.7.1.sh
+RUN ./scripts/install-tofu.sh 1.8.3
 
 # Setting various environment variables required by the application
-ENV MCTERRARIUM_ROOT=/app \
-    LOGFILE_PATH=/app/.terrarium/mc-terrarium.log \
-    LOGFILE_MAXSIZE=10 \
+ENV TERRARIUM_ROOT=/app
+
+## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8056)
+ENV TERRARIUM_SELF_ENDPOINT=localhost:8888
+
+## Set API access config
+# API_ALLOW_ORIGINS (ex: https://cloud-barista.org,xxx.xxx.xxx.xxx or * for all)
+# Set ENABLE_AUTH=true currently for basic auth for all routes (i.e., url or path)
+ENV TERRARIUM_API_ALLOW_ORIGINS=* \
+    TERRARIUM_API_AUTH_ENABLED=true \
+    TERRARIUM_API_USERNAME=default \
+    TERRARIUM_API_PASSWORD=default
+
+## Logger configuration
+# Set log file path (default logfile path: ./log/terrarium.log)
+# Set log level, such as trace, debug info, warn, error, fatal, and panic
+ENV LOGFILE_PATH=/app/log/terrarium.log \
+    LOGFILE_MAXSIZE=1000 \
     LOGFILE_MAXBACKUPS=3 \
     LOGFILE_MAXAGE=30 \
     LOGFILE_COMPRESS=false \
-    LOGLEVEL=debug \
-    LOGWRITER=both \
-    NODE_ENV=development \
-    DB_URL=localhost:3306 \
-    DB_DATABASE=poc_mc_net_tf \
-    DB_USER=poc_mc_net_tf \
-    DB_PASSWORD=poc_mc_net_tf \
-    API_ALLOW_ORIGINS=* \
-    API_AUTH_ENABLED=true \
-    API_USERNAME=default \
-    API_PASSWORD=default \
-    AUTOCONTROL_DURATION_MS=10000 \
-    SELF_ENDPOINT=localhost:8888 \
-    API_DOC_PATH=/app/pkg/api/rest/docs/swagger.json
+    LOGLEVEL=info \
+    LOGWRITER=both
+
+# Set execution environment, such as development or production
+ENV NODE_ENV=production
+
+## Set period for auto control goroutine invocation
+ENV TERRARIUM_AUTOCONTROL_DURATION_MS=10000
 
 # Setting the entrypoint for the application
 ENTRYPOINT [ "/app/mc-terrarium" ]

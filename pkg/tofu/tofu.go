@@ -14,8 +14,8 @@ import (
 	"sync"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -28,7 +28,7 @@ var requestStatusMap sync.Map
 
 // Save the running status map to file
 func SaveRunningStatusMap() error {
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	statusFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, statusFileName)
 
 	// Create the file to store the running status map
@@ -55,7 +55,7 @@ func SaveRunningStatusMap() error {
 
 // Load the running status map from file
 func LoadRunningStatusMap() error {
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	statusFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, statusFileName)
 
 	// Check and open the status file
@@ -287,7 +287,7 @@ func CopyFile(src string, des string) error {
 
 func CopyGCPCredentials(des string) error {
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	cred := projectRoot + "/secrets/credential-gcp.json"
 
 	return CopyFile(cred, des)
@@ -295,7 +295,7 @@ func CopyGCPCredentials(des string) error {
 
 func CopyAzureCredentials(des string) error {
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	cred := projectRoot + "/secrets/credential-azure.env"
 
 	return CopyFile(cred, des)

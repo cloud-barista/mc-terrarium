@@ -21,10 +21,10 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
@@ -46,7 +46,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
@@ -113,7 +113,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 // @Router /test-env/env [delete]
 func ClearTestEnv(c echo.Context) error {
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -176,7 +176,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -306,7 +306,7 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -352,7 +352,7 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -393,7 +393,7 @@ func CreateTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -432,7 +432,7 @@ func DestroyTestEnv(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
@@ -478,7 +478,7 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/test-env"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {

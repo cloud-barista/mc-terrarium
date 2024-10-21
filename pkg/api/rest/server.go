@@ -28,24 +28,21 @@ import (
 	"net/http"
 
 	// Black import (_) is for running a package's init() function without using its other contents.
-	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
-	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/rs/zerolog/log"
 
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/custommiddleware"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/route"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
-
-	"github.com/spf13/viper"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
 	// echo-swagger middleware
-	_ "github.com/cloud-barista/mc-terrarium/pkg/api/rest/docs"
+	_ "github.com/cloud-barista/mc-terrarium/api"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
@@ -87,21 +84,6 @@ const (
 )
 
 // RunServer func start Rest API server
-
-// @title Multi-Cloud Terrarium  REST API
-// @version latest
-// @description Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment to enrich multi-cloud infrastructure.
-
-// @contact.name API Support
-// @contact.url http://cloud-barista.github.io
-// @contact.email contact-to-cloud-barista@googlegroups.com
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @BasePath /terrarium
-
-// @securityDefinitions.basic BasicAuth
 func RunServer(port string) {
 
 	// Load and set tofu command utility
@@ -141,7 +123,7 @@ func RunServer(port string) {
 	}
 
 	// Custom logger middleware with zerolog
-	e.Use(custommiddleware.Zerologger(APILogSkipPatterns))
+	e.Use(middlewares.Zerologger(APILogSkipPatterns))
 
 	// Recover middleware recovers from panics anywhere in the chain, and handles the control to the centralized HTTP error handler.
 	e.Use(middleware.Recover())
@@ -149,13 +131,16 @@ func RunServer(port string) {
 	// limit the application to 20 requests/sec using the default in-memory store
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(20)))
 
-	// Add a request ID to the context of each request
-	e.Use(middleware.RequestID())
+	// Custom middleware to issue request ID and details
+	e.Use(middlewares.RequestIdAndDetailsIssuer)
+
+	// Custom middleware for tracing
+	e.Use(middlewares.TracingMiddleware)
 
 	e.HideBanner = true
 	//e.colorer.Printf(banner, e.colorer.Red("v"+Version), e.colorer.Blue(website))
 
-	allowedOrigins := viper.GetString("api.allow.origins")
+	allowedOrigins := config.Terrarium.API.Allow.Origins
 	if allowedOrigins == "" {
 		log.Fatal().Msg("allow_ORIGINS env variable for CORS is " + allowedOrigins +
 			". Please provide a proper value and source setup.env again. EXITING...")
@@ -167,10 +152,10 @@ func RunServer(port string) {
 	}))
 
 	// Conditions to prevent abnormal operation due to typos (e.g., ture, falss, etc.)
-	enableAuth := viper.GetString("api.auth.enabled") == "true"
+	enableAuth := config.Terrarium.API.Auth.Enabled
 
-	apiUser := viper.GetString("api.username")
-	apiPass := viper.GetString("api.password")
+	apiUser := config.Terrarium.API.Username
+	apiPass := config.Terrarium.API.Password
 
 	if enableAuth {
 		e.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
@@ -225,7 +210,7 @@ func RunServer(port string) {
 	groupSample := groupMultiCloudNetwork.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)
 
-	selfEndpoint := viper.GetString("self.endpoint")
+	selfEndpoint := config.Terrarium.Self.Endpoint
 	apidashboard := " http://" + selfEndpoint + "/terrarium/api"
 
 	if enableAuth {

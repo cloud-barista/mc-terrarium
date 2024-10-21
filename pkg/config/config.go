@@ -11,73 +11,138 @@ import (
 	"github.com/spf13/viper"
 )
 
-func init() {
-	Init()
+var (
+	RuntimeConfig Config
+	Terrarium     TerrariumConfig
+)
+
+type Config struct {
+	Terrarium TerrariumConfig `mapstructure:"terrarium"`
+}
+
+type TerrariumConfig struct {
+	Root        string            `mapstructure:"root"`
+	Self        SelfConfig        `mapstructure:"self"`
+	API         ApiConfig         `mapstructure:"api"`
+	LogFile     LogfileConfig     `mapstructure:"logfile"`
+	LogLevel    string            `mapstructure:"loglevel"`
+	LogWriter   string            `mapstructure:"logwriter"`
+	Node        NodeConfig        `mapstructure:"node"`
+	AutoControl AutoControlConfig `mapstructure:"autocontrol"`
+	Tumblebug   TumblebugConfig   `mapstructure:"tumblebug"`
+	// LKVStore    LkvStoreConfig    `mapstructure:"lkvstore"`
+}
+
+type SelfConfig struct {
+	Endpoint string `mapstructure:"endpoint"`
+}
+
+type ApiConfig struct {
+	Allow    AllowConfig `mapstructure:"allow"`
+	Auth     AuthConfig  `mapstructure:"auth"`
+	Username string      `mapstructure:"username"`
+	Password string      `mapstructure:"password"`
+}
+
+type AllowConfig struct {
+	Origins string `mapstructure:"origins"`
+}
+type AuthConfig struct {
+	Enabled bool `mapstructure:"enabled"`
+}
+
+// type LkvStoreConfig struct {
+// 	Path string `mapstructure:"path"`
+// }
+
+type LogfileConfig struct {
+	Path       string `mapstructure:"path"`
+	MaxSize    int    `mapstructure:"maxsize"`
+	MaxBackups int    `mapstructure:"maxbackups"`
+	MaxAge     int    `mapstructure:"maxage"`
+	Compress   bool   `mapstructure:"compress"`
+}
+
+type NodeConfig struct {
+	Env string `mapstructure:"env"`
+}
+
+type AutoControlConfig struct {
+	DurationMilliSec int `mapstructure:"duration_ms"`
+}
+
+type TumblebugConfig struct {
+	Endpoint string             `mapstructure:"endpoint"`
+	RestUrl  string             `mapstructure:"resturl"`
+	API      TumblebugApiConfig `mapstructure:"api"`
+}
+
+type TumblebugApiConfig struct {
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
 }
 
 func Init() {
-	viper.AddConfigPath("../../conf/") // config for development
-	viper.AddConfigPath(".")           // config for production optionally looking for the configuration in the working directory
-	viper.AddConfigPath("./conf/")     // config for production optionally looking for the configuration in the working directory/conf/
+	viper.AddConfigPath("../../conf/") // for development
+	viper.AddConfigPath(".")           // for production
+	viper.AddConfigPath("./conf/")     // for production
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
 
-	// Load main configuration
-	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Printf("no main config file, using default settings: %s\n", err)
-		log.Printf("no main config file, using default settings: %s", err)
+		log.Printf("No main config file, using default settings: %s", err)
 	}
 
-	// Load secrets configuration
-	// viper.SetConfigName("secrets")
-	// err = viper.MergeInConfig() // Merge in the secrets config
-	// if err != nil {
-	// 	fmt.Printf("no reading secrets config file: %s\n", err)
-	// 	log.Fatalf("no reading secrets config file: %s", err)
-	// }
+	// Explicitly bind environment variables to configuration keys
+	bindEnvironmentVariables()
 
-	// Map environment variable names to config file key names
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
-
-	// NOTE - the environment variable has higher priority than the config file
-	// Automatically recognize environment variables
 	viper.AutomaticEnv()
 
-	// Values set in runtime
-	if viper.GetString("mcterrarium.root") == "" {
-		fmt.Println("find project root by using project name")
-		log.Println("find project root by using project name")
+	if viper.GetString("terrarium.root") == "" {
+		log.Println("Finding project root by using project name")
 
-		projectName := "mc-terrarium"
-		// Get the executable path
-		execPath, err := os.Executable()
-		if err != nil {
-			fmt.Printf("Error getting executable path: %v\n", err)
-			log.Fatalf("Error getting executable path: %v", err)
-		}
-		execDir := filepath.Dir(execPath)
-		projectRoot, err := checkProjectRootInParentDirectory(projectName, execDir)
-		if err != nil {
-			fmt.Printf("set current directory as project root directory (%v)\n", err)
-			log.Printf("set current directory as project root directory (%v)", err)
-			projectRoot = execDir
-		}
-		fmt.Printf("project root directory: %s\n", projectRoot)
-		log.Printf("project root directory: %s\n", projectRoot)
-
-		// Set the binary path
-		viper.Set("mcterrarium.root", projectRoot)
-		viper.Set("apidoc.path", projectRoot+"/pkg/api/rest/docs/swagger.json")
+		projectRoot := findProjectRoot("mc-terrarium")
+		viper.Set("terrarium.root", projectRoot)
 	}
 
-	// Recursively print all keys and values in Viper
-	settings := viper.AllSettings()
-	if viper.GetString("node.env") == "development" {
+	if err := viper.Unmarshal(&RuntimeConfig); err != nil {
+		log.Fatalf("Unable to decode into struct: %v", err)
+	}
+	Terrarium = RuntimeConfig.Terrarium
+
+	// Print settings if in development mode
+	if Terrarium.Node.Env == "development" {
+		settings := viper.AllSettings()
 		recursivePrintMap(settings, "")
 	}
+}
+
+// NVL is func for null value logic
+func NVL(str string, def string) string {
+	if len(str) == 0 {
+		return def
+	}
+	return str
+}
+
+func findProjectRoot(projectName string) string {
+	execPath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("Error getting executable path: %v", err)
+	}
+	execDir := filepath.Dir(execPath)
+	projectRoot, err := checkProjectRootInParentDirectory(projectName, execDir)
+	if err != nil {
+		fmt.Printf("Set current directory as project root directory (%v)\n", err)
+		log.Printf("Set current directory as project root directory (%v)", err)
+		projectRoot = execDir
+	}
+	fmt.Printf("Project root directory: %s\n", projectRoot)
+	log.Printf("Project root directory: %s\n", projectRoot)
+	return projectRoot
 }
 
 func checkProjectRootInParentDirectory(projectName string, execDir string) (string, error) {
@@ -107,4 +172,26 @@ func recursivePrintMap(m map[string]interface{}, prefix string) {
 			log.Printf("Key: %s, Value: %v\n", fullKey, v)
 		}
 	}
+}
+
+func bindEnvironmentVariables() {
+	// Explicitly bind environment variables to configuration keys
+	viper.BindEnv("terrarium.root", "TERRARIUM_ROOT")
+	viper.BindEnv("terrarium.self.endpoint", "TERRARIUM_SELF_ENDPOINT")
+	viper.BindEnv("terrarium.api.allow.origins", "TERRARIUM_API_ALLOW_ORIGINS")
+	viper.BindEnv("terrarium.api.auth.enabled", "TERRARIUM_API_AUTH_ENABLED")
+	viper.BindEnv("terrarium.api.username", "TERRARIUM_API_USERNAME")
+	viper.BindEnv("terrarium.api.password", "TERRARIUM_API_PASSWORD")
+	viper.BindEnv("terrarium.logfile.path", "TERRARIUM_LOGFILE_PATH")
+	viper.BindEnv("terrarium.logfile.maxsize", "TERRARIUM_LOGFILE_MAXSIZE")
+	viper.BindEnv("terrarium.logfile.maxbackups", "TERRARIUM_LOGFILE_MAXBACKUPS")
+	viper.BindEnv("terrarium.logfile.maxage", "TERRARIUM_LOGFILE_MAXAGE")
+	viper.BindEnv("terrarium.logfile.compress", "TERRARIUM_LOGFILE_COMPRESS")
+	viper.BindEnv("terrarium.loglevel", "TERRARIUM_LOGLEVEL")
+	viper.BindEnv("terrarium.logwriter", "TERRARIUM_LOGWRITER")
+	viper.BindEnv("terrarium.node.env", "TERRARIUM_NODE_ENV")
+	viper.BindEnv("terrarium.autocontrol.duration_ms", "TERRARIUM_AUTOCONTROL_DURATION_MS")
+	viper.BindEnv("terrarium.tumblebug.endpoint", "TERRARIUM_TUMBLEBUG_ENDPOINT")
+	viper.BindEnv("terrarium.tumblebug.api.username", "TERRARIUM_TUMBLEBUG_API_USERNAME")
+	viper.BindEnv("terrarium.tumblebug.api.password", "TERRARIUM_TUMBLEBUG_API_PASSWORD")
 }

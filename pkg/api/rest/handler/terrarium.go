@@ -19,10 +19,10 @@ import (
 	"os"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
 // IssueTerrarium godoc
@@ -44,7 +44,7 @@ func IssueTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	trId := reqTrInfo.Id
 
@@ -142,7 +142,7 @@ func EraseTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId

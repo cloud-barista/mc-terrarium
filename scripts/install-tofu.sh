@@ -1,3 +1,11 @@
+#!/bin/bash
+
+# Default version
+DEFAULT_VERSION="1.8.3"
+
+# Use argument or default version
+VERSION=${1:-$DEFAULT_VERSION}
+
 # Ensure that your system is up to date
 apt update -y
 
@@ -14,7 +22,7 @@ chmod +x install-opentofu.sh
 # Please inspect the downloaded script
 
 # Run the installer:
-./install-opentofu.sh --install-method deb --opentofu-version 1.7.1
+./install-opentofu.sh --install-method deb --opentofu-version ${VERSION}
 
 # Remove the installer:
-rm install-opentofu.sh
+rm -f install-opentofu.sh

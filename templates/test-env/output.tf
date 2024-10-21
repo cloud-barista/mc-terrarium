@@ -41,7 +41,7 @@ output "azure_virtual_machine_private_ip" {
 }
 
 output "key-data" {
-  value = jsondecode(azapi_resource_action.test_azure_ssh_public_key_gen.output).publicKey
+  value = azapi_resource_action.test_azure_ssh_public_key_gen.output.publicKey
 }
 
 // GCP
