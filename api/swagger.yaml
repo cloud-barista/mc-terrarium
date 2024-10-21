@@ -194,17 +194,17 @@ definitions:
         example: asia-northeast3
         type: string
     type: object
+host: localhost:8888
 info:
   contact:
-    email: contact-to-cloud-barista@googlegroups.com
     name: API Support
-    url: http://cloud-barista.github.io
+    url: https://github.com/cloud-barista/mc-terrarium/issues/new
   description: Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment
     to enrich multi-cloud infrastructure.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Multi-Cloud Terrarium  REST API
+  title: Multi-Cloud Terrarium REST API
   version: latest
 paths:
   /httpVersion:

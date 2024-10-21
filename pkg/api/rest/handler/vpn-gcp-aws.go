@@ -21,11 +21,11 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
@@ -82,7 +82,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err := os.MkdirAll(workingDir, 0755)
@@ -171,7 +171,7 @@ func ClearGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -260,7 +260,7 @@ func GetResourceInfoOfGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -410,7 +410,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 	}
 	log.Debug().Msgf("%+v", req) // debug
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -487,7 +487,7 @@ func CheckInfracodeOfGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -554,7 +554,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -621,7 +621,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
@@ -723,7 +723,7 @@ func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")

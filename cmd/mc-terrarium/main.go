@@ -20,26 +20,66 @@ import (
 	"sync"
 
 	// Black import (_) is for running a package's init() function without using its other contents.
-	_ "github.com/cloud-barista/mc-terrarium/pkg/config"
-	_ "github.com/cloud-barista/mc-terrarium/pkg/logger"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
+	"github.com/cloud-barista/mc-terrarium/pkg/logger"
+	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 
 	//_ "github.com/go-sql-driver/mysql"
 
 	// _ "github.com/mattn/go-sqlite3"
 
-	restServer "github.com/cloud-barista/mc-terrarium/pkg/api/rest/server"
+	restServer "github.com/cloud-barista/mc-terrarium/pkg/api/rest"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 )
 
+// NoOpLogger is an implementation of resty.Logger that discards all logs.
+type NoOpLogger struct{}
+
+func (n *NoOpLogger) Errorf(format string, v ...interface{}) {}
+func (n *NoOpLogger) Warnf(format string, v ...interface{})  {}
+func (n *NoOpLogger) Debugf(format string, v ...interface{}) {}
+
 func init() {
 	readyz.SetReady(false)
+
+	// Initialize the configuration from "config.yaml" file or environment variables
+	config.Init()
+
+	// Initialize the logger
+	logger := logger.NewLogger(logger.Config{
+		LogLevel:    config.Terrarium.LogLevel,
+		LogWriter:   config.Terrarium.LogWriter,
+		LogFilePath: config.Terrarium.LogFile.Path,
+		MaxSize:     config.Terrarium.LogFile.MaxSize,
+		MaxBackups:  config.Terrarium.LogFile.MaxBackups,
+		MaxAge:      config.Terrarium.LogFile.MaxAge,
+		Compress:    config.Terrarium.LogFile.Compress,
+	})
+
+	// Set the global logger
+	log.Logger = *logger
 }
 
+// @title Multi-Cloud Terrarium REST API
+// @version latest
+// @description Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment to enrich multi-cloud infrastructure.
+
+// @contact.name API Support
+// @contact.url https://github.com/cloud-barista/mc-terrarium/issues/new
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8888
+// @BasePath /terrarium
+
+// @securityDefinitions.basic BasicAuth
 func main() {
 
-	log.Info().Msg("starting mc-terrarium server")
+	log.Info().Msg("preparing to run mc-terrarium server...")
 
 	// Set the default port number "8888" for the REST API server to listen on
 	port := flag.String("port", "8888", "port number for the restapiserver to listen to")
@@ -51,39 +91,22 @@ func main() {
 	}
 	log.Debug().Msgf("port number: %s", *port)
 
-	// load the latest configuration from DB (if exist)
-	// fmt.Println("")
-	// fmt.Println("[Update system environment]")
-	// common.UpdateGlobalVariable(common.StrDragonflyRestUrl)
-	// common.UpdateGlobalVariable(common.StrSpiderRestUrl)
-	// common.UpdateGlobalVariable(common.StrAutocontrolDurationMs)
-
-	// load config
-	//masterConfigInfos = confighandler.GetMasterConfigInfos()
-
-	//Setup database (meta_db/dat/mcterrarium.s3db)
-	// log.Info().Msg("setting SQL Database")
-	// err := os.MkdirAll("./meta_db/dat/", os.ModePerm)
-	// if err != nil {
-	// 	log.Error().Err(err).Msg("error creating directory")
-	// }
-	// log.Debug().Msgf("database file path: %s", "./meta_db/dat/mcterrarium.s3db")
-
 	// Watch config file changes
-	// go func() {
-	// 	viper.WatchConfig()
-	// 	viper.OnConfigChange(func(e fsnotify.Event) {
-	// 		log.Debug().Str("file", e.Name).Msg("config file changed")
-	// 		err := viper.ReadInConfig()
-	// 		if err != nil { // Handle errors reading the config file
-	// 			log.Fatal().Err(err).Msg("fatal error in config file")
-	// 		}
-	// 		err = viper.Unmarshal(&common.RuntimeConf)
-	// 		if err != nil {
-	// 			log.Panic().Err(err).Msg("error unmarshaling runtime configuration")
-	// 		}
-	// 	})
-	// }()
+	go func() {
+		viper.WatchConfig()
+		viper.OnConfigChange(func(e fsnotify.Event) {
+			log.Debug().Str("file", e.Name).Msg("config file changed")
+			err := viper.ReadInConfig()
+			if err != nil { // Handle errors reading the config file
+				log.Fatal().Err(err).Msg("fatal error in config file")
+			}
+			err = viper.Unmarshal(&config.RuntimeConfig)
+			if err != nil {
+				log.Panic().Err(err).Msg("error unmarshaling runtime configuration")
+			}
+			config.Terrarium = config.RuntimeConfig.Terrarium
+		})
+	}()
 
 	// Launch API servers (REST)
 	wg := new(sync.WaitGroup)

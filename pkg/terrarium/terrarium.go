@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
-	"github.com/spf13/viper"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 )
 
 const (
@@ -20,7 +20,7 @@ var terrariumInfoMap sync.Map
 
 // Save the terrarium info to file
 func SaveTerrariumInfoMap() error {
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	terrariumDbFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, terrariumDbFileName)
 
 	// Create the file to store the terrarium info map
@@ -47,7 +47,7 @@ func SaveTerrariumInfoMap() error {
 
 // Load the terrarium info from file
 func LoadTerrariumInfoMap() error {
-	projectRoot := viper.GetString("mcterrarium.root")
+	projectRoot := config.Terrarium.Root
 	terrariumDbFilePath := fmt.Sprintf("%s/%s/%s", projectRoot, terrariumDir, terrariumDbFileName)
 
 	// Check and open the status file

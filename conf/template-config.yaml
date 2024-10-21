@@ -2,71 +2,42 @@
 mcterrarium:
   root: # To be set in runtime
 
-cbstore:
-  root: # To be set in runtime (based on mcterrarium.root)
+  ## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8888)
+  self:
+    endpoint: localhost:8888
 
-cblog:
-  root: # To be set in runtime (based on mcterrarium.root)
+  ## Set API access config
+  api:
+    # Set API_ALLOW_ORIGINS (ex: https://cloud-barista.org,http://localhost:8888 or * for all)
+    allow:
+      origins: "*"
 
-# cbspider:
-#   callmethod: REST
-#   rest:
-#     url: http://localhost:1024/spider
+    # Set API_AUTH_ENABLED=true currently for basic auth for all routes (i.e., url or path)
+    auth:
+      enabled: true
 
-# cbtumblebug:
-#   callmethod: REST
-#   rest:
-#     url: http://localhost:1323/tumblebug
+    username: default
+    password: default
 
-## Logger configuration
-logfile:
-  # Set log file path (default logfile path: ./mc-terrarium.log) 
-  path: ./mc-terrarium.log
-  maxsize: 10
-  maxbackups: 3
-  maxage: 30
-  compress: false
+  ## Logger configuration
+  logfile:
+    # Set log file path (default logfile path: ./log/terrarium.log)
+    path: ./log/terrarium.log
+    maxsize: 10
+    maxbackups: 3
+    maxage: 30
+    compress: false
 
-# Set log level, such as trace, debug info, warn, error, fatal, and panic
-loglevel: debug
+  # Set log level, such as trace, debug info, warn, error, fatal, and panic
+  loglevel: debug
 
-# Set log writer, such as file, stdout, or both
-logwriter: both
+  # Set log writer, such as file, stdout, or both
+  logwriter: both
 
-# Set execution environment, such as development or production
-node:
-  env: development
+  # Set execution environment, such as development or production
+  node:
+    env: development
 
-## Set internal DB config (SQLlite)
-db:
-  url: localhost:3306
-  database: poc_mc_net_tf
-  user: poc_mc_net_tf
-  password: poc_mc_net_tf
-
-## Set API access config
-api:
-  # Set API_ALLOW_ORIGINS (ex: https://cloud-barista.org,http://localhost:8888 or * for all)
-  allow:
-    origins: "*"
-  
-  # Set API_AUTH_ENABLED=true currently for basic auth for all routes (i.e., url or path)
-  auth:
-    enabled: true
-  
-  username: default
-  password: default
-
-## Set period for auto control goroutine invocation
-autocontrol:
-  duration_ms: 10000
-
-## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8888)
-self:
-  endpoint: localhost:8888
-
-## Environment variables that you don't need to touch
-# Swagger UI API document file path 
-apidoc:
-  # export APIDOC_PATH=$MCTERRARIUM_ROOT/src/api/rest/docs/swagger.json
-  path: # To be set in runtime (based on mcterrarium.root)
+  ## Set period for auto control goroutine invocation
+  autocontrol:
+    duration_ms: 10000
