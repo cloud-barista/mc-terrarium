@@ -13,8 +13,8 @@ import {
 # Run `tofu state rm aws_route_table.imported_route_table` to remove it from the state file.
 resource "aws_route_table" "imported_route_table" {
   tags = data.aws_route_table.imported.tags
-  
-  vpc_id = var.aws-vpc-id
+
+  vpc_id           = var.aws-vpc-id
   propagating_vgws = [aws_vpn_gateway.vpn_gw.id]
 
   lifecycle {

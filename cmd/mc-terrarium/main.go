@@ -26,10 +26,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
-	//_ "github.com/go-sql-driver/mysql"
-
-	// _ "github.com/mattn/go-sqlite3"
-
 	restServer "github.com/cloud-barista/mc-terrarium/pkg/api/rest"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
