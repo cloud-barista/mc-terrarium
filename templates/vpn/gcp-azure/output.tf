@@ -4,7 +4,7 @@ output "gcp_router_id" {
 }
 
 output "gcp_ha_vpn_gateway_id" {
-  value = google_compute_ha_vpn_gateway.ha_vpn_gw_1.id  
+  value = google_compute_ha_vpn_gateway.ha_vpn_gw_1.id
 }
 
 output "gcp_external_vpn_gateway_id" {

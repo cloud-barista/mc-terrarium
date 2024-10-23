@@ -7,10 +7,10 @@ DEFAULT_VERSION="1.8.3"
 VERSION=${1:-$DEFAULT_VERSION}
 
 # Ensure that your system is up to date
-apt update -y
+sudo apt update -y
 
 # Ensure that you have installed the dependencies, such as `gnupg`, `software-properties-common`, `curl`, and unzip packages.
-apt install -y curl 
+sudo apt install -y curl 
 
 # Download the installer script:
 curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh

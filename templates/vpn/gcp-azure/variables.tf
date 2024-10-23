@@ -13,13 +13,13 @@ variable "terrarium-id" {
 variable "gcp-region" {
   type        = string
   description = "A region in GCP"
-  default     = "asia-northeast3"  
+  default     = "asia-northeast3"
 }
 
 variable "gcp-vpc-network-name" {
   type        = string
-  description = "The VPC network name in GCP."  
-  default = "tr-gcp-vpc"
+  description = "The VPC network name in GCP."
+  default     = "tr-gcp-vpc"
 }
 
 # variable "gcp-vpc-subnetwork-name" {
@@ -60,7 +60,7 @@ variable "azure-virtual-network-name" {
 variable "azure-gateway-subnet-cidr-block" {
   type        = string
   description = "The CIDR block for the gateway subnet."
-  default     = "192.168.130.0/24"  
+  default     = "192.168.130.0/24"
 }
 
 # variable "azure-subnet-name" {
@@ -81,7 +81,7 @@ variable "azure-gateway-subnet-cidr-block" {
 
 variable "azure-bgp-asn" {
   type        = string
-  description = "Autonomous System Number(ASN) for Border Gateway Protocol(BGP) in MS Azure"  
+  description = "Autonomous System Number(ASN) for Border Gateway Protocol(BGP) in MS Azure"
   default     = "65515"
 }
 
@@ -94,7 +94,7 @@ variable "azure_vpn_allowed_az_skus" {
 variable "azure_vpn_sku" {
   type        = string
   description = "The Azure VPN Sku/Size"
-  default     = "VpnGw1"  
+  default     = "VpnGw1"
 }
 
 # Shared secret

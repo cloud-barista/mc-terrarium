@@ -100,7 +100,7 @@ resource "azurerm_local_network_gateway" "peer_gw_2" {
   gateway_address = google_compute_ha_vpn_gateway.ha_vpn_gw_1.vpn_interfaces[1].ip_address
 
   bgp_settings {
-    asn                 = var.gcp-bgp-asn 
+    asn                 = var.gcp-bgp-asn
     bgp_peering_address = google_compute_router_peer.router_peer_2.ip_address
   }
 }

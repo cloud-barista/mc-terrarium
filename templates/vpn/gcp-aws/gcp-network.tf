@@ -23,7 +23,7 @@ resource "google_compute_router" "router_1" {
 # Create a VPN Gateway
 # Note - Two IP addresses will be automatically allocated for each of your gateway interfaces
 resource "google_compute_ha_vpn_gateway" "ha_vpn_gw_1" {
-  name     = "${var.terrarium-id}-ha-vpn-gw-1"
+  name    = "${var.terrarium-id}-ha-vpn-gw-1"
   network = data.google_compute_network.injected_vpc_network.self_link
 }
 

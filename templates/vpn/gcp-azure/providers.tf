@@ -13,7 +13,7 @@ terraform {
 
     # The Azure Provider
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "~>3.97.0"
     }
     # The AzAPI provider
@@ -48,7 +48,7 @@ provider "google" {
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
-  skip_provider_registration = true 
+  skip_provider_registration = true
   features {}
 }
 
