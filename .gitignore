@@ -50,5 +50,6 @@ logs/
 
 !secrets
 secrets/**
+!secrets/template-*
 !secrets/.keep
 !secrets/README.md

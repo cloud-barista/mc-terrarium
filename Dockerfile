@@ -65,16 +65,16 @@ ENV TERRARIUM_API_ALLOW_ORIGINS=* \
 ## Logger configuration
 # Set log file path (default logfile path: ./log/terrarium.log)
 # Set log level, such as trace, debug info, warn, error, fatal, and panic
-ENV LOGFILE_PATH=/app/log/terrarium.log \
-    LOGFILE_MAXSIZE=1000 \
-    LOGFILE_MAXBACKUPS=3 \
-    LOGFILE_MAXAGE=30 \
-    LOGFILE_COMPRESS=false \
-    LOGLEVEL=info \
-    LOGWRITER=both
+ENV TERRARIUM_LOGFILE_PATH=/app/log/terrarium.log \
+    TERRARIUM_LOGFILE_MAXSIZE=1000 \
+    TERRARIUM_LOGFILE_MAXBACKUPS=3 \
+    TERRARIUM_LOGFILE_MAXAGE=30 \
+    TERRARIUM_LOGFILE_COMPRESS=false \
+    TERRARIUM_LOGLEVEL=info \
+    TERRARIUM_LOGWRITER=both
 
 # Set execution environment, such as development or production
-ENV NODE_ENV=production
+ENV TERRARIUM_NODE_ENV=production
 
 ## Set period for auto control goroutine invocation
 ENV TERRARIUM_AUTOCONTROL_DURATION_MS=10000
