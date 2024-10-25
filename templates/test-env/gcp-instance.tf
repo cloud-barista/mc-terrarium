@@ -1,6 +1,6 @@
 // Fetch the available zones in the region
 data "google_compute_zones" "gcp_available_zones" {
-  region = var.gcp-region 
+  region = var.gcp-region
 }
 
 # Randomly select a zone
@@ -27,7 +27,7 @@ resource "google_compute_instance" "test_vm_instance" {
   }
 
   network_interface {
-    network = google_compute_network.test_vpc_network.self_link
+    network    = google_compute_network.test_vpc_network.self_link
     subnetwork = google_compute_subnetwork.test_subnetwork_1.self_link
   }
 }

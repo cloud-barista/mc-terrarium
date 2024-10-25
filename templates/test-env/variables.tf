@@ -3,7 +3,7 @@
 variable "gcp-region" {
   type        = string
   description = "A region in GCP"
-  default     = "asia-northeast3"  
+  default     = "asia-northeast3"
 }
 
 #######################################################################
