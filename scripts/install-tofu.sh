@@ -1,28 +1,27 @@
 #!/bin/bash
 
 # Default version
-DEFAULT_VERSION="1.8.3"
+DEFAULT_TOFU_VERSION="1.8.3"
 
 # Use argument or default version
-VERSION=${1:-$DEFAULT_VERSION}
+TOFU_VERSION=${1:-$DEFAULT_TOFU_VERSION}
 
 # Ensure that your system is up to date
 apt-get update -y
 
-# Ensure that you have installed the dependencies, such as `gnupg`, `software-properties-common`, `curl`, and unzip packages.
-apt-get install -y apt-transport-https ca-certificates curl gnupg
+# Ensure that you have installed the dependencies, such as `gnupg`, `software-properties-common`, `curl`, and unzip packages.
+apt-get install -y apt-transport-https ca-certificates curl gnupg git
 
-# Download the installer script:
-curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
-# Alternatively: wget --secure-protocol=TLSv1_2 --https-only https://get.opentofu.org/install-opentofu.sh -O install-opentofu.sh
 
-# Give it execution permissions:
-chmod +x install-opentofu.sh
+# Set up the OpenTofu repository
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://get.opentofu.org/opentofu.gpg | sudo tee /etc/apt/keyrings/opentofu.gpg >/dev/null
+curl -fsSL https://packages.opentofu.org/opentofu/tofu/gpgkey | sudo gpg --no-tty --batch --dearmor -o /etc/apt/keyrings/opentofu-repo.gpg >/dev/null
+sudo chmod a+r /etc/apt/keyrings/opentofu.gpg /etc/apt/keyrings/opentofu-repo.gpg
 
-# Please inspect the downloaded script
-
-# Run the installer:
-./install-opentofu.sh --install-method deb --opentofu-version ${VERSION}
+# Install OpenTofu
+apt-get update
+apt-get install -y tofu=${TOFU_VERSION}
 
 # Check tofu version after installation
 tofu --version || { echo "Failed to retrieve OpenTofu version"; exit 1; }
