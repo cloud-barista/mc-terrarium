@@ -18,18 +18,18 @@ on:
       # Only trigger on semver shaped tags.
       - "v*.*.*"
     paths-ignore:
-      - '.github/**'
-      - 'docs/**'
-      - 'scripts/**'
-      - '**.md'
-      - '.gitignore'
-      - 'LICENSE'
-      - 'examples/**'
+      - ".github/**"
+      - "docs/**"
+      - "scripts/**"
+      - "**.md"
+      - ".gitignore"
+      - "LICENSE"
+      - "examples/**"
       # - '.all-contributorsrc'
       # - 'assets/**'
       # - 'src/testclient/scripts/**'
-    # workflow trigger button
-  # workflow_dispatch:
+  # workflow trigger button
+  workflow_dispatch:
 
 env:
   DOCKER_REGISTRY_NAME: cloudbaristaorg
