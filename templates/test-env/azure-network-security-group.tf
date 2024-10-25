@@ -16,14 +16,14 @@ resource "azurerm_network_security_group" "test_nsg_1" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                        = "ICMP"
-    priority                    = 3000
-    direction                   = "Inbound"
-    access                      = "Allow"
-    protocol                    = "Icmp"
-    source_port_range           = "*"
-    destination_port_range      = "*"
-    source_address_prefix       = "*"
-    destination_address_prefix  = "*"
+    name                       = "ICMP"
+    priority                   = 3000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Icmp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 }
