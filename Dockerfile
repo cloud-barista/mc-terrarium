@@ -40,13 +40,17 @@ WORKDIR /app
 # which should be specified in .dockerignore
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/.terrarium/ /app/.terrarium/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/templates/ /app/templates/
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/conf/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/scripts/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
+# COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
 
-RUN apt-get update && apt-get install -y git
-RUN ./scripts/install-tofu.sh 1.8.3
+RUN apt-get update 
+# Installing tooling for tofu
+RUN apt-get install -y apt-transport-https ca-certificates curl gnupg
+RUN ./scripts/install-tofu.sh
+# # Check tofu version
+# RUN tofu --version
 
 # Setting various environment variables required by the application
 ENV TERRARIUM_ROOT=/app

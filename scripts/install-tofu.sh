@@ -7,10 +7,10 @@ DEFAULT_VERSION="1.8.3"
 VERSION=${1:-$DEFAULT_VERSION}
 
 # Ensure that your system is up to date
-sudo apt update -y
+apt-get update -y
 
 # Ensure that you have installed the dependencies, such as `gnupg`, `software-properties-common`, `curl`, and unzip packages.
-sudo apt install -y curl 
+apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 # Download the installer script:
 curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
@@ -23,6 +23,9 @@ chmod +x install-opentofu.sh
 
 # Run the installer:
 ./install-opentofu.sh --install-method deb --opentofu-version ${VERSION}
+
+# Check tofu version after installation
+tofu --version || { echo "Failed to retrieve OpenTofu version"; exit 1; }
 
 # Remove the installer:
 rm -f install-opentofu.sh
