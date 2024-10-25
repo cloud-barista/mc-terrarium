@@ -1,7 +1,13 @@
+networks:
+  terrarium_network:
+    external: true
+
 services:
   mc-terrarium:
     image: cloudbaristaorg/mc-terrarium:edge
-    container_name: mc-terrarium
+    container_name: mc-terrarium    
+    networks:
+      - terrarium_network
     ports:
       - target: 8888
         published: 8888
