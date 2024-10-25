@@ -46,8 +46,8 @@ Note - There may be an issue regarding Credential settings. Contributions are we
 - Required a Docker network, `terrarium_network`
 
 > [!NOTE]
-> services in other docker composes can access the `mc-terrarium` service, like `http://mc-terrarium:8888/terrarium`.
-> _Condition: Set up terrarium_network in external docker compose_
+> services in other docker composes can access the `mc-terrarium` service, like `http://mc-terrarium:8888/terrarium`.   
+> _Condition: Set up `terrarium_network` in external docker compose_
 
 You can do this by running the following command:
 
