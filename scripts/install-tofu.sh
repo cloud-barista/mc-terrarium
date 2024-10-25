@@ -9,6 +9,9 @@ TOFU_VERSION=${1:-$DEFAULT_TOFU_VERSION}
 # Ensure that your system is up to date
 apt-get update -y
 
+# Install required packages
+apt-get install -y curl git
+
 # Install required packages and repositories
 # Note: https://packages.opentofu.org/opentofu/tofu
 curl -s https://packagecloud.io/install/repositories/opentofu/tofu/script.deb.sh?any=true | bash
