@@ -53,3 +53,6 @@ secrets/**
 !secrets/template-*
 !secrets/.keep
 !secrets/README.md
+
+# Ignore container volumes
+container-volume/

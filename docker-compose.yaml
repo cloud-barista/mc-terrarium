@@ -5,7 +5,10 @@ networks:
 services:
   mc-terrarium:
     image: cloudbaristaorg/mc-terrarium:edge
-    container_name: mc-terrarium    
+    container_name: mc-terrarium
+    build:
+      context: .
+      dockerfile: Dockerfile    
     networks:
       - terrarium_network
     ports:
@@ -17,6 +20,7 @@ services:
       - ./secrets/credential-azure.env  # Azure credentials
     volumes:
       - ./secrets:/app/secrets:ro       # GCP credentials
+      - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
     environment:
       # - TERRARIUM_ROOT=/app
       # - TERRARIUM_SELF_ENDPOINT=localhost:8888
