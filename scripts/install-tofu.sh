@@ -10,7 +10,7 @@ TOFU_VERSION=${1:-$DEFAULT_TOFU_VERSION}
 apt-get update -y
 
 # Ensure that you have installed the dependencies, such as `gnupg`, `software-properties-common`, `curl`, and unzip packages.
-apt-get install -y apt-transport-https ca-certificates curl gnupg git
+apt-get install -y apt-transport-https ca-certificates curl gnupg git apt-utils
 
 
 # Set up the OpenTofu repository
