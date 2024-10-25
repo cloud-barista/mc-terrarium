@@ -69,6 +69,7 @@ variable "azure-gateway-subnet-cidr-block" {
 #   default     = ".terrarium/tr-rg-01/vpn/gcp-azure/azure-variables.tf .terrarium/tr-rg-01/vpn/gcp-azure/azure-virtual-machine.tf"
 # }
 
+
 # variable "azure-gateway-subnet-name" {
 #   type        = string
 #   description = "Gateway subnet name in MS Azure. Must be GatewaySubnet."
