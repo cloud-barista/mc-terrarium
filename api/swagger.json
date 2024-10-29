@@ -13,7 +13,7 @@
         },
         "version": "latest"
     },
-    "host": "localhost:8888",
+    "host": "localhost:8055",
     "basePath": "/terrarium",
     "paths": {
         "/httpVersion": {

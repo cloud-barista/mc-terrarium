@@ -97,6 +97,8 @@ compose-up: ## Up services by docker compose
 		echo "Creating terrarium_network..."; \
 		docker network create terrarium_network; \
 	fi
+	@echo "Pulling the latest edge images..."
+	@docker pull cloudbaristaorg/mc-terrarium:edge
 	@echo "Starting services by docker compose..."
 	@docker compose up
 

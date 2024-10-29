@@ -51,8 +51,8 @@ RUN ./scripts/install-tofu.sh
 # Setting various environment variables required by the application
 ENV TERRARIUM_ROOT=/app
 
-## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8056)
-ENV TERRARIUM_SELF_ENDPOINT=localhost:8888
+## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8055)
+ENV TERRARIUM_SELF_ENDPOINT=localhost:8055
 
 ## Set API access config
 # API_ALLOW_ORIGINS (ex: https://cloud-barista.org,xxx.xxx.xxx.xxx or * for all)
@@ -83,4 +83,4 @@ ENV TERRARIUM_AUTOCONTROL_DURATION_MS=10000
 ENTRYPOINT [ "/app/mc-terrarium" ]
 
 # Exposing the port that the application will run on
-EXPOSE 8888
+EXPOSE 8055

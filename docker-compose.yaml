@@ -4,7 +4,7 @@ networks:
 
 services:
   mc-terrarium:
-    image: cloudbaristaorg/mc-terrarium:edge
+    image: cloudbaristaorg/mc-terrarium:0.0.9
     container_name: mc-terrarium
     build:
       context: .
@@ -12,8 +12,8 @@ services:
     networks:
       - terrarium_network
     ports:
-      - target: 8888
-        published: 8888
+      - target: 8055
+        published: 8055
         protocol: tcp
     env_file:
       - ./secrets/credentials           # AWS credentials
@@ -23,7 +23,7 @@ services:
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
     environment:
       # - TERRARIUM_ROOT=/app
-      # - TERRARIUM_SELF_ENDPOINT=localhost:8888
+      # - TERRARIUM_SELF_ENDPOINT=localhost:8055
       # - TERRARIUM_API_ALLOW_ORIGINS=*
       # - TERRARIUM_API_AUTH_ENABLED=true
       # - TERRARIUM_API_USERNAME=default
@@ -33,13 +33,13 @@ services:
       # - TERRARIUM_LOGFILE_MAXBACKUPS=3
       # - TERRARIUM_LOGFILE_MAXAGE=30
       # - TERRARIUM_LOGFILE_COMPRESS=false
-      - TERRARIUM_LOGLEVEL=debug
+      # - TERRARIUM_LOGLEVEL=info
       # - TERRARIUM_LOGWRITER=both
       # - TERRARIUM_NODE_ENV=production
       # - TERRARIUM_AUTOCONTROL_DURATION_MS=10000
     healthcheck: # for MC-Terrarirum
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/terrarium/readyz" ]
-      interval: 1m
+      test: [ "CMD", "curl", "-f", "http://localhost:8055/terrarium/readyz" ]
+      interval: 5m
       timeout: 5s
       retries: 3
       start_period: 10s
