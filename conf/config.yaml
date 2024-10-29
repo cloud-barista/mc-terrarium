@@ -2,13 +2,13 @@
 terrarium:
   root: # To be set in runtime
 
-  ## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8888)
+  ## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8055)
   self:
-    endpoint: localhost:8888
+    endpoint: localhost:8055
 
   ## Set API access config
   api:
-    # Set API_ALLOW_ORIGINS (ex: https://cloud-barista.org,http://localhost:8888 or * for all)
+    # Set API_ALLOW_ORIGINS (ex: https://cloud-barista.org,http://localhost:8055 or * for all)
     allow:
       origins: "*"
 

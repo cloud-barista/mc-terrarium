@@ -69,7 +69,7 @@ func init() {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8888
+// @host localhost:8055
 // @BasePath /terrarium
 
 // @securityDefinitions.basic BasicAuth
@@ -77,8 +77,8 @@ func main() {
 
 	log.Info().Msg("preparing to run mc-terrarium server...")
 
-	// Set the default port number "8888" for the REST API server to listen on
-	port := flag.String("port", "8888", "port number for the restapiserver to listen to")
+	// Set the default port number "8055" for the REST API server to listen on
+	port := flag.String("port", "8055", "port number for the restapiserver to listen to")
 	flag.Parse()
 
 	// Validate port

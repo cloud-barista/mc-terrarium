@@ -46,7 +46,7 @@ Note - There may be an issue regarding Credential settings. Contributions are we
 - Required a Docker network, `terrarium_network`
 
 > [!NOTE]
-> services in other docker composes can access the `mc-terrarium` service, like `http://mc-terrarium:8888/terrarium`.   
+> services in other docker composes can access the `mc-terrarium` service, like `http://mc-terrarium:8055/terrarium`.  
 > _Condition: Set up `terrarium_network` in external docker compose_
 
 You can do this by running the following command:
@@ -65,7 +65,7 @@ make compose
 
 You can find the default username and password to access to API dashboard when the API server runs.
 
-URL: http://localhost:8888/terrarium/swagger/index.html
+URL: http://localhost:8055/terrarium/swagger/index.html
 
 Note - You can find API documentation on Swagger UI.
 

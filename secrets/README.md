@@ -132,7 +132,7 @@ docker run \
 --env-file "${PWD}"/secrets/credentials \
 --env-file "${PWD}"/secrets/credential-azure.env \
 --mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/ \
--p 8888:8888 \
+-p 8055:8055 \
 --name mc-terrarium \
 cloudbaristaorg/mc-terrarium:latest
 ```

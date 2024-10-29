@@ -194,7 +194,7 @@ definitions:
         example: asia-northeast3
         type: string
     type: object
-host: localhost:8888
+host: localhost:8055
 info:
   contact:
     name: API Support
