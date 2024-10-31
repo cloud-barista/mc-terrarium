@@ -1,4 +1,4 @@
-// Fetch the available zones in the region
+# Fetch the available zones in the region
 data "google_compute_zones" "gcp_available_zones" {
   region = var.gcp-region
 }
@@ -14,7 +14,7 @@ resource "google_compute_instance" "test_vm_instance" {
   name         = "tr-gcp-vm-instance"
   machine_type = "f1-micro"
 
-  zone = random_shuffle.gcp_zones_in_region.result[0] // Dynamically selected zone
+  zone = random_shuffle.gcp_zones_in_region.result[0] # Dynamically selected zone
 
   boot_disk {
     auto_delete = true

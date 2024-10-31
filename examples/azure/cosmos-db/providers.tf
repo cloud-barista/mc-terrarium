@@ -42,13 +42,13 @@ variable "cosmos_db_account_name" {
   default     = "tofu-example-cosmosdb"
 }
 
-// 리소스 그룹 생성
+# 리소스 그룹 생성
 resource "azurerm_resource_group" "example" {
   name     = "tofu-example-rg"
   location = var.resource_group_location
 }
 
-// Cosmos DB 계정 생성
+# Cosmos DB 계정 생성
 resource "azurerm_cosmosdb_account" "example" {
   name                = var.cosmos_db_account_name
   location            = azurerm_resource_group.example.location
@@ -68,7 +68,7 @@ resource "azurerm_cosmosdb_account" "example" {
   }
 }
 
-// Cosmos DB 데이터베이스 생성
+# Cosmos DB 데이터베이스 생성
 resource "azurerm_cosmosdb_sql_database" "example" {
   name                = "tofu-example-database"
   resource_group_name = azurerm_resource_group.example.name
