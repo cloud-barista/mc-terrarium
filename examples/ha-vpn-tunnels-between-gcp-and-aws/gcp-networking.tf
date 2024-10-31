@@ -57,8 +57,8 @@ resource "google_compute_router" "my-gcp-router-main" {
 # Note - Two IP addresses will be automatically allocated for each of your gateway interfaces
 resource "google_compute_ha_vpn_gateway" "my-gcp-ha-vpn-gateway" {
   # provider = "google-beta"
-  name     = "my-gcp-ha-vpn-gateway-name"
-  network  = google_compute_network.my-gcp-vpc-network.self_link
+  name    = "my-gcp-ha-vpn-gateway-name"
+  network = google_compute_network.my-gcp-vpc-network.self_link
 }
 
 # Create a peer VPN gateway with peer VPN gateway interfaces
