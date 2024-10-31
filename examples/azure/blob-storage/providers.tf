@@ -38,33 +38,33 @@ variable "resource_group_location" {
 }
 
 
-// 리소스 그룹 생성
+# 리소스 그룹 생성
 resource "azurerm_resource_group" "example" {
   name     = "tofu-example-rg"
   location = var.resource_group_location
 }
 
 
-// 랜덤 문자열 생성
+# 랜덤 문자열 생성
 resource "random_string" "suffix" {
   length  = 6
   special = false
-  upper   = false // 대문자를 사용하지 않도록 설정
+  upper   = false # 대문자를 사용하지 않도록 설정
 }
 
-// Storage Account 생성
+# Storage Account 생성
 resource "azurerm_storage_account" "example" {
-  name                     = "tofuacct${random_string.suffix.result}" // Globally unique name, only consist of lowercase letters and numbers, and must be between 3 and 24 characters long
+  name                     = "tofuacct${random_string.suffix.result}" # Globally unique name, only consist of lowercase letters and numbers, and must be between 3 and 24 characters long
   resource_group_name      = azurerm_resource_group.example.name
   location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
-  account_replication_type = "LRS" // Locally Redundant Storage
+  account_replication_type = "LRS" # Locally Redundant Storage
 
 }
 
-// Blob 컨테이너 생성
+# Blob 컨테이너 생성
 resource "azurerm_storage_container" "example" {
   name                  = "example-container"
   storage_account_name  = azurerm_storage_account.example.name
-  container_access_type = "private" // Private, Blob, or Container
+  container_access_type = "private" # Private, Blob, or Container
 }

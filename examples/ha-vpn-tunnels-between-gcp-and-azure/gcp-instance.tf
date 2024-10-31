@@ -9,8 +9,8 @@ resource "random_shuffle" "my-gcp-zones" {
 resource "google_compute_instance" "my-gcp-vm-instance" {
   name         = "my-gcp-vm-instance-name"
   machine_type = "f1-micro"
-  zone = random_shuffle.my-gcp-zones.result[0] // Dynamically selected zone
-  
+  zone         = random_shuffle.my-gcp-zones.result[0] # Dynamically selected zone
+
 
   boot_disk {
     auto_delete = true
@@ -23,7 +23,7 @@ resource "google_compute_instance" "my-gcp-vm-instance" {
   }
 
   network_interface {
-    network = google_compute_network.my-gcp-vpc-network.self_link
-    subnetwork = google_compute_subnetwork.my-gcp-subnet-2.self_link  
+    network    = google_compute_network.my-gcp-vpc-network.self_link
+    subnetwork = google_compute_subnetwork.my-gcp-subnet-2.self_link
   }
 }

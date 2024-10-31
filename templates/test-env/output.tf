@@ -1,4 +1,4 @@
-// AWS
+# AWS
 output "aws_vpc_id" {
   value = aws_vpc.test_vpc.id
 }
@@ -15,7 +15,7 @@ output "aws_instance_private_ip" {
   value = aws_instance.test_ec2_instance.private_ip
 }
 
-// Azure
+# Azure
 output "azure_virtual_network_name" {
   value = azurerm_virtual_network.test_vnet.name
 }
@@ -44,7 +44,7 @@ output "key-data" {
   value = azapi_resource_action.test_azure_ssh_public_key_gen.output.publicKey
 }
 
-// GCP
+# GCP
 output "gcp_vpc_network_name" {
   value = google_compute_network.test_vpc_network.name
 }

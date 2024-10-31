@@ -50,7 +50,7 @@ resource "azurerm_mysql_flexible_server" "example" {
   administrator_login    = "adminuser"
   administrator_password = "P@ssword1234!"
 
-  sku_name = "B_Standard_B1ms" // e.g., General Purpose, Standard_D2s_v3
+  sku_name = "B_Standard_B1ms" # e.g., General Purpose, Standard_D2s_v3
   # storage_mb = 5120              # 5 GB
   version = "5.7" # MySQL version
 
@@ -59,8 +59,8 @@ resource "azurerm_mysql_flexible_server" "example" {
   geo_redundant_backup_enabled = false
   # public_network_access_enabled = true
 
-  // Commented out the undeclared resource reference
-  // delegated_subnet_id = azurerm_subnet.example.id
+  # Commented out the undeclared resource reference
+  # delegated_subnet_id = azurerm_subnet.example.id
 }
 
 resource "azurerm_mysql_flexible_database" "example" {

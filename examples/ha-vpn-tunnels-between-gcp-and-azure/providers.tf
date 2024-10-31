@@ -13,7 +13,7 @@ terraform {
 
     # The Azure Provider
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "~>3.97.0"
     }
     # The AzAPI provider
@@ -44,7 +44,7 @@ provider "google" {
 # The "random" provider allows the use of randomness within Terraform configurations.
 # It is used to select a zone in a region randomly.
 provider "random" {
-  // Optional configuration for the random provider
+  # Optional configuration for the random provider
 }
 
 # [NOTE]
@@ -54,13 +54,13 @@ provider "random" {
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
-  skip_provider_registration = true 
+  skip_provider_registration = true
   features {}
 }
 
 # Create a resource group
 resource "azurerm_resource_group" "my-azure-resource-group" {
-  name     = "my-azure-resource-group-name"
+  name = "my-azure-resource-group-name"
   # Default: "koreacentral"
   location = var.my-azure-region
 }
