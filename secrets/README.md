@@ -92,6 +92,25 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 
 </details>
 
+#### NCP
+
+1. Access NCP (https://www.ncloud.com/)
+2. Prepare your NCP credential (My Page > Manage Auth Key Create a New API Authentication Key)
+
+<details>
+  <summary>Click to see sample</summary>
+
+    ```
+    export NCLOUD_ACCESS_KEY="YOUR_ACCESS_KEY"
+    export NCLOUD_SECRET_KEY="YOUR_SECRET_KEY"
+    ```
+
+</details>
+
+3. Store your AWS credential `secrets/credential-ncp`
+
+4. (Before using `tofu`) Execute `source secrets/credential-ncp` to set NCP credential as environment variables
+
 ## Getting started
 
 ### Source code based installation and exeuction
@@ -122,9 +141,10 @@ Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
 
 Note - About credential injection:
 
-- Set AWS credenttal as environment variable: `--env-file "${PWD}"/secrets/credentials`
+- Set AWS credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
 - Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
 - Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/`
+- (TBD) Set NCP credential as environment variable:
 
 ```bash
 
