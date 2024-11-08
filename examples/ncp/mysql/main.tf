@@ -41,64 +41,64 @@ variable "ncloud_secret_key" {
 #   default     = "SVR.VSV2.C004.M002.NET.SSD.B050.G002" # Example: 2 vCPU, 4GB RAM
 # }
 
-#Server Image Type & Product Type
-data "ncloud_server_image" "server_image" {
-  filter {
-    name   = "product_name"
-    values = ["ubuntu-20.04"]
-  }
-  # image list
-  #  + "SW.VSVR.OS.LNX64.CNTOS.0703.B050"          = "centos-7.3-64"
-  #  + "SW.VSVR.OS.LNX64.CNTOS.0708.B050"          = "CentOS 7.8 (64-bit)"
-  #  + "SW.VSVR.OS.LNX64.UBNTU.SVR1604.B050"         = "ubuntu-16.04-64-server"
-  #  + "SW.VSVR.OS.LNX64.UBNTU.SVR1804.B050"         = "ubuntu-18.04"
-  #  + "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"         = "ubuntu-20.04"
-  #  + "SW.VSVR.OS.WND64.WND.SVR2016EN.B100"         = "Windows Server 2016 (64-bit) English Edition"
-  #  + "SW.VSVR.OS.WND64.WND.SVR2019EN.B100"         = "Windows Server 2019 (64-bit) English Edition"
+# #Server Image Type & Product Type
+# data "ncloud_server_image" "server_image" {
+#   filter {
+#     name   = "product_name"
+#     values = ["ubuntu-20.04"]
+#   }
+#   # image list
+#   #  + "SW.VSVR.OS.LNX64.CNTOS.0703.B050"          = "centos-7.3-64"
+#   #  + "SW.VSVR.OS.LNX64.CNTOS.0708.B050"          = "CentOS 7.8 (64-bit)"
+#   #  + "SW.VSVR.OS.LNX64.UBNTU.SVR1604.B050"         = "ubuntu-16.04-64-server"
+#   #  + "SW.VSVR.OS.LNX64.UBNTU.SVR1804.B050"         = "ubuntu-18.04"
+#   #  + "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"         = "ubuntu-20.04"
+#   #  + "SW.VSVR.OS.WND64.WND.SVR2016EN.B100"         = "Windows Server 2016 (64-bit) English Edition"
+#   #  + "SW.VSVR.OS.WND64.WND.SVR2019EN.B100"         = "Windows Server 2019 (64-bit) English Edition"
 
-  # Attributes Reference
-  # data.ncloud_server_image.server_image.id
-}
-data "ncloud_server_product" "product" {
-  server_image_product_code = data.ncloud_server_image.server_image.id
+#   # Attributes Reference
+#   # data.ncloud_server_image.server_image.id
+# }
+# data "ncloud_server_product" "product" {
+#   server_image_product_code = data.ncloud_server_image.server_image.id
 
-  filter {
-    name   = "product_code"
-    values = ["SSD"]
-    regex  = true
-  }
-  filter {
-    name   = "cpu_count"
-    values = ["2"]
-  }
-  filter {
-    name   = "memory_size"
-    values = ["4GB"]
-  }
-  filter {
-    name   = "product_type"
-    values = ["HICPU"]
-    # Server Spec Type
-    # STAND
-    # HICPU
-    # HIMEM
-  }
-  # Attributes Reference
-  # data.ncloud_server_product.product.id
-}
+#   filter {
+#     name   = "product_code"
+#     values = ["SSD"]
+#     regex  = true
+#   }
+#   filter {
+#     name   = "cpu_count"
+#     values = ["2"]
+#   }
+#   filter {
+#     name   = "memory_size"
+#     values = ["4GB"]
+#   }
+#   filter {
+#     name   = "product_type"
+#     values = ["HICPU"]
+#     # Server Spec Type
+#     # STAND
+#     # HICPU
+#     # HIMEM
+#   }
+#   # Attributes Reference
+#   # data.ncloud_server_product.product.id
+# }
 
 
-variable "login_key_name" {
-  default = "tofu-example-key"
-}
+# variable "login_key_name" {
+#   default = "tofu-example-key"
+# }
 
-resource "random_id" "id" {
-  byte_length = 4
-}
+# resource "random_id" "id" {
+#   byte_length = 4
+# }
 
-resource "ncloud_login_key" "key" {
-  key_name = "${var.login_key_name}${random_id.id.hex}"
-}
+# resource "ncloud_login_key" "key" {
+#   key_name = "${var.login_key_name}${random_id.id.hex}"
+# }
 
 # Create VPC
 resource "ncloud_vpc" "example" {
