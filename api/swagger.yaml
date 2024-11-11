@@ -71,6 +71,11 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
     type: object
+  model.CreateInfracodeOfSqlDbRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsSqlDb'
+    type: object
   model.CreateInfracodeOfTestEnvRequest:
     properties:
       tfVars:
@@ -172,6 +177,48 @@ definitions:
         example: tr-gcp-vpc
         type: string
       terrarium-id:
+        example: ""
+        type: string
+    type: object
+  model.TfVarsSqlDb:
+    properties:
+      csp_region:
+        example: ap-northeast-2
+        type: string
+      csp_subnet1_id:
+        example: subnet-1234abcd
+        type: string
+      csp_subnet2_id:
+        example: subnet-abcd1234
+        type: string
+      csp_vnet_id:
+        example: vpc-12345678
+        type: string
+      db_admin_password:
+        example: mysdbpass
+        type: string
+      db_admin_username:
+        example: mydbadmin
+        type: string
+      db_engine_port:
+        example: 3306
+        type: integer
+      db_engine_version:
+        example: 8.0.39
+        type: string
+      db_instance_class:
+        example: db.t3.micro
+        type: string
+      db_instance_identifier:
+        example: mydbinstance
+        type: string
+      egress_cidr_block:
+        example: 0.0.0.0/0
+        type: string
+      ingress_cidr_block:
+        example: 0.0.0.0/0
+        type: string
+      terrarium_id:
         example: ""
         type: string
     type: object
@@ -752,6 +799,336 @@ paths:
       summary: Read a terrarium
       tags:
       - '[Terrarium] An environment to enrich the multi-cloud infrastructure'
+  /tr/{trId}/sql-db:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy SQL database
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy SQL database
+      tags:
+      - '[SQL Database] Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get resource info of SQL database
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      - description: custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get resource info of SQL database
+      tags:
+      - '[SQL Database] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create SQL database
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create SQL database
+      tags:
+      - '[SQL Database] Operations'
+  /tr/{trId}/sql-db/env:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: ""
+        description: Action
+        enum:
+        - force
+        in: query
+        name: action
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[SQL Database] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for SQL database
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: aws
+        description: Provider
+        enum:
+        - aws
+        - azure
+        - gcp
+        - ncp
+        in: query
+        name: provider
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Initialize a multi-cloud terrarium for SQL database
+      tags:
+      - '[SQL Database] Operations'
+  /tr/{trId}/sql-db/infracode:
+    post:
+      consumes:
+      - application/json
+      description: Create the infracode for SQL database
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters of infracode for SQL database
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateInfracodeOfSqlDbRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create the infracode for SQL database
+      tags:
+      - '[SQL Database] Operations'
+  /tr/{trId}/sql-db/plan:
+    post:
+      consumes:
+      - application/json
+      description: Check and show changes by the current infracode
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check and show changes by the current infracode
+      tags:
+      - '[SQL Database] Operations'
+  /tr/{trId}/sql-db/request/{requestId}:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of a specific request by its ID
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check the status of a specific request by its ID
+      tags:
+      - '[SQL Database] Operations'
   /tr/{trId}/vpn/gcp-aws:
     delete:
       consumes:

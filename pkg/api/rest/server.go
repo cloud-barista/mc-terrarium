@@ -199,15 +199,25 @@ func RunServer(port string) {
 	e.GET("/terrarium/httpVersion", handler.HTTPVersion)
 	e.GET("/terrarium/tofuVersion", handler.TofuVersion)
 
-	// A group for Multi-cloud Network APIs which has /terrarium as prefix
-	groupMultiCloudNetwork := e.Group("/terrarium")
+	// A terrarium group has /terrarium as prefix
+	groupTerrarium := e.Group("/terrarium")
 	// Resource Group APIs
-	route.RegisterRoutesForTestEnv(groupMultiCloudNetwork)
-	route.RegisterRoutesForRG(groupMultiCloudNetwork)
-	route.RegisterRoutesForVPN(groupMultiCloudNetwork)
+	route.RegisterRoutesForTestEnv(groupTerrarium)
+	route.RegisterRoutesForRG(groupTerrarium)
+	route.RegisterRoutesForVPN(groupTerrarium)
+
+	// SQL database APIs
+	groupTerrarium.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
+	groupTerrarium.DELETE("/tr/:trId/sql-db/env", handler.ClearSqlDb)
+	groupTerrarium.POST("/tr/:trId/sql-db/infracode", handler.CreateInfracodeForSqlDb)
+	groupTerrarium.POST("/tr/:trId/sql-db/plan", handler.CheckInfracodeForSqlDb)
+	groupTerrarium.POST("/tr/:trId/sql-db", handler.CreateSqlDb)
+	groupTerrarium.GET("/tr/:trId/sql-db", handler.GetResourceInfoOfSqlDb)
+	groupTerrarium.DELETE("/tr/:trId/sql-db", handler.DestroySqlDb)
+	groupTerrarium.GET("/tr/:trId/sql-db/request/:requestId", handler.GetRequestStatusOfSqlDb)
 
 	// Sample API group (for developers to add new API)
-	groupSample := groupMultiCloudNetwork.Group("/sample")
+	groupSample := groupTerrarium.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)
 
 	selfEndpoint := config.Terrarium.Self.Endpoint
