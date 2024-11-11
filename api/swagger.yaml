@@ -185,6 +185,9 @@ definitions:
       csp_region:
         example: ap-northeast-2
         type: string
+      csp_resource_group:
+        example: rg-12345678
+        type: string
       csp_subnet1_id:
         example: subnet-1234abcd
         type: string
@@ -195,7 +198,7 @@ definitions:
         example: vpc-12345678
         type: string
       db_admin_password:
-        example: mysdbpass
+        example: P@ssword1234!
         type: string
       db_admin_username:
         example: mydbadmin
@@ -206,11 +209,8 @@ definitions:
       db_engine_version:
         example: 8.0.39
         type: string
-      db_instance_class:
+      db_instance_spec:
         example: db.t3.micro
-        type: string
-      db_instance_identifier:
-        example: mydbinstance
         type: string
       egress_cidr_block:
         example: 0.0.0.0/0

@@ -2528,6 +2528,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "ap-northeast-2"
                 },
+                "csp_resource_group": {
+                    "type": "string",
+                    "example": "rg-12345678"
+                },
                 "csp_subnet1_id": {
                     "type": "string",
                     "example": "subnet-1234abcd"
@@ -2542,7 +2546,7 @@ const docTemplate = `{
                 },
                 "db_admin_password": {
                     "type": "string",
-                    "example": "mysdbpass"
+                    "example": "P@ssword1234!"
                 },
                 "db_admin_username": {
                     "type": "string",
@@ -2556,13 +2560,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "8.0.39"
                 },
-                "db_instance_class": {
+                "db_instance_spec": {
                     "type": "string",
                     "example": "db.t3.micro"
-                },
-                "db_instance_identifier": {
-                    "type": "string",
-                    "example": "mydbinstance"
                 },
                 "egress_cidr_block": {
                     "type": "string",
