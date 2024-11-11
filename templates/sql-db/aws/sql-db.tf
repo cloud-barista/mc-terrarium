@@ -36,13 +36,12 @@ resource "aws_security_group" "rds_sg" {
 }
 
 # Create an RDS Database Instance with updated instance class and engine version
-
 resource "aws_db_instance" "db_instance" {
   engine               = "mysql"
-  identifier           = "${var.terrarium_id}-${var.db_instance_identifier}"
+  identifier           = "${var.terrarium_id}-db-instance"
   allocated_storage    = 20
   engine_version       = var.db_engine_version # Use a compatible version of MySQL
-  instance_class       = var.db_instance_class # Updated to a supported instance class
+  instance_class       = var.db_instance_spec  # Updated to a supported instance class
   username             = var.db_admin_username
   password             = var.db_admin_password
   parameter_group_name = "default.mysql8.0"

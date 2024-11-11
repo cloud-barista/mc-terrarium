@@ -54,11 +54,11 @@ variable "egress_cidr_block" {
 }
 
 # Required database engine information
-variable "db_instance_identifier" {
-  type        = string
-  description = "The identifier for the database."
-  default     = "mydbinstance"
-}
+# variable "db_instance_identifier" {
+#   type        = string
+#   description = "The identifier for the database."
+#   default     = "mydbinstance"
+# }
 
 variable "db_engine_version" {
   type        = string
@@ -66,7 +66,7 @@ variable "db_engine_version" {
   default     = "8.0.39"
 }
 
-variable "db_instance_class" {
+variable "db_instance_spec" {
   type        = string
   description = "The instance class for the database."
   default     = "db.t3.micro"
