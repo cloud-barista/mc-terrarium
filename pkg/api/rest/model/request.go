@@ -14,3 +14,8 @@ type CreateInfracodeOfGcpAzureVpnRequest struct {
 type CreateInfracodeOfTestEnvRequest struct {
 	TfVars TfVarsTestEnv `json:"tfVars"`
 }
+
+// Request body for sql-db
+type CreateInfracodeOfSqlDbRequest struct {
+	TfVars TfVarsSqlDb `json:"tfVars"`
+}
