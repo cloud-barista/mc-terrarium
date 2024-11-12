@@ -1,12 +1,17 @@
 output "sql_db_info" {
   description = "Information needed to connect to the MySQL RDS instance."
   value = {
-    service_name       = ncloud_mysql.mysql.service_name
-    server_name_prefix = ncloud_mysql.mysql.server_name_prefix
-    user_name          = ncloud_mysql.mysql.user_name
-    host_ip            = ncloud_mysql.mysql.host_ip
-    database_name      = ncloud_mysql.mysql.database_name
-    # user_password      = ncloud_mysql.mysql.user_password
+    terrarium = {
+      id = var.terrarium_id
+    }
+    ncp = {
+      instance_identifier = ncloud_mysql.mysql.service_name
+      connection_info     = ncloud_mysql.mysql.host_ip
+      admin_username      = ncloud_mysql.mysql.user_name
+      database_name       = ncloud_mysql.mysql.database_name
+      port                = 3306                      # var.db_engine_port
+      region              = ncloud_mysql.mysql.region // Assume region is available
+    }
   }
   # sensitive = true // Mark as sensitive to hide sensitive details like passwords
 }
