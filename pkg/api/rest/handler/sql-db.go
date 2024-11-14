@@ -320,7 +320,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 		req.TfVars.TerrariumID = trId
 	}
 
-	err = tofu.SavTfVarsToFile(req.TfVars, tfVarsPath)
+	err = tofu.SaveTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
 		err2 := fmt.Errorf("failed to save tfVars to a file")
 		log.Error().Err(err).Msg(err2.Error())

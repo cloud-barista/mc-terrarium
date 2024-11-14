@@ -22,7 +22,6 @@ type TfVarsSqlDb struct {
 type OutputSQLDBInfo struct {
 	Terrarium   Terrarium   `json:"terrarium"`
 	SQLDBDetail SQLDBDetail `json:"sql_db_detail"`
-	Description string      `json:"description"`
 }
 
 type Terrarium struct {

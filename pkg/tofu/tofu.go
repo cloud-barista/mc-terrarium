@@ -349,7 +349,7 @@ func CopyFiles(sourceDir, destDir string) error {
 	return nil
 }
 
-func SavTfVarsToFile(tfVars interface{}, filePath string) error {
+func SaveTfVarsToFile(tfVars interface{}, filePath string) error {
 	tfVarsBytes, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {
 		return err
