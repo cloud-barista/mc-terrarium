@@ -198,7 +198,7 @@ definitions:
         example: vpc-12345678
         type: string
       db_admin_password:
-        example: P@ssword1234!
+        example: Password1234!
         type: string
       db_admin_username:
         example: mydbadmin

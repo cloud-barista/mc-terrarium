@@ -2546,7 +2546,7 @@ const docTemplate = `{
                 },
                 "db_admin_password": {
                     "type": "string",
-                    "example": "P@ssword1234!"
+                    "example": "Password1234!"
                 },
                 "db_admin_username": {
                     "type": "string",

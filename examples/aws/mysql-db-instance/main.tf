@@ -85,7 +85,7 @@ resource "aws_route_table_association" "public_2" {
 
 # Create a DB subnet group 
 resource "aws_db_subnet_group" "rds" {
-  name       = "main"
+  name       = "tofu-main"
   subnet_ids = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 
   tags = {
@@ -96,7 +96,7 @@ resource "aws_db_subnet_group" "rds" {
 
 # Create a security group for RDS Database Instance
 resource "aws_security_group" "rds_sg" {
-  name   = "rds_sg"
+  name   = "tofu-rds-sg"
   vpc_id = aws_vpc.main.id
 
   ingress {
