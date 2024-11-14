@@ -75,7 +75,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 	}
 
 	if !validProvidersForSqlDb[provider] {
-		err := fmt.Errorf("invalid request, provider must be one of [aws, azure, gcp, ncp]")
+		err := fmt.Errorf("invalid request, provider must be one of [aws, azure, gcp, ncpvpc]")
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
@@ -396,7 +396,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 	// subcommand: plan
 	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
-		err2 := fmt.Errorf("encountered an issue during the infracode checking process")
+		err2 := fmt.Errorf("returned: %s", ret)
 		log.Error().Err(err).Msg(err2.Error()) // error
 		res := model.Response{
 			Success: false,
@@ -424,7 +424,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
-// @Success 201 {object} model.Response "Created"
+// @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
@@ -469,7 +469,7 @@ func CreateSqlDb(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommandAsync(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
+	_, err = tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -479,15 +479,39 @@ func CreateSqlDb(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	res := model.Response{
-		Success: true,
-		Message: "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
-		Detail:  ret,
+
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/sql-db
+	// show: subcommand
+	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "sql_db_info")
+	if err != nil {
+		err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", "refined")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{
+			Success: false,
+			Message: err2.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, res)
 	}
 
+	var resourceInfo map[string]interface{}
+	err = json.Unmarshal([]byte(ret), &resourceInfo)
+	if err != nil {
+		log.Error().Err(err).Msg("") // error
+		res := model.Response{
+			Success: false,
+			Message: "failed to unmarshal resource info",
+		}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
+	res := model.Response{
+		Success: true,
+		Message: "refined read resource info (map)",
+		Object:  resourceInfo,
+	}
 	log.Debug().Msgf("%+v", res) // debug
 
-	return c.JSON(http.StatusCreated, res)
+	return c.JSON(http.StatusOK, res)
 }
 
 // GetResourceInfoOfSqlDb godoc

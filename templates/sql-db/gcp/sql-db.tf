@@ -8,7 +8,7 @@ resource "google_sql_database_instance" "instance" {
     tier = var.db_instance_spec # Set the instance type, such as db-f1-micro
   }
 
-  # deletion_protection = false # Disable deletion protection
+  deletion_protection = false # Disable deletion protection
 }
 
 # Create database

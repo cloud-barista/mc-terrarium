@@ -142,7 +142,7 @@ func ExecuteTofuCommand(trId, reqId string, args ...string) (string, error) {
 	if err != nil {
 		log.Error().Msgf("Command execution failed: %v", err)
 		setRunningStatus(trId, "Failed")
-		return "", err
+		return output, err
 	}
 	// log.Debug().Msgf("Command output: %s", output)
 	setRunningStatus(trId, "Success")

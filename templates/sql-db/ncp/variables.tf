@@ -40,6 +40,11 @@ variable "csp_region" {
 variable "csp_subnet1_id" {
   type        = string
   description = "The subnet ID in NCP."
+
+  validation {
+    condition     = can(regex("^[0-9]+$", var.csp_subnet1_id))
+    error_message = "The csp_subnet1_id must only contain digits (e.g, 123456)."
+  }
 }
 
 # variable "csp_subnet2_id" {

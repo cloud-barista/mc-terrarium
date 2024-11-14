@@ -53,6 +53,7 @@ secrets/**
 !secrets/template-*
 !secrets/.keep
 !secrets/README.md
+!secrets/load-ncp-cred-env.sh
 
 # Ignore container volumes
 container-volume/
