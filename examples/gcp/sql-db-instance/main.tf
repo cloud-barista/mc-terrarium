@@ -40,7 +40,7 @@ resource "google_sql_database_instance" "my_sql_instance" {
     tier = "db-f1-micro" # Set the instance type
   }
 
-  # deletion_protection = false # Disable deletion protection
+  deletion_protection = false # Disable deletion protection
 }
 
 # Create database

@@ -174,7 +174,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// ClearEnvForSqlDb godoc
+// ClearEnvOfSqlDb godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
 // @Tags [SQL Database] Operations
@@ -188,7 +188,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/sql-db/env [delete]
-func ClearSqlDb(c echo.Context) error {
+func ClearEnvOfSqlDb(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -490,7 +490,7 @@ func CreateSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// GetResourceInfoOfGcpAwsVpn godoc
+// GetResourceInfoOfSqlDb godoc
 // @Summary Get resource info of SQL database
 // @Description Get resource info of SQL database
 // @Tags [SQL Database] Operations
@@ -663,7 +663,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 	}
 }
 
-// DestroyGcpAwsVpn godoc
+// DestroySqlDb godoc
 // @Summary Destroy SQL database
 // @Description Destroy SQL database
 // @Tags [SQL Database] Operations
@@ -739,7 +739,7 @@ func DestroySqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// GetRequestStatusOfGcpAwsVpn godoc
+// GetRequestStatusOfSqlDb godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
 // @Tags [SQL Database] Operations

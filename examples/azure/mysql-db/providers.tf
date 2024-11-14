@@ -48,7 +48,7 @@ resource "azurerm_mysql_flexible_server" "example" {
   resource_group_name = azurerm_resource_group.example.name
 
   administrator_login    = "adminuser"
-  administrator_password = "P@ssword1234!"
+  administrator_password = "Password1234!"
 
   sku_name = "B_Standard_B1ms" # e.g., General Purpose, Standard_D2s_v3
   # storage_mb = 5120              # 5 GB

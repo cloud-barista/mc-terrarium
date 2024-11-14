@@ -97,6 +97,6 @@ variable "db_admin_username" {
 variable "db_admin_password" {
   type        = string
   description = "The admin password for the database."
-  default     = "P@ssword1234!"
+  default     = "Password1234!"
 }
 

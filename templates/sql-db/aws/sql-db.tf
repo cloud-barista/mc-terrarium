@@ -1,6 +1,6 @@
 # Create a DB subnet group 
 resource "aws_db_subnet_group" "rds" {
-  name       = "main"
+  name       = "${var.terrarium_id}-rds"
   subnet_ids = [var.csp_subnet1_id, var.csp_subnet2_id]
 
   tags = {
@@ -36,7 +36,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 # Create an RDS Database Instance with updated instance class and engine version
-resource "aws_db_instance" "db_instance" {
+resource "aws_db_instance" "instance" {
   engine               = "mysql"
   identifier           = "${var.terrarium_id}-db-instance"
   allocated_storage    = 20

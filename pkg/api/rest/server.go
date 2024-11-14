@@ -208,7 +208,7 @@ func RunServer(port string) {
 
 	// SQL database APIs
 	groupTerrarium.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
-	groupTerrarium.DELETE("/tr/:trId/sql-db/env", handler.ClearSqlDb)
+	groupTerrarium.DELETE("/tr/:trId/sql-db/env", handler.ClearEnvOfSqlDb)
 	groupTerrarium.POST("/tr/:trId/sql-db/infracode", handler.CreateInfracodeForSqlDb)
 	groupTerrarium.POST("/tr/:trId/sql-db/plan", handler.CheckInfracodeForSqlDb)
 	groupTerrarium.POST("/tr/:trId/sql-db", handler.CreateSqlDb)
