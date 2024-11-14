@@ -11,8 +11,8 @@ type TfVarsSqlDb struct {
 	DBEnginePort     int    `json:"db_engine_port,omitempty" example:"3306"`
 	IngressCIDRBlock string `json:"ingress_cidr_block,omitempty" example:"0.0.0.0/0"`
 	EgressCIDRBlock  string `json:"egress_cidr_block,omitempty" example:"0.0.0.0/0"`
-	DBEngineVersion  string `json:"db_engine_version" example:"8.0.39"`
-	DBInstanceSpec   string `json:"db_instance_spec" example:"db.t3.micro"`
+	DBEngineVersion  string `json:"db_engine_version,omitempty" example:"8.0.39"`
+	DBInstanceSpec   string `json:"db_instance_spec,omitempty" example:"db.t3.micro"`
 	DBAdminUsername  string `json:"db_admin_username" example:"mydbadmin"`
 	DBAdminPassword  string `json:"db_admin_password" example:"Password1234!"`
 	// DBInstanceID     string `json:"db_instance_identifier" example:"mydbinstance"`
