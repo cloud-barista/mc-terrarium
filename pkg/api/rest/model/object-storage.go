@@ -7,7 +7,8 @@ type TfVarsObjectStorage struct {
 	CSPResourceGroup string `json:"csp_resource_group,omitempty" example:"koreacentral"`
 }
 
-type ObjectStorageInfo struct {
+// OutputObjectStorageInfo represents the Object Storage information structure
+type OutputObjectStorageInfo struct {
 	Terrarium           TerrariumInfo       `json:"terrarium"`
 	ObjectStorageDetail ObjectStorageDetail `json:"object_storage_detail"`
 }
