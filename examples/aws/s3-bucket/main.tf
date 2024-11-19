@@ -118,7 +118,7 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 # Note: Gateway endpoint is free and provides secure access to S3 from VPC
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = aws_vpc.tofu_example.id
-  service_name = "com.amazonaws.ap-northeast-2.s3"
+  service_name = "com.amazonaws.ap-northeast-2.s3" # Fixed value of S3 service name for ap-northeast-2 
 
   tags = {
     Name = "s3-endpoint"
