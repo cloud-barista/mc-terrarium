@@ -1,14 +1,13 @@
 variable "terrarium_id" {
   type        = string
   description = "Unique ID to distinguish and manage infrastructure."
-  default     = "terrarium01"
+  # default     = "terrarium01" # Used for testing
 
   validation {
     condition     = var.terrarium_id != ""
     error_message = "The terrarium ID must be set"
   }
 }
-
 
 #######################################################################
 # Microsoft Azure (MS Azure / Azure)

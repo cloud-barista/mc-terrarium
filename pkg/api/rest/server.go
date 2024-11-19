@@ -216,6 +216,16 @@ func RunServer(port string) {
 	groupTerrarium.DELETE("/tr/:trId/sql-db", handler.DestroySqlDb)
 	groupTerrarium.GET("/tr/:trId/sql-db/request/:requestId", handler.GetRequestStatusOfSqlDb)
 
+	// Object Storage APIs
+	groupTerrarium.POST("/tr/:trId/object-storage/env", handler.InitEnvForObjectStorage)
+	groupTerrarium.DELETE("/tr/:trId/object-storage/env", handler.ClearEnvOfObjectStorage)
+	groupTerrarium.POST("/tr/:trId/object-storage/infracode", handler.CreateInfracodeForObjectStorage)
+	groupTerrarium.POST("/tr/:trId/object-storage/plan", handler.CheckInfracodeForObjectStorage)
+	groupTerrarium.POST("/tr/:trId/object-storage", handler.CreateObjectStorage)
+	groupTerrarium.GET("/tr/:trId/object-storage", handler.GetResourceInfoOfObjectStorage)
+	groupTerrarium.DELETE("/tr/:trId/object-storage", handler.DestroyObjectStorage)
+	groupTerrarium.GET("/tr/:trId/object-storage/request/:requestId", handler.GetRequestStatusOfObjectStorage)
+
 	// Sample API group (for developers to add new API)
 	groupSample := groupTerrarium.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)
