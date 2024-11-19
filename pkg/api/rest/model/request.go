@@ -19,3 +19,8 @@ type CreateInfracodeOfTestEnvRequest struct {
 type CreateInfracodeOfSqlDbRequest struct {
 	TfVars TfVarsSqlDb `json:"tfVars"`
 }
+
+// Request body for object-storage
+type CreateInfracodeOfObjectStorageRequest struct {
+	TfVars TfVarsObjectStorage `json:"tfVars"`
+}

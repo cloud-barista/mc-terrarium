@@ -71,6 +71,11 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
     type: object
+  model.CreateInfracodeOfObjectStorageRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsObjectStorage'
+    type: object
   model.CreateInfracodeOfSqlDbRequest:
     properties:
       tfVars:
@@ -177,6 +182,18 @@ definitions:
         example: tr-gcp-vpc
         type: string
       terrarium-id:
+        example: ""
+        type: string
+    type: object
+  model.TfVarsObjectStorage:
+    properties:
+      csp_region:
+        example: ap-northeast-2
+        type: string
+      csp_resource_group:
+        example: koreacentral
+        type: string
+      terrarium_id:
         example: ""
         type: string
     type: object
@@ -799,6 +816,336 @@ paths:
       summary: Read a terrarium
       tags:
       - '[Terrarium] An environment to enrich the multi-cloud infrastructure'
+  /tr/{trId}/object-storage:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy Object Storage
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy Object Storage
+      tags:
+      - '[Object Storage] Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get resource info of Object Storage
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      - description: custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get resource info of Object Storage
+      tags:
+      - '[Object Storage] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create Object Storage
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create Object Storage
+      tags:
+      - '[Object Storage] Operations'
+  /tr/{trId}/object-storage/env:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: ""
+        description: Action
+        enum:
+        - force
+        in: query
+        name: action
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[Object Storage] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for Object Storage (e.g., AWS
+        S3 Bucket, Azure Blob Storage)
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: aws
+        description: Provider
+        enum:
+        - aws
+        - azure
+        in: query
+        name: provider
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3
+        Bucket, Azure Blob Storage)
+      tags:
+      - '[Object Storage] Operations'
+  /tr/{trId}/object-storage/infracode:
+    post:
+      consumes:
+      - application/json
+      description: Create the infracode for Object Storage
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters of infracode for Object Storage
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateInfracodeOfObjectStorageRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create the infracode for Object Storage
+      tags:
+      - '[Object Storage] Operations'
+  /tr/{trId}/object-storage/plan:
+    post:
+      consumes:
+      - application/json
+      description: Check and show changes by the current infracode
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check and show changes by the current infracode
+      tags:
+      - '[Object Storage] Operations'
+  /tr/{trId}/object-storage/request/{requestId}:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of a specific request by its ID
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check the status of a specific request by its ID
+      tags:
+      - '[Object Storage] Operations'
   /tr/{trId}/sql-db:
     delete:
       consumes:
