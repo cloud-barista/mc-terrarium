@@ -29,6 +29,23 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+var validProvidersForObjectStorage = map[string]bool{
+	"aws":   true,
+	"azure": true,
+	"gcp":   true,
+	"ncp":   true,
+}
+
+func getValidProviderListForMessageBroker() []string {
+	validProviders := []string{}
+	for provider := range validProvidersForObjectStorage {
+		if validProvidersForObjectStorage[provider] {
+			validProviders = append(validProviders, provider)
+		}
+	}
+	return validProviders
+}
+
 // InitEnvForObjectStorage godoc
 // @Summary Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3 Bucket, Azure Blob Storage)
 // @Description Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3 Bucket, Azure Blob Storage)
@@ -67,8 +84,9 @@ func InitEnvForObjectStorage(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	if !validProvidersForSqlDb[provider] {
-		err := fmt.Errorf("invalid request, provider must be one of [aws, azure, gcp, ncpvpc]")
+	if !validProvidersForObjectStorage[provider] {
+		providerList := getValidProviderListForMessageBroker()
+		err := fmt.Errorf("invalid request, provider must be one of %v", providerList)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
@@ -326,7 +344,7 @@ func CreateInfracodeForObjectStorage(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Message: "the infracode for SQL database is Successfully created",
+		Message: "the infracode for an object storage is successfully created",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug

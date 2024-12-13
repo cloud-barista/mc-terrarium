@@ -29,28 +29,38 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var validProvidersForSqlDb = map[string]bool{
-	"aws":   true,
-	"azure": true,
-	"gcp":   true,
-	"ncp":   true,
+var validProvidersForMessageBroker = map[string]bool{
+	"aws": true,
+	// "azure": true,
+	// "gcp":   true,
+	// "ncp":   true,
 }
 
-// InitEnvForSqlDb godoc
-// @Summary Initialize a multi-cloud terrarium for SQL database
-// @Description Initialize a multi-cloud terrarium for SQL database
-// @Tags [SQL Database] Operations
+func getValidProvidersForMessageBroker() []string {
+	validProviders := []string{}
+	for provider := range validProvidersForMessageBroker {
+		if validProvidersForMessageBroker[provider] {
+			validProviders = append(validProviders, provider)
+		}
+	}
+	return validProviders
+}
+
+// InitEnvForMessageBroker godoc
+// @Summary Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))
+// @Description Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))
+// @Tags [Message Broker] Operations
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
-// @Param provider query string false "Provider" Enums(aws, azure, gcp, ncp) default(aws)
+// @Param provider query string false "Provider" Enums(aws) default(aws)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db/env [post]
-func InitEnvForSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker/env [post]
+func InitEnvForMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -74,8 +84,9 @@ func InitEnvForSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	if !validProvidersForSqlDb[provider] {
-		err := fmt.Errorf("invalid request, provider must be one of [aws, azure, gcp, ncpvpc]")
+	if !validProvidersForMessageBroker[provider] {
+		providerList := getValidProviderListForMessageBroker()
+		err := fmt.Errorf("invalid request, provider must be one of %v", providerList)
 		log.Warn().Msg(err.Error())
 		res := model.Response{
 			Success: false,
@@ -88,7 +99,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
 	// Set the enrichments
-	enrichments := "sql-db"
+	enrichments := "message-broker"
 
 	// Read and set the enrichments to terrarium information
 	trInfo, err := terrarium.ReadTerrariumInfo(trId)
@@ -151,7 +162,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 		}
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 	// init: subcommand
 	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
@@ -174,10 +185,10 @@ func InitEnvForSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// ClearEnvOfSqlDb godoc
+// ClearEnvOfMessageBroker godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [SQL Database] Operations
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -187,8 +198,8 @@ func InitEnvForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db/env [delete]
-func ClearEnvOfSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker/env [delete]
+func ClearEnvOfMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -245,21 +256,21 @@ func ClearEnvOfSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// CreateInfracodeForSqlDb godoc
-// @Summary Create the infracode for SQL database
-// @Description Create the infracode for SQL database
-// @Tags [SQL Database] Operations
+// CreateInfracodeForMessageBroker godoc
+// @Summary Create the infracode for Message Broker
+// @Description Create the infracode for Message Broker
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
-// @Param ParamsForInfracode body model.CreateInfracodeOfSqlDbRequest true "Parameters of infracode for SQL database"
+// @Param ParamsForInfracode body model.CreateInfracodeOfMessageBrokerRequest true "Parameters of infracode for Message Broker"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db/infracode [post]
-func CreateInfracodeForSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker/infracode [post]
+func CreateInfracodeForMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -272,7 +283,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	req := new(model.CreateInfracodeOfSqlDbRequest)
+	req := new(model.CreateInfracodeOfMessageBrokerRequest)
 	if err := c.Bind(req); err != nil {
 		err2 := fmt.Errorf("invalid request format, %v", err)
 		log.Warn().Err(err).Msg("invalid request format")
@@ -333,7 +344,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 
 	res := model.Response{
 		Success: true,
-		Message: "the infracode for SQL database is successfully created",
+		Message: "the infracode for a message broker is successfully created",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug
@@ -341,10 +352,10 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// CheckInfracodeForSqlDb godoc
+// CheckInfracodeForMessageBroker godoc
 // @Summary Check and show changes by the current infracode
 // @Description Check and show changes by the current infracode
-// @Tags [SQL Database] Operations
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -353,8 +364,8 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db/plan [post]
-func CheckInfracodeForSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker/plan [post]
+func CheckInfracodeForMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -392,7 +403,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/sql-db
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 	// subcommand: plan
 	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
@@ -416,10 +427,10 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// CreateSqlDb godoc
-// @Summary Create SQL database
-// @Description Create SQL database
-// @Tags [SQL Database] Operations
+// CreateMessageBroker godoc
+// @Summary Create Message Broker
+// @Description Create Message Broker
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -428,8 +439,8 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db [post]
-func CreateSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker [post]
+func CreateMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -467,7 +478,7 @@ func CreateSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 	// subcommand: apply
 	_, err = tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
@@ -480,9 +491,9 @@ func CreateSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/sql-db
+	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "sql_db_info")
+	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "message_broker_info")
 	if err != nil {
 		err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", "refined")
 		log.Error().Err(err).Msg(err2.Error())
@@ -514,10 +525,10 @@ func CreateSqlDb(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// GetResourceInfoOfSqlDb godoc
-// @Summary Get resource info of SQL database
-// @Description Get resource info of SQL database
-// @Tags [SQL Database] Operations
+// GetResourceInfoOfMessageBroker godoc
+// @Summary Get resource info of Message Broker
+// @Description Get resource info of Message Broker
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -527,8 +538,8 @@ func CreateSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db [get]
-func GetResourceInfoOfSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker [get]
+func GetResourceInfoOfMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -595,9 +606,9 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 	case DetailOptions.Refined:
 		// Code for handling "refined" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/sql-db
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 		// show: subcommand
-		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "sql_db_info")
+		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "message_broker_info")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
@@ -631,7 +642,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 	case DetailOptions.Raw:
 		// Code for handling "raw" detail option
 
-		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
+		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/message-broker
 		// show: subcommand
 		// Get resource info from the state or plan file
 		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
@@ -687,10 +698,10 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 	}
 }
 
-// DestroySqlDb godoc
-// @Summary Destroy SQL database
-// @Description Destroy SQL database
-// @Tags [SQL Database] Operations
+// DestroyMessageBroker godoc
+// @Summary Destroy Message Broker
+// @Description Destroy Message Broker
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -700,8 +711,8 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db [delete]
-func DestroySqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker [delete]
+func DestroyMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
@@ -763,10 +774,10 @@ func DestroySqlDb(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-// GetRequestStatusOfSqlDb godoc
+// GetRequestStatusOfMessageBroker godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [SQL Database] Operations
+// @Tags [Message Broker] Operations
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -775,8 +786,8 @@ func DestroySqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/sql-db/request/{requestId} [get]
-func GetRequestStatusOfSqlDb(c echo.Context) error {
+// @Router /tr/{trId}/message-broker/request/{requestId} [get]
+func GetRequestStatusOfMessageBroker(c echo.Context) error {
 
 	trId := c.Param("trId")
 	if trId == "" {
