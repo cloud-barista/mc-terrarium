@@ -226,6 +226,16 @@ func RunServer(port string) {
 	groupTerrarium.DELETE("/tr/:trId/object-storage", handler.DestroyObjectStorage)
 	groupTerrarium.GET("/tr/:trId/object-storage/request/:requestId", handler.GetRequestStatusOfObjectStorage)
 
+	// Message Broker APIs
+	groupTerrarium.POST("/tr/:trId/message-broker/env", handler.InitEnvForMessageBroker)
+	groupTerrarium.DELETE("/tr/:trId/message-broker/env", handler.ClearEnvOfMessageBroker)
+	groupTerrarium.POST("/tr/:trId/message-broker/infracode", handler.CreateInfracodeForMessageBroker)
+	groupTerrarium.POST("/tr/:trId/message-broker/plan", handler.CheckInfracodeForMessageBroker)
+	groupTerrarium.POST("/tr/:trId/message-broker", handler.CreateMessageBroker)
+	groupTerrarium.GET("/tr/:trId/message-broker", handler.GetResourceInfoOfMessageBroker)
+	groupTerrarium.DELETE("/tr/:trId/message-broker", handler.DestroyMessageBroker)
+	groupTerrarium.GET("/tr/:trId/message-broker/request/:requestId", handler.GetRequestStatusOfMessageBroker)
+
 	// Sample API group (for developers to add new API)
 	groupSample := groupTerrarium.Group("/sample")
 	route.RegisterSampleRoutes(groupSample)

@@ -71,10 +71,15 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsGcpAzureVpnTunnel'
     type: object
+  model.CreateInfracodeOfMessageBrokerRequest:
+    properties:
+      tfVars:
+        $ref: '#/definitions/model.TfVarsMessageBroker'
+    type: object
   model.CreateInfracodeOfObjectStorageRequest:
     properties:
       tfVars:
-        $ref: '#/definitions/model.TfVarsObjectStorage'
+        $ref: '#/definitions/model.TfVarsMessageBroker'
     type: object
   model.CreateInfracodeOfSqlDbRequest:
     properties:
@@ -185,13 +190,13 @@ definitions:
         example: ""
         type: string
     type: object
-  model.TfVarsObjectStorage:
+  model.TfVarsMessageBroker:
     properties:
       csp_region:
         example: ap-northeast-2
         type: string
-      csp_resource_group:
-        example: koreacentral
+      csp_vnet_id:
+        example: vpc-12345678
         type: string
       terrarium_id:
         example: ""
@@ -816,6 +821,335 @@ paths:
       summary: Read a terrarium
       tags:
       - '[Terrarium] An environment to enrich the multi-cloud infrastructure'
+  /tr/{trId}/message-broker:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy Message Broker
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy Message Broker
+      tags:
+      - '[Message Broker] Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get resource info of Message Broker
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        in: query
+        name: detail
+        type: string
+      - description: custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get resource info of Message Broker
+      tags:
+      - '[Message Broker] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create Message Broker
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create Message Broker
+      tags:
+      - '[Message Broker] Operations'
+  /tr/{trId}/message-broker/env:
+    delete:
+      consumes:
+      - application/json
+      description: Clear the entire directory and configuration files
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: ""
+        description: Action
+        enum:
+        - force
+        in: query
+        name: action
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Clear the entire directory and configuration files
+      tags:
+      - '[Message Broker] Operations'
+    post:
+      consumes:
+      - application/json
+      description: Initialize a multi-cloud terrarium for Message Broker (e.g., AWS
+        MQ Broker (ActiveMQ))
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: aws
+        description: Provider
+        enum:
+        - aws
+        in: query
+        name: provider
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ
+        Broker (ActiveMQ))
+      tags:
+      - '[Message Broker] Operations'
+  /tr/{trId}/message-broker/infracode:
+    post:
+      consumes:
+      - application/json
+      description: Create the infracode for Message Broker
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters of infracode for Message Broker
+        in: body
+        name: ParamsForInfracode
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateInfracodeOfMessageBrokerRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create the infracode for Message Broker
+      tags:
+      - '[Message Broker] Operations'
+  /tr/{trId}/message-broker/plan:
+    post:
+      consumes:
+      - application/json
+      description: Check and show changes by the current infracode
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check and show changes by the current infracode
+      tags:
+      - '[Message Broker] Operations'
+  /tr/{trId}/message-broker/request/{requestId}:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of a specific request by its ID
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Check the status of a specific request by its ID
+      tags:
+      - '[Message Broker] Operations'
   /tr/{trId}/object-storage:
     delete:
       consumes:

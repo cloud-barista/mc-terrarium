@@ -22,5 +22,10 @@ type CreateInfracodeOfSqlDbRequest struct {
 
 // Request body for object-storage
 type CreateInfracodeOfObjectStorageRequest struct {
-	TfVars TfVarsObjectStorage `json:"tfVars"`
+	TfVars TfVarsMessageBroker `json:"tfVars"`
+}
+
+// Request body for message-broker
+type CreateInfracodeOfMessageBrokerRequest struct {
+	TfVars TfVarsMessageBroker `json:"tfVars"`
 }

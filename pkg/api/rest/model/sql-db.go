@@ -21,14 +21,14 @@ type TfVarsSqlDb struct {
 // OutputSQLDBInfo represents the SQL Database information structure
 type OutputSQLDBInfo struct {
 	Terrarium   Terrarium   `json:"terrarium"`
-	SQLDBDetail SQLDBDetail `json:"sql_db_detail"`
+	SQLDBDetail SqlDbDetail `json:"sql_db_detail"`
 }
 
 type Terrarium struct {
 	ID string `json:"id"`
 }
 
-type SQLDBDetail struct {
+type SqlDbDetail struct {
 	// Basic Information
 	InstanceName       string            `json:"instance_name"`
 	InstanceResourceID string            `json:"instance_resource_id"`
@@ -54,10 +54,10 @@ type SQLDBDetail struct {
 	AdminUsername string `json:"admin_username"`
 
 	// Provider Specific Details
-	ProviderSpecificDetail ProviderSpecificDetail `json:"provider_specific_detail"`
+	ProviderSpecificDetail ProviderSpecificSqlDbDetail `json:"provider_specific_detail"`
 }
 
-type ProviderSpecificDetail struct {
+type ProviderSpecificSqlDbDetail struct {
 	// Common Fields
 	Provider           string `json:"provider"` // aws, azure, gcp, ncp
 	Region             string `json:"region,omitempty"`

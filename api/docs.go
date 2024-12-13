@@ -833,6 +833,493 @@ const docTemplate = `{
                 }
             }
         },
+        "/tr/{trId}/message-broker": {
+            "get": {
+                "description": "Get resource info of Message Broker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Get resource info of Message Broker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Message Broker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Create Message Broker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Destroy Message Broker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Destroy Message Broker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/message-broker/env": {
+            "post": {
+                "description": "Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "aws"
+                        ],
+                        "type": "string",
+                        "default": "aws",
+                        "description": "Provider",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Clear the entire directory and configuration files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Clear the entire directory and configuration files",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "force"
+                        ],
+                        "type": "string",
+                        "default": "",
+                        "description": "Action",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/message-broker/infracode": {
+            "post": {
+                "description": "Create the infracode for Message Broker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Create the infracode for Message Broker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters of infracode for Message Broker",
+                        "name": "ParamsForInfracode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateInfracodeOfMessageBrokerRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/message-broker/plan": {
+            "post": {
+                "description": "Check and show changes by the current infracode",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Check and show changes by the current infracode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/message-broker/request/{requestId}": {
+            "get": {
+                "description": "Check the status of a specific request by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Message Broker] Operations"
+                ],
+                "summary": "Check the status of a specific request by its ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request ID",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tr/{trId}/object-storage": {
             "get": {
                 "description": "Get resource info of Object Storage",
@@ -2858,11 +3345,19 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CreateInfracodeOfMessageBrokerRequest": {
+            "type": "object",
+            "properties": {
+                "tfVars": {
+                    "$ref": "#/definitions/model.TfVarsMessageBroker"
+                }
+            }
+        },
         "model.CreateInfracodeOfObjectStorageRequest": {
             "type": "object",
             "properties": {
                 "tfVars": {
-                    "$ref": "#/definitions/model.TfVarsObjectStorage"
+                    "$ref": "#/definitions/model.TfVarsMessageBroker"
                 }
             }
         },
@@ -3017,16 +3512,16 @@ const docTemplate = `{
                 }
             }
         },
-        "model.TfVarsObjectStorage": {
+        "model.TfVarsMessageBroker": {
             "type": "object",
             "properties": {
                 "csp_region": {
                     "type": "string",
                     "example": "ap-northeast-2"
                 },
-                "csp_resource_group": {
+                "csp_vnet_id": {
                     "type": "string",
-                    "example": "koreacentral"
+                    "example": "vpc-12345678"
                 },
                 "terrarium_id": {
                     "type": "string",
