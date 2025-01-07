@@ -115,11 +115,19 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
   name   = "allow-ssh-from-public-subnet"
 
   ingress {
-    description = "Allow traffic from Public Subnet"
+    description = "Allow traffic in VPC"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/24"]
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  ingress {
+    description = "Allow ping in VPC"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   egress {
@@ -134,7 +142,6 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
   }
 }
 
-# Security Group to allow SSH traffic
 resource "aws_security_group" "allow_ssh_and_wg" {
   name        = "allow-tls"
   description = "Allow TLS inbound traffic"
@@ -164,6 +171,14 @@ resource "aws_security_group" "allow_ssh_and_wg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow ping from anywhere"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -179,26 +194,28 @@ resource "aws_security_group" "allow_ssh_and_wg" {
 
 resource "aws_instance" "wg-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
-  instance_type          = "t3.micro"
+  instance_type          = "t3.medium"
   key_name               = "secure-testbed-keypair"
   vpc_security_group_ids = [aws_security_group.allow_ssh_and_wg.id]
   availability_zone      = "ap-northeast-2a"
   subnet_id              = aws_subnet.public.id
   user_data              = file("./init.sh")
 
+  # Set source/destination check
+  source_dest_check = false
 
   root_block_device {
     volume_size = 30
   }
 
   tags = {
-    Name = "wg-server"
+    Name = "secure-wg-svr"
   }
 }
 
 resource "aws_instance" "secure-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
-  instance_type          = "t3.micro"
+  instance_type          = "t3.medium"
   key_name               = "secure-testbed-keypair"
   vpc_security_group_ids = [aws_security_group.allow_ssh_from_public_subnet.id]
   availability_zone      = "ap-northeast-2b"
@@ -210,6 +227,6 @@ resource "aws_instance" "secure-server" {
   }
 
   tags = {
-    Name = "secure-server"
+    Name = "secure-svr"
   }
 }
