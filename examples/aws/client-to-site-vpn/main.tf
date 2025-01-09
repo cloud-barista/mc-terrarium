@@ -130,6 +130,14 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
+  ingress {
+    description = "Allow MapUI"
+    from_port   = 1324
+    to_port     = 1324
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -143,8 +151,8 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
 }
 
 resource "aws_security_group" "allow_ssh_and_wg" {
-  name        = "allow-tls"
-  description = "Allow TLS inbound traffic"
+  name        = "allow-ssh-and-wg"
+  description = "Allow TLS and Wireguard inbound traffic"
   vpc_id      = aws_vpc.secure_testbed.id
 
   ingress {
@@ -152,7 +160,7 @@ resource "aws_security_group" "allow_ssh_and_wg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["129.254.0.0/16"]
   }
 
   ingress {
@@ -160,7 +168,7 @@ resource "aws_security_group" "allow_ssh_and_wg" {
     from_port   = 51820
     to_port     = 51820
     protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["129.254.0.0/16"]
   }
 
   ingress {
@@ -168,15 +176,15 @@ resource "aws_security_group" "allow_ssh_and_wg" {
     from_port   = 51821
     to_port     = 51821
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["129.254.0.0/16"]
   }
 
   ingress {
-    description = "Allow ping from anywhere"
+    description = "Allow ping in VPC"
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   egress {
