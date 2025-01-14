@@ -32,6 +32,9 @@ go.work
 *credential*
 project-gcp.txt
 
+# Sensitive data
+.env
+
 # Binaries
 pkg/mc-terrarium
 pkg/mc-terrarium-arm
