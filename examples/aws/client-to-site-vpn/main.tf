@@ -131,12 +131,21 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
   }
 
   ingress {
-    description = "Allow MapUI"
+    description = "Allow CB-Tumblebug API traffic"
+    from_port   = 1323
+    to_port     = 1323
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  ingress {
+    description = "Allow CB-MapUI traffic"
     from_port   = 1324
     to_port     = 1324
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/16"]
   }
+
 
   egress {
     from_port   = 0
