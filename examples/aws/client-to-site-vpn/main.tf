@@ -109,6 +109,66 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
+# Security group for the public subnet
+resource "aws_security_group" "allow_ssh_and_wg" {
+  name        = "allow-ssh-and-wg"
+  description = "Allow TLS and Wireguard inbound traffic"
+  vpc_id      = aws_vpc.secure_testbed.id
+
+  ingress {
+    description = "Allow SSH from the office"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["129.254.0.0/16"]
+  }
+
+  ingress {
+    description = "WireGuard UDP traffic"
+    from_port   = 51820
+    to_port     = 51820
+    protocol    = "udp"
+    cidr_blocks = ["129.254.0.0/16"]
+  }
+
+  ingress {
+    description = "Allow TCP port for WireGuard Easy Web UI"
+    from_port   = 51821
+    to_port     = 51821
+    protocol    = "tcp"
+    cidr_blocks = ["129.254.0.0/16"]
+  }
+
+  ingress {
+    description = "Allow TCP port for ngrok web interface"
+    from_port   = 4040
+    to_port     = 4040
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  ingress {
+    description = "Allow ping in VPC"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow-ssh-and-wg"
+  }
+}
+
+
 # Security Group for Private Subnet
 resource "aws_security_group" "allow_ssh_from_public_subnet" {
   vpc_id = aws_vpc.secure_testbed.id
@@ -146,7 +206,6 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -159,56 +218,7 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
   }
 }
 
-resource "aws_security_group" "allow_ssh_and_wg" {
-  name        = "allow-ssh-and-wg"
-  description = "Allow TLS and Wireguard inbound traffic"
-  vpc_id      = aws_vpc.secure_testbed.id
-
-  ingress {
-    description = "SSH from VPC"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["129.254.0.0/16"]
-  }
-
-  ingress {
-    description = "WireGuard UDP traffic"
-    from_port   = 51820
-    to_port     = 51820
-    protocol    = "udp"
-    cidr_blocks = ["129.254.0.0/16"]
-  }
-
-  ingress {
-    description = "WireGuard TCP traffic"
-    from_port   = 51821
-    to_port     = 51821
-    protocol    = "tcp"
-    cidr_blocks = ["129.254.0.0/16"]
-  }
-
-  ingress {
-    description = "Allow ping in VPC"
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = ["10.0.0.0/16"]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = {
-    Name = "allow-ssh-and-wg"
-  }
-}
-
+# Create an instance in the public subnet
 resource "aws_instance" "wg-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
   instance_type          = "t3.medium"
@@ -230,6 +240,7 @@ resource "aws_instance" "wg-server" {
   }
 }
 
+# Create an instance in the private subnet
 resource "aws_instance" "secure-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
   instance_type          = "t3.medium"

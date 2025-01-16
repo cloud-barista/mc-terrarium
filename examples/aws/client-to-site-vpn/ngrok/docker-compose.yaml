@@ -1,0 +1,10 @@
+services:
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    network_mode: "host"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN:?AUTH_TOKEN must be set}
+    command: >
+      http ${TARGET_PORT:-80} ${NGROK_STATIC_DOMAIN:+--url=${NGROK_STATIC_DOMAIN}}
+    tty: false

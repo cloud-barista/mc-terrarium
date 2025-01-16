@@ -3,6 +3,18 @@ volumes:
 
 services:
   wg-easy:
+    image: ghcr.io/wg-easy/wg-easy
+    container_name: wg-easy
+    volumes:
+      - etc_wireguard:/etc/wireguard
+    ports:
+      - target: ${WG_PORT:-51820}
+        published: ${WG_PORT:-51820}
+        protocol: udp
+      - target: ${WG_EASY_PORT:-51821}
+        published: ${WG_EASY_PORT:-51821}
+        protocol: tcp
+    restart: unless-stopped
     environment:
       # Change Language:
       # (Supports: en, ua, ru, tr, no, pl, fr, de, ca, es, ko, vi, nl, is, pt, chs, cht, it, th, hi, ja, si)
@@ -12,7 +24,8 @@ services:
       - WG_HOST=${PUBLIC_IP?Public IP must be set}
 
       # (needs double $$, hash of 'multicloud123!'; see "How_to_generate_an_bcrypt_hash.md" for generate the hash)
-      - PASSWORD_HASH=${PASSWORD_HASH:-$$2a$$12$$iSCQRRM8cJxXnCNbWWM.1.4rHSEXloWPVy6XXei0TXfMWhDsSsTVq} 
+      - PASSWORD_HASH=${WG_EASY_PASSWORD_HASH:-$$2a$$12$$iSCQRRM8cJxXnCNbWWM.1.4rHSEXloWPVy6XXei0TXfMWhDsSsTVq}
+      - PORT=${WG_EASY_PORT:-51821}
       - WG_PORT=${WG_PORT:-51820}
       - WG_DEFAULT_ADDRESS=${WG_DEFAULT_ADDRESS:-10.1.0.x} # Clients IP address range
       - WG_DEFAULT_DNS=${WG_DEFAULT_DNS:-8.8.8.8}
@@ -39,15 +52,6 @@ services:
       # - WG_ENABLE_EXPIRES_TIME=true
       # - ENABLE_PROMETHEUS_METRICS=false
       # - PROMETHEUS_METRICS_PASSWORD=$$2a$$12$$vkvKpeEAHD78gasyawIod.1leBMKg8sBwKW.pQyNsq78bXV3INf2G # (needs double $$, hash of 'prometheus_password'; see "How_to_generate_an_bcrypt_hash.md" for generate the hash)
-
-    image: ghcr.io/wg-easy/wg-easy
-    container_name: wg-easy
-    volumes:
-      - etc_wireguard:/etc/wireguard
-    ports:
-      - "51820:51820/udp"
-      - "51821:51821/tcp"
-    restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
