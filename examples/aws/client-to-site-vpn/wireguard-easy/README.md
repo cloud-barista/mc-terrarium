@@ -62,10 +62,14 @@ After generating your hash, update it in the bootstrapper script or directly in 
 
 ## Quick Start
 
-1. Run the bootstrapper script:
+Get and run the bootstrapper script:
 
-```bash
-./wg-easy-bootstrapper.sh
+```shell
+mkdir ~/wg-easy
+cd ~/wg-easy
+wget https://raw.githubusercontent.com/cloud-barista/mc-terrarium/refs/heads/main/examples/aws/client-to-site-vpn/wireguard-easy/bootstrapper.sh
+chmod +x bootstrapper.sh
+sudo ./bootstrapper.sh
 ```
 
 The script will:
@@ -83,13 +87,13 @@ You can customize the setup using these parameters:
 1. Basic usage with custom IP:
 
 ```bash
-./wg-easy-bootstrapper.sh --public-ip=YOUR_PUBLIC_IP
+./bootstrapper.sh --public-ip=YOUR_PUBLIC_IP
 ```
 
 2. Using custom password hash (replace the default 'multicloud123!'):
 
 ```bash
-./wg-easy-bootstrapper.sh \
+./bootstrapper.sh \
   --public-ip=YOUR_PUBLIC_IP \
   --password-hash='$$2y$$10$$YourCustomPasswordHashHere'
 ```
@@ -97,7 +101,7 @@ You can customize the setup using these parameters:
 3. Full configuration example:
 
 ```bash
-./wg-easy-bootstrapper.sh \
+./bootstrapper.sh \
   --public-ip=YOUR_PUBLICIP_HERE \
   --port=51820 \
   --default-address=10.2.0.x \
