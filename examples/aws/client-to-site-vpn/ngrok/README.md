@@ -25,7 +25,7 @@ chmod +x bootstrapper.sh
 Run the script with YOUR_AUTHTOKEN and TARGET_PORT
 
 ```shell
-./bootstrapper.sh --ngrok-authtoken=your_authtoken --target-port=your_target_port
+sudo ./bootstrapper.sh --ngrok-authtoken=your_authtoken --target-port=your_target_port
 ```
 
 Note - the environment variables in `.env`:

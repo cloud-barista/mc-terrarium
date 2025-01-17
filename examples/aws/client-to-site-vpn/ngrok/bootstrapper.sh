@@ -53,6 +53,17 @@ EOF
 echo ".env file successfully updated!"
 # cat .env  # Uncomment to display the .env file content
 
+# Download Docker Compose file if not present
+COMPOSE_FILE_URL="https://raw.githubusercontent.com/cloud-barista/mc-terrarium/refs/heads/main/examples/aws/client-to-site-vpn/ngrok/docker-compose.yaml"
+if [ ! -f docker-compose.yaml ]; then
+  echo "docker-compose.yaml not found. Downloading from $COMPOSE_FILE_URL..."
+  curl -o docker-compose.yaml "$COMPOSE_FILE_URL"
+  if [ $? -ne 0 ]; then
+    echo "Error: Failed to download Docker Compose configuration." >&2
+    exit 1
+  fi
+fi
+
 # Start or restart the docker-compose stack
 echo "Starting ngrok with Docker Compose..."
 docker compose down  # Stop any existing containers
