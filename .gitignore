@@ -39,6 +39,7 @@ project-gcp.txt
 pkg/mc-terrarium
 pkg/mc-terrarium-arm
 cmd/mc-terrarium/mc-terrarium
+cmd/bcrypt/bcrypt
 
 # Log files
 log/
