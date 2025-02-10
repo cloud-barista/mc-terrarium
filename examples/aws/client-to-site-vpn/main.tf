@@ -206,6 +206,14 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
+  ingress {
+    description = "Allow CM-Butterfly traffic"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -218,10 +226,20 @@ resource "aws_security_group" "allow_ssh_from_public_subnet" {
   }
 }
 
+# https://aws.amazon.com/ko/ec2/instance-types/
+# Instance    vCPU*	  CPU Credits/hour	Mem (GiB)   Storage	   Network Performance (Gbps)***
+# t3.nano      2            6             0.5	      EBS-Only	        Up to 5 
+# t3.micro     2           12               1	      EBS-Only          Up to 5 
+# t3.small     2           24               2	      EBS-Only          Up to 5 
+# t3.medium    2           24               4	      EBS-Only          Up to 5
+# t3.large     2           36               8	      EBS-Only	        Up to 5
+# t3.xlarge    4           96              16	      EBS-Only	        Up to 5
+# t3.2xlarge   8          192              32	      EBS-Only	        Up to 5
+
 # Create an instance in the public subnet
 resource "aws_instance" "wg-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
-  instance_type          = "t3.medium"
+  instance_type          = "t3.large"
   key_name               = "secure-testbed-keypair"
   vpc_security_group_ids = [aws_security_group.allow_ssh_and_wg.id]
   availability_zone      = "ap-northeast-2a"
@@ -243,7 +261,7 @@ resource "aws_instance" "wg-server" {
 # Create an instance in the private subnet
 resource "aws_instance" "secure-server" {
   ami                    = "ami-042e76978adeb8c48" # Ubuntu 22.04 LTS
-  instance_type          = "t3.medium"
+  instance_type          = "t3.2xlarge"
   key_name               = "secure-testbed-keypair"
   vpc_security_group_ids = [aws_security_group.allow_ssh_from_public_subnet.id]
   availability_zone      = "ap-northeast-2b"
