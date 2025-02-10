@@ -17,7 +17,8 @@ terrarium:
       enabled: true
 
     username: default
-    password: default
+    # Set bcrypt-hashed password (ex: make bcrypt PASSWORD=mypassword)
+    password: $2a$10$cKUlDfR8k4VUubhhRwCV9.sFvKV3KEc9RJ.H8R/thIeVOrhQ.nuuW
 
   ## Logger configuration
   logfile:

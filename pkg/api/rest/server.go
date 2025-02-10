@@ -29,8 +29,10 @@ import (
 
 	// Black import (_) is for running a package's init() function without using its other contents.
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
+	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
@@ -44,8 +46,6 @@ import (
 	// echo-swagger middleware
 	_ "github.com/cloud-barista/mc-terrarium/api"
 	echoSwagger "github.com/swaggo/echo-swagger"
-
-	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 )
 
 //var masterConfigInfos confighandler.MASTERCONFIGTYPE
@@ -169,9 +169,12 @@ func RunServer(port string) {
 			},
 			Validator: func(username, password string, c echo.Context) (bool, error) {
 				// Be careful to use constant time comparison to prevent timing attacks
-				if subtle.ConstantTimeCompare([]byte(username), []byte(apiUser)) == 1 &&
-					subtle.ConstantTimeCompare([]byte(password), []byte(apiPass)) == 1 {
-					return true, nil
+				if subtle.ConstantTimeCompare([]byte(username), []byte(apiUser)) == 1 {
+					// bcrypt verification
+					err := bcrypt.CompareHashAndPassword([]byte(apiPass), []byte(password))
+					if err == nil {
+						return true, nil
+					}					
 				}
 				return false, nil
 			},

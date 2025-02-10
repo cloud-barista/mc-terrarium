@@ -9,7 +9,7 @@ GO := $(GOPROXY_OPTION) go
 GOPATH := $(shell go env GOPATH)
 SWAG := ~/go/bin/swag
 
-.PHONY: all dependency lint update swag swagger build arm prod run stop clean help
+.PHONY: all dependency lint update swag swagger build arm prod run stop clean help bcrypt
 
 all: swag build ## Default target: build the project
 
@@ -105,6 +105,19 @@ compose-up: ## Up services by docker compose
 compose-down: ## Down services by docker compose
 	@echo "Removing services by docker compose..."
 	@docker compose down	
+
+bcrypt: ## Generate bcrypt hash for given password (usage: make bcrypt PASSWORD=mypassword)
+	@if [ -z "$(PASSWORD)" ]; then \
+		echo "Please provide a password: make bcrypt PASSWORD=mypassword"; \
+		exit 1; \
+	fi
+	@mkdir -p cmd/bcrypt
+	@if [ ! -f "cmd/bcrypt/bcrypt" ]; then \
+		echo "bcrypt binary not found, building it..."; \
+		go build -o cmd/bcrypt/bcrypt cmd/bcrypt/main.go; \
+		chmod +x cmd/bcrypt/bcrypt; \
+	fi
+	@echo "$(PASSWORD)" | ./cmd/bcrypt/bcrypt
 
 help: ## Display this help screen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
