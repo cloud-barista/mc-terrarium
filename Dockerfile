@@ -60,7 +60,7 @@ ENV TERRARIUM_SELF_ENDPOINT=localhost:8055
 ENV TERRARIUM_API_ALLOW_ORIGINS=* \
     TERRARIUM_API_AUTH_ENABLED=true \
     TERRARIUM_API_USERNAME=default \
-    TERRARIUM_API_PASSWORD=default
+    TERRARIUM_API_PASSWORD='$2a$10$cKUlDfR8k4VUubhhRwCV9.sFvKV3KEc9RJ.H8R/thIeVOrhQ.nuuW'
 
 ## Logger configuration
 # Set log file path (default logfile path: ./log/terrarium.log)

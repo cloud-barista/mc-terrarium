@@ -54,5 +54,6 @@ func main() {
 	}
 
 	fmt.Printf("Bcrypt hash: %s\n", hash)
-	fmt.Printf("For docker-compose.yaml (with $$): %s\n", strings.ReplaceAll(hash, "$", "$$"))
+	fmt.Printf(" - For docker-compose.yaml and .env (with $$): %s\n", strings.ReplaceAll(hash, "$", "$$"))
+	fmt.Printf(" - For Dockerfile or environment variables (with ' '): '%s'\n", hash)
 }

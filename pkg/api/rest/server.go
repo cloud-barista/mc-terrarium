@@ -246,9 +246,9 @@ func RunServer(port string) {
 	selfEndpoint := config.Terrarium.Self.Endpoint
 	apidashboard := " http://" + selfEndpoint + "/terrarium/api"
 
-	if enableAuth {
-		fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + "): ")
-	}
+	// if enableAuth {
+	// 	fmt.Println(" Access to API dashboard" + " (username: " + apiUser + " / password: " + apiPass + "): ")
+	// }
 	fmt.Printf(noticeColor, apidashboard)
 	fmt.Println("\n ")
 

@@ -8,7 +8,7 @@ services:
     container_name: mc-terrarium
     build:
       context: .
-      dockerfile: Dockerfile    
+      dockerfile: Dockerfile
     networks:
       - terrarium_network
     ports:
@@ -16,11 +16,11 @@ services:
         published: 8055
         protocol: tcp
     env_file:
-      - ./secrets/credentials           # AWS credentials
-      - ./secrets/credential-azure.env  # Azure credentials
-      - ./secrets/credential-ncp.env    # NCP credentials
+      - ./secrets/credentials # AWS credentials
+      - ./secrets/credential-azure.env # Azure credentials
+      - ./secrets/credential-ncp.env # NCP credentials
     volumes:
-      - ./secrets:/app/secrets:ro       # GCP credentials
+      - ./secrets:/app/secrets:ro # GCP credentials
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
     environment:
       - TERRARIUM_ROOT=/app
@@ -28,7 +28,7 @@ services:
       # - TERRARIUM_API_ALLOW_ORIGINS=*
       # - TERRARIUM_API_AUTH_ENABLED=true
       # - TERRARIUM_API_USERNAME=default
-      # - TERRARIUM_API_PASSWORD=default
+      # - TERRARIUM_API_PASSWORD=$$2a$$10$$cKUlDfR8k4VUubhhRwCV9.sFvKV3KEc9RJ.H8R/thIeVOrhQ.nuuW
       # - TERRARIUM_LOGFILE_PATH=/app/log/terrarium.log
       # - TERRARIUM_LOGFILE_MAXSIZE=1000
       # - TERRARIUM_LOGFILE_MAXBACKUPS=3
@@ -39,7 +39,7 @@ services:
       # - TERRARIUM_NODE_ENV=production
       # - TERRARIUM_AUTOCONTROL_DURATION_MS=10000
     healthcheck: # for MC-Terrarirum
-      test: [ "CMD", "curl", "-f", "http://localhost:8055/terrarium/readyz" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8055/terrarium/readyz"]
       interval: 5m
       timeout: 5s
       retries: 3
