@@ -36,7 +36,7 @@ resource "azurerm_linux_virtual_machine" "my-azure-vm" {
   # Generate SSH key
   admin_ssh_key {
     username   = "adminuser" # This should match the admin_username
-    public_key = jsondecode(azapi_resource_action.my-azure-ssh-public-key-gen.output).publicKey
+    public_key = azapi_resource_action.my-azure-ssh-public-key-gen.output.publicKey
   }
 
   os_disk {
