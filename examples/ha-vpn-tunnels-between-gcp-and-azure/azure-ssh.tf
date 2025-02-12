@@ -21,5 +21,5 @@ resource "azapi_resource_action" "my-azure-ssh-public-key-gen" {
 }
 
 output "key-data" {
-  value = jsondecode(azapi_resource_action.my-azure-ssh-public-key-gen.output).publicKey
+  value = azapi_resource_action.my-azure-ssh-public-key-gen.output.publicKey
 }
