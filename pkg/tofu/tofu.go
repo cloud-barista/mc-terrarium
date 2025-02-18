@@ -302,51 +302,33 @@ func CopyAzureCredentials(des string) error {
 }
 
 func CopyFiles(sourceDir, destDir string) error {
-	err := filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
+		// Create destination directory if it does not exist
+		if err := os.MkdirAll(destDir, 0755); err != nil {
+			return fmt.Errorf("failed to create destination directory: %w", err)
+		}
+	
+		// Read file list from source directory
+		entries, err := os.ReadDir(sourceDir)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to read source directory: %w", err)
 		}
-
-		relPath, err := filepath.Rel(sourceDir, path)
-		if err != nil {
-			return err
-		}
-
-		destPath := filepath.Join(destDir, relPath)
-
-		if info.IsDir() {
-			err := os.MkdirAll(destPath, info.Mode())
-			if err != nil {
-				return err
+	
+		for _, entry := range entries {
+			// Skip directories
+			if entry.IsDir() {
+				continue
 			}
-		} else {
-			sourceFile, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-			defer sourceFile.Close()
-
-			destFile, err := os.Create(destPath)
-			if err != nil {
-				return err
-			}
-			defer destFile.Close()
-
-			_, err = io.Copy(destFile, sourceFile)
-			if err != nil {
-				return err
+	
+			srcFilePath := filepath.Join(sourceDir, entry.Name())
+			destFilePath := filepath.Join(destDir, entry.Name())
+	
+			// Copy the file
+			if err := copyFile(srcFilePath, destFilePath); err != nil {
+				return fmt.Errorf("failed to copy file %s: %w", entry.Name(), err)
 			}
 		}
-
+	
 		return nil
-	})
-
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to copy template files to working directory")
-		return err
-	}
-
-	return nil
 }
 
 func SaveTfVarsToFile(tfVars interface{}, filePath string) error {
@@ -361,6 +343,23 @@ func SaveTfVarsToFile(tfVars interface{}, filePath string) error {
 	}
 
 	return nil
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, sourceFile)
+	return err
 }
 
 func SaveGcpAwsTfVarsToFile(tfVars model.TfVarsGcpAwsVpnTunnel, filePath string) error {
