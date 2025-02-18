@@ -27,11 +27,14 @@ go.work
 .terraform/
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
-.terraform.tfstate.*
+terraform.tfstate.*
+terraform.tfvars.json
+
 
 # Secret files
 *credential*
 project-gcp.txt
+*.pem
 
 # Sensitive data
 .env
