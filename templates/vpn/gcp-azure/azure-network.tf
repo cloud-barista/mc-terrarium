@@ -70,9 +70,7 @@ resource "azurerm_virtual_network_gateway" "vpn_gw_1" {
       ip_configuration_name = "${var.terrarium-id}-vnetGatewayConfig2"
       apipa_addresses       = ["169.254.22.1"]
     }
-
   }
-
 }
 
 ########################################################

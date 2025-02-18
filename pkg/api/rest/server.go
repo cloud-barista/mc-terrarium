@@ -36,7 +36,6 @@ import (
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
-	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/route"
 	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 
 	// REST API (echo)
@@ -203,45 +202,84 @@ func RunServer(port string) {
 	e.GET("/terrarium/tofuVersion", handler.TofuVersion)
 
 	// A terrarium group has /terrarium as prefix
-	groupTerrarium := e.Group("/terrarium")
-	// Resource Group APIs
-	route.RegisterRoutesForTestEnv(groupTerrarium)
-	route.RegisterRoutesForRG(groupTerrarium)
-	route.RegisterRoutesForVPN(groupTerrarium)
+	gTr := e.Group("/terrarium")
+	
+	// Terrarium APIs
+	gTr.POST("/tr", handler.IssueTerrarium)
+	gTr.GET("/tr", handler.ReadAllTerrarium)
+	gTr.GET("/tr/:trId", handler.ReadTerrarium)
+	gTr.DELETE("/tr/:trId", handler.EraseTerrarium)
+
+	// VPN APIs
+	// GCP and AWS
+	gTr.POST("/tr/:trId/vpn/gcp-aws/env", handler.InitEnvForGcpAwsVpn)	// 
+	gTr.DELETE("/tr/:trId/vpn/gcp-aws/env", handler.ClearGcpAwsVpn)			//
+	gTr.GET("/tr/:trId/vpn/gcp-aws", handler.GetResourceInfoOfGcpAwsVpn)	//
+	gTr.POST("/tr/:trId/vpn/gcp-aws/infracode", handler.CreateInfracodeOfGcpAwsVpn)	// 
+	gTr.POST("/tr/:trId/vpn/gcp-aws/plan", handler.CheckInfracodeOfGcpAwsVpn)
+	gTr.POST("/tr/:trId/vpn/gcp-aws", handler.CreateGcpAwsVpn)
+	gTr.DELETE("/tr/:trId/vpn/gcp-aws", handler.DestroyGcpAwsVpn)
+	gTr.GET("/tr/:trId/vpn/gcp-aws/request/:requestId", handler.GetRequestStatusOfGcpAwsVpn)
+
+	// GCP and Azure
+	gTr.POST("/tr/:trId/vpn/gcp-azure/env", handler.InitEnvForGcpAzureVpn)
+	gTr.DELETE("/tr/:trId/vpn/gcp-azure/env", handler.ClearGcpAzureVpn)
+	gTr.GET("/tr/:trId/vpn/gcp-azure", handler.GetResourceInfoOfGcpAzureVpn)
+	gTr.POST("/tr/:trId/vpn/gcp-azure/infracode", handler.CreateInfracodeOfGcpAzureVpn)
+	gTr.POST("/tr/:trId/vpn/gcp-azure/plan", handler.CheckInfracodeOfGcpAzureVpn)
+	gTr.POST("/tr/:trId/vpn/gcp-azure", handler.CreateGcpAzureVpn)
+	gTr.DELETE("/tr/:trId/vpn/gcp-azure", handler.DestroyGcpAzureVpn)
+	gTr.GET("/tr/:trId/vpn/gcp-azure/request/:requestId", handler.GetRequestStatusOfGcpAzureVpn)
+
+	// AWS-to-site VPN
+	gTr.POST("/tr/:trId/vpn/aws-to-site/env", handler.InitEnvForAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site/env", handler.ClearAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetResourceInfoOfAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/infracode", handler.CreateInfracodeOfAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/plan", handler.CheckInfracodeOfAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DestroyAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site/request/:requestId", handler.GetRequestStatusOfAwsToSiteVpn)
 
 	// SQL database APIs
-	groupTerrarium.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
-	groupTerrarium.DELETE("/tr/:trId/sql-db/env", handler.ClearEnvOfSqlDb)
-	groupTerrarium.POST("/tr/:trId/sql-db/infracode", handler.CreateInfracodeForSqlDb)
-	groupTerrarium.POST("/tr/:trId/sql-db/plan", handler.CheckInfracodeForSqlDb)
-	groupTerrarium.POST("/tr/:trId/sql-db", handler.CreateSqlDb)
-	groupTerrarium.GET("/tr/:trId/sql-db", handler.GetResourceInfoOfSqlDb)
-	groupTerrarium.DELETE("/tr/:trId/sql-db", handler.DestroySqlDb)
-	groupTerrarium.GET("/tr/:trId/sql-db/request/:requestId", handler.GetRequestStatusOfSqlDb)
+	gTr.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
+	gTr.DELETE("/tr/:trId/sql-db/env", handler.ClearEnvOfSqlDb)
+	gTr.POST("/tr/:trId/sql-db/infracode", handler.CreateInfracodeForSqlDb)
+	gTr.POST("/tr/:trId/sql-db/plan", handler.CheckInfracodeForSqlDb)
+	gTr.POST("/tr/:trId/sql-db", handler.CreateSqlDb)
+	gTr.GET("/tr/:trId/sql-db", handler.GetResourceInfoOfSqlDb)
+	gTr.DELETE("/tr/:trId/sql-db", handler.DestroySqlDb)
+	gTr.GET("/tr/:trId/sql-db/request/:requestId", handler.GetRequestStatusOfSqlDb)
 
 	// Object Storage APIs
-	groupTerrarium.POST("/tr/:trId/object-storage/env", handler.InitEnvForObjectStorage)
-	groupTerrarium.DELETE("/tr/:trId/object-storage/env", handler.ClearEnvOfObjectStorage)
-	groupTerrarium.POST("/tr/:trId/object-storage/infracode", handler.CreateInfracodeForObjectStorage)
-	groupTerrarium.POST("/tr/:trId/object-storage/plan", handler.CheckInfracodeForObjectStorage)
-	groupTerrarium.POST("/tr/:trId/object-storage", handler.CreateObjectStorage)
-	groupTerrarium.GET("/tr/:trId/object-storage", handler.GetResourceInfoOfObjectStorage)
-	groupTerrarium.DELETE("/tr/:trId/object-storage", handler.DestroyObjectStorage)
-	groupTerrarium.GET("/tr/:trId/object-storage/request/:requestId", handler.GetRequestStatusOfObjectStorage)
+	gTr.POST("/tr/:trId/object-storage/env", handler.InitEnvForObjectStorage)
+	gTr.DELETE("/tr/:trId/object-storage/env", handler.ClearEnvOfObjectStorage)
+	gTr.POST("/tr/:trId/object-storage/infracode", handler.CreateInfracodeForObjectStorage)
+	gTr.POST("/tr/:trId/object-storage/plan", handler.CheckInfracodeForObjectStorage)
+	gTr.POST("/tr/:trId/object-storage", handler.CreateObjectStorage)
+	gTr.GET("/tr/:trId/object-storage", handler.GetResourceInfoOfObjectStorage)
+	gTr.DELETE("/tr/:trId/object-storage", handler.DestroyObjectStorage)
+	gTr.GET("/tr/:trId/object-storage/request/:requestId", handler.GetRequestStatusOfObjectStorage)
 
 	// Message Broker APIs
-	groupTerrarium.POST("/tr/:trId/message-broker/env", handler.InitEnvForMessageBroker)
-	groupTerrarium.DELETE("/tr/:trId/message-broker/env", handler.ClearEnvOfMessageBroker)
-	groupTerrarium.POST("/tr/:trId/message-broker/infracode", handler.CreateInfracodeForMessageBroker)
-	groupTerrarium.POST("/tr/:trId/message-broker/plan", handler.CheckInfracodeForMessageBroker)
-	groupTerrarium.POST("/tr/:trId/message-broker", handler.CreateMessageBroker)
-	groupTerrarium.GET("/tr/:trId/message-broker", handler.GetResourceInfoOfMessageBroker)
-	groupTerrarium.DELETE("/tr/:trId/message-broker", handler.DestroyMessageBroker)
-	groupTerrarium.GET("/tr/:trId/message-broker/request/:requestId", handler.GetRequestStatusOfMessageBroker)
+	gTr.POST("/tr/:trId/message-broker/env", handler.InitEnvForMessageBroker)
+	gTr.DELETE("/tr/:trId/message-broker/env", handler.ClearEnvOfMessageBroker)
+	gTr.POST("/tr/:trId/message-broker/infracode", handler.CreateInfracodeForMessageBroker)
+	gTr.POST("/tr/:trId/message-broker/plan", handler.CheckInfracodeForMessageBroker)
+	gTr.POST("/tr/:trId/message-broker", handler.CreateMessageBroker)
+	gTr.GET("/tr/:trId/message-broker", handler.GetResourceInfoOfMessageBroker)
+	gTr.DELETE("/tr/:trId/message-broker", handler.DestroyMessageBroker)
+	gTr.GET("/tr/:trId/message-broker/request/:requestId", handler.GetRequestStatusOfMessageBroker)
 
-	// Sample API group (for developers to add new API)
-	groupSample := groupTerrarium.Group("/sample")
-	route.RegisterSampleRoutes(groupSample)
+	// Test environment APIs
+	gTr.POST("/test-env/init", handler.InitTerrariumForTestEnv)
+	gTr.DELETE("/test-env/env", handler.ClearTestEnv)
+	gTr.GET("/test-env", handler.GetResouceInfoOfTestEnv)
+	gTr.POST("/test-env/infracode", handler.CreateInfracodeOfTestEnv)
+	gTr.POST("/test-env/plan", handler.CheckInfracodeOfTestEnv)
+	gTr.POST("/test-env", handler.CreateTestEnv)
+	gTr.DELETE("/test-env", handler.DestroyTestEnv)
+	gTr.GET("/test-env/request/:requestId/status", handler.GetRequestStatusOfTestEnv)
 
 	selfEndpoint := config.Terrarium.Self.Endpoint
 	apidashboard := " http://" + selfEndpoint + "/terrarium/api"
