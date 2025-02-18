@@ -17,7 +17,6 @@ resource "google_compute_router" "router_1" {
     asn               = var.gcp-bgp-asn
     advertise_mode    = "CUSTOM"
     advertised_groups = ["ALL_SUBNETS"]
-
   }
 }
 
@@ -32,7 +31,6 @@ resource "google_compute_ha_vpn_gateway" "ha_vpn_gw_1" {
 ########################################################
 # From here, Azure's resources are required.
 ########################################################
-
 # Create a peer VPN gateway with peer VPN gateway interfaces
 resource "google_compute_external_vpn_gateway" "external_vpn_gw_1" {
   # provider        = "google-beta"

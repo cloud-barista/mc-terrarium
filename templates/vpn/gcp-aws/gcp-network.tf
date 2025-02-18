@@ -100,7 +100,6 @@ resource "google_compute_vpn_tunnel" "vpn_tunnel_4" {
 }
 
 ########################################################
-
 # Configure interfaces for the VPN tunnels
 resource "google_compute_router_interface" "router_interface_1" {
   name       = "${var.terrarium-id}-interface-1"

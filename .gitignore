@@ -27,6 +27,7 @@ go.work
 .terraform/
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
+.terraform.tfstate.*
 
 # Secret files
 *credential*
