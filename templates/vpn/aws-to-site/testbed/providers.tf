@@ -3,22 +3,20 @@ terraform {
   required_version = "~>1.8.3"
 
   required_providers {
-    # AWS provider
     aws = {
       source  = "registry.opentofu.org/hashicorp/aws"
       version = "~>5.42"
     }
-    # Google provider
     google = {
       source  = "registry.opentofu.org/hashicorp/google"
       version = "~>5.21"
     }
-    # Azure provider
+    # The Azure Provider
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~>3.97.0"
     }
-    # AzAPI provider
+    # The AzAPI provider
     azapi = {
       source  = "azure/azapi"
       version = "~>1.12"
@@ -27,13 +25,13 @@ terraform {
 }
 
 provider "aws" {
-  region = var.vpn_config.aws.region
+  region = "ap-northeast-2" # Seoul
 }
 
 provider "google" {
   credentials = file("credential-gcp.json")
   project     = jsondecode(file("credential-gcp.json")).project_id
-  region      = local.is_gcp ? var.vpn_config.target_csp.gcp.region : "asia-northeast3" # Seoul
+  region      = "asia-northeast3" # Seoul
 }
 
 # [NOTE]
@@ -47,3 +45,9 @@ provider "azurerm" {
   features {}
 }
 
+
+# SSH key
+resource "tls_private_key" "ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}

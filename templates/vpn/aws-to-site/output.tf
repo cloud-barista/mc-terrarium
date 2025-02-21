@@ -33,7 +33,7 @@ output "vpn_info" {
       )
       vpn_connections = (
         local.is_gcp ? [
-          for i, vpn in aws_vpn_connection.conn_to_gcp : {
+          for i, vpn in aws_vpn_connection.to_gcp : {
             resource_type   = "aws_vpn_connection"
             name            = vpn.tags.Name
             id              = vpn.id
@@ -42,7 +42,7 @@ output "vpn_info" {
           }
         ] :
         local.is_azure ? [
-          for i, vpn in aws_vpn_connection.conn_to_azure : {
+          for i, vpn in aws_vpn_connection.to_azure : {
             resource_type   = "aws_vpn_connection"
             name            = vpn.tags.Name
             id              = vpn.id
@@ -83,7 +83,7 @@ output "vpn_info" {
           bgp_asn       = var.vpn_config.target_csp.gcp.bgp_asn
         }
         tunnels = [
-          for tunnel in google_compute_vpn_tunnel.vpn_tunnel : {
+          for tunnel in google_compute_vpn_tunnel.to_aws : {
             name      = tunnel.name
             id        = tunnel.id
             peer_ip   = tunnel.peer_ip
@@ -123,7 +123,7 @@ output "vpn_info" {
           }
         ], [])
         connections = try([
-          for conn in azurerm_virtual_network_gateway_connection.aws : {
+          for conn in azurerm_virtual_network_gateway_connection.to_aws : {
             name       = conn.name
             id         = conn.id
             type       = conn.type
@@ -131,7 +131,7 @@ output "vpn_info" {
           }
         ], [])
         local_gateways = try([
-          for lgw in azurerm_local_network_gateway.aws : {
+          for lgw in azurerm_local_network_gateway.aws_gw : {
             name            = lgw.name
             id              = lgw.id
             gateway_address = lgw.gateway_address
@@ -151,13 +151,13 @@ output "vpn_summary" {
     connection_count = (
       local.is_gcp ? {
         customer_gateways = length(aws_customer_gateway.gcp_gw)
-        vpn_connections   = length(aws_vpn_connection.conn_to_gcp)
+        vpn_connections   = length(aws_vpn_connection.to_gcp)
       } :
       local.is_azure ? {
         customer_gateways      = length(aws_customer_gateway.azure_gw)
-        vpn_connections        = length(aws_vpn_connection.conn_to_azure)
-        local_network_gateways = length(azurerm_local_network_gateway.aws)
-        azure_vpn_connections  = length(azurerm_virtual_network_gateway_connection.aws)
+        vpn_connections        = length(aws_vpn_connection.to_azure)
+        local_network_gateways = length(azurerm_local_network_gateway.aws_gw)
+        azure_vpn_connections  = length(azurerm_virtual_network_gateway_connection.to_aws)
       } : null
     )
   }
@@ -196,7 +196,7 @@ output "vpn_summary" {
 #         bgp_asn       = var.vpn_config.target_csp.gcp.bgp_asn
 #       }
 #       tunnels = [
-#         for tunnel in google_compute_vpn_tunnel.vpn_tunnel : {
+#         for tunnel in google_compute_vpn_tunnel.to_aws : {
 #           name      = tunnel.name
 #           id        = tunnel.id
 #           peer_ip   = tunnel.peer_ip
@@ -236,7 +236,7 @@ output "vpn_summary" {
 #         }
 #       ], [])
 #       connections = try([
-#         for conn in azurerm_virtual_network_gateway_connection.aws : {
+#         for conn in azurerm_virtual_network_gateway_connection.to_aws : {
 #           name       = conn.name
 #           id         = conn.id
 #           type       = conn.type
@@ -244,7 +244,7 @@ output "vpn_summary" {
 #         }
 #       ], [])
 #       local_gateways = try([
-#         for lgw in azurerm_local_network_gateway.aws : {
+#         for lgw in  : {
 #           name            = lgw.name
 #           id              = lgw.id
 #           gateway_address = lgw.gateway_address
