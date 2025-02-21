@@ -31,8 +31,8 @@ provider "aws" {
 }
 
 provider "google" {
-  credentials = local.is_gcp ? file("credential-gcp.json") : null
-  project     = local.is_gcp ? jsondecode(file("credential-gcp.json")).project_id : null
+  credentials = file("credential-gcp.json")
+  project     = jsondecode(file("credential-gcp.json")).project_id
   region      = local.is_gcp ? var.vpn_config.target_csp.gcp.region : "asia-northeast3" # Seoul
 }
 
