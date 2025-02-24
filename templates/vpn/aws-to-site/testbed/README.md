@@ -55,6 +55,32 @@ tofu output -json ssh_info | jq -r .gcp.command
 tofu output -json ssh_info | jq -r .azure.command
 ```
 
+## All at once
+
+```shell
+# Show specific CSP details
+tofu output -json network_details | jq .aws
+tofu output -json network_details | jq .gcp
+tofu output -json network_details | jq .azure
+
+# Save the private key to a file
+tofu output -json ssh_info | jq -r .private_key > private_key.pem
+chmod 600 private_key.pem
+
+# Connect to VMs
+tofu output -json ssh_info | jq -r .aws.command
+tofu output -json ssh_info | jq -r .gcp.command
+tofu output -json ssh_info | jq -r .azure.command
+```
+
+## Need to delete as a separate process during testing
+
+```shell
+tofu state rm aws_route_table.imported_route_table
+```
+
+Truncate `imports.tf` and perform tofu destroy.
+
 ## Note
 
 This testbed uses OpenTofu. Make sure to use `tofu` commands.
