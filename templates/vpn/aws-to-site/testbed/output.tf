@@ -41,10 +41,10 @@ output "ssh_info" {
       command    = "ssh -i private_key.pem ubuntu@${google_compute_instance.main.network_interface[0].access_config[0].nat_ip}"
     }
     azure = {
-      public_ip  = azurerm_public_ip.main.ip_address
+      public_ip  = azurerm_public_ip.main.ip_address != "" ? azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn
       private_ip = azurerm_network_interface.main.private_ip_address
       user       = "ubuntu"
-      command    = "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address}"
+      command    = "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address != "" ? azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn}"
     }
   }
 }
