@@ -5,3 +5,9 @@ resource "aws_vpn_gateway" "vpn_gw" {
   }
   vpc_id = var.vpn_config.aws.vpc_id
 }
+
+data "aws_vpc" "selected" {
+  count = local.is_alibaba ? 1 : 0
+
+  id = var.vpn_config.aws.vpc_id
+}

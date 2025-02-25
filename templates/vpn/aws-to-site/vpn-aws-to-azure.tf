@@ -7,7 +7,7 @@ resource "aws_customer_gateway" "azure_gw" {
     Name = "${local.name_prefix}-azure-side-gw-${count.index + 1}"
   }
   bgp_asn    = var.vpn_config.target_csp.azure.bgp_asn
-  ip_address = azurerm_public_ip.vpn[count.index].ip_address
+  ip_address = azurerm_public_ip.pub_ip[count.index].ip_address
   type       = "ipsec.1"
 }
 
@@ -50,7 +50,7 @@ resource "azurerm_subnet" "gateway" {
 }
 
 # Public IPs for Azure VPN Gateway
-resource "azurerm_public_ip" "vpn" {
+resource "azurerm_public_ip" "pub_ip" {
   count = local.is_azure ? 2 : 0 # 2 Public IPs for Active-Active configuration
 
   name                = "${local.name_prefix}-vpn-ip-${count.index + 1}"
@@ -62,7 +62,7 @@ resource "azurerm_public_ip" "vpn" {
 }
 
 # Azure VPN Gateway with pre-allocated APIPA addresses
-resource "azurerm_virtual_network_gateway" "vpn" {
+resource "azurerm_virtual_network_gateway" "vpn_gw" {
   count = local.is_azure ? 1 : 0
 
   name                = "${local.name_prefix}-vpn-gateway"
@@ -79,14 +79,14 @@ resource "azurerm_virtual_network_gateway" "vpn" {
   ip_configuration {
     name                          = "${local.name_prefix}-gateway-config-1"
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vpn[0].id
+    public_ip_address_id          = azurerm_public_ip.pub_ip[0].id
     subnet_id                     = azurerm_subnet.gateway[0].id
   }
 
   ip_configuration {
     name                          = "${local.name_prefix}-gateway-config-2"
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vpn[1].id
+    public_ip_address_id          = azurerm_public_ip.pub_ip[1].id
     subnet_id                     = azurerm_subnet.gateway[0].id
   }
 
@@ -146,7 +146,7 @@ resource "azurerm_virtual_network_gateway_connection" "to_aws" {
   resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
 
   type                       = "IPsec"
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn[0].id
+  virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn_gw[0].id
   local_network_gateway_id   = azurerm_local_network_gateway.aws_gw[count.index].id
   shared_key                 = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_preshared_key : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_preshared_key
 

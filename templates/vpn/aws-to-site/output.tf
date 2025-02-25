@@ -110,13 +110,13 @@ output "vpn_info" {
         type = var.vpn_config.target_csp.type
         vpn_gateway = try({
           resource_type = "azurerm_virtual_network_gateway"
-          name          = azurerm_virtual_network_gateway.vpn[0].name
-          id            = azurerm_virtual_network_gateway.vpn[0].id
-          location      = azurerm_virtual_network_gateway.vpn[0].location
-          sku           = azurerm_virtual_network_gateway.vpn[0].sku
+          name          = azurerm_virtual_network_gateway.vpn_gw[0].name
+          id            = azurerm_virtual_network_gateway.vpn_gw[0].id
+          location      = azurerm_virtual_network_gateway.vpn_gw[0].location
+          sku           = azurerm_virtual_network_gateway.vpn_gw[0].sku
         }, null)
         public_ips = try([
-          for pip in azurerm_public_ip.vpn : {
+          for pip in azurerm_public_ip.pub_ip : {
             name       = pip.name
             id         = pip.id
             ip_address = pip.ip_address
@@ -223,13 +223,13 @@ output "vpn_summary" {
 #       type = var.vpn_config.target_csp.type
 #       vpn_gateway = try({
 #         resource_type = "azurerm_virtual_network_gateway"
-#         name          = azurerm_virtual_network_gateway.vpn[0].name
-#         id            = azurerm_virtual_network_gateway.vpn[0].id
-#         location      = azurerm_virtual_network_gateway.vpn[0].location
-#         sku           = azurerm_virtual_network_gateway.vpn[0].sku
+#         name          = azurerm_virtual_network_gateway.vpn_gw[0].name
+#         id            = azurerm_virtual_network_gateway.vpn_gw[0].id
+#         location      = azurerm_virtual_network_gateway.vpn_gw[0].location
+#         sku           = azurerm_virtual_network_gateway.vpn_gw[0].sku
 #       }, null)
 #       public_ips = try([
-#         for pip in azurerm_public_ip.vpn : {
+#         for pip in azurerm_public_ip.pub_ip : {
 #           name       = pip.name
 #           id         = pip.id
 #           ip_address = pip.ip_address
