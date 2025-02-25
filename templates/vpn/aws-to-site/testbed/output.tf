@@ -20,6 +20,12 @@ output "network_details" {
       virtual_network_name = azurerm_virtual_network.main.name
       gateway_subnet_cidr  = "10.2.2.0/24" # Reserved for VPN Gateway
     }
+    alibaba = {
+      vpc_id       = alicloud_vpc.main.id
+      vpc_cidr     = alicloud_vpc.main.cidr_block
+      vswitch_id   = alicloud_vswitch.main.id
+      vswitch_cidr = alicloud_vswitch.main.cidr_block
+    }
   }
 }
 
@@ -45,6 +51,12 @@ output "ssh_info" {
       private_ip = azurerm_network_interface.main.private_ip_address
       user       = "ubuntu"
       command    = "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address != "" ? azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn}"
+    }
+    alibaba = {
+      public_ip  = alicloud_instance.main.public_ip
+      private_ip = alicloud_instance.main.private_ip
+      user       = "ubuntu"
+      command    = "ssh -i private_key.pem ubuntu@${alicloud_instance.main.public_ip}"
     }
   }
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Default version
-DEFAULT_TOFU_VERSION="1.8.3"
+DEFAULT_TOFU_VERSION="1.9.0"
 TOFU_VERSION=${1:-$DEFAULT_TOFU_VERSION}
 ARCH="amd64"
 

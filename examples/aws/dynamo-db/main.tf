@@ -1,6 +1,6 @@
 # Required Terraform and provider versions
 terraform {
-  required_version = "~>1.8.3"
+  required_version = ">=1.8.3"
 
   required_providers {
     aws = {
