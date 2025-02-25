@@ -59,7 +59,7 @@ See [Create an Azure service principal with Azure CLI](https://learn.microsoft.c
 
 4. (For source code build and run) Run
 
-```bash
+```shell
 source secrets/credential-azure.env
 az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID"
 ```
@@ -92,6 +92,26 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 
 </details>
 
+#### Alibaba CLoud
+
+1. Access Alibaba Cloud (https://www.alibabacloud.com/)
+2. Prepare your Alibaba Cloud credential (on Resource Access Management (RAM))
+
+<details>
+  <summary>Click to see sample</summary>
+
+    ```
+    ALIBABA_CLOUD_ACCESS_KEY_ID=xxxxxxxxxxxxxxxx
+    ALIBABA_CLOUD_ACCESS_KEY_SECRET=xxxxxxxxxxxxxxxxx
+    ALIBABA_CLOUD_REGION=xxxxxxxxx
+    ```
+
+</details>
+
+3. Store your AWS credential `secrets/credential-alibaba.env`
+
+4. (Before using `tofu`) Execute `source secrets/load-alibaba-cred-env.sh` to set Alibaba Cloud credential as environment variables
+
 #### NCP
 
 1. Access NCP (https://www.ncloud.com/)
@@ -101,35 +121,49 @@ See [Service account credentials](https://developers.google.com/workspace/guides
   <summary>Click to see sample</summary>
 
     ```
-    export NCLOUD_ACCESS_KEY="YOUR_ACCESS_KEY"
-    export NCLOUD_SECRET_KEY="YOUR_SECRET_KEY"
+    NCLOUD_ACCESS_KEY=YOUR_ACCESS_KEY
+    NCLOUD_SECRET_KEY=YOUR_SECRET_KEY
     ```
 
 </details>
 
-3. Store your AWS credential `secrets/credential-ncp`
+3. Store your AWS credential `secrets/credential-ncp.env`
 
-4. (Before using `tofu`) Execute `source secrets/credential-ncp` to set NCP credential as environment variables
+4. (Before using `tofu`) Execute `source secrets/load-ncp-cred-env.sh` to set NCP credential as environment variables
 
 ## Getting started
 
-### Source code based installation and exeuction
+### Quick start
+
+```shell
+cd ~/mc-terrarium
+docker compose up -d
+```
+
+(optional) Build and run
+
+```shell
+cd ~/mc-terrarium
+make compose
+```
+
+### Source code based build and run
 
 #### Build
 
-```bash
+```shell
 cd ~/mc-terrarium
 make
 ```
 
 #### Run API server binary
 
-```bash
+```shell
 cd ~/mc-terrarium
 make run
 ```
 
-### Container based execution
+### Container based run
 
 Check a tag of mc-terrarium container image in cloudbaristaorg/mc-terrarium
 
@@ -142,16 +176,18 @@ Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
 Note - About credential injection:
 
 - Set AWS credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
-- Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
-- Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/`
-- (TBD) Set NCP credential as environment variable:
+- Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credential-azure.env`
+- Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json`
+- Set Alibaba CLoud credential as environment variable: `--env-file "${PWD}"/secrets/credential-alibaba.env`
+- Set NCP credential as environment variable: `--env-file "${PWD}"/secrets/./secrets/credential-ncp.env`
 
-```bash
-
+```shell
 docker run \
 --env-file "${PWD}"/secrets/credentials \
 --env-file "${PWD}"/secrets/credential-azure.env \
---mount type=bind,source="${PWD}"/secrets/,target=/app/secrets/ \
+--mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json \
+--env-file "${PWD}"/secrets/credential-alibaba.env \
+--env-file "${PWD}"/secrets/credential-ncp.env \
 -p 8055:8055 \
 --name mc-terrarium \
 cloudbaristaorg/mc-terrarium:latest
