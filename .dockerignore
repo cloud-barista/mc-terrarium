@@ -5,14 +5,16 @@ docs/
 examples/
 
 # Terrafrom files
-*.tfstate
-*.tfstate.backup
-*.tfvars
-.terraform/
-.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.backup
+**/*.tfvars
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate.*
+**/terraform.tfvars.json
 
 # Secret files
-*credential*
+**/*credential*
 
 # Binaries
 pkg/mc-terrarium
@@ -22,7 +24,7 @@ cmd/mc-terrarium/mc-terrarium
 # Log files
 log/
 logs/
-*.log
+**/*.log
 
 # Files for tofu and infrastructure configurations
 !.terrarium/
