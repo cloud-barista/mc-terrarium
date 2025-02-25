@@ -58,8 +58,13 @@ prod: ## Build the binary file for production
 # Note - Using cgo write normal Go code that imports a pseudo-package "C". I may not need on cross-compiling.
 # Note - You can find possible platforms by 'go tool dist list' for GOOS and GOARCH
 # Note - Using the -ldflags parameter can help set variable values at compile time.
-# Note - Using the -s and -w linker flags can strip the debugging information.	
-	@cd cmd/$(MODULE_NAME) && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build -ldflags '-s -w' -tags $(MODULE_NAME) -v -o $(MODULE_NAME) main.go
+# Note - Using the -s and -w linker flags can strip the debugging information.		
+	@cd cmd/$(MODULE_NAME) && \
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build \
+		-ldflags '-s -w' \
+		-tags $(MODULE_NAME) \
+		-v -o $(MODULE_NAME) \
+		main.go
 	@echo "Build finished!"
 
 run: build ## Run the built binary

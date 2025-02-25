@@ -8,7 +8,7 @@ FROM golang:1.23.0-alpine AS builder
 # Installing necessary packages
 # sqlite-libs and sqlite-dev for SQLite support
 # build-base for common build requirements
-RUN apk add --no-cache sqlite-libs sqlite-dev build-base
+RUN apk add --no-cache sqlite-libs sqlite-dev build-base curl
 
 # Copying only necessary files for the build
 COPY . /go/src/github.com/cloud-barista/mc-terrarium
@@ -22,8 +22,12 @@ RUN go mod download
 
 # Building the Go application with specific flags
 # Note - "make prod" executes the command, 
-# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-s -w' -o mc-terrarium"
+# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -tags mc-terrarium -v -o mc-terrarium main.go
 RUN make prod
+
+# Installing OpenTofu
+RUN ./scripts/install-tofu.sh
+
 
 #############################################################
 ## Stage 2 - Application Setup
@@ -31,6 +35,9 @@ RUN make prod
 
 # Using the latest Ubuntu image for the production stage
 FROM ubuntu:22.04 AS prod
+
+# Coying the tofu binary from the builder stage
+COPY --from=builder /usr/bin/tofu /usr/bin/tofu
 
 # Setting the working directory for the application
 WORKDIR /app
@@ -44,9 +51,6 @@ COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/con
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/scripts/
 COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 # COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
-
-# Installing OpenTofu
-RUN ./scripts/install-tofu.sh
 
 # Setting various environment variables required by the application
 ENV TERRARIUM_ROOT=/app
