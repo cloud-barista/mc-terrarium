@@ -232,14 +232,14 @@ func RunServer(port string) {
 	gTr.GET("/tr/:trId/vpn/gcp-azure/request/:requestId", handler.GetRequestStatusOfGcpAzureVpn)
 
 	// AWS-to-site VPN
-	gTr.POST("/tr/:trId/vpn/aws-to-site/env", handler.InitEnvForAwsToSiteVpn)
-	gTr.DELETE("/tr/:trId/vpn/aws-to-site/env", handler.ClearAwsToSiteVpn)
-	gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetResourceInfoOfAwsToSiteVpn)
-	gTr.POST("/tr/:trId/vpn/aws-to-site/infracode", handler.CreateInfracodeOfAwsToSiteVpn)
-	gTr.POST("/tr/:trId/vpn/aws-to-site/plan", handler.CheckInfracodeOfAwsToSiteVpn)
-	gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
-	gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DestroyAwsToSiteVpn)
-	gTr.GET("/tr/:trId/vpn/aws-to-site/request/:requestId", handler.GetRequestStatusOfAwsToSiteVpn)
+	// gTr.POST("/tr/:trId/vpn/aws-to-site/env", handler.InitEnvForAwsToSiteVpn)
+	// gTr.DELETE("/tr/:trId/vpn/aws-to-site/env", handler.ClearAwsToSiteVpn)
+	// gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetResourceInfoOfAwsToSiteVpn)
+	// gTr.POST("/tr/:trId/vpn/aws-to-site/infracode", handler.CreateInfracodeOfAwsToSiteVpn)
+	// gTr.POST("/tr/:trId/vpn/aws-to-site/plan", handler.CheckInfracodeOfAwsToSiteVpn)
+	// gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
+	// gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DestroyAwsToSiteVpn)
+	// gTr.GET("/tr/:trId/vpn/aws-to-site/request/:requestId", handler.GetRequestStatusOfAwsToSiteVpn)
 
 	// SQL database APIs
 	gTr.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
