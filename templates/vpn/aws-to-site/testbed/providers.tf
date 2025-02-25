@@ -1,6 +1,6 @@
 # providers.tf
 terraform {
-  required_version = "~>1.8.3"
+  required_version = ">=1.8.3"
 
   required_providers {
     aws = {
@@ -20,6 +20,10 @@ terraform {
     azapi = {
       source  = "azure/azapi"
       version = "~>1.12"
+    }
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "~>1.243.0"
     }
   }
 }
@@ -45,6 +49,10 @@ provider "azurerm" {
   features {}
 }
 
+# Configure the Alibaba Cloud Provider
+provider "alicloud" {
+  region = "ap-northeast-2" # Seoul
+}
 
 # SSH key
 resource "tls_private_key" "ssh" {

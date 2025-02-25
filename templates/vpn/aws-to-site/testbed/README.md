@@ -17,8 +17,9 @@ tofu output network_details
 ```shell
 # Show specific CSP details
 tofu output -json network_details | jq .aws
-tofu output -json network_details | jq .gcp
 tofu output -json network_details | jq .azure
+tofu output -json network_details | jq .gcp
+tofu output -json network_details | jq .alibaba
 
 # Example: Get Azure gateway subnet CIDR
 tofu output -json network_details | jq -r .azure.gateway_subnet_cidr
@@ -55,13 +56,20 @@ tofu output -json ssh_info | jq -r .gcp.command
 tofu output -json ssh_info | jq -r .azure.command
 ```
 
+### Alibaba Instance
+
+```shell
+tofu output -json ssh_info | jq -r .alibaba.command
+```
+
 ## All at once
 
 ```shell
 # Show specific CSP details
 tofu output -json network_details | jq .aws
-tofu output -json network_details | jq .gcp
 tofu output -json network_details | jq .azure
+tofu output -json network_details | jq .gcp
+tofu output -json network_details | jq .alibaba
 
 # Save the private key to a file
 tofu output -json ssh_info | jq -r .private_key > private_key.pem
@@ -69,8 +77,9 @@ chmod 600 private_key.pem
 
 # Connect to VMs
 tofu output -json ssh_info | jq -r .aws.command
-tofu output -json ssh_info | jq -r .gcp.command
 tofu output -json ssh_info | jq -r .azure.command
+tofu output -json ssh_info | jq -r .gcp.command
+tofu output -json ssh_info | jq -r .alibaba.command
 ```
 
 ## Need to delete as a separate process during testing
