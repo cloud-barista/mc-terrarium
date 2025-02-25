@@ -1,7 +1,7 @@
 # Define the required version of Terraform and the providers that will be used in the project
 terraform {
   # Specify the required Tofu version
-  required_version = "~>1.8.3"
+  required_version = ">=1.8.3"
 
   # Specify the required providers and their versions
   required_providers {
