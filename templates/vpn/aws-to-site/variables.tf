@@ -24,9 +24,11 @@ variable "vpn_config" {
         shared_key           = string
       }))
       alibaba = optional(object({
-        region  = optional(string, "ap-northeast-2") # Seoul
-        vpc_id  = string
-        bgp_asn = optional(string, "65532") # default value
+        region       = optional(string, "ap-northeast-2") # Seoul
+        vpc_id       = string
+        vswitch_id_1 = string                    # Add this field
+        vswitch_id_2 = string                    # Add this field
+        bgp_asn      = optional(string, "65532") # default value
       }))
       tencent = optional(object({
         region  = string

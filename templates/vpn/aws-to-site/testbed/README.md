@@ -84,11 +84,13 @@ tofu output -json ssh_info | jq -r .alibaba.command
 
 ## Need to delete as a separate process during testing
 
+1. Run the following command
+
 ```shell
 tofu state rm aws_route_table.imported_route_table
 ```
 
-Truncate `imports.tf` and perform tofu destroy.
+2. Truncate `imports.tf` and perform tofu destroy.
 
 ## Note
 
