@@ -1,14 +1,57 @@
+# Get available zones
+data "alicloud_zones" "available" {
+  available_resource_creation = "VSwitch"
+}
+
 # Alibaba Cloud VPC
 resource "alicloud_vpc" "main" {
   vpc_name   = "${var.environment}-vpc"
   cidr_block = "10.3.0.0/16"
 }
 
+# zones = {
+#   count = length(data.alicloud_zones.available.zones)
+#   ids   = data.alicloud_zones.available.zones[*].id
+# }
+
+# resource "alicloud_vswitch" "main" {
+#   count = 2
+
+#   vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id}"
+#   vpc_id       = alicloud_vpc.main.id
+#   cidr_block   = "10.3.${count + 1}.0/24"
+#   zone_id      = data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id
+# }
+
 resource "alicloud_vswitch" "main" {
-  vswitch_name = "${var.environment}-vswitch"
+  vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id}"
   vpc_id       = alicloud_vpc.main.id
   cidr_block   = "10.3.1.0/24"
-  zone_id      = "ap-northeast-2a"
+  zone_id      = data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id
+}
+
+resource "alicloud_vswitch" "secondary" {
+  vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id}"
+  vpc_id       = alicloud_vpc.main.id
+  cidr_block   = "10.3.2.0/24"
+  zone_id      = data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id
+}
+
+
+# Route Table
+resource "alicloud_route_table" "main" {
+  vpc_id           = alicloud_vpc.main.id
+  route_table_name = "${var.environment}-route-table"
+}
+
+resource "alicloud_route_table_attachment" "main" {
+  vswitch_id     = alicloud_vswitch.main.id
+  route_table_id = alicloud_route_table.main.id
+}
+
+resource "alicloud_route_table_attachment" "secondary" {
+  vswitch_id     = alicloud_vswitch.secondary.id
+  route_table_id = alicloud_route_table.main.id
 }
 
 # Security Group

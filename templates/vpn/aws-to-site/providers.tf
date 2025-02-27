@@ -23,6 +23,11 @@ terraform {
       source  = "azure/azapi"
       version = "~>1.12"
     }
+    # Alibaba Cloud provider
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "~>1.243.0"
+    }
   }
 }
 
@@ -45,5 +50,10 @@ provider "azurerm" {
   # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
   skip_provider_registration = true
   features {}
+}
+
+# Configure the Alibaba Cloud Provider
+provider "alicloud" {
+  region = local.is_alibaba ? var.vpn_config.target_csp.alibaba.region : "ap-northeast-2"
 }
 

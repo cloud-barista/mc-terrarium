@@ -137,6 +137,37 @@ output "vpn_info" {
             gateway_address = lgw.gateway_address
           }
         ], [])
+      } : null,
+      local.is_alibaba ? {
+        type = var.vpn_config.target_csp.type
+        vpn_gateway = try({
+          id                            = alicloud_vpn_gateway.vpn_gw[0].id
+          internet_ip                   = alicloud_vpn_gateway.vpn_gw[0].internet_ip
+          disaster_recovery_internet_ip = alicloud_vpn_gateway.vpn_gw[0].disaster_recovery_internet_ip
+        }, null)
+        customer_gateways = try([
+          for cgw in alicloud_vpn_customer_gateway.aws_gw : {
+            id         = cgw.id
+            ip_address = cgw.ip_address
+            asn        = cgw.asn
+          }
+        ], [])
+        vpn_connections = try([
+          for conn in alicloud_vpn_connection.to_aws : {
+            id         = conn.id
+            bgp_status = conn.bgp_config.status
+            tunnels = try([
+              for tos in conn.tunnel_options_specification : {
+                id          = tos.tunnel_id
+                state       = tos.state
+                status      = tos.status
+                bsp_status  = tos.bgp_status
+                peer_asn    = tos.peer_asn
+                peer_bgp_ip = tos.peer_bgp_ip
+              }
+            ], [])
+          }
+        ], [])
       } : null
     )
   }
@@ -158,11 +189,129 @@ output "vpn_summary" {
         vpn_connections        = length(aws_vpn_connection.to_azure)
         local_network_gateways = length(azurerm_local_network_gateway.aws_gw)
         azure_vpn_connections  = length(azurerm_virtual_network_gateway_connection.to_aws)
+      } :
+      local.is_alibaba ? {
+        vpn_gateways      = length(alicloud_vpn_gateway.vpn_gw)
+        customer_gateways = length(alicloud_vpn_customer_gateway.aws_gw)
+        vpn_connections   = length(alicloud_vpn_connection.to_aws)
       } : null
     )
   }
 }
 
+output "vpn_output_debug" {
+  description = "All VPN connection information including sensitive data for debugging"
+  value = {
+    aws_side = {
+      vpc = {
+        id         = data.aws_vpc.designated[0].id
+        cidr_block = data.aws_vpc.designated[0].cidr_block
+        subnets = [for subnet in data.aws_subnet.details : {
+          id                = subnet.id
+          cidr_block        = subnet.cidr_block
+          vpc_id            = subnet.vpc_id
+          availability_zone = subnet.availability_zone
+        }]
+      }
+      vpn_gateway = {
+        complete_data = aws_vpn_gateway.vpn_gw
+        tags          = aws_vpn_gateway.vpn_gw.tags
+      }
+      customer_gateways = [for gw in aws_customer_gateway.alibaba_gw : {
+        complete_data = gw
+        sensitive_data = {
+          # certificate = gw.certificate
+          device_name = gw.device_name
+        }
+      }]
+      vpn_connections = [for conn in aws_vpn_connection.to_alibaba : {
+        complete_data = conn
+        tunnel1 = {
+          address            = conn.tunnel1_address
+          bgp_asn            = conn.tunnel1_bgp_asn
+          bgp_holdtime       = conn.tunnel1_bgp_holdtime
+          cgw_inside_address = conn.tunnel1_cgw_inside_address
+          vgw_inside_address = conn.tunnel1_vgw_inside_address
+          preshared_key      = nonsensitive(conn.tunnel1_preshared_key)
+          inside_cidr        = conn.tunnel1_inside_cidr
+        }
+        tunnel2 = {
+          address            = conn.tunnel2_address
+          bgp_asn            = conn.tunnel2_bgp_asn
+          bgp_holdtime       = conn.tunnel2_bgp_holdtime
+          cgw_inside_address = conn.tunnel2_cgw_inside_address
+          vgw_inside_address = conn.tunnel2_vgw_inside_address
+          preshared_key      = nonsensitive(conn.tunnel2_preshared_key)
+          inside_cidr        = conn.tunnel2_inside_cidr
+        }
+      }]
+    }
+
+    alibaba_side = local.is_alibaba ? {
+      vpc = {
+        info = data.alicloud_vpcs.designated[0]
+        vswitches = [for vs in data.alicloud_vswitches.selected[0].vswitches : {
+          id          = vs.id
+          cidr_block  = vs.cidr_block
+          zone_id     = vs.zone_id
+          name        = vs.name
+          description = vs.description
+        }]
+      }
+      vpn_gateway = {
+        complete_data = alicloud_vpn_gateway.vpn_gw[0]
+        details = {
+          id                            = alicloud_vpn_gateway.vpn_gw[0].id
+          status                        = alicloud_vpn_gateway.vpn_gw[0].status
+          internet_ip                   = alicloud_vpn_gateway.vpn_gw[0].internet_ip
+          disaster_recovery_internet_ip = alicloud_vpn_gateway.vpn_gw[0].disaster_recovery_internet_ip
+          # spec                          = alicloud_vpn_gateway.vpn_gw[0].spec
+        }
+      }
+      customer_gateways = [for gw in alicloud_vpn_customer_gateway.aws_gw : {
+        complete_data = gw
+        details = {
+          id          = gw.id
+          name        = gw.customer_gateway_name
+          ip_address  = gw.ip_address
+          asn         = gw.asn
+          description = gw.description
+          create_time = gw.create_time
+        }
+      }]
+      vpn_connections = [for conn in alicloud_vpn_connection.to_aws : {
+        complete_data = conn
+        details = {
+          id                 = conn.id
+          name               = conn.vpn_connection_name
+          status             = conn.status
+          local_subnet       = conn.local_subnet
+          remote_subnet      = conn.remote_subnet
+          create_time        = conn.create_time
+          effect_immediately = conn.effect_immediately
+        }
+        tunnel_specs = [for tunnel in conn.tunnel_options_specification : {
+          tunnel_id    = tunnel.tunnel_id
+          role         = tunnel.role
+          status       = tunnel.status
+          ike_config   = tunnel.tunnel_ike_config
+          ipsec_config = tunnel.tunnel_ipsec_config
+          bgp_config   = tunnel.tunnel_bgp_config
+          psk          = nonsensitive(tunnel.tunnel_ike_config[0].psk)
+          # bgp_status   = tunnel.bgp_status
+        }]
+      }]
+    } : null
+
+    input_configuration = nonsensitive({
+      terrarium_id = var.vpn_config.terrarium_id
+      aws_config   = var.vpn_config.aws
+      csp_config   = var.vpn_config.target_csp
+    })
+  }
+
+  sensitive = true
+}
 
 # backup
 #   target_csp = merge(
