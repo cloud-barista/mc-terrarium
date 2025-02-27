@@ -21,12 +21,20 @@ output "network_details" {
       gateway_subnet_cidr  = "10.2.2.0/24" # Reserved for VPN Gateway
     }
     alibaba = {
-      vpc_id       = alicloud_vpc.main.id
-      vpc_cidr     = alicloud_vpc.main.cidr_block
-      vswitch_id   = alicloud_vswitch.main.id
-      vswitch_cidr = alicloud_vswitch.main.cidr_block
+      vpc_id         = alicloud_vpc.main.id
+      vpc_cidr       = alicloud_vpc.main.cidr_block
+      vswitch_1_id   = alicloud_vswitch.main.id
+      vswitch_1_cidr = alicloud_vswitch.main.cidr_block
+      vswitch_2_id   = alicloud_vswitch.secondary.id
+      vswitch_2_cidr = alicloud_vswitch.secondary.cidr_block
     }
   }
+}
+
+data "azurerm_public_ip" "main" {
+  name                = azurerm_public_ip.main.name
+  resource_group_name = azurerm_resource_group.main.name
+  depends_on          = [azurerm_linux_virtual_machine.main]
 }
 
 output "ssh_info" {
@@ -47,10 +55,10 @@ output "ssh_info" {
       command    = "ssh -i private_key.pem ubuntu@${google_compute_instance.main.network_interface[0].access_config[0].nat_ip}"
     }
     azure = {
-      public_ip  = azurerm_public_ip.main.ip_address != "" ? azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn
+      public_ip  = data.azurerm_public_ip.main.ip_address # azurerm_public_ip.main.ip_address != "" ? data.azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn
       private_ip = azurerm_network_interface.main.private_ip_address
       user       = "ubuntu"
-      command    = "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address != "" ? azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn}"
+      command    = "ssh -i private_key.pem ubuntu@${data.azurerm_public_ip.main.ip_address}" # "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address != "" ?  : azurerm_public_ip.main.fqdn}"
     }
     alibaba = {
       public_ip  = alicloud_instance.main.public_ip
@@ -59,4 +67,5 @@ output "ssh_info" {
       command    = "ssh -i private_key.pem ubuntu@${alicloud_instance.main.public_ip}"
     }
   }
+  depends_on = [azurerm_linux_virtual_machine.main, data.azurerm_public_ip.main]
 }

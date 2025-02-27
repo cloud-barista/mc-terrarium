@@ -54,7 +54,7 @@ resource "azurerm_public_ip" "main" {
   name                = "${var.environment}-pip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Dynamic" # Changed from "Dynamic" to "Static"
 }
 
 # Network Interface
@@ -99,4 +99,6 @@ resource "azurerm_linux_virtual_machine" "main" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  depends_on = [azurerm_public_ip.main]
 }
