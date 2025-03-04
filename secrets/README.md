@@ -112,6 +112,26 @@ See [Service account credentials](https://developers.google.com/workspace/guides
 
 4. (Before using `tofu`) Execute `source secrets/load-alibaba-cred-env.sh` to set Alibaba Cloud credential as environment variables
 
+#### IBM
+
+1. Access IBM Cloud (https://www.ibm.com/cloud)
+2. Prepare your credential (My Page > Manage > Access (IAM) > API Key)
+
+Note - Set your access policy for the credential
+
+<details>
+  <summary>Click to see sample</summary>
+
+    ```
+    IC_API_KEY=YOUR_API_KEY
+    ```
+
+</details>
+
+3. Store your AWS credential `secrets/credential-ibm.env`
+
+4. (Before using `tofu`) Execute `source secrets/load-ibm-cred-env.sh` to set IBM Cloud credential as environment variables
+
 #### NCP
 
 1. Access NCP (https://www.ncloud.com/)
@@ -169,7 +189,7 @@ Check a tag of mc-terrarium container image in cloudbaristaorg/mc-terrarium
 
 #### Run mc-terrarium container
 
-Note - Credentials for AWS, Azure, and GCP must be prepared and injected when running a container.
+Note - Credentials must be prepared and injected when running a container.
 
 Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
 
@@ -179,6 +199,7 @@ Note - About credential injection:
 - Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credential-azure.env`
 - Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json`
 - Set Alibaba CLoud credential as environment variable: `--env-file "${PWD}"/secrets/credential-alibaba.env`
+- Set IBM credential as environment variable: `--env-file "${PWD}"/secrets/./secrets/credential-ibm.env`
 - Set NCP credential as environment variable: `--env-file "${PWD}"/secrets/./secrets/credential-ncp.env`
 
 ```shell
@@ -187,6 +208,7 @@ docker run \
 --env-file "${PWD}"/secrets/credential-azure.env \
 --mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json \
 --env-file "${PWD}"/secrets/credential-alibaba.env \
+--env-file "${PWD}"/secrets/credential-ibm.env \
 --env-file "${PWD}"/secrets/credential-ncp.env \
 -p 8055:8055 \
 --name mc-terrarium \
