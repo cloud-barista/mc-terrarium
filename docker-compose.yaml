@@ -19,6 +19,7 @@ services:
       - ./secrets/credentials # AWS credentials
       - ./secrets/credential-azure.env # Azure credentials
       - ./secrets/credential-ncp.env # NCP credentials
+      - ./secrets/credential-ibm.env # IBM credentials
     volumes:
       - ./secrets:/app/secrets:ro # GCP credentials
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium

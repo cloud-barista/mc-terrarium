@@ -62,6 +62,9 @@ secrets/**
 !secrets/.keep
 !secrets/README.md
 !secrets/load-ncp-cred-env.sh
+!secrets/load-alibaba-cred-env.sh
+!secrets/load-all-cred-env.sh
+!secrets/load-ibm-cred-env.sh
 
 # Ignore container volumes
 container-volume/
