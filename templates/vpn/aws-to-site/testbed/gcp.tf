@@ -25,6 +25,11 @@ resource "google_compute_firewall" "main" {
     protocol = "icmp"
   }
 
+  allow {
+    protocol = "udp"
+    ports    = ["33434-33534"]
+  }
+
   source_ranges = ["0.0.0.0/0"]
 }
 

@@ -87,6 +87,14 @@ resource "alicloud_security_group_rule" "allow_all_outbound" {
   cidr_ip           = "0.0.0.0/0"
 }
 
+resource "alicloud_security_group_rule" "allow_traceroute" {
+  type              = "ingress"
+  ip_protocol       = "udp"
+  port_range        = "33434/33534"
+  security_group_id = alicloud_security_group.main.id
+  cidr_ip           = "0.0.0.0/0"
+}
+
 # SSH Key Pair
 resource "alicloud_ecs_key_pair" "main" {
   key_pair_name = "${var.environment}-key"

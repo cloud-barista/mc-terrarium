@@ -48,6 +48,17 @@ resource "ibm_is_security_group_rule" "icmp" {
   }
 }
 
+# Allow traceroute UDP ports
+resource "ibm_is_security_group_rule" "traceroute" {
+  group     = ibm_is_security_group.main.id
+  direction = "inbound"
+  remote    = "0.0.0.0/0"
+  udp {
+    port_min = 33434
+    port_max = 33534
+  }
+}
+
 # Allow all outbound
 resource "ibm_is_security_group_rule" "outbound" {
   group     = ibm_is_security_group.main.id
