@@ -20,6 +20,7 @@ tofu output -json network_details | jq .aws
 tofu output -json network_details | jq .azure
 tofu output -json network_details | jq .gcp
 tofu output -json network_details | jq .alibaba
+tofu output -json network_details | jq .ibm
 
 # Example: Get Azure gateway subnet CIDR
 tofu output -json network_details | jq -r .azure.gateway_subnet_cidr
@@ -62,6 +63,12 @@ tofu output -json ssh_info | jq -r .azure.command
 tofu output -json ssh_info | jq -r .alibaba.command
 ```
 
+### IBM Instance
+
+```shell
+tofu output -json ssh_info | jq -r .ibm.command
+```
+
 ## All at once
 
 ```shell
@@ -70,6 +77,7 @@ tofu output -json network_details | jq .aws
 tofu output -json network_details | jq .azure
 tofu output -json network_details | jq .gcp
 tofu output -json network_details | jq .alibaba
+tofu output -json network_details | jq .ibm
 
 # Save the private key to a file
 tofu output -json ssh_info | jq -r .private_key > private_key.pem
@@ -80,6 +88,7 @@ tofu output -json ssh_info | jq -r .aws.command
 tofu output -json ssh_info | jq -r .azure.command
 tofu output -json ssh_info | jq -r .gcp.command
 tofu output -json ssh_info | jq -r .alibaba.command
+tofu output -json ssh_info | jq -r .ibm.command
 ```
 
 ## Need to delete as a separate process during testing

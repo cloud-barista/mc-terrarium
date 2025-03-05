@@ -25,6 +25,10 @@ terraform {
       source  = "aliyun/alicloud"
       version = "~>1.243.0"
     }
+    ibm = {
+      source  = "IBM-Cloud/ibm"
+      version = "~>1.76.0"
+    }
   }
 }
 
@@ -52,6 +56,11 @@ provider "azurerm" {
 # Configure the Alibaba Cloud Provider
 provider "alicloud" {
   region = "ap-northeast-2" # Seoul
+}
+
+# Configure the IBM Cloud Provider
+provider "ibm" {
+  region = "au-syd" # Sydney region
 }
 
 # SSH key

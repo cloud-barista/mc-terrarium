@@ -56,6 +56,9 @@ resource "alicloud_route_table_attachment" "secondary" {
 
 # Security Group
 resource "alicloud_security_group" "main" {
+  # [NOTE] The following line will cause an error in the Terraform/OpenTofu language server.
+  # It won't affect the actual Terraform deployment.
+  # It will be resolved when the Terraform/OpenTofu language server is updated.
   security_group_name = "${var.environment}-sg"
   vpc_id              = alicloud_vpc.main.id
 }
@@ -80,6 +83,14 @@ resource "alicloud_security_group_rule" "allow_all_outbound" {
   type              = "egress"
   ip_protocol       = "all"
   port_range        = "-1/-1"
+  security_group_id = alicloud_security_group.main.id
+  cidr_ip           = "0.0.0.0/0"
+}
+
+resource "alicloud_security_group_rule" "allow_traceroute" {
+  type              = "ingress"
+  ip_protocol       = "udp"
+  port_range        = "33434/33534"
   security_group_id = alicloud_security_group.main.id
   cidr_ip           = "0.0.0.0/0"
 }

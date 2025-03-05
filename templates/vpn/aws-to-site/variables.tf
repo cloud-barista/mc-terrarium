@@ -21,7 +21,7 @@ variable "vpn_config" {
         gateway_subnet_cidr  = string
         bgp_asn              = optional(string, "65531") # default value
         vpn_sku              = optional(string, "VpnGw1AZ")
-        shared_key           = string
+        # shared_key           = string
       }))
       alibaba = optional(object({
         region       = optional(string, "ap-northeast-2") # Seoul
@@ -30,16 +30,18 @@ variable "vpn_config" {
         vswitch_id_2 = string                    # Add this field
         bgp_asn      = optional(string, "65532") # default value
       }))
-      tencent = optional(object({
-        region  = string
-        vpc_id  = string
-        bgp_asn = string
-      }))
       ibm = optional(object({
-        region   = string
-        vpc_name = string
-        bgp_asn  = string
+        region    = optional(string, "au-syd") # Sydney region
+        vpc_id    = string
+        vpc_cidr  = string
+        subnet_id = string
+        bgp_asn   = optional(string, "65533") # default value
       }))
+      # tencent = optional(object({
+      #   region  = string
+      #   vpc_id  = string
+      #   bgp_asn = string
+      # }))
     })
   })
 
