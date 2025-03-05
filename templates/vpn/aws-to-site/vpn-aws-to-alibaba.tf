@@ -1,29 +1,4 @@
 ## AWS side resources/services
-
-# Fetching AWS VPC and subnet information
-data "aws_vpc" "designated" {
-  count = local.is_alibaba ? 1 : 0
-
-  id = var.vpn_config.aws.vpc_id
-}
-
-data "aws_subnets" "selected" {
-  count = local.is_alibaba ? 1 : 0
-  filter {
-    name   = "vpc-id"
-    values = [var.vpn_config.aws.vpc_id]
-  }
-}
-
-data "aws_subnet" "details" {
-  count = local.is_alibaba ? length(data.aws_subnets.selected[0].ids) : 0
-  id    = data.aws_subnets.selected[0].ids[count.index]
-}
-
-locals {
-  aws_subnet_cidrs = local.is_alibaba ? [for subnet in data.aws_subnet.details : subnet.cidr_block] : []
-}
-
 # AWS customer gateways (require Alibaba VPN gateway info)
 resource "aws_customer_gateway" "alibaba_gw" {
   count = local.is_alibaba ? 2 : 0
@@ -79,19 +54,19 @@ data "alicloud_zones" "available" {
   available_resource_creation = "VSwitch"
 }
 
-data "alicloud_vpcs" "designated" {
+data "alicloud_vpcs" "existing" {
   count = local.is_alibaba ? 1 : 0
 
   ids = [var.vpn_config.target_csp.alibaba.vpc_id]
 }
 
-data "alicloud_vswitches" "selected" {
+data "alicloud_vswitches" "existing" {
   count  = local.is_alibaba ? 1 : 0
   vpc_id = var.vpn_config.target_csp.alibaba.vpc_id
 }
 
 locals {
-  alibaba_subnet_cidrs = local.is_alibaba ? [for vswitch in data.alicloud_vswitches.selected[0].vswitches : vswitch.cidr_block] : []
+  alibaba_subnet_cidrs = local.is_alibaba ? [for vswitch in data.alicloud_vswitches.existing[0].vswitches : vswitch.cidr_block] : []
 }
 
 # Alibaba Cloud VPN Gateway
@@ -130,8 +105,8 @@ resource "alicloud_vpn_connection" "to_aws" {
   vpn_connection_name = "${local.name_prefix}-to-aws-${count.index + 1}"
   # local_subnet        = local.alibaba_subnet_cidrs
   # remote_subnet       = local.aws_subnet_cidrs
-  local_subnet  = [data.alicloud_vpcs.designated[0].vpcs[0].cidr_block]
-  remote_subnet = [data.aws_vpc.designated[0].cidr_block]
+  local_subnet  = [data.alicloud_vpcs.existing[0].vpcs[0].cidr_block]
+  remote_subnet = [data.aws_vpc.existing.cidr_block]
 
   network_type = "public"
   # auto_config_route  = true
@@ -204,7 +179,7 @@ resource "alicloud_vpn_connection" "to_aws" {
 }
 
 # Add data source for Alibaba route tables
-data "alicloud_route_tables" "selected" {
+data "alicloud_route_tables" "existing" {
   count  = local.is_alibaba ? 1 : 0
   vpc_id = var.vpn_config.target_csp.alibaba.vpc_id
 }
@@ -214,8 +189,8 @@ data "alicloud_route_tables" "selected" {
 resource "alicloud_route_entry" "vpn_routes" {
   count = local.is_alibaba ? 1 : 0
 
-  route_table_id        = data.alicloud_route_tables.selected[0].ids[0]
-  destination_cidrblock = data.aws_vpc.designated[0].cidr_block
+  route_table_id        = data.alicloud_route_tables.existing[0].ids[0]
+  destination_cidrblock = data.aws_vpc.existing.cidr_block
   nexthop_type          = "VpnGateway"
   nexthop_id            = alicloud_vpn_gateway.vpn_gw[0].id
 }
