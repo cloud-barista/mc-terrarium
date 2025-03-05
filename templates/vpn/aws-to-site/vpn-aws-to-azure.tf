@@ -33,7 +33,7 @@ resource "aws_vpn_connection" "to_azure" {
 
 ## Azure side resources/services
 # Azure Virtual Network
-data "azurerm_virtual_network" "vnet" {
+data "azurerm_virtual_network" "existing" {
   count = local.is_azure ? 1 : 0
 
   name                = var.vpn_config.target_csp.azure.virtual_network_name
@@ -45,7 +45,7 @@ resource "azurerm_subnet" "gateway" {
   count                = local.is_azure ? 1 : 0
   name                 = "GatewaySubnet"
   resource_group_name  = var.vpn_config.target_csp.azure.resource_group_name
-  virtual_network_name = data.azurerm_virtual_network.vnet[0].name
+  virtual_network_name = data.azurerm_virtual_network.existing[0].name
   address_prefixes     = [var.vpn_config.target_csp.azure.gateway_subnet_cidr]
 }
 

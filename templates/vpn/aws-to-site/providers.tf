@@ -28,6 +28,11 @@ terraform {
       source  = "aliyun/alicloud"
       version = "~>1.243.0"
     }
+    # IBM Cloud provider
+    ibm = {
+      source  = "IBM-Cloud/ibm"
+      version = "1.76.0"
+    }
   }
 }
 
@@ -57,3 +62,6 @@ provider "alicloud" {
   region = local.is_alibaba ? var.vpn_config.target_csp.alibaba.region : "ap-northeast-2"
 }
 
+provider "ibm" {
+  region = local.is_ibm ? var.vpn_config.target_csp.ibm.region : "au-syd" # Sydney region, Australia
+}
