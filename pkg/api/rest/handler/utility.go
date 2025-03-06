@@ -18,7 +18,7 @@ import (
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
-	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
+	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -76,7 +76,7 @@ func HTTPVersion(c echo.Context) error {
 // @Router /tofuVersion [get]
 func TofuVersion(c echo.Context) error {
 
-	ret, err := tofu.GetTofuVersion()
+	ret, err := tfutil.Version()
 	if err != nil {
 		res := model.Response{Success: false, Message: "failed to get Tofu version"}
 		return c.JSON(http.StatusInternalServerError, res)

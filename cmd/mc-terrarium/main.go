@@ -16,11 +16,14 @@ package main
 
 import (
 	"flag"
+	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 
 	// Black import (_) is for running a package's init() function without using its other contents.
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
+	"github.com/cloud-barista/mc-terrarium/pkg/lkvstore"
 	"github.com/cloud-barista/mc-terrarium/pkg/logger"
 	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog/log"
@@ -48,7 +51,7 @@ func init() {
 	logger := logger.NewLogger(logger.Config{
 		LogLevel:    config.Terrarium.LogLevel,
 		LogWriter:   config.Terrarium.LogWriter,
-		LogFilePath: config.Terrarium.LogFile.Path,
+		LogFilePath: filepath.Join(config.Terrarium.Root, config.Terrarium.LogFile.Path),
 		MaxSize:     config.Terrarium.LogFile.MaxSize,
 		MaxBackups:  config.Terrarium.LogFile.MaxBackups,
 		MaxAge:      config.Terrarium.LogFile.MaxAge,
@@ -57,6 +60,26 @@ func init() {
 
 	// Set the global logger
 	log.Logger = *logger
+
+	// Initialize the local key-value store with the specified file path
+	dbFilePath := filepath.Join(config.Terrarium.Root, config.Terrarium.LKVStore.Path)
+
+	// Ensure the DB file directory exists before creating the log file
+	dir := filepath.Dir(dbFilePath)
+	log.Debug().Msgf("DB file directory: %s", dir)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		log.Debug().Msgf("DB file directory does not exist: %s", dir)
+		// Create the directory if it does not exist
+		err = os.MkdirAll(dir, 0755) // Set permissions as needed
+		if err != nil {
+			log.Error().Msgf("Failed to Create the DB Directory: : [%v]", err)
+		}
+	}
+
+	lkvstore.Init(lkvstore.Config{
+		DbFilePath: dbFilePath,
+	})
+	
 }
 
 // @title Multi-Cloud Terrarium REST API
@@ -76,6 +99,22 @@ func init() {
 func main() {
 
 	log.Info().Msg("preparing to run mc-terrarium server...")
+
+		// Load the state from the file back into the key-value store
+		if err := lkvstore.LoadLkvStore(); err != nil {
+			log.Warn().Msg("The db file may not exist when first run.")
+		} else {
+			log.Info().Msg("Successfully loaded the lkvstore from file.")
+		}
+	
+		defer func() {
+			// Save the current state of the key-value store to file
+			if err := lkvstore.SaveLkvStore(); err != nil {
+				log.Error().Msgf("Error saving: %v\n", err)
+			} else {
+				log.Info().Msg("Successfully saved the lkvstore to file.")
+			}
+		}()
 
 	// Set the default port number "8055" for the REST API server to listen on
 	port := flag.String("port", "8055", "port number for the restapiserver to listen to")

@@ -2,6 +2,10 @@
 terrarium:
   root: # To be set in runtime
 
+  ## Set internal DB config (lkvstore: local key-value store)
+  lkvstore:
+    path: .terrarium/terrarium.db
+
   ## Set SELF_ENDPOINT, to access Swagger API dashboard outside (Ex: export SELF_ENDPOINT=x.x.x.x:8055)
   self:
     endpoint: localhost:8055
