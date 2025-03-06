@@ -24,6 +24,7 @@ type TerrariumConfig struct {
 	Root        string            `mapstructure:"root"`
 	Self        SelfConfig        `mapstructure:"self"`
 	API         ApiConfig         `mapstructure:"api"`
+	LKVStore    LkvStoreConfig    `mapstructure:"lkvstore"`
 	LogFile     LogfileConfig     `mapstructure:"logfile"`
 	LogLevel    string            `mapstructure:"loglevel"`
 	LogWriter   string            `mapstructure:"logwriter"`
@@ -51,9 +52,9 @@ type AuthConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 }
 
-// type LkvStoreConfig struct {
-// 	Path string `mapstructure:"path"`
-// }
+type LkvStoreConfig struct {
+	Path string `mapstructure:"path"`
+}
 
 type LogfileConfig struct {
 	Path       string `mapstructure:"path"`
@@ -182,6 +183,7 @@ func bindEnvironmentVariables() {
 	viper.BindEnv("terrarium.api.auth.enabled", "TERRARIUM_API_AUTH_ENABLED")
 	viper.BindEnv("terrarium.api.username", "TERRARIUM_API_USERNAME")
 	viper.BindEnv("terrarium.api.password", "TERRARIUM_API_PASSWORD")
+	viper.BindEnv("terrarium.lkvstore.path", "TERRARIUM_LKVSTORE_PATH")
 	viper.BindEnv("terrarium.logfile.path", "TERRARIUM_LOGFILE_PATH")
 	viper.BindEnv("terrarium.logfile.maxsize", "TERRARIUM_LOGFILE_MAXSIZE")
 	viper.BindEnv("terrarium.logfile.maxbackups", "TERRARIUM_LOGFILE_MAXBACKUPS")

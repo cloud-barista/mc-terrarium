@@ -22,7 +22,7 @@ import (
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
-	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
+	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
@@ -59,7 +59,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	// Copy template files to the working directory (overwrite)
 	templateTfsPath := projectRoot + "/templates/test-env"
 
-	err := tofu.CopyFiles(templateTfsPath, workingDir)
+	err := tfutil.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		res := model.Response{Success: false, Message: "Failed to copy template files to working directory"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -68,7 +68,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	// Always overwrite credential-gcp.json
 	gcpCredentialPath := workingDir + "/credential-gcp.json"
 
-	err = tofu.CopyGCPCredentials(gcpCredentialPath)
+	err = tfutil.CopyGCPCredentials(gcpCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy gcp credentials to init")
 		res := model.Response{Success: false, Message: "Failed to copy gcp credentials to init"}
@@ -76,7 +76,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 	}
 
 	azureCredentialPath := workingDir + "/credential-azure.env"
-	err = tofu.CopyAzureCredentials(azureCredentialPath)
+	err = tfutil.CopyAzureCredentials(azureCredentialPath)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to copy azure credentials to init")
 		res := model.Response{Success: false, Message: "Failed to copy azure credentials to init"}
@@ -85,7 +85,7 @@ func InitTerrariumForTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
+	ret, err := tfutil.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		res := model.Response{Success: false, Message: "Failed to init"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -197,7 +197,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
-		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
+		ret, err := tfutil.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "output", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
@@ -234,7 +234,7 @@ func GetResouceInfoOfTestEnv(c echo.Context) error {
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
-		ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
+		ret, err := tfutil.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "show", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
 			log.Error().Err(err).Msg(err2.Error()) // error
@@ -324,7 +324,7 @@ func CreateInfracodeOfTestEnv(c echo.Context) error {
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
 
-	err := tofu.SaveTestEnvTfVarsToFile(req.TfVars, tfVarsPath)
+	err := tfutil.SaveTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
 		res := model.Response{Success: false, Message: "Failed to save tfVars to a file"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -364,7 +364,7 @@ func CheckInfracodeOfTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "plan")
+	ret, err := tfutil.ExecuteTofuCommand("test-env", reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to plan") // error
 		text := fmt.Sprintf("Failed to plan\n(ret: %s)", ret)
@@ -405,7 +405,7 @@ func CreateTestEnv(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: apply
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
+	ret, err := tfutil.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		res := model.Response{Success: false, Message: "Failed to deploy test environment"}
 		return c.JSON(http.StatusInternalServerError, res)
@@ -445,7 +445,7 @@ func DestroyTestEnv(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/test-env
 	// subcommand: destroy
-	ret, err := tofu.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err := tfutil.ExecuteTofuCommandAsync("test-env", reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to destroy") // error
 		text := fmt.Sprintf("Failed to destroy: %s", ret)
@@ -490,7 +490,7 @@ func GetRequestStatusOfTestEnv(c echo.Context) error {
 	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
 
 	// Check the statusReport of the request
-	statusReport, err := tofu.GetRunningStatus("test-env", statusLogFile)
+	statusReport, err := tfutil.GetRunningStatus("test-env", statusLogFile)
 	if err != nil {
 		res := model.Response{Success: false, Message: "Failed to get the status of the request"}
 		return c.JSON(http.StatusInternalServerError, res)

@@ -23,7 +23,7 @@ import (
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
-	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
+	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
@@ -135,7 +135,7 @@ func InitEnvForObjectStorage(c echo.Context) error {
 	// Copy template files to the working directory (overwrite)
 	templateTfsPath := projectRoot + "/templates/" + enrichments + "/" + provider
 
-	err = tofu.CopyFiles(templateTfsPath, workingDir)
+	err = tfutil.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to working directory")
 		log.Error().Err(err).Msg(err2.Error())
@@ -150,7 +150,7 @@ func InitEnvForObjectStorage(c echo.Context) error {
 		// Always overwrite credential-gcp.json
 		credentialPath := workingDir + "/credential-gcp.json"
 
-		err = tofu.CopyGCPCredentials(credentialPath)
+		err = tfutil.CopyGCPCredentials(credentialPath)
 		if err != nil {
 			err2 := fmt.Errorf("failed to copy gcp credentials")
 			log.Error().Err(err).Msg(err2.Error())
@@ -164,7 +164,7 @@ func InitEnvForObjectStorage(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 	// init: subcommand
-	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "init")
+	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		err2 := fmt.Errorf("failed to initialize an infrastructure terrarium")
 		log.Error().Err(err).Msg(err2.Error())
@@ -331,7 +331,7 @@ func CreateInfracodeForObjectStorage(c echo.Context) error {
 		req.TfVars.TerrariumID = trId
 	}
 
-	err = tofu.SaveTfVarsToFile(req.TfVars, tfVarsPath)
+	err = tfutil.SaveTfVarsToFile(req.TfVars, tfVarsPath)
 	if err != nil {
 		err2 := fmt.Errorf("failed to save tfVars to a file")
 		log.Error().Err(err).Msg(err2.Error())
@@ -405,7 +405,7 @@ func CheckInfracodeForObjectStorage(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 	// subcommand: plan
-	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
+	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
 	if err != nil {
 		err2 := fmt.Errorf("returned: %s", ret)
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -480,7 +480,7 @@ func CreateObjectStorage(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 	// subcommand: apply
-	_, err = tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
+	_, err = tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -493,7 +493,7 @@ func CreateObjectStorage(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 	// show: subcommand
-	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "object_storage_info")
+	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "object_storage_info")
 	if err != nil {
 		err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", "refined")
 		log.Error().Err(err).Msg(err2.Error())
@@ -608,7 +608,7 @@ func GetResourceInfoOfObjectStorage(c echo.Context) error {
 
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 		// show: subcommand
-		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "object_storage_info")
+		ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "object_storage_info")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
@@ -645,7 +645,7 @@ func GetResourceInfoOfObjectStorage(c echo.Context) error {
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 		// show: subcommand
 		// Get resource info from the state or plan file
-		ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
+		ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
 			log.Error().Err(err).Msg(err2.Error()) // error
@@ -753,7 +753,7 @@ func DestroyObjectStorage(c echo.Context) error {
 	// Destroy the infrastructure
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}
 	// subcommand: destroy
-	ret, err := tofu.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
 	if err != nil {
 		err2 := fmt.Errorf("failed, previous request in progress")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -834,7 +834,7 @@ func GetRequestStatusOfObjectStorage(c echo.Context) error {
 	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
 
 	// Check the statusReport of the request
-	statusReport, err := tofu.GetRunningStatus(trId, statusLogFile)
+	statusReport, err := tfutil.GetRunningStatus(trId, statusLogFile)
 	if err != nil {
 		err2 := fmt.Errorf("failed to get the status of the request")
 		log.Error().Err(err).Msg(err2.Error()) // error
