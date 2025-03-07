@@ -24,8 +24,8 @@ func Version() (string, error) {
 }
 
 
-// SaveTfVarsToFile saves any tfVars structure to a JSON file
-func SaveTfVarsToFile(tfVars interface{}, file string) error {
+// SaveTfVars saves any tfVars structure to a JSON file
+func SaveTfVars(tfVars interface{}, file string) error {
 	// Convert tfVars to json
 	jsonData, err := json.MarshalIndent(tfVars, "", "  ")
 	if err != nil {

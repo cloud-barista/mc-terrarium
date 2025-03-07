@@ -23,6 +23,7 @@ import (
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -65,7 +66,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	enrichments := "vpn/gcp-aws"
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	trInfo, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -74,7 +75,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	}
 
 	trInfo.Enrichments = enrichments
-	err = terrarium.UpdateTerrariumInfo(trInfo)
+	err = terrarium.UpdateInfo(trInfo)
 	if err != nil {
 		err2 := fmt.Errorf("failed to update terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -124,7 +125,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 	// init: subcommand
-	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "init")
+	ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "init")
 	if err != nil {
 		err2 := fmt.Errorf("failed to initialize an infrastructure terrarium")
 		log.Error().Err(err).Msg(err2.Error())
@@ -281,7 +282,7 @@ func GetResourceInfoOfGcpAwsVpn(c echo.Context) error {
 
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
-		ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "vpn_info")
+		ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "output", "-json", "vpn_info")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) specified as 'output' in the state file", DetailOptions.Refined)
 			log.Error().Err(err).Msg(err2.Error())
@@ -318,7 +319,7 @@ func GetResourceInfoOfGcpAwsVpn(c echo.Context) error {
 		// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 		// show: subcommand
 		// Get resource info from the state or plan file
-		ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
+		ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "show", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to read resource info (detail: %s) from the state or plan file", DetailOptions.Raw)
 			log.Error().Err(err).Msg(err2.Error()) // error
@@ -437,7 +438,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 		req.TfVars.TerrariumId = trId
 	}
 
-	err := tfutil.SaveTfVarsToFile(req.TfVars, tfVarsPath)
+	err := tfutil.SaveTfVars(req.TfVars, tfVarsPath)
 	if err != nil {
 		err2 := fmt.Errorf("failed to save tfVars to a file")
 		log.Error().Err(err).Msg(err2.Error())
@@ -487,36 +488,22 @@ func CheckInfracodeOfGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := config.Terrarium.Root
-
-	// Check if the working directory exists
-	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
-	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		err2 := fmt.Errorf("working directory dose not exist")
-		log.Warn().Err(err).Msg(err2.Error())
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
-	// subcommand: plan
-	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "plan")
+	// Execute the plan command
+	ret, err := terrarium.Plan(trId, reqId)
 	if err != nil {
-		err2 := fmt.Errorf("encountered an issue during the infracode checking process")
-		log.Error().Err(err).Msg(err2.Error()) // error
+		log.Error().Err(err).Msg("") // error
 		res := model.Response{
 			Success: false,
-			Message: err2.Error(),
+			Message: err.Error(),
 			Detail:  ret,
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
+
+	// Return the result
 	res := model.Response{
 		Success: true,
-		Message: "the infracode checking process is successfully completed",
+		Message: "successfully completed infrastructure code check",
 		Detail:  ret,
 	}
 
@@ -554,35 +541,23 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	projectRoot := config.Terrarium.Root
 
-	// Check if the working directory exists
-	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-aws"
-	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		err2 := fmt.Errorf("working directory dose not exist")
-		log.Warn().Err(err).Msg(err2.Error())
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
-	// subcommand: apply
-	ret, err := tfutil.ExecuteTofuCommandAsync(trId, reqId, "-chdir="+workingDir, "apply", "-auto-approve")
+	// Excute the apply command
+	ret, err := terrarium.Apply(trId, reqId)
 	if err != nil {
-		err2 := fmt.Errorf("failed, previous request in progress")
-		log.Error().Err(err).Msg(err2.Error()) // error
+		log.Error().Err(err).Msg("") // error
 		res := model.Response{
 			Success: false,
-			Message: err2.Error(),
+			Message: err.Error(),
+			Detail:  ret,
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
+
+	// Return the result
 	res := model.Response{
 		Success: true,
-		Message: "the request (id: " + reqId + ") is successfully accepted and still deploying resource",
+		Message: "successfully completed the infrastructure creation",
 		Detail:  ret,
 	}
 
@@ -638,7 +613,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 	// Remove the state of the imported resources
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
 	// subcommand: state rm
-	ret, err := tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.imported_route_table")
+	ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.imported_route_table")
 	if err != nil {
 		err2 := fmt.Errorf("failed to remove the state of the imported resources")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -662,22 +637,22 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Destroy the infrastructure
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}
-	// subcommand: destroy
-	ret, err = tfutil.ExecuteTofuCommand(trId, reqId, "-chdir="+workingDir, "destroy", "-auto-approve")
+	// Excute the destroy command
+	ret, err = terrarium.Destroy(trId, reqId)
 	if err != nil {
-		err2 := fmt.Errorf("failed, previous request in progress")
-		log.Error().Err(err).Msg(err2.Error()) // error
+		log.Error().Err(err).Msg("") // error
 		res := model.Response{
 			Success: false,
-			Message: err2.Error(),
+			Message: err.Error(),
+			Detail: ret,
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
+
+	// Return the result
 	res := model.Response{
 		Success: true,
-		Message: "the destroying process is successfully completed (trId: " + trId + ", enrichments: vpn/gcp-aws)",
+		Message: "successfully completed the infrastructure destruction (trId: " + trId + ", enrichments: vpn/gcp-aws)",
 		Detail:  ret,
 	}
 
@@ -736,8 +711,8 @@ func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 	}
 	statusLogFile := fmt.Sprintf("%s/runningLogs/%s.log", workingDir, reqId)
 
-	// Check the statusReport of the request
-	statusReport, err := tfutil.GetRunningStatus(trId, statusLogFile)
+	// Check the executionHistory of the request
+	executionHistory, err := tofu.GetExcutionHistory(trId, statusLogFile)
 	if err != nil {
 		err2 := fmt.Errorf("failed to get the status of the request")
 		log.Error().Err(err).Msg(err2.Error()) // error
@@ -751,7 +726,7 @@ func GetRequestStatusOfGcpAwsVpn(c echo.Context) error {
 	res := model.Response{
 		Success: true,
 		Message: "the status of a specific request",
-		Detail:  statusReport,
+		Detail:  executionHistory,
 	}
 
 	log.Debug().Msgf("%+v", res) // debug

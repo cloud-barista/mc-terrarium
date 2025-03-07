@@ -60,14 +60,14 @@ func IssueTerrarium(c echo.Context) error {
 		}
 	}
 
-	err := terrarium.IssueTerrarium(*reqTrInfo)
+	err := terrarium.IssueID(*reqTrInfo)
 
 	if err != nil {
 		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	trInfo, err := terrarium.GetInfo(trId)
 	if err != nil {
 		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
 		res := model.Response{Success: true, Message: text}
@@ -89,7 +89,7 @@ func IssueTerrarium(c echo.Context) error {
 // @Router /tr [get]
 func ReadAllTerrarium(c echo.Context) error {
 
-	trInfoList, _ := terrarium.ReadAllTerrariumInfo()
+	trInfoList, _ := terrarium.ReadAllInfo()
 
 	return c.JSON(http.StatusOK, trInfoList)
 }
@@ -113,7 +113,7 @@ func ReadTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	trInfo, err := terrarium.ReadTerrariumInfo(trId)
+	trInfo, err := terrarium.GetInfo(trId)
 	if err != nil {
 		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
 		res := model.Response{Success: true, Message: text}
@@ -158,7 +158,7 @@ func EraseTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	err = terrarium.DeleteTerrariumInfo(trId)
+	err = terrarium.DeleteInfo(trId)
 	if err != nil {
 		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
