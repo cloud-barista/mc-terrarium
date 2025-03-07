@@ -1,10 +1,10 @@
-package tfcli
+package tfclient
 
 import (
 	"errors"
 	"fmt"
 
-	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
+	"github.com/cloud-barista/mc-terrarium/pkg/tofu"
 )
 
 // GlobalOptions defines global options for tofu commands.
@@ -123,10 +123,10 @@ func (c *Client) Exec() (string, error) {
 	}
 	
 	if c.async {
-		return tfutil.ExecuteTofuCommandAsync(c.trId, c.reqId, args...)
+		return tofu.ExecuteCommandAsync(c.trId, c.reqId, args...)
 	}
 	
-	return tfutil.ExecuteTofuCommand(c.trId, c.reqId, args...)
+	return tofu.ExecuteCommand(c.trId, c.reqId, args...)
 }
 
 // --- Main Commands ---
@@ -239,10 +239,104 @@ func (c *Client) Metadata() *Client {
 	return c
 }
 
-// State sets the state command.
-func (c *Client) State() *Client {
+// StateClient is a specialized client for state operations
+type StateClient struct {
+	*Client
+}
+
+// State sets the state command and returns a specialized StateClient.
+func (c *Client) State() *StateClient {
 	c.cmd = "state"
-	return c
+	return &StateClient{Client: c}
+}
+
+// List sets the "list" subcommand for state.
+func (s *StateClient) List() *StateClient {
+	s.args = append(s.args, "list")
+	return s
+}
+
+// Show sets the "show" subcommand for state.
+func (s *StateClient) Show(address string) *StateClient {
+	s.args = append(s.args, "show", address)
+	return s
+}
+
+// Move/Mv sets the "mv" subcommand for state to move resources.
+func (s *StateClient) Move(source, destination string) *StateClient {
+	s.args = append(s.args, "mv", source, destination)
+	return s
+}
+
+// Mv is an alias for Move.
+func (s *StateClient) Mv(source, destination string) *StateClient {
+	return s.Move(source, destination)
+}
+
+// Remove/Rm sets the "rm" subcommand for state to remove resources.
+func (s *StateClient) Remove(addresses ...string) *StateClient {
+	args := append([]string{"rm"}, addresses...)
+	s.args = append(s.args, args...)
+	return s
+}
+
+// Rm is an alias for Remove.
+func (s *StateClient) Rm(addresses ...string) *StateClient {
+	return s.Remove(addresses...)
+}
+
+// Pull sets the "pull" subcommand for state to pull remote state.
+func (s *StateClient) Pull() *StateClient {
+	s.args = append(s.args, "pull")
+	return s
+}
+
+// Push sets the "push" subcommand for state to push local state to remote.
+func (s *StateClient) Push() *StateClient {
+	s.args = append(s.args, "push")
+	return s
+}
+
+// Replace sets the "replace-provider" subcommand for state.
+func (s *StateClient) ReplaceProvider(fromProvider, toProvider string) *StateClient {
+	s.args = append(s.args, "replace-provider", fromProvider, toProvider)
+	return s
+}
+
+// WithFilter adds a filter to state operation (applicable to operations like list).
+func (s *StateClient) WithFilter(filter string) *StateClient {
+	s.args = append(s.args, filter)
+	return s
+}
+
+// WithStateOut specifies an output file for state operations (applicable to operations like pull).
+func (s *StateClient) WithStateOut(path string) *StateClient {
+	s.args = append(s.args, "-state-out="+path)
+	return s
+}
+
+// WithState specifies a state file to use for operations.
+func (s *StateClient) WithState(path string) *StateClient {
+	s.args = append(s.args, "-state="+path)
+	return s
+}
+
+// WithBackup specifies a backup path for state operations.
+func (s *StateClient) WithBackup(path string) *StateClient {
+	s.args = append(s.args, "-backup="+path)
+	return s
+}
+
+// WithBackupOut specifies an output path for the backup file.
+func (s *StateClient) WithBackupOut(path string) *StateClient {
+	s.args = append(s.args, "-backup-out="+path)
+	return s
+}
+
+// IgnoreRemoteVersion ignores remote version conflicts in state operations.
+func (s *StateClient) IgnoreRemoteVersion() *StateClient {
+	s.args = append(s.args, "-ignore-remote-version")
+	return s
 }
 
 // Taint sets the taint command.

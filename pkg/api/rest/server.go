@@ -205,15 +205,19 @@ func RunServer(port string) {
 	gTr.DELETE("/tr/:trId/vpn/gcp-azure", handler.DestroyGcpAzureVpn)
 	gTr.GET("/tr/:trId/vpn/gcp-azure/request/:requestId", handler.GetRequestStatusOfGcpAzureVpn)
 
-	// AWS-to-site VPN
-	// gTr.POST("/tr/:trId/vpn/aws-to-site/env", handler.InitEnvForAwsToSiteVpn)
-	// gTr.DELETE("/tr/:trId/vpn/aws-to-site/env", handler.ClearAwsToSiteVpn)
-	// gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetResourceInfoOfAwsToSiteVpn)
-	// gTr.POST("/tr/:trId/vpn/aws-to-site/infracode", handler.CreateInfracodeOfAwsToSiteVpn)
-	// gTr.POST("/tr/:trId/vpn/aws-to-site/plan", handler.CheckInfracodeOfAwsToSiteVpn)
-	// gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
-	// gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DestroyAwsToSiteVpn)
-	// gTr.GET("/tr/:trId/vpn/aws-to-site/request/:requestId", handler.GetRequestStatusOfAwsToSiteVpn)
+	// [AWS-to-site VPN] Resource operations (high-level APIs for resource-centric operations)
+	gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetAwsToSiteVpn)
+	// gTr.UPDATE("/tr/:trId/vpn/aws-to-site", handler.UpdateAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DeleteAwsToSiteVpn)
+
+	// [AWS-to-site VPN] Tofu Actions (low-level APIs for advanced control)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/init", handler.InitAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/plan", handler.PlanAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/apply", handler.ApplyAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/destroy", handler.DestroyAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site/actions/output", handler.OutputAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/emptyout", handler.EmptyOutAwsToSiteVpn)
 
 	// SQL database APIs
 	gTr.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)

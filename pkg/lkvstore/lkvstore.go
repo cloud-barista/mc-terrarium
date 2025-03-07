@@ -96,7 +96,7 @@ func LoadLkvStore() error {
 
 // Get returns the value for a given key.
 func Get(key string) (string, bool) {
-	log.Debug().Msgf("Get key: %s", key)
+
 	value, ok := lkvstore.Load(key)
 	if !ok {
 		log.Debug().Msgf("Get key: %s, value: %v", key, nil)
@@ -128,14 +128,13 @@ func GetWithPrefix(keyPrefix string) ([]string, bool) {
 
 // Put the key-value pair.
 func Put(key string, value interface{}) error {
-	log.Debug().Msgf("Put key: %s, value: %v", key, value)	
+
 	// Marshal the value to JSON
 	jsonValue, err := json.Marshal(value)
 	if err != nil {
 		return fmt.Errorf("failed to marshal value: %w", err)
 	}
 
-	log.Debug().Msgf("Put key: %s, jsonValue: %s", key, string(jsonValue))
 	// Store the JSON string
 	lkvstore.Store(key, string(jsonValue))
 	return nil

@@ -1,4 +1,4 @@
-package tfutil
+package tofu
 
 import (
 	"bytes"
@@ -17,13 +17,13 @@ import (
 // It can be modified if the binary name is different in the system.
 var cliName = "tofu"
 
-// setRunningStatus sets the running status for a given trId.
-func setRunningStatus(trId, status string) {
+// SetRunningStatus sets the running status for a given trId.
+func SetRunningStatus(trId, status string) {
 	lkvstore.Put("/tr/" + trId + "/status", status)
 }
 
-// getRunningStatus gets the running status for a given trId.
-func getRunningStatus(trId string) (string, bool) {
+// GetExecutionStatus gets the running status for a given trId.
+func GetExecutionStatus(trId string) (string, bool) {
 	value, exists := lkvstore.Get("/tr/" + trId + "/status")
 	if !exists {
 		return "", false
@@ -31,22 +31,22 @@ func getRunningStatus(trId string) (string, bool) {
 	return value, true
 }
 
-// ExecuteTofuCommand executes a given tofu CLI command with arguments and returns the result.
+// ExecuteCommand executes a given tofu CLI command with arguments and returns the result.
 // It also logs the full command being executed.
 // Example usage:
-// - ExecuteTofuCommand("version")
-// - ExecuteTofuCommand("apply", "-var=\"image_id=ami-abc123\"")
-// - ExecuteTofuCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
-func ExecuteTofuCommand(trId, reqId string, args ...string) (string, error) {
-	currentStatus, exists := getRunningStatus(trId)
+// - ExecuteCommand("version")
+// - ExecuteCommand("apply", "-var=\"image_id=ami-abc123\"")
+// - ExecuteCommand("import", "aws_vpc.my-imported-vpc", "vpc-a01106c2")
+func ExecuteCommand(trId, reqId string, args ...string) (string, error) {
+	currentStatus, exists := GetExecutionStatus(trId)
 	if exists && currentStatus == "Running" {
 		return "", errors.New("a previous request is still in progress")
 	}
-	setRunningStatus(trId, "Running")
+	SetRunningStatus(trId, "Running")
 
 	defer func() {
 		if r := recover(); r != nil {
-			setRunningStatus(trId, "Failed")
+			SetRunningStatus(trId, "Failed")
 		}
 	}()
 
@@ -54,27 +54,27 @@ func ExecuteTofuCommand(trId, reqId string, args ...string) (string, error) {
 	output, err := executeCommand(reqId, args)
 	if err != nil {
 		log.Error().Msgf("Command execution failed: %v", err)
-		setRunningStatus(trId, "Failed")
+		SetRunningStatus(trId, "Failed")
 		return output, err
 	}
-	setRunningStatus(trId, "Success")
+	SetRunningStatus(trId, "Success")
 
 	// Return the result
 	return output, nil
 }
 
-// ExecuteTofuCommandAsync executes a given tofu CLI command with arguments asynchronously.
-func ExecuteTofuCommandAsync(trId string, reqId string, args ...string) (string, error) {
-	currentStatus, exists := getRunningStatus(trId)
+// ExecuteCommandAsync executes a given tofu CLI command with arguments asynchronously.
+func ExecuteCommandAsync(trId string, reqId string, args ...string) (string, error) {
+	currentStatus, exists := GetExecutionStatus(trId)
 	if exists && currentStatus == "Running" {
 		return "", errors.New("a previous request is still in progress")
 	}
-	setRunningStatus(trId, "Running")
+	SetRunningStatus(trId, "Running")
 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				setRunningStatus(trId, "Failed")
+				SetRunningStatus(trId, "Failed")
 			}
 		}()
 
@@ -82,10 +82,10 @@ func ExecuteTofuCommandAsync(trId string, reqId string, args ...string) (string,
 		_, err := executeCommand(reqId, args)
 		if err != nil {
 			log.Error().Msgf("Command execution failed: %v", err)
-			setRunningStatus(trId, "Failed")
+			SetRunningStatus(trId, "Failed")
 			return
 		}
-		setRunningStatus(trId, "Success")
+		SetRunningStatus(trId, "Success")
 	}()
 
 	res := fmt.Sprintf("Request (reqId: %s) in progress. Please use the status check API with the request ID.", reqId)
@@ -137,9 +137,9 @@ func executeCommand(reqId string, args []string) (string, error) {
 	return outputBuffer.String(), nil
 }
 
-// GetRunningStatus gets the running status for a given trId.
-func GetRunningStatus(trId, statusLogFile string) (string, error) {
-	status, exists := getRunningStatus(trId)
+// GetExcutionHistory gets the running status for a given trId.
+func GetExcutionHistory(trId, statusLogFile string) (string, error) {
+	status, exists := GetExecutionStatus(trId)
 	if !exists {
 		return "", errors.New("no request found")
 	}

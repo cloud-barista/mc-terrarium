@@ -2055,6 +2055,555 @@ const docTemplate = `{
                 }
             }
         },
+        "/tr/{trId}/vpn/aws-to-site": {
+            "get": {
+                "description": "Get AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] Resource Operations"
+                ],
+                "summary": "Get AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "refined",
+                            "raw"
+                        ],
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] Resource Operations"
+                ],
+                "summary": "Create AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create the AWS to site VPN",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateAwsToSiteVpnRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] Resource Operations"
+                ],
+                "summary": "Delete AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/apply": {
+            "post": {
+                "description": "Apply AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "Apply AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/destroy": {
+            "delete": {
+                "description": "Destroy AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "Destroy AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/emptyout": {
+            "delete": {
+                "description": "EmptyOut AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "EmptyOut AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/init": {
+            "post": {
+                "description": "Init AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "Init AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create the AWS to site VPN",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateAwsToSiteVpnRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/output": {
+            "get": {
+                "description": "Output AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "Output AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "refined",
+                            "raw"
+                        ],
+                        "type": "string",
+                        "default": "refined",
+                        "description": "Resource info by detail (refined, raw)",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tr/{trId}/vpn/aws-to-site/actions/plan": {
+            "post": {
+                "description": "Plan AWS to site VPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                ],
+                "summary": "Plan AWS to site VPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tr01",
+                        "description": "Terrarium ID",
+                        "name": "trId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tr/{trId}/vpn/gcp-aws": {
             "get": {
                 "description": "Get resource info to configure GCP to AWS VPN tunnels",
@@ -2991,6 +3540,95 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.AlibabaConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65532",
+                    "example": "65532"
+                },
+                "region": {
+                    "type": "string",
+                    "default": "ap-northeast-2",
+                    "example": "ap-northeast-2"
+                },
+                "vpc_id": {
+                    "type": "string"
+                },
+                "vswitch_id_1": {
+                    "type": "string"
+                },
+                "vswitch_id_2": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AwsConfig": {
+            "type": "object",
+            "properties": {
+                "region": {
+                    "type": "string",
+                    "default": "ap-northeast-2",
+                    "example": "ap-northeast-2"
+                },
+                "subnet_id": {
+                    "type": "string"
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AwsToSiteVpnConfig": {
+            "type": "object",
+            "properties": {
+                "aws": {
+                    "$ref": "#/definitions/model.AwsConfig"
+                },
+                "target_csp": {
+                    "$ref": "#/definitions/model.TargetCspConfig"
+                },
+                "terrarium_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AzureConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65531",
+                    "example": "65531"
+                },
+                "gateway_subnet_cidr": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "resource_group_name": {
+                    "type": "string"
+                },
+                "virtual_network_name": {
+                    "type": "string"
+                },
+                "vpn_sku": {
+                    "type": "string",
+                    "default": "VpnGw1AZ",
+                    "example": "VpnGw1AZ"
+                }
+            }
+        },
+        "model.CreateAwsToSiteVpnRequest": {
+            "type": "object",
+            "properties": {
+                "vpn_config": {
+                    "$ref": "#/definitions/model.AwsToSiteVpnConfig"
+                }
+            }
+        },
         "model.CreateInfracodeOfGcpAwsVpnRequest": {
             "type": "object",
             "properties": {
@@ -3039,6 +3677,48 @@ const docTemplate = `{
                 }
             }
         },
+        "model.GcpConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65530",
+                    "example": "65530"
+                },
+                "region": {
+                    "type": "string",
+                    "default": "asia-northeast3",
+                    "example": "asia-northeast3"
+                },
+                "vpc_network_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.IbmConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65533",
+                    "example": "65533"
+                },
+                "region": {
+                    "type": "string",
+                    "default": "au-syd",
+                    "example": "au-syd"
+                },
+                "subnet_id": {
+                    "type": "string"
+                },
+                "vpc_cidr": {
+                    "type": "string"
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Response": {
             "type": "object",
             "properties": {
@@ -3065,6 +3745,26 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "model.TargetCspConfig": {
+            "type": "object",
+            "properties": {
+                "alibaba": {
+                    "$ref": "#/definitions/model.AlibabaConfig"
+                },
+                "azure": {
+                    "$ref": "#/definitions/model.AzureConfig"
+                },
+                "gcp": {
+                    "$ref": "#/definitions/model.GcpConfig"
+                },
+                "ibm": {
+                    "$ref": "#/definitions/model.IbmConfig"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
