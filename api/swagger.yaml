@@ -1,5 +1,66 @@
 basePath: /terrarium
 definitions:
+  model.AlibabaConfig:
+    properties:
+      bgp_asn:
+        default: "65532"
+        example: "65532"
+        type: string
+      region:
+        default: ap-northeast-2
+        example: ap-northeast-2
+        type: string
+      vpc_id:
+        type: string
+      vswitch_id_1:
+        type: string
+      vswitch_id_2:
+        type: string
+    type: object
+  model.AwsConfig:
+    properties:
+      region:
+        default: ap-northeast-2
+        example: ap-northeast-2
+        type: string
+      subnet_id:
+        type: string
+      vpc_id:
+        type: string
+    type: object
+  model.AwsToSiteVpnConfig:
+    properties:
+      aws:
+        $ref: '#/definitions/model.AwsConfig'
+      target_csp:
+        $ref: '#/definitions/model.TargetCspConfig'
+      terrarium_id:
+        type: string
+    type: object
+  model.AzureConfig:
+    properties:
+      bgp_asn:
+        default: "65531"
+        example: "65531"
+        type: string
+      gateway_subnet_cidr:
+        type: string
+      region:
+        type: string
+      resource_group_name:
+        type: string
+      virtual_network_name:
+        type: string
+      vpn_sku:
+        default: VpnGw1AZ
+        example: VpnGw1AZ
+        type: string
+    type: object
+  model.CreateAwsToSiteVpnRequest:
+    properties:
+      vpn_config:
+        $ref: '#/definitions/model.AwsToSiteVpnConfig'
+    type: object
   model.CreateInfracodeOfGcpAwsVpnRequest:
     properties:
       tfVars:
@@ -30,6 +91,36 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsTestEnv'
     type: object
+  model.GcpConfig:
+    properties:
+      bgp_asn:
+        default: "65530"
+        example: "65530"
+        type: string
+      region:
+        default: asia-northeast3
+        example: asia-northeast3
+        type: string
+      vpc_network_name:
+        type: string
+    type: object
+  model.IbmConfig:
+    properties:
+      bgp_asn:
+        default: "65533"
+        example: "65533"
+        type: string
+      region:
+        default: au-syd
+        example: au-syd
+        type: string
+      subnet_id:
+        type: string
+      vpc_cidr:
+        type: string
+      vpc_id:
+        type: string
+    type: object
   model.Response:
     properties:
       details:
@@ -50,6 +141,19 @@ definitions:
       success:
         example: true
         type: boolean
+    type: object
+  model.TargetCspConfig:
+    properties:
+      alibaba:
+        $ref: '#/definitions/model.AlibabaConfig'
+      azure:
+        $ref: '#/definitions/model.AzureConfig'
+      gcp:
+        $ref: '#/definitions/model.GcpConfig'
+      ibm:
+        $ref: '#/definitions/model.IbmConfig'
+      type:
+        type: string
     type: object
   model.TerrariumInfo:
     properties:
@@ -1574,6 +1678,374 @@ paths:
       summary: Check the status of a specific request by its ID
       tags:
       - '[SQL Database] Operations'
+  /tr/{trId}/vpn/aws-to-site:
+    delete:
+      consumes:
+      - application/json
+      description: Delete AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Delete AWS to site VPN
+      tags:
+      - '[AWS to site VPN] Resource Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get AWS to site VPN
+      tags:
+      - '[AWS to site VPN] Resource Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters requied to create the AWS to site VPN
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAwsToSiteVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create AWS to site VPN
+      tags:
+      - '[AWS to site VPN] Resource Operations'
+  /tr/{trId}/vpn/aws-to-site/actions/apply:
+    post:
+      consumes:
+      - application/json
+      description: Apply AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Apply AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/vpn/aws-to-site/actions/destroy:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/vpn/aws-to-site/actions/emptyout:
+    delete:
+      consumes:
+      - application/json
+      description: EmptyOut AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: EmptyOut AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/vpn/aws-to-site/actions/init:
+    post:
+      consumes:
+      - application/json
+      description: Init AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters requied to create the AWS to site VPN
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAwsToSiteVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Init AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/vpn/aws-to-site/actions/output:
+    get:
+      consumes:
+      - application/json
+      description: Output AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Output AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/vpn/aws-to-site/actions/plan:
+    post:
+      consumes:
+      - application/json
+      description: Plan AWS to site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Plan AWS to site VPN
+      tags:
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
   /tr/{trId}/vpn/gcp-aws:
     delete:
       consumes:

@@ -6,7 +6,6 @@ resource "aws_customer_gateway" "ibm_gw" {
   tags = {
     Name = "${local.name_prefix}-ibm-side-gw-${count.index + 1}"
   }
-  bgp_asn    = var.vpn_config.target_csp.ibm.bgp_asn
   ip_address = count.index % 2 == 0 ? ibm_is_vpn_gateway.vpn_gw[0].public_ip_address : ibm_is_vpn_gateway.vpn_gw[0].public_ip_address2
   type       = "ipsec.1"
 }

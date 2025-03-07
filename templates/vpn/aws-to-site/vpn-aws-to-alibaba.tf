@@ -84,6 +84,15 @@ resource "alicloud_vpn_gateway" "vpn_gw" {
   bandwidth                    = "100" # 100Mbps (the value is 5, 10, 20, 50, 100, 200, 500, 1000)
   description                  = "VPN Gateway ${count.index + 1} for AWS to Alibaba Cloud connection"
   auto_propagate               = true
+
+  timeouts {
+    create = "30m"
+    delete = "30m"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Alibaba Cloud Customer Gateway (AWS VPN Gateway info required)
@@ -112,6 +121,20 @@ resource "alicloud_vpn_connection" "to_aws" {
   # auto_config_route  = true
   enable_tunnels_bgp = true
   effect_immediately = true
+
+  timeouts {
+    create = "30m"
+    delete = "30m"
+  }
+
+  depends_on = [
+    alicloud_vpn_gateway.vpn_gw,
+    alicloud_vpn_customer_gateway.aws_gw
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tunnel_options_specification {
     customer_gateway_id  = alicloud_vpn_customer_gateway.aws_gw[count.index * 2].id
@@ -193,4 +216,13 @@ resource "alicloud_route_entry" "vpn_routes" {
   destination_cidrblock = data.aws_vpc.existing.cidr_block
   nexthop_type          = "VpnGateway"
   nexthop_id            = alicloud_vpn_gateway.vpn_gw[0].id
+
+  depends_on = [
+    alicloud_vpn_connection.to_aws,
+    alicloud_vpn_gateway.vpn_gw
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
