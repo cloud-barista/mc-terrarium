@@ -1,18 +1,18 @@
 # vpc-azure.tf
 resource "azurerm_resource_group" "main" {
-  name     = "${var.environment}-rg"
+  name     = "${var.terrarium_id}-rg"
   location = "koreacentral"
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.environment}-vnet"
+  name                = "${var.terrarium_id}-vnet"
   address_space       = ["10.2.0.0/16"]
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 }
 
 resource "azurerm_subnet" "main" {
-  name                 = "${var.environment}-subnet"
+  name                 = "${var.terrarium_id}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.2.1.0/24"]
@@ -20,7 +20,7 @@ resource "azurerm_subnet" "main" {
 
 # Network Security Group
 resource "azurerm_network_security_group" "main" {
-  name                = "${var.environment}-nsg"
+  name                = "${var.terrarium_id}-nsg"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -63,7 +63,7 @@ resource "azurerm_network_security_group" "main" {
 
 # Public IP for Azure VM
 resource "azurerm_public_ip" "main" {
-  name                = "${var.environment}-pip"
+  name                = "${var.terrarium_id}-pip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Dynamic" # Changed from "Dynamic" to "Static"
@@ -71,7 +71,7 @@ resource "azurerm_public_ip" "main" {
 
 # Network Interface
 resource "azurerm_network_interface" "main" {
-  name                = "${var.environment}-nic"
+  name                = "${var.terrarium_id}-nic"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -85,7 +85,7 @@ resource "azurerm_network_interface" "main" {
 
 # Azure VM
 resource "azurerm_linux_virtual_machine" "main" {
-  name                = "${var.environment}-vm"
+  name                = "${var.terrarium_id}-vm"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   size                = "Standard_B1s"

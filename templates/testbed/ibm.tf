@@ -1,11 +1,11 @@
 # IBM VPC and related resources
 resource "ibm_is_vpc" "main" {
-  name = "${var.environment}-vpc"
+  name = "${var.terrarium_id}-vpc"
 }
 
 # Add address prefix to VPC, 
 resource "ibm_is_vpc_address_prefix" "main" {
-  name = "${var.environment}-addr-prefix"
+  name = "${var.terrarium_id}-addr-prefix"
   vpc  = ibm_is_vpc.main.id
   zone = "au-syd-1" # Sydney, Australia (Zones: au-syd-1, au-syd-2, au-syd-3)
   cidr = "10.4.0.0/16"
@@ -14,7 +14,7 @@ resource "ibm_is_vpc_address_prefix" "main" {
 resource "ibm_is_subnet" "main" {
   depends_on = [ibm_is_vpc_address_prefix.main]
 
-  name            = "${var.environment}-subnet"
+  name            = "${var.terrarium_id}-subnet"
   vpc             = ibm_is_vpc.main.id
   zone            = ibm_is_vpc_address_prefix.main.zone
   ipv4_cidr_block = "10.4.1.0/24"
@@ -22,7 +22,7 @@ resource "ibm_is_subnet" "main" {
 
 # Security group
 resource "ibm_is_security_group" "main" {
-  name = "${var.environment}-sg"
+  name = "${var.terrarium_id}-sg"
   vpc  = ibm_is_vpc.main.id
 }
 
@@ -68,7 +68,7 @@ resource "ibm_is_security_group_rule" "outbound" {
 
 # SSH Key
 resource "ibm_is_ssh_key" "main" {
-  name       = "${var.environment}-key"
+  name       = "${var.terrarium_id}-key"
   public_key = tls_private_key.ssh.public_key_openssh
 }
 
@@ -78,7 +78,7 @@ data "ibm_is_image" "ubuntu_22_04" {
 
 # Virtual Server Instance (VSI)
 resource "ibm_is_instance" "main" {
-  name    = "${var.environment}-vsi"
+  name    = "${var.terrarium_id}-vsi"
   vpc     = ibm_is_vpc.main.id
   zone    = ibm_is_vpc_address_prefix.main.zone # Use the same zone as subnet: au-syd-1
   keys    = [ibm_is_ssh_key.main.id]
@@ -93,6 +93,6 @@ resource "ibm_is_instance" "main" {
 
 # Floating IP for public access
 resource "ibm_is_floating_ip" "main" {
-  name   = "${var.environment}-fip"
+  name   = "${var.terrarium_id}-fip"
   target = ibm_is_instance.main.primary_network_interface[0].id
 }

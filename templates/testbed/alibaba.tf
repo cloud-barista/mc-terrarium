@@ -5,7 +5,7 @@ data "alicloud_zones" "available" {
 
 # Alibaba Cloud VPC
 resource "alicloud_vpc" "main" {
-  vpc_name   = "${var.environment}-vpc"
+  vpc_name   = "${var.terrarium_id}-vpc"
   cidr_block = "10.3.0.0/16"
 }
 
@@ -17,21 +17,21 @@ resource "alicloud_vpc" "main" {
 # resource "alicloud_vswitch" "main" {
 #   count = 2
 
-#   vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id}"
+#   vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id}"
 #   vpc_id       = alicloud_vpc.main.id
 #   cidr_block   = "10.3.${count + 1}.0/24"
 #   zone_id      = data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id
 # }
 
 resource "alicloud_vswitch" "main" {
-  vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id}"
+  vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id}"
   vpc_id       = alicloud_vpc.main.id
   cidr_block   = "10.3.1.0/24"
   zone_id      = data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id
 }
 
 resource "alicloud_vswitch" "secondary" {
-  vswitch_name = "${var.environment}-vswitch-${data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id}"
+  vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id}"
   vpc_id       = alicloud_vpc.main.id
   cidr_block   = "10.3.2.0/24"
   zone_id      = data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id
@@ -41,7 +41,7 @@ resource "alicloud_vswitch" "secondary" {
 # Route Table
 resource "alicloud_route_table" "main" {
   vpc_id           = alicloud_vpc.main.id
-  route_table_name = "${var.environment}-route-table"
+  route_table_name = "${var.terrarium_id}-route-table"
 }
 
 resource "alicloud_route_table_attachment" "main" {
@@ -59,7 +59,7 @@ resource "alicloud_security_group" "main" {
   # [NOTE] The following line will cause an error in the Terraform/OpenTofu language server.
   # It won't affect the actual Terraform deployment.
   # It will be resolved when the Terraform/OpenTofu language server is updated.
-  security_group_name = "${var.environment}-sg"
+  security_group_name = "${var.terrarium_id}-sg"
   vpc_id              = alicloud_vpc.main.id
 }
 
@@ -97,13 +97,13 @@ resource "alicloud_security_group_rule" "allow_traceroute" {
 
 # SSH Key Pair
 resource "alicloud_ecs_key_pair" "main" {
-  key_pair_name = "${var.environment}-key"
+  key_pair_name = "${var.terrarium_id}-key"
   public_key    = tls_private_key.ssh.public_key_openssh
 }
 
 # ECS Instance
 resource "alicloud_instance" "main" {
-  instance_name              = "${var.environment}-ecs"
+  instance_name              = "${var.terrarium_id}-ecs"
   instance_type              = "ecs.t6-c1m1.large"
   image_id                   = "ubuntu_22_04_x64_20G_alibase_20230515.vhd"
   system_disk_category       = "cloud_essd"
@@ -158,6 +158,6 @@ resource "alicloud_instance" "main" {
   )
 
   tags = {
-    Environment = var.environment
+    Environment = var.terrarium_id
   }
 }
