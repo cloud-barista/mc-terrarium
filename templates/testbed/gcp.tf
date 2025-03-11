@@ -1,11 +1,11 @@
 # vpc-gcp.tf
 resource "google_compute_network" "main" {
-  name                    = "${var.environment}-vpc"
+  name                    = "${var.terrarium_id}-vpc"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "main" {
-  name          = "${var.environment}-subnet"
+  name          = "${var.terrarium_id}-subnet"
   ip_cidr_range = "10.1.0.0/24"
   region        = "asia-northeast3"
   network       = google_compute_network.main.id
@@ -13,7 +13,7 @@ resource "google_compute_subnetwork" "main" {
 
 # GCP Firewall and Rules
 resource "google_compute_firewall" "main" {
-  name    = "${var.environment}-firewall"
+  name    = "${var.terrarium_id}-firewall"
   network = google_compute_network.main.name
 
   allow {
@@ -35,7 +35,7 @@ resource "google_compute_firewall" "main" {
 
 # GCP VM instance
 resource "google_compute_instance" "main" {
-  name         = "${var.environment}-vm"
+  name         = "${var.terrarium_id}-vm"
   machine_type = "e2-micro"
   zone         = "asia-northeast3-a"
 

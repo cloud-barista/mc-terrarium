@@ -86,11 +86,6 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsSqlDb'
     type: object
-  model.CreateInfracodeOfTestEnvRequest:
-    properties:
-      tfVars:
-        $ref: '#/definitions/model.TfVarsTestEnv'
-    type: object
   model.GcpConfig:
     properties:
       bgp_asn:
@@ -278,25 +273,6 @@ definitions:
         example: ""
         type: string
     type: object
-  model.TfVarsTestEnv:
-    properties:
-      aws-region:
-        default: ap-northeast-2
-        example: ap-northeast-2
-        type: string
-      azure-region:
-        default: koreacentral
-        example: koreacentral
-        type: string
-      azure-resource-group-name:
-        default: tr-rg-01
-        example: tr-rg-01
-        type: string
-      gcp-region:
-        default: asia-northeast3
-        example: asia-northeast3
-        type: string
-    type: object
 host: localhost:8055
 info:
   contact:
@@ -353,208 +329,6 @@ paths:
       summary: Check mc-terrarium server is ready
       tags:
       - '[System] Utility'
-  /test-env:
-    delete:
-      consumes:
-      - application/json
-      description: Destroy test environment
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Destroy test environment
-      tags:
-      - '[Test env] Test environment management'
-    get:
-      consumes:
-      - application/json
-      description: Get all resource info of test environment
-      parameters:
-      - default: refined
-        description: Resource info by detail (refined, raw)
-        in: query
-        name: detail
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Get all resource info of test environment
-      tags:
-      - '[Test env] Test environment management'
-    post:
-      consumes:
-      - application/json
-      description: Create test environment
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Create test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/env:
-    delete:
-      consumes:
-      - application/json
-      description: Clear the entire directory and configuration files
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Clear the entire directory and configuration files
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/infracode:
-    post:
-      consumes:
-      - application/json
-      description: Create the infracode to configure test environment
-      parameters:
-      - description: Parameters requied to create the infracode to configure test
-          environment
-        in: body
-        name: ParamsForInfracode
-        required: true
-        schema:
-          $ref: '#/definitions/model.CreateInfracodeOfTestEnvRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Create the infracode to configure test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/init:
-    post:
-      consumes:
-      - application/json
-      description: Initialize a multi-cloud terrarium for test environment
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Initialize a multi-cloud terrarium for test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/plan:
-    post:
-      consumes:
-      - application/json
-      description: Check the infracode and show changes of test environment
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Check the infracode and show changes of test environment
-      tags:
-      - '[Test env] Test environment management'
-  /test-env/request/{requestId}/status:
-    get:
-      consumes:
-      - application/json
-      description: Get the status of the request to configure test environment
-      parameters:
-      - description: Request ID
-        in: path
-        name: requestId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Get the status of the request to configure test environment
-      tags:
-      - '[Test env] Test environment management'
   /tofuVersion:
     get:
       consumes:
@@ -1678,6 +1452,362 @@ paths:
       summary: Check the status of a specific request by its ID
       tags:
       - '[SQL Database] Operations'
+  /tr/{trId}/testbed:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Delete the testbed
+      tags:
+      - '[Testbed] Resource Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get the testbed
+      tags:
+      - '[Testbed] Resource Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create the testbed
+      tags:
+      - '[Testbed] Resource Operations'
+  /tr/{trId}/testbed/actions/apply:
+    post:
+      consumes:
+      - application/json
+      description: Apply the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Apply the testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/testbed/actions/destroy:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy the testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/testbed/actions/emptyout:
+    delete:
+      consumes:
+      - application/json
+      description: EmptyOut the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: EmptyOut the testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/testbed/actions/init:
+    post:
+      consumes:
+      - application/json
+      description: Init testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Init testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/testbed/actions/output:
+    get:
+      consumes:
+      - application/json
+      description: Output the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Output the testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+  /tr/{trId}/testbed/actions/plan:
+    post:
+      consumes:
+      - application/json
+      description: Plan the testbed
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Plan the testbed
+      tags:
+      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
   /tr/{trId}/vpn/aws-to-site:
     delete:
       consumes:

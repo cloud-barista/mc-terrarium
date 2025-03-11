@@ -5,8 +5,8 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 
   tags = {
-    Name        = "${var.environment}-vpc"
-    Environment = var.environment
+    Name        = "${var.terrarium_id}-vpc"
+    Environment = var.terrarium_id
   }
 }
 
@@ -17,8 +17,8 @@ resource "aws_subnet" "main" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name        = "${var.environment}-subnet"
-    Environment = var.environment
+    Name        = "${var.terrarium_id}-subnet"
+    Environment = var.terrarium_id
   }
 }
 
@@ -26,8 +26,8 @@ resource "aws_route_table" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name        = "${var.environment}-rtb"
-    Environment = var.environment
+    Name        = "${var.terrarium_id}-rtb"
+    Environment = var.terrarium_id
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-igw"
+    Name = "${var.terrarium_id}-igw"
   }
 }
 
@@ -54,13 +54,13 @@ resource "aws_route" "internet_gateway" {
 
 # AWS Key Pair
 resource "aws_key_pair" "main" {
-  key_name   = "${var.environment}-key"
+  key_name   = "${var.terrarium_id}-key"
   public_key = tls_private_key.ssh.public_key_openssh
 }
 
 # AWS Security Group
 resource "aws_security_group" "main" {
-  name        = "${var.environment}-sg"
+  name        = "${var.terrarium_id}-sg"
   description = "Allow SSH and ICMP"
   vpc_id      = aws_vpc.main.id
 
@@ -93,7 +93,7 @@ resource "aws_security_group" "main" {
   }
 
   tags = {
-    Name = "${var.environment}-sg"
+    Name = "${var.terrarium_id}-sg"
   }
 }
 
@@ -110,6 +110,6 @@ resource "aws_instance" "main" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "${var.environment}-ec2"
+    Name = "${var.terrarium_id}-ec2"
   }
 }

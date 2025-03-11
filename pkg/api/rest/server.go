@@ -184,6 +184,34 @@ func RunServer(port string) {
 	gTr.GET("/tr/:trId", handler.ReadTerrarium)
 	gTr.DELETE("/tr/:trId", handler.EraseTerrarium)
 
+	// [Testbed] Resource operations (high-level APIs for resource-centric operations)
+	gTr.POST("/tr/:trId/testbed", handler.CreateTestbed)
+	gTr.GET("/tr/:trId/testbed", handler.GetTestbed)
+	// gTr.UPDATE("/tr/:trId/testbed", handler.UpdateTestbed)
+	gTr.DELETE("/tr/:trId/testbed", handler.DeleteTestbed)
+
+	// [Testbed] Tofu Actions (low-level APIs for advanced control)
+	gTr.POST("/tr/:trId/testbed/actions/init", handler.InitTestbed)
+	gTr.POST("/tr/:trId/testbed/actions/plan", handler.PlanTestbed)
+	gTr.POST("/tr/:trId/testbed/actions/apply", handler.ApplyTestbed)
+	gTr.DELETE("/tr/:trId/testbed/actions/destroy", handler.DestroyTestbed)
+	gTr.GET("/tr/:trId/testbed/actions/output", handler.OutputTestbed)
+	gTr.DELETE("/tr/:trId/testbed/actions/emptyout", handler.EmptyOutTestbed)
+
+	// [AWS-to-site VPN] Resource operations (high-level APIs for resource-centric operations)
+	gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetAwsToSiteVpn)
+	// gTr.UPDATE("/tr/:trId/vpn/aws-to-site", handler.UpdateAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DeleteAwsToSiteVpn)
+
+	// [AWS-to-site VPN] Tofu Actions (low-level APIs for advanced control)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/init", handler.InitAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/plan", handler.PlanAwsToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/apply", handler.ApplyAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/destroy", handler.DestroyAwsToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/aws-to-site/actions/output", handler.OutputAwsToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/emptyout", handler.EmptyOutAwsToSiteVpn)
+
 	// VPN APIs
 	// GCP and AWS
 	gTr.POST("/tr/:trId/vpn/gcp-aws/env", handler.InitEnvForGcpAwsVpn)	// 
@@ -204,20 +232,6 @@ func RunServer(port string) {
 	gTr.POST("/tr/:trId/vpn/gcp-azure", handler.CreateGcpAzureVpn)
 	gTr.DELETE("/tr/:trId/vpn/gcp-azure", handler.DestroyGcpAzureVpn)
 	gTr.GET("/tr/:trId/vpn/gcp-azure/request/:requestId", handler.GetRequestStatusOfGcpAzureVpn)
-
-	// [AWS-to-site VPN] Resource operations (high-level APIs for resource-centric operations)
-	gTr.POST("/tr/:trId/vpn/aws-to-site", handler.CreateAwsToSiteVpn)
-	gTr.GET("/tr/:trId/vpn/aws-to-site", handler.GetAwsToSiteVpn)
-	// gTr.UPDATE("/tr/:trId/vpn/aws-to-site", handler.UpdateAwsToSiteVpn)
-	gTr.DELETE("/tr/:trId/vpn/aws-to-site", handler.DeleteAwsToSiteVpn)
-
-	// [AWS-to-site VPN] Tofu Actions (low-level APIs for advanced control)
-	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/init", handler.InitAwsToSiteVpn)
-	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/plan", handler.PlanAwsToSiteVpn)
-	gTr.POST("/tr/:trId/vpn/aws-to-site/actions/apply", handler.ApplyAwsToSiteVpn)
-	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/destroy", handler.DestroyAwsToSiteVpn)
-	gTr.GET("/tr/:trId/vpn/aws-to-site/actions/output", handler.OutputAwsToSiteVpn)
-	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/emptyout", handler.EmptyOutAwsToSiteVpn)
 
 	// SQL database APIs
 	gTr.POST("/tr/:trId/sql-db/env", handler.InitEnvForSqlDb)
@@ -248,16 +262,6 @@ func RunServer(port string) {
 	gTr.GET("/tr/:trId/message-broker", handler.GetResourceInfoOfMessageBroker)
 	gTr.DELETE("/tr/:trId/message-broker", handler.DestroyMessageBroker)
 	gTr.GET("/tr/:trId/message-broker/request/:requestId", handler.GetRequestStatusOfMessageBroker)
-
-	// Test environment APIs
-	gTr.POST("/test-env/init", handler.InitTerrariumForTestEnv)
-	gTr.DELETE("/test-env/env", handler.ClearTestEnv)
-	gTr.GET("/test-env", handler.GetResouceInfoOfTestEnv)
-	gTr.POST("/test-env/infracode", handler.CreateInfracodeOfTestEnv)
-	gTr.POST("/test-env/plan", handler.CheckInfracodeOfTestEnv)
-	gTr.POST("/test-env", handler.CreateTestEnv)
-	gTr.DELETE("/test-env", handler.DestroyTestEnv)
-	gTr.GET("/test-env/request/:requestId/status", handler.GetRequestStatusOfTestEnv)
 
 	selfEndpoint := config.Terrarium.Self.Endpoint
 	apidashboard := " http://" + selfEndpoint + "/terrarium/api"

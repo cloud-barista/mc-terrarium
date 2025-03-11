@@ -1,6 +1,6 @@
 # outputs.tf
-output "network_details" {
-  description = "Network resource details"
+output "testbed_info" {
+  description = "Testbed resource details"
   value = {
     aws = {
       vpc_id      = aws_vpc.main.id
