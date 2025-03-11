@@ -1,15 +1,28 @@
 # Multi-Cloud Terrarium
 
-Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment (i.e., infrastructure terrarium) and features to enrich multi-cloud infrastructure.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3ab8720f-221d-45a6-8d7a-73222c98edb1" width="50%" height="50%" >
+</p>
+
+<p align="center">
+  <strong>🚀 Powered by OpenTofu</strong><br>
+  <strong>🤝 A Collaboration Between Cloud-Barista & OpenTofu</strong>
+</p>
+
+**Multi-Cloud Terrarium (mc-terrarium)** is an open-source project designed to provide an environment—an **infrastructure terrarium**—that enhances multi-cloud infrastructure management.
+
+## 🌟 Features & Components
 
 The infrastructure terrarium consists of:
 
-- <ins>information of cloud resources/services</ins>, which is created and managed by Cloud-Barista,
-- <ins>TF configuration files</ins>, which specify resources/services to be add, and
-- <ins>OpenTofu</ins>, which create and manage resources on cloud platforms.
-- and so on.
+- **Multi-Cloud Infrastructure Metadata**: Managed by Cloud-Barista to provide a unified view of multi-cloud environments.
+- **Infrastructure Enrichment with OpenTofu**: Extends Cloud-Barista’s capabilities by provisioning additional resources and services beyond its native support.
+- **Infrastructure Code (.tf)**: Defines and structures infrastructure components and enrichments.
+- **Other Evolving Components**: Continuously enhancing multi-cloud infrastructure capabilities.
 
-mc-terrarium currently provides features for multi-cloud network, such as site-to-site VPN. This will gradually evolve to enable you to build the multi-cloud infrastructure you need.
+## 🌍 Multi-Cloud Networking & Beyond
+
+Currently, mc-terrarium provides **multi-cloud networking** features, such as **site-to-site VPN** setup. It will continue to evolve, enabling you to seamlessly build and manage the multi-cloud infrastructure you need.
 
 ## Prerequisites
 
@@ -68,18 +81,3 @@ You can find the default username and password to access to API dashboard when t
 URL: http://localhost:8055/terrarium/swagger/index.html
 
 Note - You can find API documentation on Swagger UI.
-
----
-
-## Appendix
-
-**The example of API call sequence**
-
-1. POST /tr/{trId}/vpn/gcp-azure/env
-2. POST /tr/{trId}/vpn/gcp-azure/infracode
-3. POST /tr/{trId}/vpn/gcp-azure/plan
-4. POST /tr/{trId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
-5. GET /tr/{trId}/vpn/gcp-azure/request/{requestId}/status (Check the above API status)
-6. GET /tr/{trId}/vpn/gcp-azure (Get resource info with detail (refined, raw))
-7. DELETE /tr/{trId}/vpn/gcp-azure (Time-consuming API, return a request ID and be processed asynchronously)
-8. DELETE /tr/{trId}/vpn/gcp-azure/env
