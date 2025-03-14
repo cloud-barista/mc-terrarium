@@ -29,6 +29,10 @@ terraform {
       source  = "IBM-Cloud/ibm"
       version = "~>1.76.0"
     }
+    tencentcloud = {
+      source  = "tencentcloudstack/tencentcloud"
+      version = "~>1.81.173"
+    }
   }
 }
 
@@ -61,6 +65,11 @@ provider "alicloud" {
 # Configure the IBM Cloud Provider
 provider "ibm" {
   region = "au-syd" # Sydney region
+}
+
+# Configure the Tencent Cloud Provider
+provider "tencentcloud" {
+  region = "ap-seoul" # Seoul region
 }
 
 # SSH key

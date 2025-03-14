@@ -5,25 +5,29 @@
 1. Install OpenTofu
 2. Apply the OpenTofu configuration
 
-## Network Details required to build AWS-Site VPN
+## Testbed info
+
+> [!NOTE]
+> Network info of testbed info is required to build AWS-Site VPN.
 
 To view the network configuration details for each CSP:
 
 ```shell
-# Show all network details
-tofu output network_details
+# Show tesbed details
+tofu output testbed_info
 ```
 
 ```shell
 # Show specific CSP details
-tofu output -json network_details | jq .aws
-tofu output -json network_details | jq .azure
-tofu output -json network_details | jq .gcp
-tofu output -json network_details | jq .alibaba
-tofu output -json network_details | jq .ibm
+tofu output -json testbed_info | jq .aws
+tofu output -json testbed_info | jq .azure
+tofu output -json testbed_info | jq .gcp
+tofu output -json testbed_info | jq .alibaba
+tofu output -json testbed_info | jq .tencent
+tofu output -json testbed_info | jq .ibm
 
 # Example: Get Azure gateway subnet CIDR
-tofu output -json network_details | jq -r .azure.gateway_subnet_cidr
+tofu output -json testbed_info | jq -r .azure.gateway_subnet_cidr
 ```
 
 ## Setup SSH Access
@@ -63,6 +67,12 @@ tofu output -json ssh_info | jq -r .azure.command
 tofu output -json ssh_info | jq -r .alibaba.command
 ```
 
+### Tencent Instance
+
+```shell
+tofu output -json ssh_info | jq -r .tencent.command
+```
+
 ### IBM Instance
 
 ```shell
@@ -73,11 +83,12 @@ tofu output -json ssh_info | jq -r .ibm.command
 
 ```shell
 # Show specific CSP details
-tofu output -json network_details | jq .aws
-tofu output -json network_details | jq .azure
-tofu output -json network_details | jq .gcp
-tofu output -json network_details | jq .alibaba
-tofu output -json network_details | jq .ibm
+tofu output -json testbed_info | jq .aws
+tofu output -json testbed_info | jq .azure
+tofu output -json testbed_info | jq .gcp
+tofu output -json testbed_info | jq .alibaba
+tofu output -json testbed_info | jq .tencent
+tofu output -json testbed_info | jq .ibm
 
 # Save the private key to a file
 tofu output -json ssh_info | jq -r .private_key > private_key.pem
@@ -88,6 +99,7 @@ tofu output -json ssh_info | jq -r .aws.command
 tofu output -json ssh_info | jq -r .azure.command
 tofu output -json ssh_info | jq -r .gcp.command
 tofu output -json ssh_info | jq -r .alibaba.command
+tofu output -json ssh_info | jq -r .tencent.command
 tofu output -json ssh_info | jq -r .ibm.command
 ```
 
