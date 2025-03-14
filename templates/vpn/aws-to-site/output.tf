@@ -47,6 +47,15 @@ output "vpn_info" {
             ip_address    = cgw.ip_address
             bgp_asn       = cgw.bgp_asn
           }
+        ] :
+        local.is_tencent ? [
+          for i, cgw in aws_customer_gateway.tencent_gw : {
+            resource_type = "aws_customer_gateway"
+            name          = cgw.tags.Name
+            id            = cgw.id
+            ip_address    = cgw.ip_address
+            bgp_asn       = cgw.bgp_asn
+          }
         ] : []
       )
       vpn_connections = (
@@ -79,6 +88,15 @@ output "vpn_info" {
         ] :
         local.is_ibm ? [
           for i, vpn in aws_vpn_connection.to_ibm : {
+            resource_type   = "aws_vpn_connection"
+            name            = vpn.tags.Name
+            id              = vpn.id
+            tunnel1_address = vpn.tunnel1_address
+            tunnel2_address = vpn.tunnel2_address
+          }
+        ] :
+        local.is_tencent ? [
+          for i, vpn in aws_vpn_connection.to_tencent : {
             resource_type   = "aws_vpn_connection"
             name            = vpn.tags.Name
             id              = vpn.id
@@ -224,6 +242,33 @@ output "vpn_info" {
             peer_cidrs    = conn.peer[0].cidrs
           }
         ], [])
+      } : null,
+      local.is_tencent ? {
+        type = var.vpn_config.target_csp.type
+        vpn_gateway = try({
+          resource_type = "tencentcloud_vpn_gateway"
+          name          = tencentcloud_vpn_gateway.vpn_gw[0].name
+          id            = tencentcloud_vpn_gateway.vpn_gw[0].id
+          public_ips    = tencentcloud_vpn_gateway.vpn_gw[0].public_ip_address
+        }, null)
+        customer_gateways = try([
+          for cgw in tencentcloud_vpn_customer_gateway.aws_gw : {
+            name              = cgw.name
+            id                = cgw.id
+            public_ip_address = cgw.public_ip_address
+          }
+        ], [])
+        vpn_connections = try([
+          for conn in tencentcloud_vpn_connection.to_aws : {
+            name                = conn.name
+            id                  = conn.id
+            vpc_cidr_block      = conn.vpc_cidr_block
+            customer_cidr_block = conn.customer_gateway_cidr_block
+            local_bgp_ip        = conn.bgp_config.local_bgp_ip
+            remote_bgp_ip       = conn.bgp_config.remote_bgp_ip
+            tunnel_cidr         = conn.bgp_config.tunnel_cidr
+          }
+        ], [])
       } : null
     )
   }
@@ -254,6 +299,11 @@ output "vpn_summary" {
       local.is_ibm ? {
         vpn_gateways    = length(ibm_is_vpn_gateway.vpn_gw)
         vpn_connections = length(ibm_is_vpn_gateway_connection.to_aws)
+      } :
+      local.is_tencent ? {
+        vpn_gateways      = length(tencentcloud_vpn_gateway.vpn_gw)
+        customer_gateways = length(tencentcloud_vpn_customer_gateway.aws_gw)
+        vpn_connections   = length(tencentcloud_vpn_connection.to_aws)
       } : null
     )
   }
