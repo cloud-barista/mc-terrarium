@@ -37,20 +37,20 @@ func IssueID(trInfo model.TerrariumInfo) error {
 }
 
 // GetInfo reads the terrarium info
-func GetInfo(trId string) (model.TerrariumInfo, error) {
+func GetInfo(trId string) (model.TerrariumInfo, bool, error) {
 
 	ret := model.TerrariumInfo{}
 	value, exists := lkvstore.Get("/tr/" + trId)
 	if !exists {
-		return ret, fmt.Errorf("no terrarium (trId: %s)", trId)
+		return ret, exists, fmt.Errorf("no terrarium (trId: %s)", trId)
 	}
 
 	err := json.Unmarshal([]byte(value), &ret)
 	if err != nil {
-		return ret, fmt.Errorf("failed to unmarshal terrarium info: %w", err)
+		return ret, exists, fmt.Errorf("failed to unmarshal terrarium info: %w", err)
 	}
 
-	return ret, nil
+	return ret, exists, nil
 }
 
 
@@ -98,18 +98,23 @@ func DeleteInfo(trId string) error {
 }
 
 // GetEnrichments gets the terrarium enrichments from the terrarium info
-func GetEnrichments(trId string) (string, error) {
-	trInfo, err := GetInfo(trId)
+func GetEnrichments(trId string) (string, bool, error) {
+	trInfo, exist, err := GetInfo(trId)
+	if !exist {
+		log.Error().Msg("no terrarium")
+		return "", exist, errors.New("no terrarium")
+	}
+	
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get terrarium info")
-		return "", err
+		return "", exist, err
 	}
-	return trInfo.Enrichments, nil
+	return trInfo.Enrichments, exist, nil
 }
 
 // GetTerrariumEnvPath gets the terrarium environment path (i.e., a working directory)
 func GetTerrariumEnvPath(trId string) (string, error) {
-	enrichments, err := GetEnrichments(trId)
+	enrichments, _, err := GetEnrichments(trId)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get enrichments")
 		return "", err
@@ -130,11 +135,21 @@ func GetTerrariumEnvPath(trId string) (string, error) {
 
 // SetEnrichments puts the terrarium enrichments to the terrarium info
 func SetEnrichments(trId, enrichments string) error {
-	trInfo, err := GetInfo(trId)
+	trInfo, exist, err := GetInfo(trId)
+
+	if !exist {
+		log.Error().Msg("no terrarium")
+		return errors.New("no terrarium")
+	}
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get terrarium info")
 		return err
 	}
+	if trInfo.Enrichments != "" {
+		log.Error().Msg("enrichments already exist")
+		return errors.New("enrichments already exist")
+	}
+
 	trInfo.Enrichments = enrichments
 	err = UpdateInfo(trInfo)
 	if err != nil {

@@ -103,7 +103,7 @@ func InitEnvForMessageBroker(c echo.Context) error {
 	enrichments := "message-broker"
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -216,7 +216,7 @@ func ClearEnvOfMessageBroker(c echo.Context) error {
 	projectRoot := config.Terrarium.Root
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -299,7 +299,7 @@ func CreateInfracodeForMessageBroker(c echo.Context) error {
 	projectRoot := config.Terrarium.Root
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -384,7 +384,7 @@ func CheckInfracodeForMessageBroker(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -459,7 +459,7 @@ func CreateMessageBroker(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -582,7 +582,7 @@ func GetResourceInfoOfMessageBroker(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -731,7 +731,7 @@ func DestroyMessageBroker(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -814,7 +814,7 @@ func GetRequestStatusOfMessageBroker(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())

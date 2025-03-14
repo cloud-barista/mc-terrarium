@@ -100,10 +100,10 @@ func Get(key string) (string, bool) {
 	value, ok := lkvstore.Load(key)
 	if !ok {
 		log.Debug().Msgf("Get key: %s, value: %v", key, nil)
-		return "", false
+		return "", ok
 	}
 
-	return value.(string), true
+	return value.(string), ok
 }
 
 // GetWithPrefix returns the values for a given key prefix.

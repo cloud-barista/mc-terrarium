@@ -66,7 +66,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	enrichments := "vpn/gcp-aws"
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _,err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())

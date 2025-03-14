@@ -92,7 +92,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 	enrichments := "sql-db"
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -205,7 +205,7 @@ func ClearEnvOfSqlDb(c echo.Context) error {
 	projectRoot := config.Terrarium.Root
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -288,7 +288,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 	projectRoot := config.Terrarium.Root
 
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -373,7 +373,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -448,7 +448,7 @@ func CreateSqlDb(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -571,7 +571,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -720,7 +720,7 @@ func DestroySqlDb(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -803,7 +803,7 @@ func GetRequestStatusOfSqlDb(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
