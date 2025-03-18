@@ -66,7 +66,20 @@ func initTestbed(c echo.Context) (model.Response, error) {
 	// Set the enrichments
 	enrichments := "testbed"
 
-	err := terrarium.SetEnrichments(trId, enrichments)
+	// Check if the terrarium is already used for another purpose
+	trInfo, exist, err := terrarium.GetInfo(trId)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return emptyRes, err
+	}	
+
+	if exist && trInfo.Enrichments != enrichments{
+		err := fmt.Errorf("the terrarium (trId: %s) is already used for another purpose", trId)
+		log.Warn().Msg(err.Error())
+		return emptyRes, err
+	}
+
+	err = terrarium.SetEnrichments(trId, enrichments)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err

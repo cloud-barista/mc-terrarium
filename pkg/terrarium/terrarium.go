@@ -145,10 +145,6 @@ func SetEnrichments(trId, enrichments string) error {
 		log.Error().Err(err).Msg("failed to get terrarium info")
 		return err
 	}
-	if trInfo.Enrichments != "" {
-		log.Error().Msg("enrichments already exist")
-		return errors.New("enrichments already exist")
-	}
 
 	trInfo.Enrichments = enrichments
 	err = UpdateInfo(trInfo)
