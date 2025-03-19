@@ -3,31 +3,34 @@ data "alicloud_zones" "available" {
   available_resource_creation = "VSwitch"
 }
 
+# Get available instance types for more flexibility
+data "alicloud_instance_types" "available" {
+  cpu_core_count       = 2
+  memory_size          = 8
+  availability_zone    = data.alicloud_zones.available.zones[0].id
+  instance_type_family = "ecs.g7" # Try G7 generation first
+}
+
+# Fallback instance types if g7 not available
+data "alicloud_instance_types" "fallback" {
+  cpu_core_count    = 2
+  memory_size       = 4
+  availability_zone = data.alicloud_zones.available.zones[0].id
+  # No family filter to get all available types
+}
+
 # Alibaba Cloud VPC
 resource "alicloud_vpc" "main" {
   vpc_name   = "${var.terrarium_id}-vpc"
   cidr_block = "10.3.0.0/16"
 }
 
-# zones = {
-#   count = length(data.alicloud_zones.available.zones)
-#   ids   = data.alicloud_zones.available.zones[*].id
-# }
-
-# resource "alicloud_vswitch" "main" {
-#   count = 2
-
-#   vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id}"
-#   vpc_id       = alicloud_vpc.main.id
-#   cidr_block   = "10.3.${count + 1}.0/24"
-#   zone_id      = data.alicloud_zones.available.zones[count.index % length(data.alicloud_zones.available.zones)].id
-# }
-
+# Create subnet in the first available zone
 resource "alicloud_vswitch" "main" {
-  vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id}"
+  vswitch_name = "${var.terrarium_id}-vswitch-${data.alicloud_zones.available.zones[0].id}"
   vpc_id       = alicloud_vpc.main.id
   cidr_block   = "10.3.1.0/24"
-  zone_id      = data.alicloud_zones.available.zones[0 % length(data.alicloud_zones.available.zones)].id
+  zone_id      = data.alicloud_zones.available.zones[0].id
 }
 
 resource "alicloud_vswitch" "secondary" {
@@ -36,7 +39,6 @@ resource "alicloud_vswitch" "secondary" {
   cidr_block   = "10.3.2.0/24"
   zone_id      = data.alicloud_zones.available.zones[1 % length(data.alicloud_zones.available.zones)].id
 }
-
 
 # Route Table
 resource "alicloud_route_table" "main" {
@@ -101,10 +103,10 @@ resource "alicloud_ecs_key_pair" "main" {
   public_key    = tls_private_key.ssh.public_key_openssh
 }
 
-# ECS Instance
+# ECS Instance with dynamic instance type
 resource "alicloud_instance" "main" {
   instance_name              = "${var.terrarium_id}-ecs"
-  instance_type              = "ecs.t6-c1m1.large"
+  instance_type              = length(data.alicloud_instance_types.available.instance_types) > 0 ? data.alicloud_instance_types.available.instance_types[0].id : data.alicloud_instance_types.fallback.instance_types[0].id
   image_id                   = "ubuntu_22_04_x64_20G_alibase_20230515.vhd"
   system_disk_category       = "cloud_essd"
   system_disk_size           = 20
@@ -112,6 +114,10 @@ resource "alicloud_instance" "main" {
   vswitch_id                 = alicloud_vswitch.main.id
   internet_max_bandwidth_out = 5
   key_name                   = alicloud_ecs_key_pair.main.key_pair_name
+
+  # Use spot instance for better availability and lower cost
+  spot_strategy = "SpotAsPriceGo"
+  spot_duration = 1
 
   user_data = base64encode(<<-EOF
               #!/bin/bash

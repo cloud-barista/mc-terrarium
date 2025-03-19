@@ -1,6 +1,7 @@
 module github.com/cloud-barista/mc-terrarium
 
-go 1.21.4
+go 1.23.0
+
 toolchain go1.23.7
 
 require (

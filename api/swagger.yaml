@@ -147,7 +147,24 @@ definitions:
         $ref: '#/definitions/model.GcpConfig'
       ibm:
         $ref: '#/definitions/model.IbmConfig'
+      tencent:
+        $ref: '#/definitions/model.TencentConfig'
       type:
+        type: string
+    type: object
+  model.TencentConfig:
+    properties:
+      bgp_asn:
+        default: "65534"
+        example: "65534"
+        type: string
+      region:
+        default: ap-seoul
+        example: ap-seoul
+        type: string
+      subnet_id:
+        type: string
+      vpc_id:
         type: string
     type: object
   model.TerrariumInfo:

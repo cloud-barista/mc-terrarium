@@ -67,10 +67,15 @@ func IssueTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, exist, err := terrarium.GetInfo(trId)
+	if !exist {
+		text := fmt.Errorf("no terrarium with the given ID (trId: %s)", trId)
+		res := model.Response{Success: true, Message: text.Error()}
+		return c.JSON(http.StatusBadRequest, res)
+	}
 	if err != nil {
-		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
-		res := model.Response{Success: true, Message: text}
+		text := fmt.Errorf("failed to get the terrarium information (trId: %s) - %w)", trId, err)
+		res := model.Response{Success: true, Message: text.Error()}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -113,10 +118,15 @@ func ReadTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	trInfo, err := terrarium.GetInfo(trId)
+	trInfo, exist, err := terrarium.GetInfo(trId)
+	if !exist {
+		text := fmt.Errorf("no terrarium with the given ID (trId: %s)", trId)
+		res := model.Response{Success: true, Message: text.Error()}
+		return c.JSON(http.StatusBadRequest, res)
+	}
 	if err != nil {
-		text := fmt.Sprintf("no terrarium with the given ID (trId: %s)", trId)
-		res := model.Response{Success: true, Message: text}
+		text := fmt.Errorf("failed to get the terrarium information (trId: %s) - %w", trId, err)
+		res := model.Response{Success: true, Message: text.Error()}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
@@ -147,8 +157,8 @@ func EraseTerrarium(c echo.Context) error {
 	// Check if the working directory exists
 	workingDir := projectRoot + "/.terrarium/" + trId
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
-		text := fmt.Sprintf("not exist terrarium (id: %v)", trId)
-		res := model.Response{Success: false, Message: text}
+		text := fmt.Errorf("not exist terrarium (id: %v) - %w", trId, err)
+		res := model.Response{Success: false, Message: text.Error()}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 

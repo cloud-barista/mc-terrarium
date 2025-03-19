@@ -41,13 +41,14 @@ type IbmConfig struct {
 	BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
 }
 
-// // TencentConfig represents Tencent Cloud specific VPN configuration
-// // Currently commented out in the original definition
-// type TencentConfig struct {
-// 	Region  string `json:"region"`
-// 	VpcId   string `json:"vpc_id"`
-// 	BgpAsn  string `json:"bgp_asn"`
-// }
+// TencentConfig represents Tencent Cloud specific VPN configuration
+// Currently commented out in the original definition
+type TencentConfig struct {
+	Region   string `json:"region" default:"ap-seoul" example:"ap-seoul"`
+	VpcId    string `json:"vpc_id"`
+	SubnetId string `json:"subnet_id"`
+	BgpAsn   string `json:"bgp_asn" default:"65534" example:"65534"`
+}
 
 // AwsConfig represents AWS specific VPN configuration
 type AwsConfig struct {
@@ -63,7 +64,7 @@ type TargetCspConfig struct {
 	Azure    *AzureConfig   `json:"azure,omitempty"`
 	Alibaba  *AlibabaConfig `json:"alibaba,omitempty"`
 	Ibm      *IbmConfig     `json:"ibm,omitempty"`
-	// Tencent  *TencentConfig `json:"tencent,omitempty"`
+	Tencent  *TencentConfig `json:"tencent,omitempty"`
 }
 
 // AwsToSiteVpnConfig represents the main VPN configuration structure
@@ -114,7 +115,7 @@ func validateTargetCspConfig(targetCsp TargetCspConfig) error {
 		"azure":   true,
 		"alibaba": true,
 		"ibm":     true,
-		// "tencent": true,
+		"tencent": true,
 	}
 
 	if !validTypes[targetCsp.Type] {
@@ -151,13 +152,13 @@ func validateTargetCspConfig(targetCsp TargetCspConfig) error {
 		if err := validateIbmConfig(*targetCsp.Ibm); err != nil {
 			return err
 		}
-	// case "tencent":
-	// 	if targetCsp.Tencent == nil {
-	// 		return fmt.Errorf("tencent configuration is required when target_csp.type is 'tencent'")
-	// 	}
-	// 	if err := validateTencentConfig(*targetCsp.Tencent); err != nil {
-	// 		return err
-	// 	}
+	case "tencent":
+		if targetCsp.Tencent == nil {
+			return fmt.Errorf("tencent configuration is required when target_csp.type is 'tencent'")
+		}
+		if err := validateTencentConfig(*targetCsp.Tencent); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -216,19 +217,19 @@ func validateIbmConfig(ibm IbmConfig) error {
 	return nil
 }
 
-// // validateTencentConfig validates Tencent Cloud configuration
-// func validateTencentConfig(tencent TencentConfig) error {
-// 	if tencent.Region == "" {
-// 		return fmt.Errorf("tencent.region is required")
-// 	}
-// 	if tencent.VpcId == "" {
-// 		return fmt.Errorf("tencent.vpc_id is required")
-// 	}
-// 	if tencent.BgpAsn == "" {
-// 		return fmt.Errorf("tencent.bgp_asn is required")
-// 	}
-// 	return nil
-// }
+// validateTencentConfig validates Tencent Cloud configuration
+func validateTencentConfig(tencent TencentConfig) error {
+	if tencent.Region == "" {
+		return fmt.Errorf("tencent.region is required")
+	}
+	if tencent.VpcId == "" {
+		return fmt.Errorf("tencent.vpc_id is required")
+	}
+	if tencent.BgpAsn == "" {
+		return fmt.Errorf("tencent.bgp_asn is required")
+	}
+	return nil
+}
 
 
 

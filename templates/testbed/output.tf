@@ -34,6 +34,12 @@ output "testbed_info" {
       subnet_id   = ibm_is_subnet.main.id
       subnet_cidr = ibm_is_subnet.main.ipv4_cidr_block
     }
+    tencent = {
+      vpc_id      = tencentcloud_vpc.main.id
+      vpc_cidr    = tencentcloud_vpc.main.cidr_block
+      subnet_id   = tencentcloud_subnet.main.id
+      subnet_cidr = tencentcloud_subnet.main.cidr_block
+    }
   }
 }
 
@@ -61,10 +67,10 @@ output "ssh_info" {
       command    = "ssh -i private_key.pem ubuntu@${google_compute_instance.main.network_interface[0].access_config[0].nat_ip}"
     }
     azure = {
-      public_ip  = data.azurerm_public_ip.main.ip_address # azurerm_public_ip.main.ip_address != "" ? data.azurerm_public_ip.main.ip_address : azurerm_public_ip.main.fqdn
+      public_ip  = data.azurerm_public_ip.main.ip_address
       private_ip = azurerm_network_interface.main.private_ip_address
       user       = "ubuntu"
-      command    = "ssh -i private_key.pem ubuntu@${data.azurerm_public_ip.main.ip_address}" # "ssh -i private_key.pem ubuntu@${azurerm_public_ip.main.ip_address != "" ?  : azurerm_public_ip.main.fqdn}"
+      command    = "ssh -i private_key.pem ubuntu@${data.azurerm_public_ip.main.ip_address}"
     }
     alibaba = {
       public_ip  = alicloud_instance.main.public_ip
@@ -77,6 +83,12 @@ output "ssh_info" {
       private_ip = ibm_is_instance.main.primary_network_interface[0].primary_ip[0].address
       user       = "ubuntu"
       command    = "ssh -i private_key.pem ubuntu@${ibm_is_floating_ip.main.address}"
+    }
+    tencent = {
+      public_ip  = tencentcloud_instance.main.public_ip
+      private_ip = tencentcloud_instance.main.private_ip
+      user       = "ubuntu"
+      command    = "ssh -i private_key.pem ubuntu@${tencentcloud_instance.main.public_ip}"
     }
   }
   depends_on = [azurerm_linux_virtual_machine.main, data.azurerm_public_ip.main]

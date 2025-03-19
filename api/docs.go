@@ -3981,7 +3981,31 @@ const docTemplate = `{
                 "ibm": {
                     "$ref": "#/definitions/model.IbmConfig"
                 },
+                "tencent": {
+                    "$ref": "#/definitions/model.TencentConfig"
+                },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TencentConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65534",
+                    "example": "65534"
+                },
+                "region": {
+                    "type": "string",
+                    "default": "ap-seoul",
+                    "example": "ap-seoul"
+                },
+                "subnet_id": {
+                    "type": "string"
+                },
+                "vpc_id": {
                     "type": "string"
                 }
             }

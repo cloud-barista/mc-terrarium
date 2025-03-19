@@ -33,6 +33,11 @@ terraform {
       source  = "IBM-Cloud/ibm"
       version = "1.76.0"
     }
+    # Tencent Cloud provider
+    tencentcloud = {
+      source  = "tencentcloudstack/tencentcloud"
+      version = "~>1.81.173"
+    }
   }
 }
 
@@ -64,4 +69,9 @@ provider "alicloud" {
 
 provider "ibm" {
   region = local.is_ibm ? var.vpn_config.target_csp.ibm.region : "au-syd" # Sydney region, Australia
+}
+
+# Configure the Tencent Cloud Provider
+provider "tencentcloud" {
+  region = local.is_tencent ? var.vpn_config.target_csp.tencent.region : "ap-seoul" # Seoul region
 }
