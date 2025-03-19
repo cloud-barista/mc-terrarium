@@ -102,13 +102,19 @@ func GetEnrichments(trId string) (string, bool, error) {
 	trInfo, exist, err := GetInfo(trId)
 	if !exist {
 		log.Error().Msg("no terrarium")
-		return "", exist, errors.New("no terrarium")
+		return "", false, errors.New("no terrarium")
 	}
 	
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get terrarium info")
-		return "", exist, err
+		return "", false, err
 	}
+
+	exist = (trInfo.Enrichments != "")
+	if !exist {
+		return "", false, nil
+	}
+	
 	return trInfo.Enrichments, exist, nil
 }
 

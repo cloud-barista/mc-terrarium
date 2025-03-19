@@ -86,17 +86,18 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	enrichments := "vpn/aws-to-site"
 
 	// Check if the terrarium is already used for another purpose
-	trInfo, exist, err := terrarium.GetInfo(trId)
+	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}	
 
-	if exist && trInfo.Enrichments != enrichments{
+	// Check if the terrarium is already used for another purpose
+	if exist &&	existingEnrichments != enrichments {
 		err := fmt.Errorf("the terrarium (trId: %s) is already used for another purpose", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
-	}	
+	}
 
 	// Set the enrichments
 	err = terrarium.SetEnrichments(trId, enrichments)
@@ -501,10 +502,32 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
+	enrichments := "vpn/aws-to-site"
+	
+	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return emptyRes, err
+	}
+
+	if !exist || existingEnrichments != enrichments {
+		err := fmt.Errorf("the terrarium (trId: %s) is not used for the testbed", trId)
+		log.Warn().Msg(err.Error())
+		return emptyRes, err
+	}	
+
 	// Execute the emptyout command
-	err := terrarium.EmptyOutTerrariumEnv(trId)
+	err = terrarium.EmptyOutTerrariumEnv(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to empty out the infrastructure terrarium")
+		log.Error().Err(err).Msg(err2.Error())
+		return emptyRes, err2
+	}
+
+	// Unset the enrichments
+	err = terrarium.SetEnrichments(trId, "")
+	if err != nil {
+		err2 := fmt.Errorf("failed to unset the enrichments")
 		log.Error().Err(err).Msg(err2.Error())
 		return emptyRes, err2
 	}

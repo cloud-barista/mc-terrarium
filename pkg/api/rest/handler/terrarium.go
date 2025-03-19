@@ -48,6 +48,9 @@ func IssueTerrarium(c echo.Context) error {
 
 	trId := reqTrInfo.Id
 
+	// * Info: Make sure the Enrichments field is empty
+	reqTrInfo.Enrichments = ""
+
 	// Create the the working directory if it dosen't exist
 	workingDir := projectRoot + "/.terrarium/" + trId
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {

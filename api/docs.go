@@ -4022,7 +4022,8 @@ const docTemplate = `{
                     "example": "This terrarium enriches ..."
                 },
                 "enrichments": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "id": {
                     "type": "string",
