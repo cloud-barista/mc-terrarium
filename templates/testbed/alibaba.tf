@@ -8,10 +8,10 @@ data "alicloud_instance_types" "available" {
   cpu_core_count       = 2
   memory_size          = 8
   availability_zone    = data.alicloud_zones.available.zones[0].id
-  instance_type_family = "ecs.c7" # Try C7 generation first
+  instance_type_family = "ecs.g7" # Try G7 generation first
 }
 
-# Fallback instance types if c7 not available
+# Fallback instance types if g7 not available
 data "alicloud_instance_types" "fallback" {
   cpu_core_count    = 2
   memory_size       = 4

@@ -49,17 +49,17 @@ resource "aws_vpn_connection" "to_tencent" {
 resource "aws_vpn_connection_route" "to_tencent" {
   count = local.is_tencent ? 2 : 0
 
-  destination_cidr_block = var.vpn_config.target_csp.tencent.vpc_cidr
+  destination_cidr_block = data.tencentcloud_vpc_instances.existing[0].instance_list[0].cidr_block
   vpn_connection_id      = aws_vpn_connection.to_tencent[count.index].id
 }
 
 ## Tencent Cloud side resources/services
 # Fetching Tencent VPC and subnets information
-# data "tencentcloud_vpc" "existing" {
-#   count = local.is_tencent ? 1 : 0
-# 
-#   id = var.vpn_config.target_csp.tencent.vpc_id
-# }
+data "tencentcloud_vpc_instances" "existing" {
+  count = local.is_tencent ? 1 : 0
+
+  vpc_id = var.vpn_config.target_csp.tencent.vpc_id
+}
 
 data "tencentcloud_vpc_route_tables" "existing" {
   count = local.is_tencent ? 1 : 0
@@ -69,7 +69,7 @@ data "tencentcloud_vpc_route_tables" "existing" {
 }
 
 locals {
-  default_route_table_id = local.is_tencent ? data.tencentcloud_vpc_route_tables.existing[0].id : null
+  default_route_table_id = local.is_tencent ? data.tencentcloud_vpc_route_tables.existing[0].instance_list[0].route_table_id : null
 }
 
 # Tencent Cloud VPN Gateway
@@ -109,7 +109,7 @@ resource "tencentcloud_vpn_connection" "to_aws" {
 
   name                = "${local.name_prefix}-to-aws-${count.index + 1}"
   vpc_id              = var.vpn_config.target_csp.tencent.vpc_id # Required if vpn gateway is not in CCN
-  vpn_gateway_id      = tencentcloud_vpn_gateway.vpn_gw[0].id
+  vpn_gateway_id      = tencentcloud_vpn_gateway.vpn_gw[floor(count.index / 2)].id
   customer_gateway_id = tencentcloud_vpn_customer_gateway.aws_gw[count.index].id
   pre_share_key       = count.index % 2 == 0 ? aws_vpn_connection.to_tencent[floor(count.index / 2)].tunnel1_preshared_key : aws_vpn_connection.to_tencent[floor(count.index / 2)].tunnel2_preshared_key
   route_type          = "StaticRoute" # Valid value: STATIC, StaticRoute, Policy, Bgp
@@ -153,14 +153,26 @@ resource "tencentcloud_vpn_connection" "to_aws" {
   }
 }
 
-# Add route table entry for Tencent VPC to route traffic to AWS VPC through the VPN
+# Add a route to VPN gateway for Tencent VPC to route traffic to AWS VPC
+resource "tencentcloud_vpn_gateway_route" "route" {
+  count = local.is_tencent ? 4 : 0
+
+  vpn_gateway_id         = tencentcloud_vpn_gateway.vpn_gw[floor(count.index / 2)].id
+  destination_cidr_block = data.aws_vpc.existing.cidr_block
+  instance_id            = tencentcloud_vpn_connection.to_aws[count.index].id
+  instance_type          = "VPNCONN"
+  priority               = 100 * (count.index % 2) # Set 0 or 100 for priority
+  status                 = "ENABLE"                # Valid values: ENABLE, DISABLE
+}
+
+# Add a route to the default route table for Tencent VPC to route traffic to AWS VPC
 resource "tencentcloud_route_table_entry" "vpn_routes" {
-  count = local.is_tencent ? 1 : 0
+  count = local.is_tencent ? 2 : 0
 
   route_table_id         = local.default_route_table_id
   destination_cidr_block = data.aws_vpc.existing.cidr_block
   next_type              = "VPN"
-  next_hub               = tencentcloud_vpn_connection.to_aws[0].id
+  next_hub               = tencentcloud_vpn_gateway.vpn_gw[count.index].id
 
   depends_on = [
     data.tencentcloud_vpc_route_tables.existing,

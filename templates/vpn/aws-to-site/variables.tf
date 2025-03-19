@@ -35,13 +35,13 @@ variable "vpn_config" {
         vpc_id    = string
         vpc_cidr  = string
         subnet_id = string
-        bgp_asn   = optional(string, "65533") # default value
+        # bgp_asn   = optional(string, "65533") # default value
       }))
       tencent = optional(object({
         region    = optional(string, "ap-seoul") # Seoul region
         vpc_id    = string
         subnet_id = string
-        bgp_asn   = optional(string, "65534") # default value
+        # bgp_asn   = optional(string, "65534") # default value
       }))
     })
   })
