@@ -132,7 +132,7 @@ resource "azurerm_local_network_gateway" "aws_gw" {
   gateway_address = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_address : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_address
 
   bgp_settings {
-    asn                 = aws_vpn_gateway.vpn_gw.amazon_side_asn
+    asn                 = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_bgp_asn : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_bgp_asn
     bgp_peering_address = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_vgw_inside_address : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_vgw_inside_address
   }
 }

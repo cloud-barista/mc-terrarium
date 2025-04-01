@@ -15,30 +15,21 @@ type GcpConfig struct {
 
 // AzureConfig represents Azure specific VPN configuration
 type AzureConfig struct {
-	Region              string  `json:"region"`
-	ResourceGroupName   string  `json:"resource_group_name"`
-	VirtualNetworkName  string  `json:"virtual_network_name"`
-	GatewaySubnetCidr   string  `json:"gateway_subnet_cidr"`
-	BgpAsn              *string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
-	VpnSku              *string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
+	Region             string  `json:"region"`
+	ResourceGroupName  string  `json:"resource_group_name"`
+	VirtualNetworkName string  `json:"virtual_network_name"`
+	GatewaySubnetCidr  string  `json:"gateway_subnet_cidr"`
+	BgpAsn             *string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
+	VpnSku             *string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
 }
 
 // AlibabaConfig represents Alibaba Cloud specific VPN configuration
 type AlibabaConfig struct {
-	Region      *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId       string  `json:"vpc_id"`
-	VswitchId1  string  `json:"vswitch_id_1"`
-	VswitchId2  string  `json:"vswitch_id_2"`
-	BgpAsn      *string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
-}
-
-// IbmConfig represents IBM Cloud specific VPN configuration
-type IbmConfig struct {
-	Region    *string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
-	VpcId     string  `json:"vpc_id"`
-	VpcCidr   string  `json:"vpc_cidr"`
-	SubnetId  string  `json:"subnet_id"`
-	BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
+	Region     *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
+	VpcId      string  `json:"vpc_id"`
+	VswitchId1 string  `json:"vswitch_id_1"`
+	VswitchId2 string  `json:"vswitch_id_2"`
+	BgpAsn     *string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
 }
 
 // TencentConfig represents Tencent Cloud specific VPN configuration
@@ -47,30 +38,40 @@ type TencentConfig struct {
 	Region   string `json:"region" default:"ap-seoul" example:"ap-seoul"`
 	VpcId    string `json:"vpc_id"`
 	SubnetId string `json:"subnet_id"`
-	BgpAsn   string `json:"bgp_asn" default:"65534" example:"65534"`
+	// BgpAsn   *string `json:"bgp_asn" default:"65534" example:"65534"`
+}
+
+// IbmConfig represents IBM Cloud specific VPN configuration
+type IbmConfig struct {
+	Region   *string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
+	VpcId    string  `json:"vpc_id"`
+	VpcCidr  string  `json:"vpc_cidr"`
+	SubnetId string  `json:"subnet_id"`
+	// BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
 }
 
 // AwsConfig represents AWS specific VPN configuration
 type AwsConfig struct {
-	Region    *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId     string  `json:"vpc_id"`
-	SubnetId  string  `json:"subnet_id"`
+	Region   *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
+	VpcId    string  `json:"vpc_id"`
+	SubnetId string  `json:"subnet_id"`
+	BgpAsn   *string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
 }
 
 // TargetCspConfig represents the target cloud service provider configuration
 type TargetCspConfig struct {
-	Type     string         `json:"type"`
-	Gcp      *GcpConfig     `json:"gcp,omitempty"`
-	Azure    *AzureConfig   `json:"azure,omitempty"`
-	Alibaba  *AlibabaConfig `json:"alibaba,omitempty"`
-	Ibm      *IbmConfig     `json:"ibm,omitempty"`
-	Tencent  *TencentConfig `json:"tencent,omitempty"`
+	Type    string         `json:"type"`
+	Gcp     *GcpConfig     `json:"gcp,omitempty"`
+	Azure   *AzureConfig   `json:"azure,omitempty"`
+	Alibaba *AlibabaConfig `json:"alibaba,omitempty"`
+	Ibm     *IbmConfig     `json:"ibm,omitempty"`
+	Tencent *TencentConfig `json:"tencent,omitempty"`
 }
 
 // AwsToSiteVpnConfig represents the main VPN configuration structure
 type AwsToSiteVpnConfig struct {
-	TerrariumId string         `json:"terrarium_id"`
-	Aws         AwsConfig      `json:"aws"`
+	TerrariumId string          `json:"terrarium_id"`
+	Aws         AwsConfig       `json:"aws"`
 	TargetCsp   TargetCspConfig `json:"target_csp"`
 }
 
@@ -203,6 +204,24 @@ func validateAlibabaConfig(alibaba AlibabaConfig) error {
 	return nil
 }
 
+// validateTencentConfig validates Tencent Cloud configuration
+func validateTencentConfig(tencent TencentConfig) error {
+	if tencent.Region == "" {
+		return fmt.Errorf("tencent.region is required")
+	}
+	if tencent.VpcId == "" {
+		return fmt.Errorf("tencent.vpc_id is required")
+	}
+	// if tencent.SubnetId == "" {
+	// 	return fmt.Errorf("tencent.subnet_id is required")
+	// }
+	// * NOTE: Tencent doesn't support BGP.
+	// if tencent.BgpAsn == "" {
+	// 	return fmt.Errorf("tencent.bgp_asn is required")
+	// }
+	return nil
+}
+
 // validateIbmConfig validates IBM Cloud configuration
 func validateIbmConfig(ibm IbmConfig) error {
 	if ibm.VpcId == "" {
@@ -216,22 +235,6 @@ func validateIbmConfig(ibm IbmConfig) error {
 	}
 	return nil
 }
-
-// validateTencentConfig validates Tencent Cloud configuration
-func validateTencentConfig(tencent TencentConfig) error {
-	if tencent.Region == "" {
-		return fmt.Errorf("tencent.region is required")
-	}
-	if tencent.VpcId == "" {
-		return fmt.Errorf("tencent.vpc_id is required")
-	}
-	if tencent.BgpAsn == "" {
-		return fmt.Errorf("tencent.bgp_asn is required")
-	}
-	return nil
-}
-
-
 
 /*
  * Model for the AWS to site VPN information
@@ -287,11 +290,11 @@ type GcpExternalGatewayInterface struct {
 
 // GcpExternalGateway represents GCP external gateway information
 type GcpExternalGateway struct {
-	ResourceType   string                      `json:"resource_type"`
-	Name           string                      `json:"name"`
-	ID             string                      `json:"id"`
-	RedundancyType string                      `json:"redundancy_type"`
-	Description    string                      `json:"description"`
+	ResourceType   string                        `json:"resource_type"`
+	Name           string                        `json:"name"`
+	ID             string                        `json:"id"`
+	RedundancyType string                        `json:"redundancy_type"`
+	Description    string                        `json:"description"`
 	Interfaces     []GcpExternalGatewayInterface `json:"interfaces"`
 }
 
@@ -329,12 +332,12 @@ type GcpPeer struct {
 
 // GcpInfo represents GCP-specific target CSP information
 type GcpInfo struct {
-	VpnGateway      GcpVpnGateway     `json:"vpn_gateway"`
+	VpnGateway      GcpVpnGateway      `json:"vpn_gateway"`
 	ExternalGateway GcpExternalGateway `json:"external_gateway"`
-	Router          GcpRouter         `json:"router"`
-	Tunnels         []GcpTunnel       `json:"tunnels"`
-	Interfaces      []GcpInterface    `json:"interfaces"`
-	Peers           []GcpPeer         `json:"peers"`
+	Router          GcpRouter          `json:"router"`
+	Tunnels         []GcpTunnel        `json:"tunnels"`
+	Interfaces      []GcpInterface     `json:"interfaces"`
+	Peers           []GcpPeer          `json:"peers"`
 }
 
 // AzureVpnGateway represents Azure VPN gateway information
@@ -392,26 +395,26 @@ type AlibabaCustomerGateway struct {
 
 // AlibabaTunnelOption represents Alibaba Cloud tunnel option information
 type AlibabaTunnelOption struct {
-	ID         string `json:"id"`
-	State      string `json:"state"`
-	Status     string `json:"status"`
-	BgpStatus  string `json:"bsp_status"`
-	PeerAsn    string `json:"peer_asn"`
-	PeerBgpIP  string `json:"peer_bgp_ip"`
+	ID        string `json:"id"`
+	State     string `json:"state"`
+	Status    string `json:"status"`
+	BgpStatus string `json:"bsp_status"`
+	PeerAsn   string `json:"peer_asn"`
+	PeerBgpIP string `json:"peer_bgp_ip"`
 }
 
 // AlibabaVpnConnection represents Alibaba Cloud VPN connection information
 type AlibabaVpnConnection struct {
-	ID        string              `json:"id"`
-	BgpStatus string              `json:"bgp_status"`
+	ID        string                `json:"id"`
+	BgpStatus string                `json:"bgp_status"`
 	Tunnels   []AlibabaTunnelOption `json:"tunnels"`
 }
 
 // AlibabaInfo represents Alibaba Cloud-specific target CSP information
 type AlibabaInfo struct {
-	VpnGateway      *AlibabaVpnGateway      `json:"vpn_gateway,omitempty"`
+	VpnGateway       *AlibabaVpnGateway       `json:"vpn_gateway,omitempty"`
 	CustomerGateways []AlibabaCustomerGateway `json:"customer_gateways"`
-	VpnConnections  []AlibabaVpnConnection  `json:"vpn_connections"`
+	VpnConnections   []AlibabaVpnConnection   `json:"vpn_connections"`
 }
 
 // IbmVpnGateway represents IBM Cloud VPN gateway information
@@ -441,11 +444,11 @@ type IbmInfo struct {
 
 // TargetCspInfo represents target CSP information with all possible CSP types
 type TargetCspInfo struct {
-	Type    string      `json:"type"`
-	Gcp     *GcpInfo    `json:"gcp,omitempty"`
-	Azure   *AzureInfo  `json:"azure,omitempty"`
+	Type    string       `json:"type"`
+	Gcp     *GcpInfo     `json:"gcp,omitempty"`
+	Azure   *AzureInfo   `json:"azure,omitempty"`
 	Alibaba *AlibabaInfo `json:"alibaba,omitempty"`
-	Ibm     *IbmInfo    `json:"ibm,omitempty"`
+	Ibm     *IbmInfo     `json:"ibm,omitempty"`
 }
 
 // VpnInfo represents the main VPN information output structure

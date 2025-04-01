@@ -3793,6 +3793,11 @@ const docTemplate = `{
         "model.AwsConfig": {
             "type": "object",
             "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "64512",
+                    "example": "64512"
+                },
                 "region": {
                     "type": "string",
                     "default": "ap-northeast-2",
@@ -3916,11 +3921,6 @@ const docTemplate = `{
         "model.IbmConfig": {
             "type": "object",
             "properties": {
-                "bgp_asn": {
-                    "type": "string",
-                    "default": "65533",
-                    "example": "65533"
-                },
                 "region": {
                     "type": "string",
                     "default": "au-syd",
@@ -3992,11 +3992,6 @@ const docTemplate = `{
         "model.TencentConfig": {
             "type": "object",
             "properties": {
-                "bgp_asn": {
-                    "type": "string",
-                    "default": "65534",
-                    "example": "65534"
-                },
                 "region": {
                     "type": "string",
                     "default": "ap-seoul",

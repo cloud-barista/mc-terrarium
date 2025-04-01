@@ -6,7 +6,7 @@ resource "aws_customer_gateway" "tencent_gw" {
   tags = {
     Name = "${local.name_prefix}-tencent-side-gw-${count.index + 1}"
   }
-  bgp_asn    = var.vpn_config.target_csp.tencent.bgp_asn
+  # bgp_asn    = var.vpn_config.target_csp.tencent.bgp_asn
   ip_address = tencentcloud_vpn_gateway.vpn_gw[count.index].public_ip_address
   type       = "ipsec.1"
 }

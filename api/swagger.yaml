@@ -19,6 +19,10 @@ definitions:
     type: object
   model.AwsConfig:
     properties:
+      bgp_asn:
+        default: "64512"
+        example: "64512"
+        type: string
       region:
         default: ap-northeast-2
         example: ap-northeast-2
@@ -101,10 +105,6 @@ definitions:
     type: object
   model.IbmConfig:
     properties:
-      bgp_asn:
-        default: "65533"
-        example: "65533"
-        type: string
       region:
         default: au-syd
         example: au-syd
@@ -154,10 +154,6 @@ definitions:
     type: object
   model.TencentConfig:
     properties:
-      bgp_asn:
-        default: "65534"
-        example: "65534"
-        type: string
       region:
         default: ap-seoul
         example: ap-seoul
