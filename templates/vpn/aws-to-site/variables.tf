@@ -6,6 +6,7 @@ variable "vpn_config" {
       region    = optional(string, "ap-northeast-2") # Seoul
       vpc_id    = string
       subnet_id = string
+      bgp_asn   = optional(string, "64512") # default value
     })
     target_csp = object({
       type = string # "gcp", "azure", "alibaba", "tencent", "ibm"
@@ -30,6 +31,12 @@ variable "vpn_config" {
         vswitch_id_2 = string                    # Add this field
         bgp_asn      = optional(string, "65532") # default value
       }))
+      tencent = optional(object({
+        region = optional(string, "ap-seoul") # Seoul region
+        vpc_id = string
+        # subnet_id = string
+        # bgp_asn   = optional(string, "65534") # default value
+      }))
       ibm = optional(object({
         region    = optional(string, "au-syd") # Sydney region
         vpc_id    = string
@@ -37,12 +44,7 @@ variable "vpn_config" {
         subnet_id = string
         # bgp_asn   = optional(string, "65533") # default value
       }))
-      tencent = optional(object({
-        region    = optional(string, "ap-seoul") # Seoul region
-        vpc_id    = string
-        subnet_id = string
-        # bgp_asn   = optional(string, "65534") # default value
-      }))
+
     })
   })
 

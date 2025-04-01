@@ -309,6 +309,32 @@ output "vpn_summary" {
   }
 }
 
+# To check the AWS side ASN and VPN connection BGP ASN
+# output "aws_side_asn" {
+#   description = "AWS side ASN"
+#   value       = aws_vpn_gateway.vpn_gw.amazon_side_asn
+# }
+
+# output "aws_vpn_connection_bgp_asn" {
+#   description = "AWS VPN connection BGP ASN for both tunnels"
+#   value = {
+#     tunnel1 = (
+#       local.is_gcp ? [for conn in aws_vpn_connection.to_gcp : conn.tunnel1_bgp_asn] :
+#       local.is_azure ? [for conn in aws_vpn_connection.to_azure : conn.tunnel1_bgp_asn] :
+#       local.is_alibaba ? [for conn in aws_vpn_connection.to_alibaba : conn.tunnel1_bgp_asn] :
+#       local.is_ibm ? [for conn in aws_vpn_connection.to_ibm : conn.tunnel1_bgp_asn] :
+#       local.is_tencent ? [for conn in aws_vpn_connection.to_tencent : conn.tunnel1_bgp_asn] : []
+#     )
+#     tunnel2 = (
+#       local.is_gcp ? [for conn in aws_vpn_connection.to_gcp : conn.tunnel2_bgp_asn] :
+#       local.is_azure ? [for conn in aws_vpn_connection.to_azure : conn.tunnel2_bgp_asn] :
+#       local.is_alibaba ? [for conn in aws_vpn_connection.to_alibaba : conn.tunnel2_bgp_asn] :
+#       local.is_ibm ? [for conn in aws_vpn_connection.to_ibm : conn.tunnel2_bgp_asn] :
+#       local.is_tencent ? [for conn in aws_vpn_connection.to_tencent : conn.tunnel2_bgp_asn] : []
+#     )
+#   }
+# }
+
 # output "vpn_output_debug" {
 #   description = "All VPN connection information including sensitive data for debugging"
 #   value = {

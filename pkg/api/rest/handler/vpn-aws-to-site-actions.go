@@ -77,7 +77,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	/*
 	* [Process] Prepare and execute the init command
-	*/
+	 */
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
@@ -90,10 +90,10 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
-	}	
+	}
 
 	// Check if the terrarium is already used for another purpose
-	if exist &&	existingEnrichments != enrichments {
+	if exist && existingEnrichments != enrichments {
 		err := fmt.Errorf("the terrarium (trId: %s) is already used for another purpose", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
@@ -137,7 +137,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	/*
 	* [Output] Return the result
-	*/
+	 */
 
 	res := model.Response{
 		Success: true,
@@ -164,21 +164,21 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/plan [post]
 func PlanAwsToSiteVpn(c echo.Context) error {
-	
+
 	ret, err := planAwsToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-		
+
 	return c.JSON(http.StatusOK, ret)
 }
 
 func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
-	
+
 	trId := c.Param("trId")
 	if trId == "" {
 		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
@@ -222,7 +222,7 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/apply [post]
 func ApplyAwsToSiteVpn(c echo.Context) error {
-	
+
 	res, err := applyAwsToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
@@ -294,7 +294,7 @@ func DestroyAwsToSiteVpn(c echo.Context) error {
 func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
-	
+
 	trId := c.Param("trId")
 	if trId == "" {
 		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
@@ -305,8 +305,24 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
+	// Define err variable to track errors
+	var err error
+
+	// Add a deferred function to refresh state if an error occurs
+	defer func() {
+		if err != nil {
+			log.Info().Msg("Attempting to refresh state after error...")
+			_, refreshErr := terrarium.Refresh(trId, reqId)
+			if refreshErr != nil {
+				log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
+			} else {
+				log.Info().Msg("Successfully refreshed state after error")
+			}
+		}
+	}()
+
 	// Detach the imported route table for preventing to destroy the imported resource
-	err := terrarium.DetachImportedResource(trId, reqId, "aws_route_table.imported_route_table")	
+	err = terrarium.DetachImportedResource(trId, reqId, "aws_route_table.imported_route_table")
 	if err != nil {
 		err2 := fmt.Errorf("failed to remove the imported route table")
 		log.Error().Err(err).Msg(err2.Error())
@@ -314,7 +330,8 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Execute the destroy command
-	ret, err := terrarium.Destroy(trId, reqId)
+	var ret string
+	ret, err = terrarium.Destroy(trId, reqId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to destroy the infrastructure terrarium")
 		log.Error().Err(err).Msg(err2.Error())
@@ -326,7 +343,7 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		Message: "successfully destroyed the infrastructure terrarium",
 		Detail:  ret,
 	}
-	
+
 	log.Debug().Msgf("%+v", res) // debug
 
 	return res, nil
@@ -354,15 +371,14 @@ func OutputAwsToSiteVpn(c echo.Context) error {
 		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-		
+
 	return c.JSON(http.StatusOK, res)
 }
 
 func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
-	
 	emptyRes := model.Response{}
-	
+
 	trId := c.Param("trId")
 	if trId == "" {
 		err := fmt.Errorf("invalid request, terrarium ID (trId: %s) is required", trId)
@@ -379,7 +395,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		Raw:     "raw",
 	}
 
-		// valid detail options
+	// valid detail options
 	validDetailOptions := map[string]bool{
 		DetailOptions.Refined: true,
 		DetailOptions.Raw:     true,
@@ -401,7 +417,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	switch detail {
 	case DetailOptions.Refined:
 		// Execute the output command
-		ret, err := terrarium.Output(trId, reqId, "vpn_info", "-json") 
+		ret, err := terrarium.Output(trId, reqId, "vpn_info", "-json")
 		if err != nil {
 			err2 := fmt.Errorf("failed to output the infrastructure terrarium")
 			return emptyRes, err2
@@ -424,7 +440,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return res, nil
 
 	case DetailOptions.Raw:
-		
+
 		// Execute the show command
 		ret, err := terrarium.Show(trId, reqId, "-json")
 		if err != nil {
@@ -458,10 +474,10 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 		return res, nil
 
-	default:		
+	default:
 		err := fmt.Errorf("invalid detail option (%s)", detail)
 		log.Warn().Err(err).Msg("") // warn
-		
+
 		return emptyRes, err
 	}
 }
@@ -486,7 +502,7 @@ func EmptyOutAwsToSiteVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err.Error())
 		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
-	}	
+	}
 
 	return c.JSON(http.StatusOK, res)
 }
@@ -503,7 +519,7 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	enrichments := "vpn/aws-to-site"
-	
+
 	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
@@ -514,7 +530,7 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		err := fmt.Errorf("the terrarium (trId: %s) is not used for the testbed", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
-	}	
+	}
 
 	// Execute the emptyout command
 	err = terrarium.EmptyOutTerrariumEnv(trId)
@@ -536,7 +552,7 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		Success: true,
 		Message: "successfully emptied out the infrastructure terrarium",
 	}
-	
+
 	log.Debug().Msgf("%+v", res) // debug
 
 	return res, nil

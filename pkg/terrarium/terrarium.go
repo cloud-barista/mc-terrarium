@@ -29,9 +29,9 @@ func IssueID(trInfo model.TerrariumInfo) error {
 		log.Debug().Msgf("value: %v", value)
 		return fmt.Errorf("the terrarium (trId: %s) already exist", trInfo.Id)
 	}
-	
+
 	// Save the terrarium info
-	lkvstore.Put("/tr/" + trInfo.Id, trInfo)
+	lkvstore.Put("/tr/"+trInfo.Id, trInfo)
 
 	return nil
 }
@@ -53,17 +53,15 @@ func GetInfo(trId string) (model.TerrariumInfo, bool, error) {
 	return ret, exists, nil
 }
 
-
 // ReadAllInfo reads all terrarium info
 func ReadAllInfo() ([]model.TerrariumInfo, error) {
 
 	terrariumInfoList := []model.TerrariumInfo{}
 	values, exists := lkvstore.GetWithPrefix("/tr/")
 
-
 	if exists {
 		for _, value := range values {
-			
+
 			trInfo := model.TerrariumInfo{}
 			err := json.Unmarshal([]byte(value), &trInfo)
 			if err != nil {
@@ -73,7 +71,7 @@ func ReadAllInfo() ([]model.TerrariumInfo, error) {
 			terrariumInfoList = append(terrariumInfoList, trInfo)
 		}
 	}
-	
+
 	return terrariumInfoList, nil
 }
 
@@ -84,7 +82,7 @@ func UpdateInfo(trInfo model.TerrariumInfo) error {
 	if !exists {
 		return fmt.Errorf("no terrarium (trId: %s)", trInfo.Id)
 	}
-	lkvstore.Put("/tr/" + trInfo.Id, trInfo)
+	lkvstore.Put("/tr/"+trInfo.Id, trInfo)
 
 	return nil
 }
@@ -104,7 +102,7 @@ func GetEnrichments(trId string) (string, bool, error) {
 		log.Error().Msg("no terrarium")
 		return "", false, errors.New("no terrarium")
 	}
-	
+
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get terrarium info")
 		return "", false, err
@@ -114,7 +112,7 @@ func GetEnrichments(trId string) (string, bool, error) {
 	if !exist {
 		return "", false, nil
 	}
-	
+
 	return trInfo.Enrichments, exist, nil
 }
 
@@ -164,7 +162,7 @@ func SetEnrichments(trId, enrichments string) error {
 // CreateTerrariumEnv sets the terrarium environment
 func CreateTerrariumEnv(trId, enrichments string) error {
 
-	// Check if the terrarium environment exists (i.e., a terrarium environment) 
+	// Check if the terrarium environment exists (i.e., a terrarium environment)
 	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -183,7 +181,7 @@ func CreateTerrariumEnv(trId, enrichments string) error {
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to terrarium environment")
 		log.Error().Err(err).Msg(err2.Error())
-	
+
 		return err2
 	}
 	return nil
@@ -191,8 +189,8 @@ func CreateTerrariumEnv(trId, enrichments string) error {
 
 // SetCredentials sets the credentials for the terrarium environment
 func SetCredentials(trId, enrichments string, csps ...string) error {
-	
-	// Check if the terrarium environment exists (i.e., a terrarium environment) 
+
+	// Check if the terrarium environment exists (i.e., a terrarium environment)
 	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -230,8 +228,8 @@ func SetCredentials(trId, enrichments string, csps ...string) error {
 
 // SaveTfVars sets the tofu variables for the terrarium environment
 func SaveTfVars(trId, enrichments string, tfVars any) error {
-	
-	// Check if the terrarium environment exists (i.e., a terrarium environment) 
+
+	// Check if the terrarium environment exists (i.e., a terrarium environment)
 	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -261,7 +259,7 @@ func SaveTfVars(trId, enrichments string, tfVars any) error {
 // EmptyOutTerrariumEnv truncates the terrarium environment
 func EmptyOutTerrariumEnv(trId string) error {
 
-	// Check if the terrarium environment exists (i.e., a terrarium environment) 
+	// Check if the terrarium environment exists (i.e., a terrarium environment)
 	projectRoot := config.Terrarium.Root
 	workingDir := projectRoot + "/.terrarium/" + trId
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
@@ -298,16 +296,15 @@ func EmptyOutTerrariumEnv(trId string) error {
 			return err
 		}
 	}
-	
+
 	return nil
 }
-
 
 /*
  * [Note] Terrarium actions powered by OpenTofu
  */
 
-// Init prepares a terrarium environment for other commands (i.e., a terrarium environment) 
+// Init prepares a terrarium environment for other commands (i.e., a terrarium environment)
 func Init(trId, reqId string) (string, error) {
 
 	// Get working directory
@@ -315,7 +312,7 @@ func Init(trId, reqId string) (string, error) {
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get terrarium environment path")
 		return "", err
-	}	
+	}
 
 	// Execute tofu command: init
 	tfcli := tfclient.NewClient(trId, reqId)
@@ -332,7 +329,7 @@ func Init(trId, reqId string) (string, error) {
 
 // Plan shows changes required by the current configuration
 func Plan(trId, reqId string) (string, error) {
-	
+
 	// Get working directory
 	workingDir, err := GetTerrariumEnvPath(trId)
 	if err != nil {
@@ -347,7 +344,7 @@ func Plan(trId, reqId string) (string, error) {
 	ret, err := tfcli.Plan().Exec()
 	if err != nil {
 		log.Error().Err(err).Msg("failed to execute tofu command")
-		return "", err		
+		return "", err
 	}
 
 	return ret, nil
@@ -389,13 +386,13 @@ func Destroy(trId, reqId string) (string, error) {
 	// Execute tofu command: destroy
 	tfcli := tfclient.NewClient(trId, reqId)
 	tfcli.SetChdir(workingDir)
-	
+
 	ret, err := tfcli.Destroy().Auto().Exec()
 	if err != nil {
 		log.Error().Err(err).Msg("failed to execute tofu command")
 		return "", err
 	}
-	
+
 	return ret, nil
 }
 
@@ -412,7 +409,7 @@ func Output(trId, reqId, name string, options ...string) (string, error) {
 	// Execute tofu command: output
 	tfcli := tfclient.NewClient(trId, reqId)
 	tfcli.SetChdir(workingDir)
-	
+
 	tfcli.Output()
 	// Check if options includes "-json"
 	for _, option := range options {
@@ -427,7 +424,7 @@ func Output(trId, reqId, name string, options ...string) (string, error) {
 		log.Error().Err(err).Msg("failed to execute tofu command")
 		return "", err
 	}
-	
+
 	return ret, nil
 }
 
@@ -495,10 +492,32 @@ func State(trId, reqId, subcommand string, args ...string) (string, error) {
 	return ret, nil
 }
 
-// DetachImportedResource detaches an imported resource from the state
-func DetachImportedResource(trId, reqId, resourceId string) (error) {
+// Refresh refreshes the state file
+func Refresh(trId, reqId string) (string, error) {
+	// Get working directory
+	workingDir, err := GetTerrariumEnvPath(trId)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to get terrarium environment path")
+		return "", err
+	}
 
-	_, err := State(trId, reqId, "rm", resourceId)	
+	// Execute tofu command: refresh
+	tfcli := tfclient.NewClient(trId, reqId)
+	tfcli.SetChdir(workingDir)
+
+	ret, err := tfcli.Refresh().Exec()
+	if err != nil {
+		log.Error().Err(err).Msg("failed to execute tofu command")
+		return "", err
+	}
+
+	return ret, nil
+}
+
+// DetachImportedResource detaches an imported resource from the state
+func DetachImportedResource(trId, reqId, resourceId string) error {
+
+	_, err := State(trId, reqId, "rm", resourceId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to remove the imported route table")
 		log.Error().Err(err).Msg(err2.Error())
@@ -522,4 +541,3 @@ func DetachImportedResource(trId, reqId, resourceId string) (error) {
 
 	return nil
 }
-
