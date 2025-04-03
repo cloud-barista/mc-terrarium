@@ -18,6 +18,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
+// @Param ReqBody body model.CreateTestbedRequest true "Parameters requied to create a testbed"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
@@ -42,7 +43,7 @@ func CreateTestbed(c echo.Context) error {
 		log.Error().Err(err).Msg(err.Error())
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	
+
 	res, err = applyTestbed(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
@@ -67,7 +68,7 @@ func CreateTestbed(c echo.Context) error {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/testbed [get]
 func GetTestbed(c echo.Context) error {
-	
+
 	// Handler workflow by sequenctially running the following operation:
 	// 1. Get
 
@@ -94,7 +95,7 @@ func GetTestbed(c echo.Context) error {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/testbed [delete]
 func DeleteTestbed(c echo.Context) error {
-	
+
 	// Handler workflow by sequenctially running the following operation:
 	// 1. Destroy
 

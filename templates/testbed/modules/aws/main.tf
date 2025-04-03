@@ -55,7 +55,7 @@ resource "aws_route" "internet_gateway" {
 # AWS Key Pair
 resource "aws_key_pair" "main" {
   key_name   = "${var.terrarium_id}-key"
-  public_key = tls_private_key.ssh.public_key_openssh
+  public_key = var.public_key
 }
 
 # AWS Security Group

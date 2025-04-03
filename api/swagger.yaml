@@ -90,6 +90,11 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsSqlDb'
     type: object
+  model.CreateTestbedRequest:
+    properties:
+      testbed_config:
+        $ref: '#/definitions/model.TestbedConfigDetail'
+    type: object
   model.GcpConfig:
     properties:
       bgp_asn:
@@ -178,6 +183,23 @@ definitions:
         type: string
     required:
     - id
+    type: object
+  model.TestbedConfigDetail:
+    properties:
+      desired_providers:
+        example:
+        - aws
+        - azure
+        - gcp
+        - alibaba
+        - tencent
+        - ibm
+        items:
+          type: string
+        type: array
+      terrarium_id:
+        example: ""
+        type: string
     type: object
   model.TfVarsGcpAwsVpnTunnel:
     properties:
@@ -1560,6 +1582,12 @@ paths:
         name: trId
         required: true
         type: string
+      - description: Parameters requied to create a testbed
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTestbedRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -1712,6 +1740,12 @@ paths:
         name: trId
         required: true
         type: string
+      - description: Parameters requied to create a testbed
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTestbedRequest'
       - description: Custom request ID
         in: header
         name: x-request-id

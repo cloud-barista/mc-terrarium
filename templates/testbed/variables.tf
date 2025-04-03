@@ -5,3 +5,9 @@ variable "terrarium_id" {
 
   default = "testbed-01"
 }
+
+variable "desired_providers" {
+  type        = list(string)
+  description = "List of providers to be used in the testbed."
+  default     = ["aws", "gcp", "azure", "alibaba", "tencent", "ibm"]
+}

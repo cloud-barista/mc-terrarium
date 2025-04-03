@@ -56,6 +56,6 @@ resource "google_compute_instance" "main" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${tls_private_key.ssh.public_key_openssh}"
+    ssh-keys = "ubuntu:${var.public_key}"
   }
 }

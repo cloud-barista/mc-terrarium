@@ -1833,6 +1833,15 @@
                         "required": true
                     },
                     {
+                        "description": "Parameters requied to create a testbed",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateTestbedRequest"
+                        }
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2114,6 +2123,15 @@
                         "name": "trId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create a testbed",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateTestbedRequest"
+                        }
                     },
                     {
                         "type": "string",
@@ -3894,6 +3912,14 @@
                 }
             }
         },
+        "model.CreateTestbedRequest": {
+            "type": "object",
+            "properties": {
+                "testbed_config": {
+                    "$ref": "#/definitions/model.TestbedConfigDetail"
+                }
+            }
+        },
         "model.GcpConfig": {
             "type": "object",
             "properties": {
@@ -4018,6 +4044,29 @@
                     "type": "string",
                     "default": "tr01",
                     "example": "tr01"
+                }
+            }
+        },
+        "model.TestbedConfigDetail": {
+            "type": "object",
+            "properties": {
+                "desired_providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "aws",
+                        "azure",
+                        "gcp",
+                        "alibaba",
+                        "tencent",
+                        "ibm"
+                    ]
+                },
+                "terrarium_id": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
