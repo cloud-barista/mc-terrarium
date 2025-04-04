@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
@@ -69,70 +70,69 @@ func initTestbed(c echo.Context) (model.Response, error) {
 		req.TestbedConfig.TerrariumId = trId
 	}
 
-	providers := req.TestbedConfig.DesiredProviders
-
-	// // Set providers for the terrarium environment
-	// providers := []string{"aws", req.VpnConfig.TargetCsp.Type}
-
 	/*
-	* [Process] Prepare and execute the init command
+	 * [Process] Prepare and execute the init command
 	 */
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	// Set the enrichments
+	// Set the enrichments and engaged providers
 	enrichments := "testbed"
+	providers := req.TestbedConfig.DesiredProviders
 
-	// Check if the terrarium is already used for another purpose
-	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
+	// Check if the terrarium already used for another purpose
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}
-
-	// Check if the terrarium is already used for another purpose
-	if exist && existingEnrichments != enrichments {
+	if trInfo.Enrichments != "" && trInfo.Enrichments != enrichments {
 		err := fmt.Errorf("the terrarium (trId: %s) is already used for another purpose", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
 	}
 
-	err = terrarium.SetEnrichments(trId, enrichments)
+	// Set the terrarium information
+	trInfo.Enrichments = enrichments
+	trInfo.Providers = providers
+
+	// Update the terrarium info
+	err = terrarium.UpdateInfo(trInfo)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}
 
-	// Set the terrarium environment
-	err = terrarium.CreateTerrariumEnv(trId, enrichments, providers)
+	// Create the terrarium environment
+	err = terrarium.CreateEnv(trInfo)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}
 
 	// Set a custom-output.tf
-	var mergeArgs []string
-	for _, provider := range providers {
-		mergeArg := fmt.Sprintf("try({ %s = module.%s.testbed_info }, {})", provider, provider)
-		mergeArgs = append(mergeArgs, mergeArg)
-	}
-	outputs := strings.Join(mergeArgs, ",\n\t\t")
+	// 	var mergeArgs []string
+	// 	for _, provider := range providers {
+	// 		mergeArg := fmt.Sprintf("try({ %s = module.%s.testbed_info }, {})", provider, provider)
+	// 		mergeArgs = append(mergeArgs, mergeArg)
+	// 	}
+	// 	outputs := strings.Join(mergeArgs, ",\n\t\t")
 
-	docstring := fmt.Sprintf(`
-output "testbed_info" {	
-	description = "Testbed resource details"
-	value = merge(
-		%s
-	)
-}
-`, outputs)
+	// 	docstring := fmt.Sprintf(`
+	// output "testbed_info" {
+	// 	description = "Testbed resource details"
+	// 	value = merge(
+	// 		%s
+	// 	)
+	// }
+	// `, outputs)
 
-	err = terrarium.SetCustomOutputsTf(trId, enrichments, docstring)
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return emptyRes, err
-	}
+	// 	err = terrarium.SetCustomOutputsTf(trId, enrichments, docstring)
+	// 	if err != nil {
+	// 		log.Error().Err(err).Msg(err.Error())
+	// 		return emptyRes, err
+	// 	}
 
 	/*
 	 * NOTE: Set CSPs' credentials for the terrarium environment
@@ -424,23 +424,91 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 		/*
 		 * NOTE: Set the output object (e.g., "testbed_info") to get the refined resource info
 		 */
-		ret, err := terrarium.Output(trId, reqId, "testbed_info", "-json")
+
+		trInfo, exists, err := terrarium.GetInfo(trId)
 		if err != nil {
-			err2 := fmt.Errorf("failed to output the infrastructure terrarium")
+			log.Error().Err(err).Msg(err.Error())
+			return emptyRes, err
+		}
+		if !exists {
+			err2 := fmt.Errorf("no terrarium with the given ID (trId: %s)", trId)
+			log.Warn().Msg(err2.Error())
 			return emptyRes, err2
 		}
 
-		var resourceInfo map[string]interface{}
-		err = json.Unmarshal([]byte(ret), &resourceInfo)
-		if err != nil {
-			log.Error().Err(err).Msg("") // error
-			return emptyRes, err
+		// In-parallel, retrieve and merge the resource info
+		providers := trInfo.Providers
+		if len(providers) == 0 {
+			err2 := fmt.Errorf("no providers in the terrarium (trId: %s)", trId)
+			log.Warn().Msg(err2.Error())
+			return emptyRes, err2
 		}
+
+		// function-scoped struct for secure or robust error handling in goroutines
+		type resultWithError struct {
+			provider     string
+			resourceInfo string
+			err          error
+		}
+		results := make(chan resultWithError, len(providers)) // buffered channel to prevent goroutine leaks
+
+		var wg sync.WaitGroup
+		for _, provider := range providers {
+			wg.Add(1)
+			provider := provider // ! Important: prevent closure capture
+			go func() {
+				defer wg.Done()
+				// Retrieve provider's resource info
+				targetObject := fmt.Sprintf("%s_testbed_info", provider)
+				resourceInfo, err := terrarium.Output(trId, reqId, targetObject, "-json")
+				if err != nil {
+					results <- resultWithError{
+						provider: provider,
+						err:      fmt.Errorf("failed to get output for provider '%s': %w", provider, err),
+					}
+					return
+				}
+
+				results <- resultWithError{
+					provider:     provider,
+					resourceInfo: resourceInfo,
+					err:          nil,
+				}
+			}()
+		}
+
+		wg.Wait()
+		close(results)
+
+		// Merge th results
+		var allResourceInfo = make(map[string]any)
+		for res := range results {
+			if res.err != nil {
+				log.Error().Err(res.err).Msg("") // error
+				continue                         // or handle the error as needed
+			}
+
+			var resourceInfo any
+			err = json.Unmarshal([]byte(res.resourceInfo), &resourceInfo)
+			if err != nil {
+				log.Error().Err(err).Msg("") // error
+				return emptyRes, err
+			}
+
+			allResourceInfo[res.provider] = resourceInfo
+		}
+
+		// Optional: return error if any individual result has error
+		// for _, res := range collected {
+		// 	if res.err != nil {
+		// 		return collected, res.err // or accumulate all errors if needed
+		// 	}
+		// }
 
 		res := model.Response{
 			Success: true,
 			Message: "refined read resource info (map)",
-			Object:  resourceInfo,
+			Object:  allResourceInfo,
 		}
 		log.Debug().Msgf("%+v", res) // debug
 

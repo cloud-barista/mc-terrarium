@@ -1,7 +1,7 @@
 # outputs.tf
 output "ibm_testbed_info" {
   description = "IBM, resource details"
-  value       = length(module.ibm) > 0 ? { ibm = module.ibm.testbed_info } : {}
+  value       = length(module.ibm) > 0 ? module.ibm.testbed_info : {}
 }
 
 output "ibm_testbed_ssh_info" {

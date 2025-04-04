@@ -1,7 +1,7 @@
 # outputs.tf
 output "gcp_testbed_info" {
   description = "GCP, resource details"
-  value       = length(module.gcp) > 0 ? { gcp = module.gcp.testbed_info } : {}
+  value       = length(module.gcp) > 0 ? module.gcp.testbed_info : {}
 }
 
 output "gcp_testbed_ssh_info" {

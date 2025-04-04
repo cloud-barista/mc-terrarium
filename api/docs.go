@@ -167,11 +167,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Information for a new terrarium",
-                        "name": "TerrariumInfo",
+                        "name": "RequestBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.TerrariumInfo"
+                            "$ref": "#/definitions/model.TerrariumCreationRequest"
                         }
                     }
                 ],
@@ -4031,10 +4031,29 @@ const docTemplate = `{
                 }
             }
         },
+        "model.TerrariumCreationRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "default": "This terrarium enriches ...",
+                    "example": "This terrarium enriches ..."
+                },
+                "name": {
+                    "type": "string",
+                    "default": "tr01",
+                    "example": "tr01"
+                }
+            }
+        },
         "model.TerrariumInfo": {
             "type": "object",
             "required": [
-                "id"
+                "id",
+                "name"
             ],
             "properties": {
                 "description": {
@@ -4044,12 +4063,28 @@ const docTemplate = `{
                 },
                 "enrichments": {
                     "type": "string",
-                    "example": ""
+                    "example": "vpn/aws-to-site"
                 },
                 "id": {
                     "type": "string",
                     "default": "tr01",
                     "example": "tr01"
+                },
+                "name": {
+                    "type": "string",
+                    "default": "tr01",
+                    "example": "tr01"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "aws",
+                        "azure",
+                        "gcp"
+                    ]
                 }
             }
         },
