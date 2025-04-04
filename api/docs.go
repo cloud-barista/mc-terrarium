@@ -167,11 +167,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Information for a new terrarium",
-                        "name": "TerrariumInfo",
+                        "name": "RequestBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.TerrariumInfo"
+                            "$ref": "#/definitions/model.TerrariumCreationRequest"
                         }
                     }
                 ],
@@ -1839,6 +1839,15 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "description": "Parameters requied to create a testbed",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateTestbedRequest"
+                        }
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2120,6 +2129,15 @@ const docTemplate = `{
                         "name": "trId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Parameters requied to create a testbed",
+                        "name": "ReqBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateTestbedRequest"
+                        }
                     },
                     {
                         "type": "string",
@@ -3900,6 +3918,14 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CreateTestbedRequest": {
+            "type": "object",
+            "properties": {
+                "testbed_config": {
+                    "$ref": "#/definitions/model.TestbedConfigDetail"
+                }
+            }
+        },
         "model.GcpConfig": {
             "type": "object",
             "properties": {
@@ -4005,10 +4031,29 @@ const docTemplate = `{
                 }
             }
         },
+        "model.TerrariumCreationRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "default": "This terrarium enriches ...",
+                    "example": "This terrarium enriches ..."
+                },
+                "name": {
+                    "type": "string",
+                    "default": "tr01",
+                    "example": "tr01"
+                }
+            }
+        },
         "model.TerrariumInfo": {
             "type": "object",
             "required": [
-                "id"
+                "id",
+                "name"
             ],
             "properties": {
                 "description": {
@@ -4018,12 +4063,51 @@ const docTemplate = `{
                 },
                 "enrichments": {
                     "type": "string",
-                    "example": ""
+                    "example": "vpn/aws-to-site"
                 },
                 "id": {
                     "type": "string",
                     "default": "tr01",
                     "example": "tr01"
+                },
+                "name": {
+                    "type": "string",
+                    "default": "tr01",
+                    "example": "tr01"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "aws",
+                        "azure",
+                        "gcp"
+                    ]
+                }
+            }
+        },
+        "model.TestbedConfigDetail": {
+            "type": "object",
+            "properties": {
+                "desired_providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "aws",
+                        "azure",
+                        "gcp",
+                        "alibaba",
+                        "tencent",
+                        "ibm"
+                    ]
+                },
+                "terrarium_id": {
+                    "type": "string",
+                    "example": ""
                 }
             }
         },

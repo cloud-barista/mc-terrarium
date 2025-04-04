@@ -69,7 +69,7 @@ resource "ibm_is_security_group_rule" "outbound" {
 # SSH Key
 resource "ibm_is_ssh_key" "main" {
   name       = "${var.terrarium_id}-key"
-  public_key = tls_private_key.ssh.public_key_openssh
+  public_key = var.public_key
 }
 
 data "ibm_is_image" "ubuntu_22_04" {

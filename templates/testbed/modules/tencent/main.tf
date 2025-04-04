@@ -84,7 +84,7 @@ resource "tencentcloud_security_group_rule" "allow_all_outbound" {
 # SSH Key Pair - Using a compliant format with underscores rather than hyphens
 resource "tencentcloud_key_pair" "main" {
   key_name   = "${replace(var.terrarium_id, "-", "_")}_key"
-  public_key = tls_private_key.ssh.public_key_openssh
+  public_key = var.public_key
 }
 
 # Tencent Cloud Virtual Machine (CVM)
@@ -142,7 +142,7 @@ resource "tencentcloud_instance" "main" {
               chmod 700 /home/ubuntu/.ssh
               
               # Add SSH public key
-              echo "${tls_private_key.ssh.public_key_openssh}" > /home/ubuntu/.ssh/authorized_keys
+              echo "${var.public_key}" > /home/ubuntu/.ssh/authorized_keys
               chmod 600 /home/ubuntu/.ssh/authorized_keys
               chown -R ubuntu:ubuntu /home/ubuntu/.ssh
               

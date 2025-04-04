@@ -1,54 +1,6 @@
-# providers.tf
-terraform {
-  required_version = ">=1.8.3"
-
-  required_providers {
-    # AWS provider
-    aws = {
-      source  = "registry.opentofu.org/hashicorp/aws"
-      version = "~>5.42"
-    }
-    # Google provider
-    google = {
-      source  = "registry.opentofu.org/hashicorp/google"
-      version = "~>5.21"
-    }
-    # Azure provider
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~>3.97.0"
-    }
-    # AzAPI provider
-    azapi = {
-      source  = "azure/azapi"
-      version = "~>1.12"
-    }
-    # Alibaba Cloud provider
-    alicloud = {
-      source  = "aliyun/alicloud"
-      version = "~>1.243.0"
-    }
-    # IBM Cloud provider
-    ibm = {
-      source  = "IBM-Cloud/ibm"
-      version = "1.76.0"
-    }
-    # Tencent Cloud provider
-    tencentcloud = {
-      source  = "tencentcloudstack/tencentcloud"
-      version = "~>1.81.173"
-    }
-  }
-}
-
+# Configure the AWS Provider
 provider "aws" {
-  region = var.vpn_config.aws.region
-}
-
-provider "google" {
-  credentials = file("credential-gcp.json")
-  project     = jsondecode(file("credential-gcp.json")).project_id
-  region      = local.is_gcp ? var.vpn_config.target_csp.gcp.region : "asia-northeast3" # Seoul
+  region = try(var.vpn_config.aws.region, "ap-northeast-2") # Default: "ap-northeast-2", Seoul region, Korea
 }
 
 # [NOTE]
@@ -62,16 +14,24 @@ provider "azurerm" {
   features {}
 }
 
-# Configure the Alibaba Cloud Provider
-provider "alicloud" {
-  region = local.is_alibaba ? var.vpn_config.target_csp.alibaba.region : "ap-northeast-2"
+# Configure GCP Provider
+provider "google" {
+  credentials = file("credential-gcp.json")
+  project     = jsondecode(file("credential-gcp.json")).project_id
+  region      = try(var.vpn_config.target_csp.gcp.region, "asia-northeast3") # Default: "asia-northeast3", Seoul region, Korea
 }
 
-provider "ibm" {
-  region = local.is_ibm ? var.vpn_config.target_csp.ibm.region : "au-syd" # Sydney region, Australia
+# Configure the Alibaba Cloud Provider
+provider "alicloud" {
+  region = try(var.vpn_config.target_csp.alibaba.region, "ap-northeast-2") # Default: "ap-northeast-2", Seoul region, Korea
 }
 
 # Configure the Tencent Cloud Provider
 provider "tencentcloud" {
-  region = local.is_tencent ? var.vpn_config.target_csp.tencent.region : "ap-seoul" # Seoul region
+  region = try(var.vpn_config.target_csp.tencent.region, "ap-seoul") # Default: "ap-seoul", Seoul region, Korea
+}
+
+# Configure the IBM Cloud Provider
+provider "ibm" {
+  region = try(var.vpn_config.target_csp.ibm.region, "au-syd") # Default: "au-syd",  Sydney region, Australia
 }

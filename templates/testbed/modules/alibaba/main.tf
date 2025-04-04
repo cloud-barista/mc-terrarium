@@ -100,7 +100,7 @@ resource "alicloud_security_group_rule" "allow_traceroute" {
 # SSH Key Pair
 resource "alicloud_ecs_key_pair" "main" {
   key_pair_name = "${var.terrarium_id}-key"
-  public_key    = tls_private_key.ssh.public_key_openssh
+  public_key    = var.public_key
 }
 
 # ECS Instance with dynamic instance type
@@ -144,7 +144,7 @@ resource "alicloud_instance" "main" {
               chmod 700 /home/ubuntu/.ssh
 
               # Add SSH public key
-              echo "${tls_private_key.ssh.public_key_openssh}" > /home/ubuntu/.ssh/authorized_keys
+              echo "${var.public_key}" > /home/ubuntu/.ssh/authorized_keys
               chmod 600 /home/ubuntu/.ssh/authorized_keys
               chown -R ubuntu:ubuntu /home/ubuntu/.ssh
 

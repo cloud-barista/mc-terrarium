@@ -1,5 +1,10 @@
 package model
 
+// Request bodies for testbed
+type CreateTestbedRequest struct {
+	TestbedConfig TestbedConfigDetail `json:"testbed_config"`
+}
+
 // Request bodies for AWS to site VPN
 type CreateAwsToSiteVpnRequest struct {
 	VpnConfig AwsToSiteVpnConfig `json:"vpn_config"`
@@ -29,4 +34,3 @@ type CreateInfracodeOfObjectStorageRequest struct {
 type CreateInfracodeOfMessageBrokerRequest struct {
 	TfVars TfVarsMessageBroker `json:"tfVars"`
 }
-

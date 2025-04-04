@@ -90,6 +90,11 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsSqlDb'
     type: object
+  model.CreateTestbedRequest:
+    properties:
+      testbed_config:
+        $ref: '#/definitions/model.TestbedConfigDetail'
+    type: object
   model.GcpConfig:
     properties:
       bgp_asn:
@@ -163,6 +168,19 @@ definitions:
       vpc_id:
         type: string
     type: object
+  model.TerrariumCreationRequest:
+    properties:
+      description:
+        default: This terrarium enriches ...
+        example: This terrarium enriches ...
+        type: string
+      name:
+        default: tr01
+        example: tr01
+        type: string
+    required:
+    - name
+    type: object
   model.TerrariumInfo:
     properties:
       description:
@@ -170,14 +188,44 @@ definitions:
         example: This terrarium enriches ...
         type: string
       enrichments:
-        example: ""
+        example: vpn/aws-to-site
         type: string
       id:
         default: tr01
         example: tr01
         type: string
+      name:
+        default: tr01
+        example: tr01
+        type: string
+      providers:
+        example:
+        - aws
+        - azure
+        - gcp
+        items:
+          type: string
+        type: array
     required:
     - id
+    - name
+    type: object
+  model.TestbedConfigDetail:
+    properties:
+      desired_providers:
+        example:
+        - aws
+        - azure
+        - gcp
+        - alibaba
+        - tencent
+        - ibm
+        items:
+          type: string
+        type: array
+      terrarium_id:
+        example: ""
+        type: string
     type: object
   model.TfVarsGcpAwsVpnTunnel:
     properties:
@@ -394,10 +442,10 @@ paths:
       parameters:
       - description: Information for a new terrarium
         in: body
-        name: TerrariumInfo
+        name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/model.TerrariumInfo'
+          $ref: '#/definitions/model.TerrariumCreationRequest'
       produces:
       - application/json
       responses:
@@ -1560,6 +1608,12 @@ paths:
         name: trId
         required: true
         type: string
+      - description: Parameters requied to create a testbed
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTestbedRequest'
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -1712,6 +1766,12 @@ paths:
         name: trId
         required: true
         type: string
+      - description: Parameters requied to create a testbed
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTestbedRequest'
       - description: Custom request ID
         in: header
         name: x-request-id

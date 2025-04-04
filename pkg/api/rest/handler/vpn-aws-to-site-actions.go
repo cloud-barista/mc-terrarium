@@ -76,7 +76,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	/*
-	* [Process] Prepare and execute the init command
+	 * [Process] Prepare and execute the init command
 	 */
 
 	// Get the request ID
@@ -84,30 +84,33 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	// Set the enrichments
 	enrichments := "vpn/aws-to-site"
+	providers := []string{"aws", req.VpnConfig.TargetCsp.Type}
 
 	// Check if the terrarium is already used for another purpose
-	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}
-
-	// Check if the terrarium is already used for another purpose
-	if exist && existingEnrichments != enrichments {
+	if trInfo.Enrichments != "" && trInfo.Enrichments != enrichments {
 		err := fmt.Errorf("the terrarium (trId: %s) is already used for another purpose", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
 	}
 
-	// Set the enrichments
-	err = terrarium.SetEnrichments(trId, enrichments)
+	// Set the terrarium information
+	trInfo.Enrichments = enrichments
+	trInfo.Providers = providers
+
+	// Update the terrarium info
+	err = terrarium.UpdateInfo(trInfo)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
 	}
 
-	// Set the terrarium environment
-	err = terrarium.CreateTerrariumEnv(trId, enrichments)
+	// Create the terrarium environment
+	err = terrarium.CreateEnv(trInfo)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
