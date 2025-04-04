@@ -31,25 +31,37 @@ import (
 // @Tags [Terrarium] An environment to enrich the multi-cloud infrastructure
 // @Accept  json
 // @Produce  json
-// @Param TerrariumInfo body model.TerrariumInfo true "Information for a new terrarium"
+// @Param RequestBody body model.TerrariumCreationRequest true "Information for a new terrarium"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr [post]
 func IssueTerrarium(c echo.Context) error {
 
-	reqTrInfo := new(model.TerrariumInfo)
-	if err := c.Bind(reqTrInfo); err != nil {
+	req := new(model.TerrariumCreationRequest)
+	if err := c.Bind(req); err != nil {
 		res := model.Response{Success: false, Message: "failed to bind the request"}
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
 	projectRoot := config.Terrarium.Root
 
-	trId := reqTrInfo.Id
+	// * Info: Make sure the enrichments field is empty
+	terrariumInfo := &model.TerrariumInfo{
+		Name:        req.Name,
+		Description: req.Description,
+		Id:          req.Name,
+		Enrichments: "",
+		Providers:   []string{},
+	}
+	trId := terrariumInfo.Id
 
-	// * Info: Make sure the Enrichments field is empty
-	reqTrInfo.Enrichments = ""
+	// * Info: Check and issue the terrarium ID
+	err := terrarium.IssueID(*terrariumInfo)
+	if err != nil {
+		res := model.Response{Success: false, Message: err.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
 
 	// Create the the working directory if it dosen't exist
 	workingDir := projectRoot + "/.terrarium/" + trId
@@ -61,13 +73,6 @@ func IssueTerrarium(c echo.Context) error {
 			res := model.Response{Success: false, Message: err2.Error()}
 			return c.JSON(http.StatusInternalServerError, res)
 		}
-	}
-
-	err := terrarium.IssueID(*reqTrInfo)
-
-	if err != nil {
-		res := model.Response{Success: false, Message: err.Error()}
-		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	trInfo, exist, err := terrarium.GetInfo(trId)
