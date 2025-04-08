@@ -7,7 +7,5 @@ output "aws_testbed_info" {
 output "aws_testbed_ssh_info" {
   description = "AWS, SSH connection information"
   sensitive   = true
-  value = {
-    aws = try(module.aws.ssh_info, null)
-  }
+  value       = try(module.aws.ssh_info, {})
 }

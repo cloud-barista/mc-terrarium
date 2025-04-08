@@ -7,7 +7,5 @@ output "azure_testbed_info" {
 output "azure_testbed_ssh_info" {
   description = "Azure, SSH connection information"
   sensitive   = true
-  value = {
-    azure = try(module.azure.ssh_info, null)
-  }
+  value = try(module.azure.ssh_info, {})
 }

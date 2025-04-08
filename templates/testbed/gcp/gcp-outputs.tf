@@ -7,7 +7,5 @@ output "gcp_testbed_info" {
 output "gcp_testbed_ssh_info" {
   description = "GCP, SSH connection information"
   sensitive   = true
-  value = {
-    gcp = try(module.gcp.ssh_info, null)
-  }
+  value = try(module.gcp.ssh_info, {})
 }

@@ -14,15 +14,15 @@ To view the network configuration details for each CSP:
 
 ```shell
 # Show specific CSP details
-tofu output -json aws_testbed_info | jq .aws
-tofu output -json azure_testbed_info | jq .azure
-tofu output -json gcp_testbed_info | jq .gcp
-tofu output -json alibaba_testbed_info | jq .alibaba
-tofu output -json tencent_testbed_info | jq .tencent
-tofu output -json ibm_testbed_info | jq .ibm
+tofu output -json aws_testbed_info
+tofu output -json azure_testbed_info
+tofu output -json gcp_testbed_info
+tofu output -json alibaba_testbed_info
+tofu output -json tencent_testbed_inf
+tofu output -json ibm_testbed_info
 
 # Example: Get Azure gateway subnet CIDR
-tofu output -json azure_testbed_info | jq -r .azure.gateway_subnet_cidr
+tofu output -json azure_testbed_info | jq -r .gateway_subnet_cidr
 ```
 
 ## Setup SSH Access
@@ -41,60 +41,60 @@ Use the following commands to connect to each VM:
 ### AWS Instance
 
 ```shell
-tofu output -json aws_testbed_ssh_info | jq -r .aws.command
+tofu output -json aws_testbed_ssh_info | jq -r .command
 ```
 
 ### Azure Instance
 
 ```shell
-tofu output -json azure_testbed_ssh_info | jq -r .azure.command
+tofu output -json azure_testbed_ssh_info | jq -r .command
 ```
 
 ### GCP Instance
 
 ```shell
-tofu output -json gcp_testbed_ssh_info | jq -r .gcp.command
+tofu output -json gcp_testbed_ssh_info | jq -r .command
 ```
 
 ### Alibaba Instance
 
 ```shell
-tofu output -json alibaba_testbed_ssh_info | jq -r .alibaba.command
+tofu output -json alibaba_testbed_ssh_info | jq -r .command
 ```
 
 ### Tencent Instance
 
 ```shell
-tofu output -json tencent_testbed_ssh_info | jq -r .tencent.command
+tofu output -json tencent_testbed_ssh_info | jq -r .command
 ```
 
 ### IBM Instance
 
 ```shell
-tofu output -json ibm_testbed_ssh_info | jq -r .ibm.command
+tofu output -json ibm_testbed_ssh_info | jq -r .command
 ```
 
 ## All at once
 
 ```shell
 # Show specific CSP details
-tofu output -json aws_testbed_info | jq .aws
-tofu output -json azure_testbed_info | jq .azure
-tofu output -json gcp_testbed_info | jq .gcp
-tofu output -json alibaba_testbed_info | jq .alibaba
-tofu output -json tencent_testbed_info | jq .tencent
-tofu output -json ibm_testbed_info | jq .ibm
+tofu output -json aws_testbed_info
+tofu output -json azure_testbed_info
+tofu output -json gcp_testbed_info
+tofu output -json alibaba_testbed_info
+tofu output -json tencent_testbed_info
+tofu output -json ibm_testbed_info
 
 # Example: Get Azure gateway subnet CIDR
-tofu output -json azure_testbed_info | jq -r .azure.gateway_subnet_cidr
+tofu output -json azure_testbed_info | jq -r .gateway_subnet_cidr
 
 # Connect to VMs
-tofu output -json aws_testbed_ssh_info | jq -r .aws.command
-tofu output -json azure_testbed_ssh_info | jq -r .azure.command
-tofu output -json gcp_testbed_ssh_info | jq -r .gcp.command
-tofu output -json alibaba_testbed_ssh_info | jq -r .alibaba.command
-tofu output -json tencent_testbed_ssh_info | jq -r .tencent.command
-tofu output -json ibm_testbed_ssh_info | jq -r .ibm.command
+tofu output -json aws_testbed_ssh_info | jq -r .command
+tofu output -json azure_testbed_ssh_info | jq -r .command
+tofu output -json gcp_testbed_ssh_info | jq -r .command
+tofu output -json alibaba_testbed_ssh_info | jq -r .command
+tofu output -json tencent_testbed_ssh_info | jq -r .command
+tofu output -json ibm_testbed_ssh_info | jq -r .command
 ```
 
 ## Need to delete as a separate process during testing
