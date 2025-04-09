@@ -41,16 +41,16 @@ output "vpn_info" {
       ], [])
       vpn_connections = try([
         for conn in tencentcloud_vpn_connection.to_aws : {
-          resource_type      = "tencentcloud_vpn_connection"
-          name               = try(conn.name, null)
-          id                 = try(conn.id, null)
-          vpc_id             = try(conn.vpc_id, null)
-          vpn_gateway_id     = try(conn.vpn_gateway_id, null)
-          customer_gatway_id = try(conn.customer_gateway_id, null)
-          local_cidr_block   = try(conn.local_cidr_block, null)
-          remote_cidr_block  = try(conn.remote_cidr_block, null)
-          ike_local_address  = try(conn.ike_config.local_address, null)
-          ike_remote_address = try(conn.ike_config.remote_address, null)
+          resource_type          = "tencentcloud_vpn_connection"
+          name                   = try(conn.name, null)
+          id                     = try(conn.id, null)
+          vpc_id                 = try(conn.vpc_id, null)
+          vpn_gateway_id         = try(conn.vpn_gateway_id, null)
+          customer_gatway_id     = try(conn.customer_gateway_id, null)
+          ike_local_address      = try(conn.ike_local_address, null)
+          ike_remote_address     = try(conn.ike_remote_address, null)
+          health_check_local_ip  = try(conn.health_check_local_ip, null)
+          health_check_remote_ip = try(conn.health_check_remote_ip, null)
         }
       ], [])
     }
