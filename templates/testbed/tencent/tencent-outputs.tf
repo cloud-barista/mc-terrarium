@@ -7,7 +7,5 @@ output "tencent_testbed_info" {
 output "tencent_testbed_ssh_info" {
   description = "Tencent, SSH connection information"
   sensitive   = true
-  value = {
-    tencent = try(module.tencent.ssh_info, null)
-  }
+  value       = try(module.tencent.ssh_info, {})
 }

@@ -1520,7 +1520,7 @@ paths:
       - application/json
       description: Delete the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1557,7 +1557,7 @@ paths:
       - application/json
       description: Get the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1602,7 +1602,7 @@ paths:
       - application/json
       description: Create the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1646,7 +1646,7 @@ paths:
       - application/json
       description: Apply the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1684,7 +1684,7 @@ paths:
       - application/json
       description: Destroy the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1722,7 +1722,7 @@ paths:
       - application/json
       description: EmptyOut the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1760,7 +1760,7 @@ paths:
       - application/json
       description: Init testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1804,7 +1804,7 @@ paths:
       - application/json
       description: Output the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId
@@ -1850,7 +1850,7 @@ paths:
       - application/json
       description: Plan the testbed
       parameters:
-      - default: tr01
+      - default: testbed01
         description: Terrarium ID
         in: path
         name: trId

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
@@ -116,7 +117,9 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	// Set credentials for the terrarium environment
+	/*
+	 * NOTE: Set CSPs' credentials for the terrarium environment
+	 */
 	err = terrarium.SetCredentials(trId, enrichments, "gcp")
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
@@ -139,7 +142,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	/*
-	* [Output] Return the result
+	 * [Output] Return the result
 	 */
 
 	res := model.Response{
@@ -313,14 +316,22 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	// Add a deferred function to refresh state if an error occurs
 	defer func() {
-		if err != nil {
-			log.Info().Msg("Attempting to refresh state after error...")
-			_, refreshErr := terrarium.Refresh(trId, reqId)
-			if refreshErr != nil {
-				log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
-			} else {
-				log.Info().Msg("Successfully refreshed state after error")
-			}
+		log.Info().Msg("recover imports.tf and refresh state for the next destroy request")
+
+		// Recover the imports.tf
+		recoverErr := terrarium.RecoverImportTf(trId)
+		if recoverErr != nil {
+			log.Error().Err(recoverErr).Msg("Failed to recover imports.tf")
+		} else {
+			log.Info().Msg("Successfully recovered imports.tf")
+		}
+
+		// Refresh the state
+		_, refreshErr := terrarium.Refresh(trId, reqId)
+		if refreshErr != nil {
+			log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
+		} else {
+			log.Info().Msg("Successfully refreshed state after error")
 		}
 	}()
 
@@ -419,26 +430,106 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	// Get the resource info by the detail option
 	switch detail {
 	case DetailOptions.Refined:
-		// Execute the output command
-		ret, err := terrarium.Output(trId, reqId, "vpn_info", "-json")
+
+		/*
+		 * NOTE: Set the output object (e.g., "testbed_info") to get the refined resource info
+		 */
+
+		trInfo, exists, err := terrarium.GetInfo(trId)
 		if err != nil {
-			err2 := fmt.Errorf("failed to output the infrastructure terrarium")
+			log.Error().Err(err).Msg(err.Error())
+			return emptyRes, err
+		}
+		if !exists {
+			err2 := fmt.Errorf("no terrarium with the given ID (trId: %s)", trId)
+			log.Warn().Msg(err2.Error())
 			return emptyRes, err2
 		}
 
-		var resourceInfo map[string]interface{}
-		err = json.Unmarshal([]byte(ret), &resourceInfo)
-		if err != nil {
-			log.Error().Err(err).Msg("") // error
-			return emptyRes, err
+		// In-parallel, retrieve and merge the resource info
+		providers := trInfo.Providers
+		if len(providers) == 0 {
+			err2 := fmt.Errorf("no providers in the terrarium (trId: %s)", trId)
+			log.Warn().Msg(err2.Error())
+			return emptyRes, err2
 		}
+		// function-scoped struct for secure or robust error handling in goroutines
+		type resultWithError struct {
+			provider     string
+			resourceInfo string
+			err          error
+		}
+		results := make(chan resultWithError, len(providers)) // buffered channel to prevent goroutine leaks
+
+		var wg sync.WaitGroup
+		for _, provider := range providers {
+			wg.Add(1)
+			provider := provider // ! Important: This prevents closure capture
+			go func() {
+				defer wg.Done()
+				// Retrieve provider's resource info
+				targetObject := fmt.Sprintf("%s_vpn_info", provider)
+				resourceInfo, err := terrarium.Output(trId, reqId, targetObject, "-json")
+				if err != nil {
+					results <- resultWithError{
+						provider: provider,
+						err:      fmt.Errorf("failed to get output for provider '%s': %w", provider, err),
+					}
+					return
+				}
+
+				results <- resultWithError{
+					provider:     provider,
+					resourceInfo: resourceInfo,
+					err:          nil,
+				}
+			}()
+		}
+
+		wg.Wait()
+		close(results)
+
+		// Merge th results
+		var allResourceInfo = make(map[string]any)
+
+		allResourceInfo["terrarium_id"] = trId
+
+		for res := range results {
+			if res.err != nil {
+				log.Error().Err(res.err).Msg("") // error
+				continue                         // or handle the error as needed
+			}
+
+			var resourceInfo map[string]any
+			err = json.Unmarshal([]byte(res.resourceInfo), &resourceInfo)
+			if err != nil {
+				log.Error().Err(err).Msg("") // error
+				return emptyRes, err
+			}
+
+			// Merge resourceInfo directly into allResourceInfo
+			mergeResourceInfo(allResourceInfo, resourceInfo)
+		}
+
+		// Optional: return error if any individual result has error
+		// for _, res := range collected {
+		// 	if res.err != nil {
+		// 		return collected, res.err // or accumulate all errors if needed
+		// 	}
+		// }
 
 		res := model.Response{
 			Success: true,
 			Message: "refined read resource info (map)",
-			Object:  resourceInfo,
+			Object:  allResourceInfo,
 		}
-		log.Debug().Msgf("%+v", res) // debug
+
+		// Pretty print the JSON for better readability in logs
+		prettyRes, err := json.MarshalIndent(res, "", "  ")
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to marshal pretty JSON")
+		}
+		log.Debug().Msgf("\n%+v", string(prettyRes)) // debug
 
 		return res, nil
 
@@ -452,28 +543,59 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 			return emptyRes, err2
 		}
 
-		// Parse the resource info
-		resourcesString := gjson.Get(ret, "values.root_module.resources").String()
-		if resourcesString == "" {
+		var allResources []interface{}
+		// Parse the resource info in root module
+		resourceInRootModule := gjson.Get(ret, "values.root_module.resources").String()
+		if resourceInRootModule == "" {
 			err2 := fmt.Errorf("could not find resource info (trId: %s)", trId)
 			log.Warn().Msg(err2.Error())
 			return emptyRes, err2
 		}
 
-		var resourceInfoList []interface{}
-		err = json.Unmarshal([]byte(resourcesString), &resourceInfoList)
+		err = json.Unmarshal([]byte(resourceInRootModule), &allResources)
 		if err != nil {
 			err2 := fmt.Errorf("failed to unmarshal resource info")
 			log.Error().Err(err).Msg(err2.Error()) // error
 			return emptyRes, err2
 		}
 
+		// Parse the resource info in child modules
+		resourcesInChildModules := gjson.Get(ret, "values.root_module.child_modules.#.resources").Array()
+		if len(resourcesInChildModules) == 0 {
+			err2 := fmt.Errorf("could not find resource info (trId: %s)", trId)
+			log.Warn().Msg(err2.Error())
+		}
+
+		for _, resourcesInChildModule := range resourcesInChildModules {
+			if resourcesInChildModule.String() == "" {
+				err2 := fmt.Errorf("could not find resource info (trId: %s)", trId)
+				log.Warn().Msg(err2.Error())
+				return emptyRes, err2
+			}
+
+			var temp []interface{}
+			err = json.Unmarshal([]byte(resourcesInChildModule.String()), &temp)
+			if err != nil {
+				err2 := fmt.Errorf("failed to unmarshal resource info")
+				log.Error().Err(err).Msg(err2.Error()) // error
+				return emptyRes, err2
+			}
+
+			allResources = append(allResources, temp...)
+		}
+
 		res := model.Response{
 			Success: true,
 			Message: "raw resource info (list)",
-			List:    resourceInfoList,
+			List:    allResources,
 		}
-		log.Debug().Msgf("%+v", res) // debug
+
+		// Pretty print the JSON for better readability in logs
+		prettyRes, err := json.MarshalIndent(res, "", "  ")
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to marshal pretty JSON")
+		}
+		log.Debug().Msgf("\n%+v", string(prettyRes)) // debug
 
 		return res, nil
 
@@ -482,6 +604,43 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		log.Warn().Err(err).Msg("") // warn
 
 		return emptyRes, err
+	}
+}
+
+// mergeResourceInfo recursively merges the new resource information into the existing map
+// It modifies the existing map directly
+func mergeResourceInfo(existing, new map[string]any) {
+	// Handle nil cases
+	if existing == nil || new == nil {
+		return
+	}
+
+	for k, v := range new {
+		// Check if the key exists in the existing map
+		valueInExisting, ok := existing[k]
+		if !ok {
+			existing[k] = v
+			continue
+		}
+
+		// If both values are maps, recursively merge them
+		if existingMap, ok1 := valueInExisting.(map[string]any); ok1 {
+			if newMap, ok2 := v.(map[string]any); ok2 {
+				mergeResourceInfo(existingMap, newMap)
+				continue
+			}
+		}
+
+		// If both values are slices, append them
+		if existingSlice, ok1 := valueInExisting.([]any); ok1 {
+			if newSlice, ok2 := v.([]any); ok2 {
+				existing[k] = append(existingSlice, newSlice...)
+				continue
+			}
+		}
+
+		// For incompatible types or primitives, prefer the new value
+		existing[k] = v
 	}
 }
 

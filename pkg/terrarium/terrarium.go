@@ -197,20 +197,11 @@ func CreateEnv(trInfo model.TerrariumInfo) error {
 		}
 	}
 
-	// Copy modules and template files to the terrarium environment (overwrite)
+	// Copy template files and modules to the terrarium environment (overwrite)
 	templateTfsPath := projectRoot + "/templates/" + enrichments
 
-	// Copy modules
-	srcModuleDir := templateTfsPath + "/modules"
-	dstModuleDir := workingDir + "/modules"
-	err := tfutil.CopyDir(srcModuleDir, dstModuleDir)
-	if err != nil {
-		err2 := fmt.Errorf("could not find the modules for terrarium environment")
-		log.Warn().Err(err).Msg(err2.Error())
-	}
-
 	// Copy the template files to the terrarium environment
-	err = tfutil.CopyFiles(templateTfsPath, workingDir)
+	err := tfutil.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy the template files to terrarium environment")
 		log.Error().Err(err).Msg(err2.Error())
@@ -218,14 +209,23 @@ func CreateEnv(trInfo model.TerrariumInfo) error {
 		return err2
 	}
 
-	// Copy the provider specific template files to the terrarium environment
+	// (If it exists) copy the provider specific template files to the terrarium environment
 	for _, provider := range providers {
 		providerTfsDir := projectRoot + "/templates/" + enrichments + "/" + provider
 		err = tfutil.CopyFiles(providerTfsDir, workingDir)
 		if err != nil {
-			err2 := fmt.Errorf("could not find the provider (%s) specific template files to terrarium environment", provider)
+			err2 := fmt.Errorf("could not find any provider (%s) specific template files to terrarium environment", provider)
 			log.Warn().Err(err).Msg(err2.Error())
 		}
+	}
+
+	// (If it exists) Copy modules if it exists
+	srcModuleDir := templateTfsPath + "/modules"
+	dstModuleDir := workingDir + "/modules"
+	err = tfutil.CopyDir(srcModuleDir, dstModuleDir)
+	if err != nil {
+		err2 := fmt.Errorf("could not find any modules for terrarium environment")
+		log.Warn().Err(err).Msg(err2.Error())
 	}
 
 	return nil
@@ -363,6 +363,49 @@ func EmptyOutTerrariumEnv(trId string) error {
 			log.Error().Err(err).Msgf("failed to empty out the terrarium environment (dir: %s)", entryPath)
 			return err
 		}
+	}
+
+	return nil
+}
+
+// RecoverImportTf recovers the imports.tf file
+func RecoverImportTf(trId string) error {
+
+	// Check if the terrarium environment exists (i.e., a terrarium environment)
+	trInfo, exist, err := GetInfo(trId)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to get terrarium info")
+		return err
+	}
+
+	if !exist {
+		err := fmt.Errorf("no terrarium (trId: %s)", trId)
+		log.Error().Msg(err.Error())
+		return err
+	}
+
+	projectRoot := config.Terrarium.Root
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + trInfo.Enrichments
+	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
+		err := os.MkdirAll(workingDir, 0755)
+		if err != nil {
+			err2 := fmt.Errorf("failed to set the terrarium environment (trId: %s)", trId)
+			log.Error().Err(err).Msg(err2.Error())
+			return err2
+		}
+	}
+
+	// Check if the imports.tf file exists
+	importsTfPath := workingDir + "/imports.tf"
+
+	// Copy template files and modules to the terrarium environment (overwrite)
+	templateTfsPath := projectRoot + "/templates/" + trInfo.Enrichments + "/imports.tf"
+
+	// Copy the imports.tf to the terrarium environment
+	if err := tfutil.CopyFile(templateTfsPath, importsTfPath); err != nil {
+		err2 := fmt.Errorf("failed to copy the imports.tf file to terrarium environment")
+		log.Error().Err(err).Msg(err2.Error())
+		return err2
 	}
 
 	return nil

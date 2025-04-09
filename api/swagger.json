@@ -1760,7 +1760,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1826,7 +1826,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1890,7 +1890,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1947,7 +1947,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2004,7 +2004,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2061,7 +2061,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2118,7 +2118,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2184,7 +2184,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2252,7 +2252,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",

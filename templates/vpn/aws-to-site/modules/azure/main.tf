@@ -1,24 +1,24 @@
 ## AWS side resources/services
 # AWS Customer Gateway (require Azure VPN Gateway info)
 resource "aws_customer_gateway" "azure_gw" {
-  count = local.is_azure ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-azure-side-gw-${count.index + 1}"
+    Name = "${var.name_prefix}-azure-side-gw-${count.index + 1}"
   }
-  bgp_asn    = var.vpn_config.target_csp.azure.bgp_asn
+  bgp_asn    = var.bgp_asn
   ip_address = azurerm_public_ip.pub_ip[count.index].ip_address
   type       = "ipsec.1"
 }
 
 # AWS VPN Connection with custom inside CIDR blocks (due to Azure VPN Gateway's requirement)
 resource "aws_vpn_connection" "to_azure" {
-  count = local.is_azure ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-to-azure-${count.index + 1}"
+    Name = "${var.name_prefix}-to-azure-${count.index + 1}"
   }
-  vpn_gateway_id      = aws_vpn_gateway.vpn_gw.id
+  vpn_gateway_id      = var.aws_vpn_gateway_id
   customer_gateway_id = aws_customer_gateway.azure_gw[count.index].id
   type                = "ipsec.1"
 
@@ -34,28 +34,27 @@ resource "aws_vpn_connection" "to_azure" {
 ## Azure side resources/services
 # Azure Virtual Network
 data "azurerm_virtual_network" "existing" {
-  count = local.is_azure ? 1 : 0
 
-  name                = var.vpn_config.target_csp.azure.virtual_network_name
-  resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
+  name                = var.virtual_network_name
+  resource_group_name = var.resource_group_name
 }
 
 # Gateway Subnet (Azure requirement: "GatewaySubnet" is required for VPN Gateway)
 resource "azurerm_subnet" "gateway" {
-  count                = local.is_azure ? 1 : 0
+
   name                 = "GatewaySubnet"
-  resource_group_name  = var.vpn_config.target_csp.azure.resource_group_name
-  virtual_network_name = data.azurerm_virtual_network.existing[0].name
-  address_prefixes     = [var.vpn_config.target_csp.azure.gateway_subnet_cidr]
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.existing.name
+  address_prefixes     = [var.gateway_subnet_cidr]
 }
 
 # Public IPs for Azure VPN Gateway
 resource "azurerm_public_ip" "pub_ip" {
-  count = local.is_azure ? 2 : 0 # 2 Public IPs for Active-Active configuration
+  count = 2 # 2 Public IPs for Active-Active configuration
 
-  name                = "${local.name_prefix}-vpn-ip-${count.index + 1}"
-  location            = var.vpn_config.target_csp.azure.region
-  resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
+  name                = "${var.name_prefix}-vpn-ip-${count.index + 1}"
+  location            = var.region
+  resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = ["1", "2", "3"] # Availability zones
@@ -63,31 +62,30 @@ resource "azurerm_public_ip" "pub_ip" {
 
 # Azure VPN Gateway with pre-allocated APIPA addresses
 resource "azurerm_virtual_network_gateway" "vpn_gw" {
-  count = local.is_azure ? 1 : 0
 
-  name                = "${local.name_prefix}-vpn-gateway"
-  location            = var.vpn_config.target_csp.azure.region
-  resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
+  name                = "${var.name_prefix}-vpn-gateway"
+  location            = var.region
+  resource_group_name = var.resource_group_name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
 
   active_active = true
   enable_bgp    = true
-  sku           = var.vpn_config.target_csp.azure.vpn_sku
+  sku           = var.vpn_sku
 
   ip_configuration {
-    name                          = "${local.name_prefix}-gateway-config-1"
+    name                          = "${var.name_prefix}-gateway-config-1"
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pub_ip[0].id
-    subnet_id                     = azurerm_subnet.gateway[0].id
+    subnet_id                     = azurerm_subnet.gateway.id
   }
 
   ip_configuration {
-    name                          = "${local.name_prefix}-gateway-config-2"
+    name                          = "${var.name_prefix}-gateway-config-2"
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pub_ip[1].id
-    subnet_id                     = azurerm_subnet.gateway[0].id
+    subnet_id                     = azurerm_subnet.gateway.id
   }
 
   # https://learn.microsoft.com/en-us/azure/vpn-gateway/bgp-howto
@@ -96,9 +94,9 @@ resource "azurerm_virtual_network_gateway" "vpn_gw" {
   # you must select an address from the Azure-reserved APIPA address range for VPN, 
   # which is from 169.254.21.0 to 169.254.22.255.
   bgp_settings {
-    asn = var.vpn_config.target_csp.azure.bgp_asn
+    asn = var.bgp_asn
     peering_addresses {
-      ip_configuration_name = "${local.name_prefix}-gateway-config-1"
+      ip_configuration_name = "${var.name_prefix}-gateway-config-1"
       apipa_addresses = [
         # note - AWS-sides BGP address cannot be used due to Azure's requirments.
         # aws_vpn_connection.to_azure[0].tunnel1_cgw_inside_address,
@@ -108,7 +106,7 @@ resource "azurerm_virtual_network_gateway" "vpn_gw" {
       ]
     }
     peering_addresses {
-      ip_configuration_name = "${local.name_prefix}-gateway-config-2"
+      ip_configuration_name = "${var.name_prefix}-gateway-config-2"
       apipa_addresses = [
         # Note - Inside tunnel addresses generated by AWS may not be used 
         # due to Azure's APIPA address range (from 169.254.21.0 to 169.254.22.255).
@@ -123,11 +121,11 @@ resource "azurerm_virtual_network_gateway" "vpn_gw" {
 
 # Azure Local Network Gateway (require AWS VPN gateway info)
 resource "azurerm_local_network_gateway" "aws_gw" {
-  count = local.is_azure ? 4 : 0
+  count = 4
 
-  name                = "${local.name_prefix}-aws-side-${count.index + 1}"
-  location            = var.vpn_config.target_csp.azure.region
-  resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
+  name                = "${var.name_prefix}-aws-side-${count.index + 1}"
+  location            = var.region
+  resource_group_name = var.resource_group_name
 
   gateway_address = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_address : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_address
 
@@ -139,14 +137,14 @@ resource "azurerm_local_network_gateway" "aws_gw" {
 
 # Azure VPN Connection 
 resource "azurerm_virtual_network_gateway_connection" "to_aws" {
-  count = local.is_azure ? 4 : 0
+  count = 4
 
-  name                = "${local.name_prefix}-to-aws-${count.index + 1}"
-  location            = var.vpn_config.target_csp.azure.region
-  resource_group_name = var.vpn_config.target_csp.azure.resource_group_name
+  name                = "${var.name_prefix}-to-aws-${count.index + 1}"
+  location            = var.region
+  resource_group_name = var.resource_group_name
 
   type                       = "IPsec"
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn_gw[0].id
+  virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn_gw.id
   local_network_gateway_id   = azurerm_local_network_gateway.aws_gw[count.index].id
   shared_key                 = count.index % 2 == 0 ? aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel1_preshared_key : aws_vpn_connection.to_azure[floor(count.index / 2)].tunnel2_preshared_key
 

@@ -7,7 +7,5 @@ output "ibm_testbed_info" {
 output "ibm_testbed_ssh_info" {
   description = "IBM, SSH connection information"
   sensitive   = true
-  value = {
-    ibm = try(module.ibm.ssh_info, null)
-  }
+  value = try(module.ibm.ssh_info, {})
 }
