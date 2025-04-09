@@ -24,7 +24,7 @@ import (
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param ReqBody body model.CreateTestbedRequest true "Parameters requied to create a testbed"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
@@ -143,11 +143,11 @@ func initTestbed(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	err = terrarium.SetCredentials(trId, enrichments, "azure")
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return emptyRes, err
-	}
+	// err = terrarium.SetCredentials(trId, enrichments, "azure")
+	// if err != nil {
+	// 	log.Error().Err(err).Msg(err.Error())
+	// 	return emptyRes, err
+	// }
 
 	// Set the tfvars
 	err = terrarium.SaveTfVars(trId, enrichments, req.TestbedConfig)
@@ -185,7 +185,7 @@ func initTestbed(c echo.Context) (model.Response, error) {
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
@@ -243,7 +243,7 @@ func planTestbed(c echo.Context) (model.Response, error) {
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
@@ -301,7 +301,7 @@ func applyTestbed(c echo.Context) (model.Response, error) {
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
@@ -359,7 +359,7 @@ func destroyTestbed(c echo.Context) (model.Response, error) {
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
@@ -588,7 +588,7 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 // @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
 // @Accept json
 // @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
+// @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"

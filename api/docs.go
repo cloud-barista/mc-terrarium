@@ -1766,7 +1766,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1832,7 +1832,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1896,7 +1896,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -1953,7 +1953,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2010,7 +2010,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2067,7 +2067,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2124,7 +2124,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2190,7 +2190,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",
@@ -2258,7 +2258,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "tr01",
+                        "default": "testbed01",
                         "description": "Terrarium ID",
                         "name": "trId",
                         "in": "path",

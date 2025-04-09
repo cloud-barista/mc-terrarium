@@ -1,13 +1,13 @@
 ## AWS side resources/services
 # AWS customer gateways (require IBM VPN gateway info)
 resource "aws_customer_gateway" "ibm_gw" {
-  count = local.is_ibm ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-ibm-side-gw-${count.index + 1}"
+    Name = "${var.name_prefix}-ibm-side-gw-${count.index + 1}"
   }
   # bgp_asn    = var.vpn_config.target_csp.ibm.bgp_asn
-  ip_address = count.index % 2 == 0 ? ibm_is_vpn_gateway.vpn_gw[0].public_ip_address : ibm_is_vpn_gateway.vpn_gw[0].public_ip_address2
+  ip_address = count.index % 2 == 0 ? ibm_is_vpn_gateway.vpn_gw.public_ip_address : ibm_is_vpn_gateway.vpn_gw.public_ip_address2
   type       = "ipsec.1"
 }
 
@@ -15,12 +15,12 @@ resource "aws_customer_gateway" "ibm_gw" {
 # aws_vpn_connection.to_ibm.tunnel1_cgw_inside_address - The RFC 6890 link-local address of the first VPN tunnel (Customer Gateway Side).
 # aws_vpn_connection.to_ibm.tunnel1_vgw_inside_address - The RFC 6890 link-local address of the first VPN tunnel (VPN Gateway Side).
 resource "aws_vpn_connection" "to_ibm" {
-  count = local.is_ibm ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-to-ibm-${count.index + 1}"
+    Name = "${var.name_prefix}-to-ibm-${count.index + 1}"
   }
-  vpn_gateway_id      = aws_vpn_gateway.vpn_gw.id
+  vpn_gateway_id      = var.aws_vpn_gateway_id
   customer_gateway_id = aws_customer_gateway.ibm_gw[count.index].id
   type                = "ipsec.1"
   static_routes_only  = true
@@ -29,43 +29,39 @@ resource "aws_vpn_connection" "to_ibm" {
 # [Note] it's necessary to support static routing
 # AWS VPN connection route
 resource "aws_vpn_connection_route" "to_ibm" {
-  count = local.is_ibm ? 2 : 0
+  count = 2
 
-  destination_cidr_block = var.vpn_config.target_csp.ibm.vpc_cidr
+  destination_cidr_block = var.vpc_cidr
   vpn_connection_id      = aws_vpn_connection.to_ibm[count.index].id
 }
 
 ## IBM Cloud side resources/services
 # Fetching IBM subnets information
 data "ibm_is_zones" "available" {
-  count = local.is_ibm ? 1 : 0
 
-  region = var.vpn_config.target_csp.ibm.region
+  region = var.region
 }
 
 data "ibm_is_subnets" "existing" {
-  count = local.is_ibm ? 1 : 0
 
-  vpc = var.vpn_config.target_csp.ibm.vpc_id
+  vpc = var.vpc_id
 }
 
 data "ibm_is_subnet" "existing" {
-  count = local.is_ibm ? 1 : 0
 
-  identifier = var.vpn_config.target_csp.ibm.subnet_id
+  identifier = var.subnet_id
 }
 
 locals {
-  ibm_subnet_cidrs = local.is_ibm ? [for subnet in data.ibm_is_subnets.existing[0].subnets : subnet.ipv4_cidr_block] : []
-  ibm_subnet_cidr  = local.is_ibm ? [data.ibm_is_subnet.existing[0].ipv4_cidr_block] : []
+  ibm_subnet_cidrs = try([for subnet in data.ibm_is_subnets.existing.subnets : subnet.ipv4_cidr_block], [])
+  ibm_subnet_cidr  = try([data.ibm_is_subnet.existing.ipv4_cidr_block], [])
 }
 
 # IBM Cloud VPN Gateway
 resource "ibm_is_vpn_gateway" "vpn_gw" {
-  count = local.is_ibm ? 1 : 0
 
-  name   = "${local.name_prefix}-vpn-gw-${count.index + 1}"
-  subnet = var.vpn_config.target_csp.ibm.subnet_id
+  name   = "${var.name_prefix}-vpn-gw"
+  subnet = var.subnet_id
   mode   = "route"
 }
 
@@ -75,10 +71,10 @@ resource "ibm_is_vpn_gateway" "vpn_gw" {
 
 # IBM Cloud VPN Connection
 resource "ibm_is_vpn_gateway_connection" "to_aws" {
-  count = local.is_ibm ? 4 : 0
+  count = 4
 
-  name          = "${local.name_prefix}-to-aws-${count.index + 1}"
-  vpn_gateway   = ibm_is_vpn_gateway.vpn_gw[0].id
+  name          = "${var.name_prefix}-to-aws-${count.index + 1}"
+  vpn_gateway   = ibm_is_vpn_gateway.vpn_gw.id
   preshared_key = count.index % 2 == 0 ? aws_vpn_connection.to_ibm[floor(count.index / 2)].tunnel1_preshared_key : aws_vpn_connection.to_ibm[floor(count.index / 2)].tunnel2_preshared_key
 
   # [Note] We may not use the following code.
@@ -93,22 +89,22 @@ resource "ibm_is_vpn_gateway_connection" "to_aws" {
     # [Note] We may not use the following code.
     # In argument reference of IBM TF docs, it doesn't appear.
     # But ironically it appears in the example code.
-    # cidrs   = [data.aws_vpc.existing.cidr_block]
+    # cidrs   = [var.aws_vpc_cidr_block]
   }
 }
 
 # Fetch existing VPC routing tables
 data "ibm_is_vpc_routing_tables" "existing" {
-  count = local.is_ibm ? 1 : 0
-  vpc   = var.vpn_config.target_csp.ibm.vpc_id
+
+  vpc = var.vpc_id
 }
 
 locals {
   # Find routing table that has our subnet attached
-  target_routing_table = local.is_ibm ? [
-    for rt in data.ibm_is_vpc_routing_tables.existing[0].routing_tables :
-    rt if contains([for subnet in rt.subnets : subnet.id], var.vpn_config.target_csp.ibm.subnet_id)
-  ][0] : null
+  target_routing_table = try([
+    for rt in data.ibm_is_vpc_routing_tables.existing.routing_tables :
+    rt if contains([for subnet in rt.subnets : subnet.id], var.subnet_id)
+  ][0], null)
 }
 
 # [Note] 
@@ -116,13 +112,12 @@ locals {
 
 # First VPN route
 resource "ibm_is_vpc_routing_table_route" "vpn_route_1" {
-  count = local.is_ibm ? 1 : 0
 
-  name          = "${local.name_prefix}-to-aws-1"
-  vpc           = var.vpn_config.target_csp.ibm.vpc_id
-  zone          = data.ibm_is_zones.available[0].zones[0]
+  name          = "${var.name_prefix}-to-aws-1"
+  vpc           = var.vpc_id
+  zone          = data.ibm_is_zones.available.zones[0]
   routing_table = local.target_routing_table.routing_table
-  destination   = data.aws_vpc.existing.cidr_block
+  destination   = var.aws_vpc_cidr_block
   action        = "deliver"
   advertise     = true
   next_hop      = ibm_is_vpn_gateway_connection.to_aws[0].gateway_connection
@@ -131,15 +126,14 @@ resource "ibm_is_vpc_routing_table_route" "vpn_route_1" {
 
 # Second VPN route
 resource "ibm_is_vpc_routing_table_route" "vpn_route_2" {
-  count = local.is_ibm ? 1 : 0
 
   depends_on = [ibm_is_vpc_routing_table_route.vpn_route_1]
 
-  name          = "${local.name_prefix}-to-aws-2"
-  vpc           = var.vpn_config.target_csp.ibm.vpc_id
-  zone          = data.ibm_is_zones.available[0].zones[0]
+  name          = "${var.name_prefix}-to-aws-2"
+  vpc           = var.vpc_id
+  zone          = data.ibm_is_zones.available.zones[0]
   routing_table = local.target_routing_table.routing_table
-  destination   = data.aws_vpc.existing.cidr_block
+  destination   = var.aws_vpc_cidr_block
   action        = "deliver"
   advertise     = true
   next_hop      = ibm_is_vpn_gateway_connection.to_aws[1].gateway_connection
@@ -148,15 +142,14 @@ resource "ibm_is_vpc_routing_table_route" "vpn_route_2" {
 
 # Third VPN route
 resource "ibm_is_vpc_routing_table_route" "vpn_route_3" {
-  count = local.is_ibm ? 1 : 0
 
   depends_on = [ibm_is_vpc_routing_table_route.vpn_route_2]
 
-  name          = "${local.name_prefix}-to-aws-3"
-  vpc           = var.vpn_config.target_csp.ibm.vpc_id
-  zone          = data.ibm_is_zones.available[0].zones[0]
+  name          = "${var.name_prefix}-to-aws-3"
+  vpc           = var.vpc_id
+  zone          = data.ibm_is_zones.available.zones[0]
   routing_table = local.target_routing_table.routing_table
-  destination   = data.aws_vpc.existing.cidr_block
+  destination   = var.aws_vpc_cidr_block
   action        = "deliver"
   advertise     = true
   next_hop      = ibm_is_vpn_gateway_connection.to_aws[2].gateway_connection
@@ -165,15 +158,14 @@ resource "ibm_is_vpc_routing_table_route" "vpn_route_3" {
 
 # Fourth VPN route
 resource "ibm_is_vpc_routing_table_route" "vpn_route_4" {
-  count = local.is_ibm ? 1 : 0
 
   depends_on = [ibm_is_vpc_routing_table_route.vpn_route_3]
 
-  name          = "${local.name_prefix}-to-aws-4"
-  vpc           = var.vpn_config.target_csp.ibm.vpc_id
-  zone          = data.ibm_is_zones.available[0].zones[0]
+  name          = "${var.name_prefix}-to-aws-4"
+  vpc           = var.vpc_id
+  zone          = data.ibm_is_zones.available.zones[0]
   routing_table = local.target_routing_table.routing_table
-  destination   = data.aws_vpc.existing.cidr_block
+  destination   = var.aws_vpc_cidr_block
   action        = "deliver"
   advertise     = true
   next_hop      = ibm_is_vpn_gateway_connection.to_aws[3].gateway_connection

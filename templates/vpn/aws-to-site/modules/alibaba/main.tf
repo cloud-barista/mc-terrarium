@@ -1,13 +1,13 @@
 ## AWS side resources/services
 # AWS customer gateways (require Alibaba VPN gateway info)
 resource "aws_customer_gateway" "alibaba_gw" {
-  count = local.is_alibaba ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-alibaba-side-gw-${count.index + 1}"
+    Name = "${var.name_prefix}-alibaba-side-gw-${count.index + 1}"
   }
-  bgp_asn    = var.vpn_config.target_csp.alibaba.bgp_asn
-  ip_address = count.index % 2 == 0 ? alicloud_vpn_gateway.vpn_gw[0].internet_ip : alicloud_vpn_gateway.vpn_gw[0].disaster_recovery_internet_ip
+  bgp_asn    = var.bgp_asn
+  ip_address = count.index % 2 == 0 ? alicloud_vpn_gateway.vpn_gw.internet_ip : alicloud_vpn_gateway.vpn_gw.disaster_recovery_internet_ip
   type       = "ipsec.1"
 }
 
@@ -15,12 +15,12 @@ resource "aws_customer_gateway" "alibaba_gw" {
 # aws_vpn_connection.to_alibaba.tunnel1_cgw_inside_address - The RFC 6890 link-local address of the first VPN tunnel (Customer Gateway Side).
 # aws_vpn_connection.to_alibaba.tunnel1_vgw_inside_address - The RFC 6890 link-local address of the first VPN tunnel (VPN Gateway Side).
 resource "aws_vpn_connection" "to_alibaba" {
-  count = local.is_alibaba ? 2 : 0
+  count = 2
 
   tags = {
-    Name = "${local.name_prefix}-to-alibaba-${count.index + 1}"
+    Name = "${var.name_prefix}-to-alibaba-${count.index + 1}"
   }
-  vpn_gateway_id      = aws_vpn_gateway.vpn_gw.id
+  vpn_gateway_id      = var.aws_vpn_gateway_id
   customer_gateway_id = aws_customer_gateway.alibaba_gw[count.index].id
   type                = "ipsec.1"
 
@@ -49,40 +49,34 @@ resource "aws_vpn_connection" "to_alibaba" {
 ## Alibaba Cloud side resources/services
 # Fetching Alibaba VPC and subnets information
 data "alicloud_zones" "available" {
-  count = local.is_alibaba ? 1 : 0
-
   available_resource_creation = "VSwitch"
 }
 
 data "alicloud_vpcs" "existing" {
-  count = local.is_alibaba ? 1 : 0
-
-  ids = [var.vpn_config.target_csp.alibaba.vpc_id]
+  ids = [var.vpc_id]
 }
 
 data "alicloud_vswitches" "existing" {
-  count  = local.is_alibaba ? 1 : 0
-  vpc_id = var.vpn_config.target_csp.alibaba.vpc_id
+  vpc_id = var.vpc_id
 }
 
 locals {
-  alibaba_subnet_cidrs = local.is_alibaba ? [for vswitch in data.alicloud_vswitches.existing[0].vswitches : vswitch.cidr_block] : []
+  alibaba_subnet_cidrs = try([for vswitch in data.alicloud_vswitches.existing.vswitches : vswitch.cidr_block], [])
 }
 
 # Alibaba Cloud VPN Gateway
 resource "alicloud_vpn_gateway" "vpn_gw" {
-  count = local.is_alibaba ? 1 : 0
 
   vpn_type                     = "Normal"
   network_type                 = "public"
-  vpn_gateway_name             = "${local.name_prefix}-vpn-gw-${count.index + 1}"
-  vpc_id                       = var.vpn_config.target_csp.alibaba.vpc_id
-  vswitch_id                   = var.vpn_config.target_csp.alibaba.vswitch_id_1
-  disaster_recovery_vswitch_id = var.vpn_config.target_csp.alibaba.vswitch_id_2
+  vpn_gateway_name             = "${var.name_prefix}-vpn-gw"
+  vpc_id                       = var.vpc_id
+  vswitch_id                   = var.vswitch_id_1
+  disaster_recovery_vswitch_id = var.vswitch_id_2
   payment_type                 = "PayAsYouGo"
   enable_ipsec                 = true
   bandwidth                    = "100" # 100Mbps (the value is 5, 10, 20, 50, 100, 200, 500, 1000)
-  description                  = "VPN Gateway ${count.index + 1} for AWS to Alibaba Cloud connection"
+  description                  = "VPN Gateway for AWS to Alibaba Cloud connection"
   auto_propagate               = true
 
   timeouts {
@@ -97,9 +91,9 @@ resource "alicloud_vpn_gateway" "vpn_gw" {
 
 # Alibaba Cloud Customer Gateway (AWS VPN Gateway info required)
 resource "alicloud_vpn_customer_gateway" "aws_gw" {
-  count = local.is_alibaba ? 4 : 0
+  count = 4
 
-  customer_gateway_name = "${local.name_prefix}-aws-side-gw-${count.index + 1}"
+  customer_gateway_name = "${var.name_prefix}-aws-side-gw-${count.index + 1}"
   ip_address            = count.index % 2 == 0 ? aws_vpn_connection.to_alibaba[floor(count.index / 2)].tunnel1_address : aws_vpn_connection.to_alibaba[floor(count.index / 2)].tunnel2_address
   asn                   = count.index % 2 == 0 ? aws_vpn_connection.to_alibaba[floor(count.index / 2)].tunnel1_bgp_asn : aws_vpn_connection.to_alibaba[floor(count.index / 2)].tunnel2_bgp_asn
   description           = "Customer Gateway ${count.index + 1} for AWS VPN connection "
@@ -107,15 +101,15 @@ resource "alicloud_vpn_customer_gateway" "aws_gw" {
 
 # Alibaba Cloud VPN Connection
 resource "alicloud_vpn_connection" "to_aws" {
-  count = local.is_alibaba ? 2 : 0
+  count = 2
 
-  vpn_gateway_id = alicloud_vpn_gateway.vpn_gw[0].id
+  vpn_gateway_id = alicloud_vpn_gateway.vpn_gw.id
 
-  vpn_connection_name = "${local.name_prefix}-to-aws-${count.index + 1}"
+  vpn_connection_name = "${var.name_prefix}-to-aws-${count.index + 1}"
   # local_subnet        = local.alibaba_subnet_cidrs
   # remote_subnet       = local.aws_subnet_cidrs
-  local_subnet  = [data.alicloud_vpcs.existing[0].vpcs[0].cidr_block]
-  remote_subnet = [data.aws_vpc.existing.cidr_block]
+  local_subnet  = [data.alicloud_vpcs.existing.vpcs[0].cidr_block]
+  remote_subnet = [var.aws_vpc_cidr_block]
 
   network_type = "public"
   # auto_config_route  = true
@@ -163,7 +157,7 @@ resource "alicloud_vpn_connection" "to_aws" {
     }
 
     tunnel_bgp_config {
-      local_asn    = var.vpn_config.target_csp.alibaba.bgp_asn
+      local_asn    = var.bgp_asn
       local_bgp_ip = aws_vpn_connection.to_alibaba[count.index].tunnel1_cgw_inside_address
       tunnel_cidr  = cidrsubnet("${aws_vpn_connection.to_alibaba[count.index].tunnel1_cgw_inside_address}/30", 0, 0)
     }
@@ -194,7 +188,7 @@ resource "alicloud_vpn_connection" "to_aws" {
     }
 
     tunnel_bgp_config {
-      local_asn    = var.vpn_config.target_csp.alibaba.bgp_asn
+      local_asn    = var.bgp_asn
       local_bgp_ip = aws_vpn_connection.to_alibaba[count.index].tunnel2_cgw_inside_address
       tunnel_cidr  = cidrsubnet("${aws_vpn_connection.to_alibaba[count.index].tunnel2_cgw_inside_address}/30", 0, 0)
     }
@@ -203,19 +197,17 @@ resource "alicloud_vpn_connection" "to_aws" {
 
 # Add data source for Alibaba route tables
 data "alicloud_route_tables" "existing" {
-  count  = local.is_alibaba ? 1 : 0
-  vpc_id = var.vpn_config.target_csp.alibaba.vpc_id
+  vpc_id = var.vpc_id
 }
 
 # IMPORTNANT: REQUIRE Alibaba side route table configuration
 # Alibaba side route table configuration
 resource "alicloud_route_entry" "vpn_routes" {
-  count = local.is_alibaba ? 1 : 0
 
-  route_table_id        = data.alicloud_route_tables.existing[0].ids[0]
-  destination_cidrblock = data.aws_vpc.existing.cidr_block
+  route_table_id        = data.alicloud_route_tables.existing.ids[0]
+  destination_cidrblock = var.aws_vpc_cidr_block
   nexthop_type          = "VpnGateway"
-  nexthop_id            = alicloud_vpn_gateway.vpn_gw[0].id
+  nexthop_id            = alicloud_vpn_gateway.vpn_gw.id
 
   depends_on = [
     alicloud_vpn_connection.to_aws,
