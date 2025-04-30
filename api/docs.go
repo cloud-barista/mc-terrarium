@@ -3906,7 +3906,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "tfVars": {
-                    "$ref": "#/definitions/model.TfVarsMessageBroker"
+                    "$ref": "#/definitions/model.TfVarsObjectStorage"
                 }
             }
         },
@@ -4192,6 +4192,23 @@ const docTemplate = `{
                 "csp_vnet_id": {
                     "type": "string",
                     "example": "vpc-12345678"
+                },
+                "terrarium_id": {
+                    "type": "string",
+                    "example": ""
+                }
+            }
+        },
+        "model.TfVarsObjectStorage": {
+            "type": "object",
+            "properties": {
+                "csp_region": {
+                    "type": "string",
+                    "example": "ap-northeast-2"
+                },
+                "csp_resource_group": {
+                    "type": "string",
+                    "example": "koreacentral"
                 },
                 "terrarium_id": {
                     "type": "string",
