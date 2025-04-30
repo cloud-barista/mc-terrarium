@@ -25,6 +25,7 @@ output "vpn_info" {
       vpn_gateway = try({
         resource_type                 = "alicloud_vpn_gateway"
         id                            = alicloud_vpn_gateway.vpn_gw.id
+        name                          = alicloud_vpn_gateway.vpn_gw.name
         internet_ip                   = alicloud_vpn_gateway.vpn_gw.internet_ip
         disaster_recovery_internet_ip = alicloud_vpn_gateway.vpn_gw.disaster_recovery_internet_ip
       }, null)
@@ -43,12 +44,13 @@ output "vpn_info" {
           bgp_status    = conn.bgp_config.status
           tunnels = try([
             for tos in conn.tunnel_options_specification : {
-              id          = tos.tunnel_id
-              state       = tos.state
-              status      = tos.status
-              bsp_status  = tos.bgp_status
-              peer_asn    = tos.peer_asn
-              peer_bgp_ip = tos.peer_bgp_ip
+              resource_type = "alicloud_vpn_tunnel_options"
+              id            = tos.tunnel_id
+              state         = tos.state
+              status        = tos.status
+              bgp_status    = tos.bgp_status
+              peer_asn      = tos.peer_asn
+              peer_bgp_ip   = tos.peer_bgp_ip
             }
           ], [])
         }

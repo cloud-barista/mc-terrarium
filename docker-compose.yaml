@@ -16,12 +16,14 @@ services:
         published: 8055
         protocol: tcp
     env_file:
-      - ./secrets/credentials # AWS credentials
-      - ./secrets/credential-azure.env # Azure credentials
-      - ./secrets/credential-ncp.env # NCP credentials
-      - ./secrets/credential-ibm.env # IBM credentials
+      - ./secrets/credentials             # AWS credential
+      - ./secrets/credential-azure.env    # Azure credential
+      - ./secrets/credential-alibaba.env  # Alibaba credential
+      - ./secrets/credential-tencent.env  # Tencent credential
+      - ./secrets/credential-ibm.env      # IBM credential
+      - ./secrets/credential-ncp.env      # NCP credential
     volumes:
-      - ./secrets:/app/secrets:ro # GCP credentials
+      - ./secrets/credential-gcp.json:/app/secrets/credential-gcp.json:ro # GCP credential
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
     environment:
       - TERRARIUM_ROOT=/app

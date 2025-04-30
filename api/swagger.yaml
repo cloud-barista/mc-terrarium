@@ -83,7 +83,7 @@ definitions:
   model.CreateInfracodeOfObjectStorageRequest:
     properties:
       tfVars:
-        $ref: '#/definitions/model.TfVarsMessageBroker'
+        $ref: '#/definitions/model.TfVarsObjectStorage'
     type: object
   model.CreateInfracodeOfSqlDbRequest:
     properties:
@@ -288,6 +288,18 @@ definitions:
         type: string
       csp_vnet_id:
         example: vpc-12345678
+        type: string
+      terrarium_id:
+        example: ""
+        type: string
+    type: object
+  model.TfVarsObjectStorage:
+    properties:
+      csp_region:
+        example: ap-northeast-2
+        type: string
+      csp_resource_group:
+        example: koreacentral
         type: string
       terrarium_id:
         example: ""

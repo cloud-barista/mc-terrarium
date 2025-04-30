@@ -23,7 +23,7 @@ output "vpn_info" {
     }
     ibm = {
       vpn_gateway = try({
-        resource_type = "ibm_is_vpn_gateway"
+        resource_type = ibm_is_vpn_gateway.vpn_gw.resource_type
         name          = ibm_is_vpn_gateway.vpn_gw.name
         id            = ibm_is_vpn_gateway.vpn_gw.id
         public_ip_1   = ibm_is_vpn_gateway.vpn_gw.public_ip_address
@@ -31,12 +31,26 @@ output "vpn_info" {
       }, null)
       vpn_connections = try([
         for conn in ibm_is_vpn_gateway_connection.to_aws : {
-          name         = conn.name
-          id           = conn.id
-          local_cidrs  = conn.local[0].cidrs
-          peer_address = conn.peer[0].address
-          peer_cidrs   = conn.peer[0].cidrs
-          # preshared_key = nonsensitive(conn.preshared_key)
+          resource_type      = conn.resource_type
+          name               = conn.name
+          id                 = conn.id
+          crn                = conn.crn
+          gateway_connection = conn.gateway_connection
+          mode               = conn.mode
+          status             = conn.status
+          status_reasons = try([
+            for reason in conn.status_reasons : {
+              code      = reason.code
+              message   = reason.message
+              more_info = reason.more_info
+            }
+          ], [])
+          tunnels = try([
+            for tunnel in conn.tunnels : {
+              resource_type = tunnel.resource_type
+              address       = tunnel.address
+            }
+          ])
         }
       ], [])
     }

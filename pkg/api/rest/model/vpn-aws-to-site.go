@@ -8,28 +8,28 @@ import "fmt"
 
 // GcpConfig represents GCP specific VPN configuration
 type GcpConfig struct {
-	Region         *string `json:"region,omitempty" default:"asia-northeast3" example:"asia-northeast3"`
-	VpcNetworkName string  `json:"vpc_network_name"`
-	BgpAsn         *string `json:"bgp_asn,omitempty" default:"65530" example:"65530"`
+	Region         string `json:"region,omitempty" default:"asia-northeast3" example:"asia-northeast3"`
+	VpcNetworkName string `json:"vpc_network_name"`
+	BgpAsn         string `json:"bgp_asn,omitempty" default:"65530" example:"65530"`
 }
 
 // AzureConfig represents Azure specific VPN configuration
 type AzureConfig struct {
-	Region             string  `json:"region"`
-	ResourceGroupName  string  `json:"resource_group_name"`
-	VirtualNetworkName string  `json:"virtual_network_name"`
-	GatewaySubnetCidr  string  `json:"gateway_subnet_cidr"`
-	BgpAsn             *string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
-	VpnSku             *string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
+	Region             string `json:"region"`
+	ResourceGroupName  string `json:"resource_group_name"`
+	VirtualNetworkName string `json:"virtual_network_name"`
+	GatewaySubnetCidr  string `json:"gateway_subnet_cidr"`
+	BgpAsn             string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
+	VpnSku             string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
 }
 
 // AlibabaConfig represents Alibaba Cloud specific VPN configuration
 type AlibabaConfig struct {
-	Region     *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId      string  `json:"vpc_id"`
-	VswitchId1 string  `json:"vswitch_id_1"`
-	VswitchId2 string  `json:"vswitch_id_2"`
-	BgpAsn     *string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
+	Region     string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
+	VpcId      string `json:"vpc_id"`
+	VswitchId1 string `json:"vswitch_id_1"`
+	VswitchId2 string `json:"vswitch_id_2"`
+	BgpAsn     string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
 }
 
 // TencentConfig represents Tencent Cloud specific VPN configuration
@@ -43,19 +43,19 @@ type TencentConfig struct {
 
 // IbmConfig represents IBM Cloud specific VPN configuration
 type IbmConfig struct {
-	Region   *string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
-	VpcId    string  `json:"vpc_id"`
-	VpcCidr  string  `json:"vpc_cidr"`
-	SubnetId string  `json:"subnet_id"`
+	Region   string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
+	VpcId    string `json:"vpc_id"`
+	VpcCidr  string `json:"vpc_cidr"`
+	SubnetId string `json:"subnet_id"`
 	// BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
 }
 
 // AwsConfig represents AWS specific VPN configuration
 type AwsConfig struct {
-	Region   *string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId    string  `json:"vpc_id"`
-	SubnetId string  `json:"subnet_id"`
-	BgpAsn   *string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
+	Region   string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
+	VpcId    string `json:"vpc_id"`
+	SubnetId string `json:"subnet_id"`
+	BgpAsn   string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
 }
 
 // TargetCspConfig represents the target cloud service provider configuration
@@ -237,8 +237,24 @@ func validateIbmConfig(ibm IbmConfig) error {
 }
 
 /*
- * Model for the AWS to site VPN information
+ * Output of the AWS to site VPN information
  */
+
+// * AWS section
+
+// VpnInfo represents the main VPN information output structure
+type VpnInfo struct {
+	Terrarium TerrariumInfo `json:"terrarium"`
+	Aws       AwsVpnInfo    `json:"aws"`
+	TargetCsp TargetCspInfo `json:"target_csp"`
+}
+
+// AwsVpnInfo represents AWS-specific VPN information
+type AwsVpnInfo struct {
+	VpnGateway       AwsVpnGateway        `json:"vpn_gateway"`
+	CustomerGateways []AwsCustomerGateway `json:"customer_gateways"`
+	VpnConnections   []AwsVpnConnection   `json:"vpn_connections"`
+}
 
 // AwsVpnGateway represents AWS VPN gateway information
 type AwsVpnGateway struct {
@@ -266,78 +282,26 @@ type AwsVpnConnection struct {
 	Tunnel2Address string `json:"tunnel2_address"`
 }
 
-// AwsInfo represents AWS-specific VPN information
-type AwsInfo struct {
-	VpnGateway       AwsVpnGateway        `json:"vpn_gateway"`
-	CustomerGateways []AwsCustomerGateway `json:"customer_gateways"`
-	VpnConnections   []AwsVpnConnection   `json:"vpn_connections"`
+// * TargetCspInfo section
+// TargetCspInfo represents target CSP information with all possible CSP types
+type TargetCspInfo struct {
+	Type    string          `json:"type"`
+	Azure   *AzureVpnInfo   `json:"azure,omitempty"`
+	Gcp     *GcpVpnInfo     `json:"gcp,omitempty"`
+	Alibaba *AlibabaVpnInfo `json:"alibaba,omitempty"`
+	Tencent *TencentVpnInfo `json:"tencent,omitempty"`
+	Ibm     *IbmInfo        `json:"ibm,omitempty"`
 }
 
-// GcpVpnGateway represents GCP VPN gateway information
-type GcpVpnGateway struct {
-	ResourceType string `json:"resource_type"`
-	Name         string `json:"name"`
-	ID           string `json:"id"`
-	Network      string `json:"network"`
-	Region       string `json:"region"`
-}
+// * Azure section
 
-// GcpExternalGatewayInterface represents interface for GCP external gateway
-type GcpExternalGatewayInterface struct {
-	ID        string `json:"id"`
-	IPAddress string `json:"ip_address"`
-}
-
-// GcpExternalGateway represents GCP external gateway information
-type GcpExternalGateway struct {
-	ResourceType   string                        `json:"resource_type"`
-	Name           string                        `json:"name"`
-	ID             string                        `json:"id"`
-	RedundancyType string                        `json:"redundancy_type"`
-	Description    string                        `json:"description"`
-	Interfaces     []GcpExternalGatewayInterface `json:"interfaces"`
-}
-
-// GcpRouter represents GCP router information
-type GcpRouter struct {
-	ResourceType string `json:"resource_type"`
-	Name         string `json:"name"`
-	ID           string `json:"id"`
-	Network      string `json:"network"`
-	BgpAsn       string `json:"bgp_asn"`
-}
-
-// GcpTunnel represents GCP tunnel information
-type GcpTunnel struct {
-	Name      string `json:"name"`
-	ID        string `json:"id"`
-	PeerIP    string `json:"peer_ip"`
-	Interface int    `json:"interface"`
-}
-
-// GcpInterface represents GCP interface information
-type GcpInterface struct {
-	Name    string `json:"name"`
-	ID      string `json:"id"`
-	IPRange string `json:"ip_range"`
-}
-
-// GcpPeer represents GCP peer information
-type GcpPeer struct {
-	Name    string `json:"name"`
-	ID      string `json:"id"`
-	PeerIP  string `json:"peer_ip"`
-	PeerAsn string `json:"peer_asn"`
-}
-
-// GcpInfo represents GCP-specific target CSP information
-type GcpInfo struct {
-	VpnGateway      GcpVpnGateway      `json:"vpn_gateway"`
-	ExternalGateway GcpExternalGateway `json:"external_gateway"`
-	Router          GcpRouter          `json:"router"`
-	Tunnels         []GcpTunnel        `json:"tunnels"`
-	Interfaces      []GcpInterface     `json:"interfaces"`
-	Peers           []GcpPeer          `json:"peers"`
+// AzureVpnInfo represents Azure-specific target CSP information
+type AzureVpnInfo struct {
+	VpnGateway    *AzureVpnGateway    `json:"vpn_gateway,omitempty"`
+	PublicIPs     []AzurePublicIP     `json:"public_ips"`
+	Connections   []AzureConnection   `json:"connections"`
+	LocalGateways []AzureLocalGateway `json:"local_gateways"`
+	BgpAsn        string              `json:"bgp_asn"`
 }
 
 // AzureVpnGateway represents Azure VPN gateway information
@@ -351,70 +315,189 @@ type AzureVpnGateway struct {
 
 // AzurePublicIP represents Azure public IP information
 type AzurePublicIP struct {
-	Name      string `json:"name"`
-	ID        string `json:"id"`
-	IPAddress string `json:"ip_address"`
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	IPAddress    string `json:"ip_address"`
 }
 
 // AzureConnection represents Azure connection information
 type AzureConnection struct {
-	Name      string `json:"name"`
-	ID        string `json:"id"`
-	Type      string `json:"type"`
-	EnableBgp bool   `json:"enable_bgp"`
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	Type         string `json:"type"`
+	EnableBgp    bool   `json:"enable_bgp"`
 }
 
 // AzureLocalGateway represents Azure local gateway information
 type AzureLocalGateway struct {
+	ResourceType   string `json:"resource_type"`
 	Name           string `json:"name"`
 	ID             string `json:"id"`
 	GatewayAddress string `json:"gateway_address"`
 }
 
-// AzureInfo represents Azure-specific target CSP information
-type AzureInfo struct {
-	VpnGateway    *AzureVpnGateway    `json:"vpn_gateway,omitempty"`
-	PublicIPs     []AzurePublicIP     `json:"public_ips"`
-	Connections   []AzureConnection   `json:"connections"`
-	LocalGateways []AzureLocalGateway `json:"local_gateways"`
+// * GCP section
+
+// GcpVpnInfo represents GCP-specific target CSP information
+type GcpVpnInfo struct {
+	VpnGateway      GcpVpnGateway      `json:"vpn_gateway"`
+	ExternalGateway GcpExternalGateway `json:"external_gateway"`
+	Router          GcpRouter          `json:"router"`
+	Tunnels         []GcpTunnel        `json:"tunnels"`
+	Interfaces      []GcpInterface     `json:"interfaces"`
+	Peers           []GcpPeer          `json:"peers"`
+}
+
+// GcpVpnGateway represents GCP VPN gateway information
+type GcpVpnGateway struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	Network      string `json:"network"`
+	Region       string `json:"region"`
+}
+
+// GcpExternalGateway represents GCP external gateway information
+type GcpExternalGateway struct {
+	ResourceType   string                        `json:"resource_type"`
+	Name           string                        `json:"name"`
+	ID             string                        `json:"id"`
+	RedundancyType string                        `json:"redundancy_type"`
+	Description    string                        `json:"description"`
+	Interfaces     []GcpExternalGatewayInterface `json:"interfaces"`
+}
+
+// GcpExternalGatewayInterface represents interface for GCP external gateway
+type GcpExternalGatewayInterface struct {
+	ID        string `json:"id"`
+	IPAddress string `json:"ip_address"`
+}
+
+// GcpRouter represents GCP router information
+type GcpRouter struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	Network      string `json:"network"`
+	BgpAsn       string `json:"bgp_asn"`
+}
+
+// GcpTunnel represents GCP tunnel information
+type GcpTunnel struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	PeerIP       string `json:"peer_ip"`
+	Interface    int    `json:"interface"`
+}
+
+// GcpInterface represents GCP interface information
+type GcpInterface struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	IPRange      string `json:"ip_range"`
+}
+
+// GcpPeer represents GCP peer information
+type GcpPeer struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	PeerIP       string `json:"peer_ip"`
+	PeerAsn      string `json:"peer_asn"`
+}
+
+// * Alibaba section
+
+// AlibabaVpnInfo represents Alibaba Cloud-specific target CSP information
+type AlibabaVpnInfo struct {
+	VpnGateway       *AlibabaVpnGateway       `json:"vpn_gateway,omitempty"`
+	CustomerGateways []AlibabaCustomerGateway `json:"customer_gateways"`
+	VpnConnections   []AlibabaVpnConnection   `json:"vpn_connections"`
+	BgpAsn           string                   `json:"bgp_asn"`
 }
 
 // AlibabaVpnGateway represents Alibaba Cloud VPN gateway information
 type AlibabaVpnGateway struct {
+	ResourceType               string `json:"resource_type"`
 	ID                         string `json:"id"`
+	Name                       string `json:"name"`
 	InternetIP                 string `json:"internet_ip"`
 	DisasterRecoveryInternetIP string `json:"disaster_recovery_internet_ip"`
 }
 
 // AlibabaCustomerGateway represents Alibaba Cloud customer gateway information
 type AlibabaCustomerGateway struct {
-	ID        string `json:"id"`
-	IPAddress string `json:"ip_address"`
-	Asn       string `json:"asn"`
-}
-
-// AlibabaTunnelOption represents Alibaba Cloud tunnel option information
-type AlibabaTunnelOption struct {
-	ID        string `json:"id"`
-	State     string `json:"state"`
-	Status    string `json:"status"`
-	BgpStatus string `json:"bsp_status"`
-	PeerAsn   string `json:"peer_asn"`
-	PeerBgpIP string `json:"peer_bgp_ip"`
+	ResourceType string `json:"resource_type"`
+	ID           string `json:"id"`
+	IPAddress    string `json:"ip_address"`
+	Asn          string `json:"asn"`
 }
 
 // AlibabaVpnConnection represents Alibaba Cloud VPN connection information
 type AlibabaVpnConnection struct {
-	ID        string                `json:"id"`
-	BgpStatus string                `json:"bgp_status"`
-	Tunnels   []AlibabaTunnelOption `json:"tunnels"`
+	ResourceType string                `json:"resource_type"`
+	ID           string                `json:"id"`
+	BgpStatus    string                `json:"bgp_status"`
+	Tunnels      []AlibabaTunnelOption `json:"tunnels"`
 }
 
-// AlibabaInfo represents Alibaba Cloud-specific target CSP information
-type AlibabaInfo struct {
-	VpnGateway       *AlibabaVpnGateway       `json:"vpn_gateway,omitempty"`
-	CustomerGateways []AlibabaCustomerGateway `json:"customer_gateways"`
-	VpnConnections   []AlibabaVpnConnection   `json:"vpn_connections"`
+// AlibabaTunnelOption represents Alibaba Cloud tunnel option information
+type AlibabaTunnelOption struct {
+	ResourceType string `json:"resource_type"`
+	ID           string `json:"id"`
+	State        string `json:"state"`
+	Status       string `json:"status"`
+	BgpStatus    string `json:"bgp_status"`
+	PeerAsn      string `json:"peer_asn"`
+	PeerBgpIP    string `json:"peer_bgp_ip"`
+}
+
+// * Tencent section
+
+type TencentVpnInfo struct {
+	VpnGateways      []TencentVpnGateway      `json:"vpn_gateways,omitempty"`
+	CustomerGateways []TencentCustomerGateway `json:"customer_gateways"`
+	VpnConnections   []TencentVpnConnection   `json:"vpn_connections"`
+}
+
+type TencentVpnGateway struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	VpcID        string `json:"vpc_id"`
+	PublicIP     string `json:"public_ip"`
+}
+
+type TencentCustomerGateway struct {
+	ResourceType    string `json:"resource_type"`
+	Name            string `json:"name"`
+	ID              string `json:"id"`
+	PublicIpAddress string `json:"public_ip_address"`
+}
+
+type TencentVpnConnection struct {
+	ResourceType        string `json:"resource_type"`
+	Name                string `json:"name"`
+	ID                  string `json:"id"`
+	VpcID               string `json:"vpc_id"`
+	VpnGatewayId        string `json:"vpn_gateway_id"`
+	CustomerGatewayId   string `json:"customer_gateway_id"`
+	IkeLocalAddress     string `json:"ike_local_address"`
+	IkeRemoteAddress    string `json:"ike_remote_address"`
+	HealthCheckLocalIp  string `json:"health_check_local_ip"`
+	HealthCheckRemoteIp string `json:"health_check_remote_ip"`
+}
+
+// * IBM section
+
+// IbmInfo represents IBM Cloud-specific target CSP information
+type IbmInfo struct {
+	VpnGateway     *IbmVpnGateway     `json:"vpn_gateway,omitempty"`
+	VpnConnections []IbmVpnConnection `json:"vpn_connections"`
 }
 
 // IbmVpnGateway represents IBM Cloud VPN gateway information
@@ -428,32 +511,26 @@ type IbmVpnGateway struct {
 
 // IbmVpnConnection represents IBM Cloud VPN connection information
 type IbmVpnConnection struct {
-	Name         string   `json:"name"`
-	ID           string   `json:"id"`
-	PresharedKey string   `json:"preshared_key"`
-	LocalCidrs   []string `json:"local_cidrs"`
-	PeerAddress  string   `json:"peer_address"`
-	PeerCidrs    []string `json:"peer_cidrs"`
+	ResourceType      string            `json:"resource_type"`
+	Name              string            `json:"name"`
+	ID                string            `json:"id"`
+	Crn               string            `json:"crn"`
+	GatewayConnection string            `json:"gateway_connection"`
+	Mode              string            `json:"mode"`
+	Status            string            `json:"status"`
+	StatusReasons     []IbmStatusReason `json:"status_reasons"`
+	Tunnels           []IbmTunnel       `json:"tunnels"`
 }
 
-// IbmInfo represents IBM Cloud-specific target CSP information
-type IbmInfo struct {
-	VpnGateway     *IbmVpnGateway     `json:"vpn_gateway,omitempty"`
-	VpnConnections []IbmVpnConnection `json:"vpn_connections"`
+// IbmStatusReason represents IBM Cloud VPN status reason information
+type IbmStatusReason struct {
+	Code     string `json:"code"`
+	Message  string `json:"message"`
+	MoreInfo string `json:"more_info"`
 }
 
-// TargetCspInfo represents target CSP information with all possible CSP types
-type TargetCspInfo struct {
-	Type    string       `json:"type"`
-	Gcp     *GcpInfo     `json:"gcp,omitempty"`
-	Azure   *AzureInfo   `json:"azure,omitempty"`
-	Alibaba *AlibabaInfo `json:"alibaba,omitempty"`
-	Ibm     *IbmInfo     `json:"ibm,omitempty"`
-}
-
-// VpnInfo represents the main VPN information output structure
-type VpnInfo struct {
-	Terrarium TerrariumInfo `json:"terrarium"`
-	Aws       AwsInfo       `json:"aws"`
-	TargetCsp TargetCspInfo `json:"target_csp"`
+// IbmTunnel represents IBM Cloud VPN tunnel information
+type IbmTunnel struct {
+	ResourceType string `json:"resource_type"`
+	Address      string `json:"address"`
 }
