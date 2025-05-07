@@ -3,7 +3,7 @@ package model
 import "fmt"
 
 /*
- * Model for the AWS to site VPN configuration
+ * Input/request body for the AWS to site VPN configuration
  */
 
 // GcpConfig represents GCP specific VPN configuration
@@ -237,17 +237,21 @@ func validateIbmConfig(ibm IbmConfig) error {
 }
 
 /*
- * Output of the AWS to site VPN information
+ * Output/response body of the AWS to site VPN information
  */
-
-// * AWS section
 
 // VpnInfo represents the main VPN information output structure
 type VpnInfo struct {
-	Terrarium TerrariumInfo `json:"terrarium"`
-	Aws       AwsVpnInfo    `json:"aws"`
-	TargetCsp TargetCspInfo `json:"target_csp"`
+	Terrarium TerrariumInfo   `json:"terrarium"`
+	Aws       *AwsVpnInfo     `json:"aws"`
+	Azure     *AzureVpnInfo   `json:"azure,omitempty"`
+	Gcp       *GcpVpnInfo     `json:"gcp,omitempty"`
+	Alibaba   *AlibabaVpnInfo `json:"alibaba,omitempty"`
+	Tencent   *TencentVpnInfo `json:"tencent,omitempty"`
+	Ibm       *IbmInfo        `json:"ibm,omitempty"`
 }
+
+// * AWS section
 
 // AwsVpnInfo represents AWS-specific VPN information
 type AwsVpnInfo struct {
@@ -283,15 +287,15 @@ type AwsVpnConnection struct {
 }
 
 // * TargetCspInfo section
-// TargetCspInfo represents target CSP information with all possible CSP types
-type TargetCspInfo struct {
-	Type    string          `json:"type"`
-	Azure   *AzureVpnInfo   `json:"azure,omitempty"`
-	Gcp     *GcpVpnInfo     `json:"gcp,omitempty"`
-	Alibaba *AlibabaVpnInfo `json:"alibaba,omitempty"`
-	Tencent *TencentVpnInfo `json:"tencent,omitempty"`
-	Ibm     *IbmInfo        `json:"ibm,omitempty"`
-}
+// // TargetCspInfo represents target CSP information with all possible CSP types
+// type TargetCspInfo struct {
+// 	Type    string          `json:"type"`
+// 	Azure   *AzureVpnInfo   `json:"azure,omitempty"`
+// 	Gcp     *GcpVpnInfo     `json:"gcp,omitempty"`
+// 	Alibaba *AlibabaVpnInfo `json:"alibaba,omitempty"`
+// 	Tencent *TencentVpnInfo `json:"tencent,omitempty"`
+// 	Ibm     *IbmInfo        `json:"ibm,omitempty"`
+// }
 
 // * Azure section
 

@@ -43,7 +43,7 @@ func CreateAwsToSiteVpn(c echo.Context) error {
 		log.Error().Err(err).Msg(err.Error())
 		return c.JSON(http.StatusInternalServerError, res)
 	}
-	
+
 	res, err = applyAwsToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
@@ -68,7 +68,7 @@ func CreateAwsToSiteVpn(c echo.Context) error {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/vpn/aws-to-site [get]
 func GetAwsToSiteVpn(c echo.Context) error {
-	
+
 	// Handler workflow by sequenctially running the following operation:
 	// 1. Get
 
@@ -95,7 +95,7 @@ func GetAwsToSiteVpn(c echo.Context) error {
 // @Failure 503 {object} model.Response "Service Unavailable"
 // @Router /tr/{trId}/vpn/aws-to-site [delete]
 func DeleteAwsToSiteVpn(c echo.Context) error {
-	
+
 	// Handler workflow by sequenctially running the following operation:
 	// 1. Destroy
 
@@ -105,7 +105,7 @@ func DeleteAwsToSiteVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// res, err = cleanAwsToSiteVpn(c)
+	// res, err = emptyOutAwsToSiteVpn(c)
 	// if err != nil {
 	// 	log.Error().Err(err).Msg(err.Error())
 	// 	return c.JSON(http.StatusInternalServerError, res)

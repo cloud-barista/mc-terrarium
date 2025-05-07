@@ -492,6 +492,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		// Merge th results
 		var allResourceInfo = make(map[string]any)
 
+		log.Debug().Msgf("trId: %s", trId)
 		allResourceInfo["terrarium_id"] = trId
 
 		for res := range results {
@@ -689,7 +690,7 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	if !exist || existingEnrichments != enrichments {
-		err := fmt.Errorf("the terrarium (trId: %s) is not used for the testbed", trId)
+		err := fmt.Errorf("the terrarium (trId: %s) is used for the other purpose (%s)", trId, existingEnrichments)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
 	}

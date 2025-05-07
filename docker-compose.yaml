@@ -4,7 +4,7 @@ networks:
 
 services:
   mc-terrarium:
-    image: cloudbaristaorg/mc-terrarium:0.0.16
+    image: cloudbaristaorg/mc-terrarium:0.0.21
     container_name: mc-terrarium
     build:
       context: .
@@ -25,6 +25,7 @@ services:
     volumes:
       - ./secrets/credential-gcp.json:/app/secrets/credential-gcp.json:ro # GCP credential
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
+      - /etc/ssl/certs:/etc/ssl/certs:ro
     environment:
       - TERRARIUM_ROOT=/app
       # - TERRARIUM_SELF_ENDPOINT=localhost:8055
