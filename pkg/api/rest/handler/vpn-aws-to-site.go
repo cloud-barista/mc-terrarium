@@ -98,6 +98,7 @@ func DeleteAwsToSiteVpn(c echo.Context) error {
 
 	// Handler workflow by sequenctially running the following operation:
 	// 1. Destroy
+	// 2. EmptyOut
 
 	res, err := destroyAwsToSiteVpn(c)
 	if err != nil {
@@ -105,11 +106,11 @@ func DeleteAwsToSiteVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// res, err = emptyOutAwsToSiteVpn(c)
-	// if err != nil {
-	// 	log.Error().Err(err).Msg(err.Error())
-	// 	return c.JSON(http.StatusInternalServerError, res)
-	// }
+	res, err = emptyOutAwsToSiteVpn(c)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return c.JSON(http.StatusInternalServerError, res)
+	}
 
 	return c.JSON(http.StatusOK, res)
 }
