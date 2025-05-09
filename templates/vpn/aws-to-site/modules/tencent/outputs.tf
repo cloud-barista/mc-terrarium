@@ -2,44 +2,44 @@ output "vpn_info" {
   description = "VPN connection information"
   value = {
     aws = {
-      customer_gateways = try([
+      customer_gateways = [
         for i, cgw in aws_customer_gateway.tencent_gw : {
           resource_type = "aws_customer_gateway"
-          name          = cgw.tags.Name
-          id            = cgw.id
-          ip_address    = cgw.ip_address
-          bgp_asn       = cgw.bgp_asn
+          name          = try(cgw.tags.Name, "")
+          id            = try(cgw.id, "")
+          ip_address    = try(cgw.ip_address, "")
+          bgp_asn       = try(cgw.bgp_asn, "")
         }
-      ], [])
-      vpn_connections = try([
+      ]
+      vpn_connections = [
         for i, vpn in aws_vpn_connection.to_tencent : {
           resource_type   = "aws_vpn_connection"
-          name            = vpn.tags.Name
-          id              = vpn.id
-          tunnel1_address = vpn.tunnel1_address
-          tunnel2_address = vpn.tunnel2_address
+          name            = try(vpn.tags.Name, "")
+          id              = try(vpn.id, "")
+          tunnel1_address = try(vpn.tunnel1_address, "")
+          tunnel2_address = try(vpn.tunnel2_address, "")
         }
-      ], [])
+      ]
     }
     tencent = {
-      vpn_gateways = try([
+      vpn_gateways = [
         for vpn_gw in tencentcloud_vpn_gateway.vpn_gw : {
           resource_type = "tencentcloud_vpn_gateway"
-          name          = vpn_gw.name
-          id            = vpn_gw.id
-          vpc_id        = vpn_gw.vpc_id
-          public_ip     = vpn_gw.public_ip_address
+          name          = try(vpn_gw.name, "")
+          id            = try(vpn_gw.id, "")
+          vpc_id        = try(vpn_gw.vpc_id, "")
+          public_ip     = try(vpn_gw.public_ip_address, "")
         }
-      ], [])
-      customer_gateways = try([
+      ]
+      customer_gateways = [
         for cgw in tencentcloud_vpn_customer_gateway.aws_gw : {
           resource_type     = "tencentcloud_vpn_customer_gateway"
-          name              = cgw.name
-          id                = cgw.id
-          public_ip_address = cgw.public_ip_address
+          name              = try(cgw.name, "")
+          id                = try(cgw.id, "")
+          public_ip_address = try(cgw.public_ip_address, "")
         }
-      ], [])
-      vpn_connections = try([
+      ]
+      vpn_connections = [
         for conn in tencentcloud_vpn_connection.to_aws : {
           resource_type          = "tencentcloud_vpn_connection"
           name                   = try(conn.name, null)
@@ -52,7 +52,7 @@ output "vpn_info" {
           health_check_local_ip  = try(conn.health_check_local_ip, null)
           health_check_remote_ip = try(conn.health_check_remote_ip, null)
         }
-      ], [])
+      ]
     }
   }
 }
