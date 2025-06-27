@@ -3,7 +3,7 @@ volumes:
 
 services:
   wg-easy:
-    image: ghcr.io/wg-easy/wg-easy
+    image: ghcr.io/wg-easy/wg-easy:13
     container_name: wg-easy
     volumes:
       - etc_wireguard:/etc/wireguard
