@@ -1,0 +1,21 @@
+# Example configuration for using existing Azure infrastructure
+# Copy this file to terraform.tfvars and update with your actual values
+
+# Existing Resource Group where AKS will be deployed
+resource_group_name = "my-aks-rg"
+
+# Azure region
+location = "my-aks-region"
+
+# AKS cluster configuration
+cluster_name = "my-aks-cluster"
+dns_prefix   = "my-aks-dns" # Must be globally unique
+
+# Existing network infrastructure
+vnet_resource_group_name = "my-network-rg" # Can be same as resource_group_name
+vnet_name                = "my-aks-vnet"   # Virtual Network name
+subnet_name              = "my-aks-subnet" # Subnet name for AKS nodes
+
+# Kubernetes service networking (must not overlap with existing VNet CIDR)
+service_cidr   = "10.7.0.0/16" # Adjust based on your network setup
+dns_service_ip = "10.7.0.10"   # Must be within service_cidr
