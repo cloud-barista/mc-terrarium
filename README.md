@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>🚀 Powered by OpenTofu</strong><br>
-  <strong>🤝 A Collaboration Between Cloud-Barista & OpenTofu</strong>
+  <strong>🤝 In Synergy with Cloud-Barista</strong>
 </p>
 
 **Multi-Cloud Terrarium (mc-terrarium)** is an open-source project designed to provide an environment—an **infrastructure terrarium**—that enhances multi-cloud infrastructure management.
@@ -52,6 +52,32 @@ go install github.com/swaggo/swag/cmd/swag@latest
 Prepare credentials by looking at the README and templates in the `/secrets` directory.
 
 Note - There may be an issue regarding Credential settings. Contributions are welcome.
+
+## Development Tools (Optional)
+
+### OpenTofu MCP Server Integration (for contributors)
+
+This enables AI-powered assistance **for your enhanced development experience**, such as OpenTofu registry search, documentation access, and code assistance.
+
+As recommended by OpenTofu MCP Server, we use the **hosted service** instead of local installation for better reliability and always up-to-date registry data.
+
+**Setup for VS Code:**
+
+- Create `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "opentofu": {
+      "type": "sse",
+      "url": "https://mcp.opentofu.org/sse"
+    }
+  },
+  "inputs": []
+}
+```
+
+For other editors (Cursor) or local installation options, see the [OpenTofu MCP Server repository](https://github.com/opentofu/opentofu-mcp-server).
 
 ## Up and run MC-Terrarium
 

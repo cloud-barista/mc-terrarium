@@ -5,11 +5,12 @@ This guide explains how to set up a WireGuard VPN server using WireGuard Easy, a
 ## Prerequisites
 
 - Linux server with Docker and Docker Compose installed
+
   - [Install Docker Engine](https://docs.docker.com/engine/install/)
 
-   ```bash
-   curl -sSL get.docker.com | sh
-   ```
+  ```bash
+  curl -sSL get.docker.com | sh
+  ```
 
   - [Install the Compose plugin](https://docs.docker.com/compose/install/linux/)
 
