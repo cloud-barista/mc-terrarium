@@ -6,56 +6,11 @@ import "fmt"
  * Input/request body for the AWS to site VPN configuration
  */
 
-// GcpConfig represents GCP specific VPN configuration
-type GcpConfig struct {
-	Region         string `json:"region,omitempty" default:"asia-northeast3" example:"asia-northeast3"`
-	VpcNetworkName string `json:"vpc_network_name"`
-	BgpAsn         string `json:"bgp_asn,omitempty" default:"65530" example:"65530"`
-}
-
-// AzureConfig represents Azure specific VPN configuration
-type AzureConfig struct {
-	Region             string `json:"region"`
-	ResourceGroupName  string `json:"resource_group_name"`
-	VirtualNetworkName string `json:"virtual_network_name"`
-	GatewaySubnetCidr  string `json:"gateway_subnet_cidr"`
-	BgpAsn             string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
-	VpnSku             string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
-}
-
-// AlibabaConfig represents Alibaba Cloud specific VPN configuration
-type AlibabaConfig struct {
-	Region     string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId      string `json:"vpc_id"`
-	VswitchId1 string `json:"vswitch_id_1"`
-	VswitchId2 string `json:"vswitch_id_2"`
-	BgpAsn     string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
-}
-
-// TencentConfig represents Tencent Cloud specific VPN configuration
-// Currently commented out in the original definition
-type TencentConfig struct {
-	Region   string `json:"region" default:"ap-seoul" example:"ap-seoul"`
-	VpcId    string `json:"vpc_id"`
-	SubnetId string `json:"subnet_id"`
-	// BgpAsn   *string `json:"bgp_asn" default:"65534" example:"65534"`
-}
-
-// IbmConfig represents IBM Cloud specific VPN configuration
-type IbmConfig struct {
-	Region   string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
-	VpcId    string `json:"vpc_id"`
-	VpcCidr  string `json:"vpc_cidr"`
-	SubnetId string `json:"subnet_id"`
-	// BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
-}
-
-// AwsConfig represents AWS specific VPN configuration
-type AwsConfig struct {
-	Region   string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId    string `json:"vpc_id"`
-	SubnetId string `json:"subnet_id"`
-	BgpAsn   string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
+// AwsToSiteVpnConfig represents the main VPN configuration structure
+type AwsToSiteVpnConfig struct {
+	TerrariumId string          `json:"terrarium_id"`
+	Aws         AwsConfig       `json:"aws"`
+	TargetCsp   TargetCspConfig `json:"target_csp"`
 }
 
 // TargetCspConfig represents the target cloud service provider configuration
@@ -66,13 +21,6 @@ type TargetCspConfig struct {
 	Alibaba *AlibabaConfig `json:"alibaba,omitempty"`
 	Ibm     *IbmConfig     `json:"ibm,omitempty"`
 	Tencent *TencentConfig `json:"tencent,omitempty"`
-}
-
-// AwsToSiteVpnConfig represents the main VPN configuration structure
-type AwsToSiteVpnConfig struct {
-	TerrariumId string          `json:"terrarium_id"`
-	Aws         AwsConfig       `json:"aws"`
-	TargetCsp   TargetCspConfig `json:"target_csp"`
 }
 
 // Validate validates the AWS to Site VPN configuration

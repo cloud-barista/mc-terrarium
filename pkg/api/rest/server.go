@@ -147,7 +147,7 @@ func RunServer(port string) {
 					err := bcrypt.CompareHashAndPassword([]byte(apiPass), []byte(password))
 					if err == nil {
 						return true, nil
-					}					
+					}
 				}
 				return false, nil
 			},
@@ -177,7 +177,7 @@ func RunServer(port string) {
 
 	// A terrarium group has /terrarium as prefix
 	gTr := e.Group("/terrarium")
-	
+
 	// Terrarium APIs
 	gTr.POST("/tr", handler.IssueTerrarium)
 	gTr.GET("/tr", handler.ReadAllTerrarium)
@@ -212,12 +212,26 @@ func RunServer(port string) {
 	gTr.GET("/tr/:trId/vpn/aws-to-site/actions/output", handler.OutputAwsToSiteVpn)
 	gTr.DELETE("/tr/:trId/vpn/aws-to-site/actions/emptyout", handler.EmptyOutAwsToSiteVpn)
 
+	// [Site-to-Site VPN] Resource operations (high-level APIs for resource-centric operations)
+	gTr.POST("/tr/:trId/vpn/site-to-site", handler.CreateSiteToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/site-to-site", handler.GetSiteToSiteVpn)
+	// gTr.PUT("/tr/:trId/vpn/site-to-site", handler.UpdateSiteToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/site-to-site", handler.DeleteSiteToSiteVpn)
+
+	// [Site-to-Site VPN] Tofu Actions (low-level APIs for advanced control)
+	gTr.POST("/tr/:trId/vpn/site-to-site/actions/init", handler.InitSiteToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/site-to-site/actions/plan", handler.PlanSiteToSiteVpn)
+	gTr.POST("/tr/:trId/vpn/site-to-site/actions/apply", handler.ApplySiteToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/site-to-site/actions/destroy", handler.DestroySiteToSiteVpn)
+	gTr.GET("/tr/:trId/vpn/site-to-site/actions/output", handler.OutputSiteToSiteVpn)
+	gTr.DELETE("/tr/:trId/vpn/site-to-site/actions/emptyout", handler.EmptyOutSiteToSiteVpn)
+
 	// VPN APIs
 	// GCP and AWS
-	gTr.POST("/tr/:trId/vpn/gcp-aws/env", handler.InitEnvForGcpAwsVpn)	// 
-	gTr.DELETE("/tr/:trId/vpn/gcp-aws/env", handler.ClearGcpAwsVpn)			//
-	gTr.GET("/tr/:trId/vpn/gcp-aws", handler.GetResourceInfoOfGcpAwsVpn)	//
-	gTr.POST("/tr/:trId/vpn/gcp-aws/infracode", handler.CreateInfracodeOfGcpAwsVpn)	// 
+	gTr.POST("/tr/:trId/vpn/gcp-aws/env", handler.InitEnvForGcpAwsVpn)
+	gTr.DELETE("/tr/:trId/vpn/gcp-aws/env", handler.ClearGcpAwsVpn)
+	gTr.GET("/tr/:trId/vpn/gcp-aws", handler.GetResourceInfoOfGcpAwsVpn)
+	gTr.POST("/tr/:trId/vpn/gcp-aws/infracode", handler.CreateInfracodeOfGcpAwsVpn)
 	gTr.POST("/tr/:trId/vpn/gcp-aws/plan", handler.CheckInfracodeOfGcpAwsVpn)
 	gTr.POST("/tr/:trId/vpn/gcp-aws", handler.CreateGcpAwsVpn)
 	gTr.DELETE("/tr/:trId/vpn/gcp-aws", handler.DestroyGcpAwsVpn)

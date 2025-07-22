@@ -90,6 +90,11 @@ definitions:
       tfVars:
         $ref: '#/definitions/model.TfVarsSqlDb'
     type: object
+  model.CreateSiteToSiteVpnRequest:
+    properties:
+      vpn_config:
+        $ref: '#/definitions/model.SiteToSiteVpnConfig'
+    type: object
   model.CreateTestbedRequest:
     properties:
       testbed_config:
@@ -141,6 +146,23 @@ definitions:
       success:
         example: true
         type: boolean
+    type: object
+  model.SiteToSiteVpnConfig:
+    properties:
+      alibaba:
+        $ref: '#/definitions/model.AlibabaConfig'
+      aws:
+        $ref: '#/definitions/model.AwsConfig'
+      azure:
+        $ref: '#/definitions/model.AzureConfig'
+      gcp:
+        $ref: '#/definitions/model.GcpConfig'
+      ibm:
+        $ref: '#/definitions/model.IbmConfig'
+      tencent:
+        $ref: '#/definitions/model.TencentConfig'
+      terrarium_id:
+        type: string
     type: object
   model.TargetCspConfig:
     properties:
@@ -2898,6 +2920,417 @@ paths:
       summary: Check the status of a specific request by its ID
       tags:
       - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+  /tr/{trId}/vpn/site-to-site:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Delete Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] Resource Operations'
+    get:
+      consumes:
+      - application/json
+      description: Get Site-to-Site VPN information
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] Resource Operations'
+    post:
+      consumes:
+      - application/json
+      description: Create Site-to-Site VPN between two cloud sites
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters required to create the Site-to-Site VPN
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSiteToSiteVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Create Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] Resource Operations'
+    put:
+      consumes:
+      - application/json
+      description: Update Site-to-Site VPN configuration
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters required to update the Site-to-Site VPN
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSiteToSiteVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] Resource Operations'
+  /tr/{trId}/vpn/site-to-site/actions/apply:
+    post:
+      consumes:
+      - application/json
+      description: Apply Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Apply Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+  /tr/{trId}/vpn/site-to-site/actions/destroy:
+    delete:
+      consumes:
+      - application/json
+      description: Destroy Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Destroy Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+  /tr/{trId}/vpn/site-to-site/actions/emptyout:
+    delete:
+      consumes:
+      - application/json
+      description: EmptyOut Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: EmptyOut Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+  /tr/{trId}/vpn/site-to-site/actions/init:
+    post:
+      consumes:
+      - application/json
+      description: Init Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Parameters required to create the Site-to-Site VPN
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSiteToSiteVpnRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Init Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+  /tr/{trId}/vpn/site-to-site/actions/output:
+    get:
+      consumes:
+      - application/json
+      description: Output Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - default: refined
+        description: Resource info by detail (refined, raw)
+        enum:
+        - refined
+        - raw
+        in: query
+        name: detail
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Output Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+  /tr/{trId}/vpn/site-to-site/actions/plan:
+    post:
+      consumes:
+      - application/json
+      description: Plan Site-to-Site VPN
+      parameters:
+      - default: tr01
+        description: Terrarium ID
+        in: path
+        name: trId
+        required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Plan Site-to-Site VPN
+      tags:
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
 securityDefinitions:
   BasicAuth:
     type: basic
