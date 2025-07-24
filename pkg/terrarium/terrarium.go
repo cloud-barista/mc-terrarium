@@ -281,14 +281,14 @@ func SetCredentials(trId, enrichments string, csps ...string) error {
 				log.Error().Err(err).Msg(err2.Error())
 				return err2
 			}
-		case "azure":
-			credentialPath := workingDir + "/credential-azure.env"
-			err := tfutil.CopyAzureCredentials(credentialPath)
-			if err != nil {
-				err2 := fmt.Errorf("failed to copy azure credentials")
-				log.Error().Err(err).Msg(err2.Error())
-				return err2
-			}
+			// case "azure":
+			// 	credentialPath := workingDir + "/credential-azure.env"
+			// 	err := tfutil.CopyAzureCredentials(credentialPath)
+			// 	if err != nil {
+			// 		err2 := fmt.Errorf("failed to copy azure credentials")
+			// 		log.Error().Err(err).Msg(err2.Error())
+			// 		return err2
+			// 	}
 		}
 	}
 	return nil

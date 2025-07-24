@@ -10,6 +10,10 @@ type CreateAwsToSiteVpnRequest struct {
 	VpnConfig AwsToSiteVpnConfig `json:"vpn_config"`
 }
 
+type CreateSiteToSiteVpnRequest struct {
+	VpnConfig SiteToSiteVpnConfig `json:"vpn_config"`
+}
+
 // Reqeust bodies for GCP-AWS VPN
 type CreateInfracodeOfGcpAwsVpnRequest struct {
 	TfVars TfVarsGcpAwsVpnTunnel `json:"tfVars"`

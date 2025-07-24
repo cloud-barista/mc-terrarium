@@ -4,37 +4,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 	"sync"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
+	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/terrarium"
+	tfutil "github.com/cloud-barista/mc-terrarium/pkg/tofu/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 )
 
 /*
- * [API - AWS to Site VPN] OpenTofu Actions (for fine-grained contorl)
+ * [API - Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
  */
 
-// InitAwsToSiteVpn godoc
-// @Summary Init AWS to site VPN
-// @Description Init AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// InitSiteToSiteVpn godoc
+// @Summary Init Site-to-Site VPN
+// @Description Init Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
-// @Param ReqBody body model.CreateAwsToSiteVpnRequest true "Parameters requied to create the AWS to site VPN"
+// @Param ReqBody body model.CreateSiteToSiteVpnRequest true "Parameters required to create the Site-to-Site VPN"
 // @Param x-request-id header string false "Custom request ID"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/init [post]
-func InitAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/init [post]
+func InitSiteToSiteVpn(c echo.Context) error {
 
-	res, err := initAwsToSiteVpn(c)
+	res, err := initSiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		res := model.Response{Success: false, Message: err.Error()}
@@ -44,7 +47,7 @@ func InitAwsToSiteVpn(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
-func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func initSiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -58,10 +61,10 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	req := new(model.CreateAwsToSiteVpnRequest)
+	req := new(model.CreateSiteToSiteVpnRequest)
 	if err := c.Bind(req); err != nil {
-		err2 := fmt.Errorf("invalid request format, %v", err)
-		log.Warn().Err(err).Msg("invalid request format")
+		err2 := fmt.Errorf("invalid request format: %w", err)
+		log.Warn().Msg(err2.Error())
 		return emptyRes, err2
 	}
 	log.Debug().Msgf("%#v", req) // debug
@@ -72,7 +75,18 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	// Validate the request
 	if err := req.VpnConfig.Validate(); err != nil {
-		log.Warn().Err(err).Msg("invalid request data")
+		err2 := fmt.Errorf("invalid VPN configuration: %w", err)
+		log.Warn().Msg(err2.Error())
+		return emptyRes, err2
+	}
+
+	// Get providers from the request
+	providers := getProvidersFromRequest(req)
+
+	// Validate that we have at least 2 providers
+	if len(providers) != 2 {
+		err := fmt.Errorf("site-to-site VPN requires 2 CSPs, got %d", len(providers))
+		log.Error().Msg(err.Error())
 		return emptyRes, err
 	}
 
@@ -84,8 +98,10 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
 	// Set the enrichments
-	enrichments := "vpn/aws-to-site"
-	providers := []string{"aws", req.VpnConfig.TargetCsp.Type}
+	enrichments := "vpn/site-to-site"
+
+	// Sort providers in alphabetical order
+	sort.Strings(providers)
 
 	// Check if the terrarium is already used for another purpose
 	trInfo, _, err := terrarium.GetInfo(trId)
@@ -117,17 +133,35 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
+	// On the env, the infracode for VPN connection between provider pair should be appended additionally.
+	providerPair := fmt.Sprintf("%s-%s", providers[0], providers[1])
+	projectRoot := config.Terrarium.Root
+	providerTfsDir := projectRoot + "/templates/" + enrichments + "/conn-" + providerPair
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + enrichments
+	err = tfutil.CopyFiles(providerTfsDir, workingDir)
+	if err != nil {
+		err2 := fmt.Errorf("could not find any provider pair (%s) specific template files to terrarium environment", providerPair)
+		log.Warn().Err(err).Msg(err2.Error())
+	}
+
 	/*
 	 * NOTE: Set CSPs' credentials for the terrarium environment
 	 */
-	err = terrarium.SetCredentials(trId, enrichments, "gcp")
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return emptyRes, err
+	for _, provider := range providers {
+		err = terrarium.SetCredentials(trId, enrichments, provider)
+		if err != nil {
+			log.Error().Err(err).Msg(err.Error())
+			return emptyRes, err
+		}
 	}
 
 	// Set the tfvars
-	err = terrarium.SaveTfVars(trId, enrichments, req)
+	// Transform the request to match Terraform variables structure
+	tfVars := map[string]interface{}{
+		"vpn_config": req.VpnConfig,
+	}
+
+	err = terrarium.SaveTfVars(trId, enrichments, tfVars)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
@@ -147,7 +181,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	res := model.Response{
 		Success: true,
-		Message: "successfully initialized the infrastructure terrarium",
+		Message: "successfully initialized the infrastructure terrarium for Site-to-Site VPN",
 		Detail:  ret,
 	}
 
@@ -156,10 +190,37 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	return res, nil
 }
 
-// PlanAwsToSiteVpn godoc
-// @Summary Plan AWS to site VPN
-// @Description Plan AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+func getProvidersFromRequest(req *model.CreateSiteToSiteVpnRequest) []string {
+	// Get providers from the request
+
+	providers := []string{}
+
+	if req.VpnConfig.Aws != nil {
+		providers = append(providers, "aws")
+	}
+	if req.VpnConfig.Azure != nil {
+		providers = append(providers, "azure")
+	}
+	if req.VpnConfig.Gcp != nil {
+		providers = append(providers, "gcp")
+	}
+	if req.VpnConfig.Alibaba != nil {
+		providers = append(providers, "alibaba")
+	}
+	if req.VpnConfig.Tencent != nil {
+		providers = append(providers, "tencent")
+	}
+	if req.VpnConfig.Ibm != nil {
+		providers = append(providers, "ibm")
+	}
+
+	return providers
+}
+
+// PlanSiteToSiteVpn godoc
+// @Summary Plan Site-to-Site VPN
+// @Description Plan Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -168,20 +229,18 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/plan [post]
-func PlanAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/plan [post]
+func PlanSiteToSiteVpn(c echo.Context) error {
 
-	ret, err := planAwsToSiteVpn(c)
+	ret, err := planSiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		res := model.Response{Success: false, Message: err.Error()}
-		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	return c.JSON(http.StatusOK, ret)
 }
 
-func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func planSiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -205,7 +264,7 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	res := model.Response{
 		Success: true,
-		Message: "successfully planned the infrastructure terrarium",
+		Message: "successfully planned the infrastructure terrarium for Site-to-Site VPN",
 		Detail:  ret,
 	}
 
@@ -214,10 +273,10 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	return res, nil
 }
 
-// ApplyAwsToSiteVpn godoc
-// @Summary Apply AWS to site VPN
-// @Description Apply AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// ApplySiteToSiteVpn godoc
+// @Summary Apply Site-to-Site VPN
+// @Description Apply Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -226,20 +285,19 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/apply [post]
-func ApplyAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/apply [post]
+func ApplySiteToSiteVpn(c echo.Context) error {
 
-	res, err := applyAwsToSiteVpn(c)
+	res, err := applySiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	return c.JSON(http.StatusCreated, res)
 }
 
-func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func applySiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -263,7 +321,7 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	res := model.Response{
 		Success: true,
-		Message: "successfully applied the infrastructure terrarium",
+		Message: "successfully applied the infrastructure terrarium for Site-to-Site VPN",
 		Detail:  ret,
 	}
 
@@ -272,10 +330,10 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	return res, nil
 }
 
-// DestroyAwsToSiteVpn godoc
-// @Summary Destroy AWS to site VPN
-// @Description Destroy AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// DestroySiteToSiteVpn godoc
+// @Summary Destroy Site-to-Site VPN
+// @Description Destroy Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -284,20 +342,19 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/destroy [delete]
-func DestroyAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/destroy [delete]
+func DestroySiteToSiteVpn(c echo.Context) error {
 
-	res, err := destroyAwsToSiteVpn(c)
+	res, err := destroySiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	return c.JSON(http.StatusCreated, res)
 }
 
-func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func destroySiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -308,39 +365,49 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
+	trInfo, exists, err := terrarium.GetInfo(trId)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return emptyRes, err
+	}
+	if !exists {
+		err := fmt.Errorf("terrarium (trId: %s) does not exist", trId)
+		log.Warn().Msg(err.Error())
+		return emptyRes, err
+	}
+
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-	// Define err variable to track errors
-	var err error
+	if Contains(trInfo.Providers, "aws") {
+		// Add a deferred function to refresh state if an error occurs
+		defer func() {
+			log.Info().Msg("recover imports.tf and refresh state for the next destroy request")
 
-	// Add a deferred function to refresh state if an error occurs
-	defer func() {
-		log.Info().Msg("recover imports.tf and refresh state for the next destroy request")
+			// Recover the imports.tf
+			recoverErr := terrarium.RecoverImportTf(trId)
+			if recoverErr != nil {
+				log.Error().Err(recoverErr).Msg("Failed to recover imports.tf")
+			} else {
+				log.Info().Msg("Successfully recovered imports.tf")
+			}
 
-		// Recover the imports.tf
-		recoverErr := terrarium.RecoverImportTf(trId)
-		if recoverErr != nil {
-			log.Error().Err(recoverErr).Msg("Failed to recover imports.tf")
-		} else {
-			log.Info().Msg("Successfully recovered imports.tf")
+			// Refresh the state
+			_, refreshErr := terrarium.Refresh(trId, reqId)
+			if refreshErr != nil {
+				log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
+			} else {
+				log.Info().Msg("Successfully refreshed state after error")
+			}
+		}()
+
+		// Detach the imported route table for preventing to destroy the imported resource
+		err = terrarium.DetachImportedResource(trId, reqId, "aws_route_table.imported_route_table")
+		if err != nil {
+			err2 := fmt.Errorf("failed to remove the imported route table")
+			log.Error().Err(err).Msg(err2.Error())
+			return emptyRes, err
 		}
-
-		// Refresh the state
-		_, refreshErr := terrarium.Refresh(trId, reqId)
-		if refreshErr != nil {
-			log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
-		} else {
-			log.Info().Msg("Successfully refreshed state after error")
-		}
-	}()
-
-	// Detach the imported route table for preventing to destroy the imported resource
-	err = terrarium.DetachImportedResource(trId, reqId, "aws_route_table.imported_route_table")
-	if err != nil {
-		err2 := fmt.Errorf("failed to remove the imported route table")
-		log.Error().Err(err).Msg(err2.Error())
-		return emptyRes, err
 	}
 
 	// Execute the destroy command
@@ -354,7 +421,7 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 	res := model.Response{
 		Success: true,
-		Message: "successfully destroyed the infrastructure terrarium",
+		Message: "successfully destroyed the infrastructure terrarium for Site-to-Site VPN",
 		Detail:  ret,
 	}
 
@@ -363,10 +430,19 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	return res, nil
 }
 
-// OutputAwsToSiteVpn godoc
-// @Summary Output AWS to site VPN
-// @Description Output AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+func Contains(slice []string, item string) bool {
+	for _, v := range slice {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
+
+// OutputSiteToSiteVpn godoc
+// @Summary Output Site-to-Site VPN
+// @Description Output Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -376,20 +452,19 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/output [get]
-func OutputAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/output [get]
+func OutputSiteToSiteVpn(c echo.Context) error {
 
-	res, err := outputAwsToSiteVpn(c)
+	res, err := outputSiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	return c.JSON(http.StatusOK, res)
 }
 
-func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func outputSiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -489,7 +564,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		wg.Wait()
 		close(results)
 
-		// Merge th results
+		// Merge the results
 		var allResourceInfo = make(map[string]any)
 
 		log.Debug().Msgf("trId: %s", trId)
@@ -569,17 +644,14 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 
 		for _, resourcesInChildModule := range resourcesInChildModules {
 			if resourcesInChildModule.String() == "" {
-				err2 := fmt.Errorf("could not find resource info (trId: %s)", trId)
-				log.Warn().Msg(err2.Error())
-				return emptyRes, err2
+				continue
 			}
 
 			var temp []interface{}
 			err = json.Unmarshal([]byte(resourcesInChildModule.String()), &temp)
 			if err != nil {
-				err2 := fmt.Errorf("failed to unmarshal resource info")
-				log.Error().Err(err).Msg(err2.Error()) // error
-				return emptyRes, err2
+				log.Error().Err(err).Msg("failed to unmarshal child module resources")
+				continue
 			}
 
 			allResources = append(allResources, temp...)
@@ -608,47 +680,10 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 }
 
-// mergeResourceInfo recursively merges the new resource information into the existing map
-// It modifies the existing map directly
-func mergeResourceInfo(existing, new map[string]any) {
-	// Handle nil cases
-	if existing == nil || new == nil {
-		return
-	}
-
-	for k, v := range new {
-		// Check if the key exists in the existing map
-		valueInExisting, ok := existing[k]
-		if !ok {
-			existing[k] = v
-			continue
-		}
-
-		// If both values are maps, recursively merge them
-		if existingMap, ok1 := valueInExisting.(map[string]any); ok1 {
-			if newMap, ok2 := v.(map[string]any); ok2 {
-				mergeResourceInfo(existingMap, newMap)
-				continue
-			}
-		}
-
-		// If both values are slices, append them
-		if existingSlice, ok1 := valueInExisting.([]any); ok1 {
-			if newSlice, ok2 := v.([]any); ok2 {
-				existing[k] = append(existingSlice, newSlice...)
-				continue
-			}
-		}
-
-		// For incompatible types or primitives, prefer the new value
-		existing[k] = v
-	}
-}
-
-// EmptyOutAwsToSiteVpn godoc
-// @Summary EmptyOut AWS to site VPN
-// @Description EmptyOut AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// EmptyOutSiteToSiteVpn godoc
+// @Summary EmptyOut Site-to-Site VPN
+// @Description EmptyOut Site-to-Site VPN
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -657,20 +692,19 @@ func mergeResourceInfo(existing, new map[string]any) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/aws-to-site/actions/emptyout [delete]
-func EmptyOutAwsToSiteVpn(c echo.Context) error {
+// @Router /tr/{trId}/vpn/site-to-site/actions/emptyout [delete]
+func EmptyOutSiteToSiteVpn(c echo.Context) error {
 
-	res, err := emptyOutAwsToSiteVpn(c)
+	res, err := emptyOutSiteToSiteVpn(c)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		res := model.Response{Success: false, Message: err.Error()}
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
 	return c.JSON(http.StatusOK, res)
 }
 
-func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
+func emptyOutSiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	emptyRes := model.Response{}
 
@@ -681,16 +715,16 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	enrichments := "vpn/aws-to-site"
+	enrichments := "vpn/site-to-site"
 
 	existingEnrichments, exist, err := terrarium.GetEnrichments(trId)
 	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
+		log.Error().Err(err).Msg("failed to get enrichments")
 		return emptyRes, err
 	}
 
 	if !exist || existingEnrichments != enrichments {
-		err := fmt.Errorf("the terrarium (trId: %s) is used for the other purpose (%s)", trId, existingEnrichments)
+		err := fmt.Errorf("terrarium (trId: %s) is not configured for Site-to-Site VPN", trId)
 		log.Warn().Msg(err.Error())
 		return emptyRes, err
 	}
@@ -700,20 +734,20 @@ func emptyOutAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	if err != nil {
 		err2 := fmt.Errorf("failed to empty out the infrastructure terrarium")
 		log.Error().Err(err).Msg(err2.Error())
-		return emptyRes, err2
+		return emptyRes, err
 	}
 
 	// Unset the enrichments
 	err = terrarium.SetEnrichments(trId, "")
 	if err != nil {
-		err2 := fmt.Errorf("failed to unset the enrichments")
+		err2 := fmt.Errorf("failed to unset the terrarium enrichments")
 		log.Error().Err(err).Msg(err2.Error())
-		return emptyRes, err2
+		return emptyRes, err
 	}
 
 	res := model.Response{
 		Success: true,
-		Message: "successfully emptied out the infrastructure terrarium",
+		Message: "successfully emptied out the infrastructure terrarium for Site-to-Site VPN",
 	}
 
 	log.Debug().Msgf("%+v", res) // debug
