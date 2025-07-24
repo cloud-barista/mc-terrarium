@@ -26,8 +26,10 @@ resource "aws_vpn_connection" "to_azure" {
   # When setting AWS inside IPv4 CIDR blocks to 169.254.21.0/30, 
   # AWS will use 169.254.21.1 and
   # Azure will use 169.254.21.2.
-  tunnel1_inside_cidr = count.index == 0 ? "169.254.21.0/30" : "169.254.22.0/30"
-  tunnel2_inside_cidr = count.index == 0 ? "169.254.21.4/30" : "169.254.22.4/30"
+
+  # Example of var.azure_apipa_cidrs is ["169.254.21.0/30", "169.254.21.4/30", "169.254.22.0/30", "169.254.22.4/30"]
+  tunnel1_inside_cidr = count.index % 2 == 0 ? var.azure_apipa_cidrs[0] : var.azure_apipa_cidrs[2]
+  tunnel2_inside_cidr = count.index % 2 == 0 ? var.azure_apipa_cidrs[1] : var.azure_apipa_cidrs[3]
 }
 
 # Azure Local Network Gateway (require AWS VPN gateway info)

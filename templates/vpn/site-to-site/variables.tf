@@ -20,6 +20,12 @@ variable "vpn_config" {
       gateway_subnet_cidr  = string
       bgp_asn              = optional(string, "65531") # default value
       vpn_sku              = optional(string, "VpnGw1AZ")
+      apipa_cidrs = optional(list(string), [
+        "169.254.21.0/30",
+        "169.254.21.4/30",
+        "169.254.22.0/30",
+        "169.254.22.4/30"
+      ])
       # shared_key           = string
     }))
     alibaba = optional(object({

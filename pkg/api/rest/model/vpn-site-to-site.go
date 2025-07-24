@@ -14,65 +14,65 @@ import (
 
 // SiteToSiteVpnConfig represents the main VPN configuration structure
 type SiteToSiteVpnConfig struct {
-	TerrariumId string         `json:"terrarium_id"`
-	Alibaba     *AlibabaConfig `json:"alibaba,omitempty"`
+	TerrariumId string         `json:"terrarium_id" example:"tr01"`
 	Aws         *AwsConfig     `json:"aws,omitempty"`
 	Azure       *AzureConfig   `json:"azure,omitempty"`
 	Gcp         *GcpConfig     `json:"gcp,omitempty"`
-	Ibm         *IbmConfig     `json:"ibm,omitempty"`
+	Alibaba     *AlibabaConfig `json:"alibaba,omitempty"`
 	Tencent     *TencentConfig `json:"tencent,omitempty"`
+	Ibm         *IbmConfig     `json:"ibm,omitempty"`
+}
+
+// AwsConfig represents AWS specific VPN configuration
+type AwsConfig struct {
+	Region   string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
+	VpcId    string `json:"vpc_id" example:"vpc-12345678"`
+	SubnetId string `json:"subnet_id" example:"subnet-12345678"`
+	BgpAsn   string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
+}
+
+// AzureConfig represents Azure specific VPN configuration
+type AzureConfig struct {
+	Region             string   `json:"region" example:"koreacentral"`
+	ResourceGroupName  string   `json:"resource_group_name" example:"my-resource-group"`
+	VirtualNetworkName string   `json:"virtual_network_name" example:"my-virtual-network"`
+	GatewaySubnetCidr  string   `json:"gateway_subnet_cidr" example:"10.0.1.0/27"`
+	BgpAsn             string   `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
+	VpnSku             string   `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
+	ApipaCidrs         []string `json:"apipa_cidrs,omitempty" example:"169.254.21.0/30,169.254.21.4/30,169.254.22.0/30,169.254.22.4/30"`
 }
 
 // GcpConfig represents GCP specific VPN configuration
 type GcpConfig struct {
 	Region         string `json:"region,omitempty" default:"asia-northeast3" example:"asia-northeast3"`
-	VpcNetworkName string `json:"vpc_network_name"`
+	VpcNetworkName string `json:"vpc_network_name" example:"my-vpc-network"`
 	BgpAsn         string `json:"bgp_asn,omitempty" default:"65530" example:"65530"`
-}
-
-// AzureConfig represents Azure specific VPN configuration
-type AzureConfig struct {
-	Region             string `json:"region"`
-	ResourceGroupName  string `json:"resource_group_name"`
-	VirtualNetworkName string `json:"virtual_network_name"`
-	GatewaySubnetCidr  string `json:"gateway_subnet_cidr"`
-	BgpAsn             string `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
-	VpnSku             string `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
 }
 
 // AlibabaConfig represents Alibaba Cloud specific VPN configuration
 type AlibabaConfig struct {
 	Region     string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId      string `json:"vpc_id"`
-	VswitchId1 string `json:"vswitch_id_1"`
-	VswitchId2 string `json:"vswitch_id_2"`
+	VpcId      string `json:"vpc_id" example:"vpc-bp1abcdefg123456789"`
+	VswitchId1 string `json:"vswitch_id_1" example:"vsw-bp1abcdefg123456789"`
+	VswitchId2 string `json:"vswitch_id_2" example:"vsw-bp2abcdefg123456789"`
 	BgpAsn     string `json:"bgp_asn,omitempty" default:"65532" example:"65532"`
 }
 
 // TencentConfig represents Tencent Cloud specific VPN configuration
-// Currently commented out in the original definition
 type TencentConfig struct {
 	Region   string `json:"region" default:"ap-seoul" example:"ap-seoul"`
-	VpcId    string `json:"vpc_id"`
-	SubnetId string `json:"subnet_id"`
+	VpcId    string `json:"vpc_id" example:"vpc-abcdefg123456789"`
+	SubnetId string `json:"subnet_id" example:"subnet-abcdefg123456789"`
 	// BgpAsn   *string `json:"bgp_asn" default:"65534" example:"65534"`
 }
 
 // IbmConfig represents IBM Cloud specific VPN configuration
 type IbmConfig struct {
 	Region   string `json:"region,omitempty" default:"au-syd" example:"au-syd"`
-	VpcId    string `json:"vpc_id"`
-	VpcCidr  string `json:"vpc_cidr"`
-	SubnetId string `json:"subnet_id"`
+	VpcId    string `json:"vpc_id" example:"r006-abc12345-6789-abcd-ef01-234567890abc"`
+	VpcCidr  string `json:"vpc_cidr" example:"10.0.0.0/16"`
+	SubnetId string `json:"subnet_id" example:"0717-abc12345-6789-abcd-ef01-234567890abc"`
 	// BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
-}
-
-// AwsConfig represents AWS specific VPN configuration
-type AwsConfig struct {
-	Region   string `json:"region,omitempty" default:"ap-northeast-2" example:"ap-northeast-2"`
-	VpcId    string `json:"vpc_id"`
-	SubnetId string `json:"subnet_id"`
-	BgpAsn   string `json:"bgp_asn,omitempty" default:"64512" example:"64512"`
 }
 
 // Validate validates the VpnConfig structure
@@ -220,7 +220,7 @@ func (a *AwsConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil
@@ -249,7 +249,7 @@ func (g *GcpConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil
@@ -305,7 +305,7 @@ func (a *AzureConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil
@@ -340,7 +340,7 @@ func (a *AlibabaConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil
@@ -365,7 +365,7 @@ func (t *TencentConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil
@@ -399,7 +399,7 @@ func (i *IbmConfig) Validate() error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "; "))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
 
 	return nil

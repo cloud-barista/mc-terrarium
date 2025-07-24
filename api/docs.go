@@ -3849,70 +3849,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "Update Site-to-Site VPN configuration",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Site-to-Site VPN] Resource Operations"
-                ],
-                "summary": "Update Site-to-Site VPN",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tr01",
-                        "description": "Terrarium ID",
-                        "name": "trId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Parameters required to update the Site-to-Site VPN",
-                        "name": "ReqBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.CreateSiteToSiteVpnRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Custom request ID",
-                        "name": "x-request-id",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Create Site-to-Site VPN between two cloud sites",
                 "consumes": [
@@ -4411,13 +4347,16 @@ const docTemplate = `{
                     "example": "ap-northeast-2"
                 },
                 "vpc_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vpc-bp1abcdefg123456789"
                 },
                 "vswitch_id_1": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vsw-bp1abcdefg123456789"
                 },
                 "vswitch_id_2": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vsw-bp2abcdefg123456789"
                 }
             }
         },
@@ -4435,10 +4374,12 @@ const docTemplate = `{
                     "example": "ap-northeast-2"
                 },
                 "subnet_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "subnet-12345678"
                 },
                 "vpc_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vpc-12345678"
                 }
             }
         },
@@ -4459,22 +4400,38 @@ const docTemplate = `{
         "model.AzureConfig": {
             "type": "object",
             "properties": {
+                "apipa_cidrs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "169.254.21.0/30",
+                        "169.254.21.4/30",
+                        "169.254.22.0/30",
+                        "169.254.22.4/30"
+                    ]
+                },
                 "bgp_asn": {
                     "type": "string",
                     "default": "65531",
                     "example": "65531"
                 },
                 "gateway_subnet_cidr": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "10.0.1.0/27"
                 },
                 "region": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "koreacentral"
                 },
                 "resource_group_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-resource-group"
                 },
                 "virtual_network_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-virtual-network"
                 },
                 "vpn_sku": {
                     "type": "string",
@@ -4561,7 +4518,8 @@ const docTemplate = `{
                     "example": "asia-northeast3"
                 },
                 "vpc_network_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-vpc-network"
                 }
             }
         },
@@ -4574,13 +4532,16 @@ const docTemplate = `{
                     "example": "au-syd"
                 },
                 "subnet_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "0717-abc12345-6789-abcd-ef01-234567890abc"
                 },
                 "vpc_cidr": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "10.0.0.0/16"
                 },
                 "vpc_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "r006-abc12345-6789-abcd-ef01-234567890abc"
                 }
             }
         },
@@ -4635,7 +4596,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/model.TencentConfig"
                 },
                 "terrarium_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tr01"
                 }
             }
         },
@@ -4671,10 +4633,12 @@ const docTemplate = `{
                     "example": "ap-seoul"
                 },
                 "subnet_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "subnet-abcdefg123456789"
                 },
                 "vpc_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "vpc-abcdefg123456789"
                 }
             }
         },

@@ -133,7 +133,7 @@ func initSiteToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	// Additionally, append infracode for connection between provider pair
+	// On the env, the infracode for VPN connection between provider pair should be appended additionally.
 	providerPair := fmt.Sprintf("%s-%s", providers[0], providers[1])
 	projectRoot := config.Terrarium.Root
 	providerTfsDir := projectRoot + "/templates/" + enrichments + "/conn-" + providerPair

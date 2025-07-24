@@ -31,6 +31,12 @@ variable "azure_public_ip_addresses" {
   type        = list(string)
 }
 
+variable "azure_apipa_cidrs" {
+  description = "List of APIPA CIDRs for Azure VPN Gateway"
+  type        = list(string)
+  default     = ["169.254.21.0/30", "169.254.21.4/30", "169.254.22.0/30", "169.254.22.4/30"]
+}
+
 variable "aws_vpn_gateway_id" {
   description = "value of the AWS VPN Gateway ID"
   type        = string

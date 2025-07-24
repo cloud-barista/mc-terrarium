@@ -11,10 +11,13 @@ definitions:
         example: ap-northeast-2
         type: string
       vpc_id:
+        example: vpc-bp1abcdefg123456789
         type: string
       vswitch_id_1:
+        example: vsw-bp1abcdefg123456789
         type: string
       vswitch_id_2:
+        example: vsw-bp2abcdefg123456789
         type: string
     type: object
   model.AwsConfig:
@@ -28,8 +31,10 @@ definitions:
         example: ap-northeast-2
         type: string
       subnet_id:
+        example: subnet-12345678
         type: string
       vpc_id:
+        example: vpc-12345678
         type: string
     type: object
   model.AwsToSiteVpnConfig:
@@ -43,17 +48,30 @@ definitions:
     type: object
   model.AzureConfig:
     properties:
+      apipa_cidrs:
+        example:
+        - 169.254.21.0/30
+        - 169.254.21.4/30
+        - 169.254.22.0/30
+        - 169.254.22.4/30
+        items:
+          type: string
+        type: array
       bgp_asn:
         default: "65531"
         example: "65531"
         type: string
       gateway_subnet_cidr:
+        example: 10.0.1.0/27
         type: string
       region:
+        example: koreacentral
         type: string
       resource_group_name:
+        example: my-resource-group
         type: string
       virtual_network_name:
+        example: my-virtual-network
         type: string
       vpn_sku:
         default: VpnGw1AZ
@@ -111,6 +129,7 @@ definitions:
         example: asia-northeast3
         type: string
       vpc_network_name:
+        example: my-vpc-network
         type: string
     type: object
   model.IbmConfig:
@@ -120,10 +139,13 @@ definitions:
         example: au-syd
         type: string
       subnet_id:
+        example: 0717-abc12345-6789-abcd-ef01-234567890abc
         type: string
       vpc_cidr:
+        example: 10.0.0.0/16
         type: string
       vpc_id:
+        example: r006-abc12345-6789-abcd-ef01-234567890abc
         type: string
     type: object
   model.Response:
@@ -162,6 +184,7 @@ definitions:
       tencent:
         $ref: '#/definitions/model.TencentConfig'
       terrarium_id:
+        example: tr01
         type: string
     type: object
   model.TargetCspConfig:
@@ -186,8 +209,10 @@ definitions:
         example: ap-seoul
         type: string
       subnet_id:
+        example: subnet-abcdefg123456789
         type: string
       vpc_id:
+        example: vpc-abcdefg123456789
         type: string
     type: object
   model.TerrariumCreationRequest:
@@ -3044,49 +3069,6 @@ paths:
           schema:
             $ref: '#/definitions/model.Response'
       summary: Create Site-to-Site VPN
-      tags:
-      - '[Site-to-Site VPN] Resource Operations'
-    put:
-      consumes:
-      - application/json
-      description: Update Site-to-Site VPN configuration
-      parameters:
-      - default: tr01
-        description: Terrarium ID
-        in: path
-        name: trId
-        required: true
-        type: string
-      - description: Parameters required to update the Site-to-Site VPN
-        in: body
-        name: ReqBody
-        required: true
-        schema:
-          $ref: '#/definitions/model.CreateSiteToSiteVpnRequest'
-      - description: Custom request ID
-        in: header
-        name: x-request-id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.Response'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Update Site-to-Site VPN
       tags:
       - '[Site-to-Site VPN] Resource Operations'
   /tr/{trId}/vpn/site-to-site/actions/apply:

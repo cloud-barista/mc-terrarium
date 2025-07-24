@@ -81,40 +81,40 @@ func GetSiteToSiteVpn(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// UpdateSiteToSiteVpn godoc
-// @Summary Update Site-to-Site VPN
-// @Description Update Site-to-Site VPN configuration
-// @Tags [Site-to-Site VPN] Resource Operations
-// @Accept json
-// @Produce json
-// @Param trId path string true "Terrarium ID" default(tr01)
-// @Param ReqBody body model.CreateSiteToSiteVpnRequest true "Parameters required to update the Site-to-Site VPN"
-// @Param x-request-id header string false "Custom request ID"
-// @Success 200 {object} model.Response "OK"
-// @Failure 400 {object} model.Response "Bad Request"
-// @Failure 500 {object} model.Response "Internal Server Error"
-// @Failure 503 {object} model.Response "Service Unavailable"
-// @Router /tr/{trId}/vpn/site-to-site [put]
-func UpdateSiteToSiteVpn(c echo.Context) error {
+// // UpdateSiteToSiteVpn godoc
+// // @Summary Update Site-to-Site VPN
+// // @Description Update Site-to-Site VPN configuration
+// // @Tags [Site-to-Site VPN] Resource Operations
+// // @Accept json
+// // @Produce json
+// // @Param trId path string true "Terrarium ID" default(tr01)
+// // @Param ReqBody body model.CreateSiteToSiteVpnRequest true "Parameters required to update the Site-to-Site VPN"
+// // @Param x-request-id header string false "Custom request ID"
+// // @Success 200 {object} model.Response "OK"
+// // @Failure 400 {object} model.Response "Bad Request"
+// // @Failure 500 {object} model.Response "Internal Server Error"
+// // @Failure 503 {object} model.Response "Service Unavailable"
+// // @Router /tr/{trId}/vpn/site-to-site [put]
+// func UpdateSiteToSiteVpn(c echo.Context) error {
 
-	// Handler workflow by sequentially running the following operation:
-	// 1. Plan (with updated configuration)
-	// 2. Apply
+// 	// Handler workflow by sequentially running the following operation:
+// 	// 1. Plan (with updated configuration)
+// 	// 2. Apply
 
-	res, err := planSiteToSiteVpn(c)
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return c.JSON(http.StatusInternalServerError, res)
-	}
+// 	res, err := planSiteToSiteVpn(c)
+// 	if err != nil {
+// 		log.Error().Err(err).Msg(err.Error())
+// 		return c.JSON(http.StatusInternalServerError, res)
+// 	}
 
-	res, err = applySiteToSiteVpn(c)
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return c.JSON(http.StatusInternalServerError, res)
-	}
+// 	res, err = applySiteToSiteVpn(c)
+// 	if err != nil {
+// 		log.Error().Err(err).Msg(err.Error())
+// 		return c.JSON(http.StatusInternalServerError, res)
+// 	}
 
-	return c.JSON(http.StatusOK, res)
-}
+// 	return c.JSON(http.StatusOK, res)
+// }
 
 // DeleteSiteToSiteVpn godoc
 // @Summary Delete Site-to-Site VPN
