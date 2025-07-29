@@ -46,9 +46,18 @@ definitions:
       terrarium_id:
         type: string
     type: object
-  model.AzureConfig:
+  model.AzureBgpPeeringCidrs:
     properties:
-      apipa_cidrs:
+      to_alibaba:
+        example:
+        - 169.254.25.0/30
+        - 169.254.25.4/30
+        - 169.254.26.0/30
+        - 169.254.26.4/30
+        items:
+          type: string
+        type: array
+      to_aws:
         example:
         - 169.254.21.0/30
         - 169.254.21.4/30
@@ -57,10 +66,42 @@ definitions:
         items:
           type: string
         type: array
+      to_gcp:
+        example:
+        - 169.254.23.0/30
+        - 169.254.23.4/30
+        - 169.254.24.0/30
+        - 169.254.24.4/30
+        items:
+          type: string
+        type: array
+      to_ibm:
+        example:
+        - 169.254.29.0/30
+        - 169.254.29.4/30
+        - 169.254.30.0/30
+        - 169.254.30.4/30
+        items:
+          type: string
+        type: array
+      to_tencent:
+        example:
+        - 169.254.27.0/30
+        - 169.254.27.4/30
+        - 169.254.28.0/30
+        - 169.254.28.4/30
+        items:
+          type: string
+        type: array
+    type: object
+  model.AzureConfig:
+    properties:
       bgp_asn:
         default: "65531"
         example: "65531"
         type: string
+      bgp_peering_cidrs:
+        $ref: '#/definitions/model.AzureBgpPeeringCidrs'
       gateway_subnet_cidr:
         example: 10.0.1.0/27
         type: string

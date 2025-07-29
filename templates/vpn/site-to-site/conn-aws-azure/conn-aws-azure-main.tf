@@ -7,7 +7,7 @@ module "conn_aws_azure" {
   azure_region              = var.vpn_config.azure.region
   azure_resource_group_name = var.vpn_config.azure.resource_group_name
   azure_bgp_asn             = var.vpn_config.azure.bgp_asn
-  azure_apipa_cidrs         = var.vpn_config.azure.apipa_cidrs
+  azure_apipa_cidrs         = var.vpn_config.azure.bgp_peering_cidrs.to_aws
 
   # AWS resources info, created 
   aws_vpn_gateway_id = aws_vpn_gateway.vpn_gw.id

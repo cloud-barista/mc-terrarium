@@ -1,7 +1,8 @@
 variable "vpn_config" {
-  description = "VPN configuration for AWS and target CSP connection"
+  description = "VPN configuration for multi-cloud site-to-site connections"
   type = object({
-    terrarium_id = string
+    terrarium_id  = string
+    shared_secret = optional(string, "MySharedSecret123!")
     aws = optional(object({
       region    = optional(string, "ap-northeast-2") # Seoul
       vpc_id    = string
@@ -20,13 +21,71 @@ variable "vpn_config" {
       gateway_subnet_cidr  = string
       bgp_asn              = optional(string, "65531") # default value
       vpn_sku              = optional(string, "VpnGw1AZ")
-      apipa_cidrs = optional(list(string), [
-        "169.254.21.0/30",
-        "169.254.21.4/30",
-        "169.254.22.0/30",
-        "169.254.22.4/30"
-      ])
-      # shared_key           = string
+
+      # BGP peering CIDR ranges for Azure connections to other CSPs
+      bgp_peering_cidrs = optional(object({
+        # APIPA CIDRs for connection to AWS
+        to_aws = optional(list(string), [
+          "169.254.21.0/30", # Tunnel 1 - Interface 0
+          "169.254.21.4/30", # Tunnel 1 - Interface 1  
+          "169.254.22.0/30", # Tunnel 2 - Interface 0
+          "169.254.22.4/30"  # Tunnel 2 - Interface 1
+        ])
+
+        # APIPA CIDRs for connection to GCP
+        to_gcp = optional(list(string), [
+          "169.254.23.0/30", # Tunnel 1 - Interface 0
+          "169.254.23.4/30", # Tunnel 1 - Interface 1
+          "169.254.24.0/30", # Tunnel 2 - Interface 0  
+          "169.254.24.4/30"  # Tunnel 2 - Interface 1
+        ])
+
+        # APIPA CIDRs for connection to Alibaba Cloud
+        to_alibaba = optional(list(string), [
+          "169.254.25.0/30", # Tunnel 1 - Interface 0
+          "169.254.25.4/30", # Tunnel 1 - Interface 1
+          "169.254.26.0/30", # Tunnel 2 - Interface 0
+          "169.254.26.4/30"  # Tunnel 2 - Interface 1
+        ])
+
+        # APIPA CIDRs for connection to Tencent Cloud
+        to_tencent = optional(list(string), [
+          "169.254.27.0/30", # Tunnel 1 - Interface 0
+          "169.254.27.4/30", # Tunnel 1 - Interface 1
+          "169.254.28.0/30", # Tunnel 2 - Interface 0
+          "169.254.28.4/30"  # Tunnel 2 - Interface 1
+        ])
+
+        # APIPA CIDRs for connection to IBM Cloud
+        to_ibm = optional(list(string), [
+          "169.254.29.0/30", # Tunnel 1 - Interface 0
+          "169.254.29.4/30", # Tunnel 1 - Interface 1
+          "169.254.30.0/30", # Tunnel 2 - Interface 0
+          "169.254.30.4/30"  # Tunnel 2 - Interface 1
+        ])
+        }), {
+        # Default values if not specified
+        to_aws = [
+          "169.254.21.0/30", "169.254.21.4/30",
+          "169.254.22.0/30", "169.254.22.4/30"
+        ]
+        to_gcp = [
+          "169.254.23.0/30", "169.254.23.4/30",
+          "169.254.24.0/30", "169.254.24.4/30"
+        ]
+        to_alibaba = [
+          "169.254.25.0/30", "169.254.25.4/30",
+          "169.254.26.0/30", "169.254.26.4/30"
+        ]
+        to_tencent = [
+          "169.254.27.0/30", "169.254.27.4/30",
+          "169.254.28.0/30", "169.254.28.4/30"
+        ]
+        to_ibm = [
+          "169.254.29.0/30", "169.254.29.4/30",
+          "169.254.30.0/30", "169.254.30.4/30"
+        ]
+      })
     }))
     alibaba = optional(object({
       region       = optional(string, "ap-northeast-2") # Seoul
