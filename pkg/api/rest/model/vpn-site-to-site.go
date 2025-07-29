@@ -33,13 +33,22 @@ type AwsConfig struct {
 
 // AzureConfig represents Azure specific VPN configuration
 type AzureConfig struct {
-	Region             string   `json:"region" example:"koreacentral"`
-	ResourceGroupName  string   `json:"resource_group_name" example:"my-resource-group"`
-	VirtualNetworkName string   `json:"virtual_network_name" example:"my-virtual-network"`
-	GatewaySubnetCidr  string   `json:"gateway_subnet_cidr" example:"10.0.1.0/27"`
-	BgpAsn             string   `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
-	VpnSku             string   `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
-	ApipaCidrs         []string `json:"apipa_cidrs,omitempty" example:"169.254.21.0/30,169.254.21.4/30,169.254.22.0/30,169.254.22.4/30"`
+	Region             string                `json:"region" example:"koreacentral"`
+	ResourceGroupName  string                `json:"resource_group_name" example:"my-resource-group"`
+	VirtualNetworkName string                `json:"virtual_network_name" example:"my-virtual-network"`
+	GatewaySubnetCidr  string                `json:"gateway_subnet_cidr" example:"10.0.1.0/27"`
+	BgpAsn             string                `json:"bgp_asn,omitempty" default:"65531" example:"65531"`
+	VpnSku             string                `json:"vpn_sku,omitempty" default:"VpnGw1AZ" example:"VpnGw1AZ"`
+	BgpPeeringCidrs    *AzureBgpPeeringCidrs `json:"bgp_peering_cidrs,omitempty"`
+}
+
+// AzureBgpPeeringCidrs represents BGP peering CIDR ranges for Azure connections to other CSPs
+type AzureBgpPeeringCidrs struct {
+	ToAws     []string `json:"to_aws,omitempty" example:"169.254.21.0/30,169.254.21.4/30,169.254.22.0/30,169.254.22.4/30"`
+	ToGcp     []string `json:"to_gcp,omitempty" example:"169.254.23.0/30,169.254.23.4/30,169.254.24.0/30,169.254.24.4/30"`
+	ToAlibaba []string `json:"to_alibaba,omitempty" example:"169.254.25.0/30,169.254.25.4/30,169.254.26.0/30,169.254.26.4/30"`
+	ToTencent []string `json:"to_tencent,omitempty" example:"169.254.27.0/30,169.254.27.4/30,169.254.28.0/30,169.254.28.4/30"`
+	ToIbm     []string `json:"to_ibm,omitempty" example:"169.254.29.0/30,169.254.29.4/30,169.254.30.0/30,169.254.30.4/30"`
 }
 
 // GcpConfig represents GCP specific VPN configuration
@@ -304,6 +313,13 @@ func (a *AzureConfig) Validate() error {
 		}
 	}
 
+	// Validate BGP peering CIDRs (optional)
+	if a.BgpPeeringCidrs != nil {
+		if err := a.BgpPeeringCidrs.Validate(); err != nil {
+			errors = append(errors, fmt.Sprintf("bgp_peering_cidrs: %v", err))
+		}
+	}
+
 	if len(errors) > 0 {
 		return fmt.Errorf("%s", strings.Join(errors, "; "))
 	}
@@ -429,4 +445,134 @@ func contains(slice []string, item string) bool {
 		}
 	}
 	return false
+}
+
+// Validate Azure BGP peering CIDRs configuration
+func (a *AzureBgpPeeringCidrs) Validate() error {
+	if a == nil {
+		return nil // Optional field
+	}
+
+	var errors []string
+	var allCidrs []string
+
+	// Validate each CSP's CIDR ranges and collect all CIDRs for duplicate check
+	if err := validateCidrList(a.ToAws, "to_aws"); err != nil {
+		errors = append(errors, err.Error())
+	} else {
+		allCidrs = append(allCidrs, a.ToAws...)
+	}
+
+	if err := validateCidrList(a.ToGcp, "to_gcp"); err != nil {
+		errors = append(errors, err.Error())
+	} else {
+		allCidrs = append(allCidrs, a.ToGcp...)
+	}
+
+	if err := validateCidrList(a.ToAlibaba, "to_alibaba"); err != nil {
+		errors = append(errors, err.Error())
+	} else {
+		allCidrs = append(allCidrs, a.ToAlibaba...)
+	}
+
+	if err := validateCidrList(a.ToTencent, "to_tencent"); err != nil {
+		errors = append(errors, err.Error())
+	} else {
+		allCidrs = append(allCidrs, a.ToTencent...)
+	}
+
+	if err := validateCidrList(a.ToIbm, "to_ibm"); err != nil {
+		errors = append(errors, err.Error())
+	} else {
+		allCidrs = append(allCidrs, a.ToIbm...)
+	}
+
+	// Check for duplicate CIDRs across CSPs
+	if err := validateNoDuplicateCidrs(allCidrs); err != nil {
+		errors = append(errors, err.Error())
+	}
+
+	if len(errors) > 0 {
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
+	}
+
+	return nil
+}
+
+// Helper function to validate CIDR list
+func validateCidrList(cidrs []string, fieldName string) error {
+	if len(cidrs) == 0 {
+		return nil // Empty list is allowed
+	}
+
+	// Check each CIDR format
+	for i, cidr := range cidrs {
+		if _, ipNet, err := net.ParseCIDR(cidr); err != nil {
+			return fmt.Errorf("%s[%d]: invalid CIDR format '%s'", fieldName, i, cidr)
+		} else {
+			// Validate APIPA range (169.254.x.x/30)
+			if !strings.HasPrefix(cidr, "169.254.") {
+				return fmt.Errorf("%s[%d]: CIDR '%s' must be in APIPA range (169.254.x.x)", fieldName, i, cidr)
+			}
+
+			// Check if it's /30 subnet (required for BGP peering)
+			if !strings.HasSuffix(cidr, "/30") {
+				return fmt.Errorf("%s[%d]: CIDR '%s' must be /30 subnet for BGP peering", fieldName, i, cidr)
+			}
+
+			// Validate Azure reserved APIPA range (169.254.21.0 ~ 169.254.22.255)
+			if err := validateAzureApipaRange(ipNet.IP, fieldName, i, cidr); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Helper function to validate Azure APIPA range (169.254.21.0 ~ 169.254.22.255)
+func validateAzureApipaRange(ip net.IP, fieldName string, index int, cidr string) error {
+	// Convert IP to 4-byte representation for comparison
+	ipv4 := ip.To4()
+	if ipv4 == nil {
+		return fmt.Errorf("%s[%d]: CIDR '%s' must be IPv4", fieldName, index, cidr)
+	}
+
+	// Check if the IP is within Azure's reserved APIPA range (169.254.21.0 ~ 169.254.22.255)
+	if ipv4[0] == 169 && ipv4[1] == 254 {
+		thirdOctet := ipv4[2]
+		if thirdOctet < 21 || thirdOctet > 22 {
+			return fmt.Errorf("%s[%d]: CIDR '%s' must be within Azure reserved APIPA range (169.254.21.0 ~ 169.254.22.255)", fieldName, index, cidr)
+		}
+	} else {
+		return fmt.Errorf("%s[%d]: CIDR '%s' must be within Azure reserved APIPA range (169.254.21.0 ~ 169.254.22.255)", fieldName, index, cidr)
+	}
+
+	// Additional check: ensure network address is properly aligned for /30
+	fourthOctet := ipv4[3]
+	if fourthOctet%4 != 0 {
+		return fmt.Errorf("%s[%d]: CIDR '%s' network address must be aligned to /30 boundary (multiples of 4)", fieldName, index, cidr)
+	}
+
+	return nil
+}
+
+// Helper function to validate no duplicate CIDRs across CSPs
+func validateNoDuplicateCidrs(cidrs []string) error {
+	if len(cidrs) <= 1 {
+		return nil // No duplicates possible
+	}
+
+	cidrMap := make(map[string]bool)
+	for _, cidr := range cidrs {
+		if cidr == "" {
+			continue // Skip empty strings
+		}
+		if cidrMap[cidr] {
+			return fmt.Errorf("duplicate CIDR found: '%s' is used in multiple CSP configurations", cidr)
+		}
+		cidrMap[cidr] = true
+	}
+
+	return nil
 }

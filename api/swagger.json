@@ -4391,10 +4391,22 @@
                 }
             }
         },
-        "model.AzureConfig": {
+        "model.AzureBgpPeeringCidrs": {
             "type": "object",
             "properties": {
-                "apipa_cidrs": {
+                "to_alibaba": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "169.254.25.0/30",
+                        "169.254.25.4/30",
+                        "169.254.26.0/30",
+                        "169.254.26.4/30"
+                    ]
+                },
+                "to_aws": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -4406,10 +4418,54 @@
                         "169.254.22.4/30"
                     ]
                 },
+                "to_gcp": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "169.254.23.0/30",
+                        "169.254.23.4/30",
+                        "169.254.24.0/30",
+                        "169.254.24.4/30"
+                    ]
+                },
+                "to_ibm": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "169.254.29.0/30",
+                        "169.254.29.4/30",
+                        "169.254.30.0/30",
+                        "169.254.30.4/30"
+                    ]
+                },
+                "to_tencent": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "169.254.27.0/30",
+                        "169.254.27.4/30",
+                        "169.254.28.0/30",
+                        "169.254.28.4/30"
+                    ]
+                }
+            }
+        },
+        "model.AzureConfig": {
+            "type": "object",
+            "properties": {
                 "bgp_asn": {
                     "type": "string",
                     "default": "65531",
                     "example": "65531"
+                },
+                "bgp_peering_cidrs": {
+                    "$ref": "#/definitions/model.AzureBgpPeeringCidrs"
                 },
                 "gateway_subnet_cidr": {
                     "type": "string",
