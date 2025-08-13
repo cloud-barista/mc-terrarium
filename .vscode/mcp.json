@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"opentofu": {
+			"command": "npx",
+      "args": ["-y", "@opentofu/opentofu-mcp-server"]
+		}
+	},
+	"inputs": []
+}
