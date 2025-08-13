@@ -53,13 +53,13 @@ Prepare credentials by looking at the README and templates in the `/secrets` dir
 
 Note - There may be an issue regarding Credential settings. Contributions are welcome.
 
-## Development Tools (Optional)
+## Development Tools
 
 ### OpenTofu MCP Server Integration (for contributors)
 
-This enables AI-powered assistance **for your enhanced development experience**, such as OpenTofu registry search, documentation access, and code assistance.
+This enables AI-powered assistance **for your enhanced development experience**, such as OpenTofu registry search, documentation access, and code assistance through AI tools like GitHub Copilot.
 
-As recommended by OpenTofu MCP Server, we use the **hosted service** instead of local installation for better reliability and always up-to-date registry data.
+We use the **npx-based installation** for reliable access to OpenTofu registry data and documentation. SSE (Server-Sent Events) transport appears to be deprecated and being replaced with Streamable HTTP transport in MCP.
 
 **Setup for VS Code:**
 
@@ -69,15 +69,15 @@ As recommended by OpenTofu MCP Server, we use the **hosted service** instead of 
 {
   "servers": {
     "opentofu": {
-      "type": "sse",
-      "url": "https://mcp.opentofu.org/sse"
+      "command": "npx",
+      "args": ["-y", "@opentofu/opentofu-mcp-server"]
     }
   },
   "inputs": []
 }
 ```
 
-For other editors (Cursor) or local installation options, see the [OpenTofu MCP Server repository](https://github.com/opentofu/opentofu-mcp-server).
+For other editors (Cursor) or additional setup options, see the [OpenTofu MCP Server repository](https://github.com/opentofu/opentofu-mcp-server).
 
 ## Up and run MC-Terrarium
 
