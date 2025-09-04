@@ -45,10 +45,10 @@ type AzureConfig struct {
 // AzureBgpPeeringCidrs represents BGP peering CIDR ranges for Azure connections to other CSPs
 type AzureBgpPeeringCidrs struct {
 	ToAws     []string `json:"to_aws,omitempty" example:"169.254.21.0/30,169.254.21.4/30,169.254.22.0/30,169.254.22.4/30"`
-	ToGcp     []string `json:"to_gcp,omitempty" example:"169.254.23.0/30,169.254.23.4/30,169.254.24.0/30,169.254.24.4/30"`
-	ToAlibaba []string `json:"to_alibaba,omitempty" example:"169.254.25.0/30,169.254.25.4/30,169.254.26.0/30,169.254.26.4/30"`
-	ToTencent []string `json:"to_tencent,omitempty" example:"169.254.27.0/30,169.254.27.4/30,169.254.28.0/30,169.254.28.4/30"`
-	ToIbm     []string `json:"to_ibm,omitempty" example:"169.254.29.0/30,169.254.29.4/30,169.254.30.0/30,169.254.30.4/30"`
+	ToGcp     []string `json:"to_gcp,omitempty" example:"169.254.21.8/30,169.254.21.12/30,169.254.22.8/30,169.254.22.12/30"`
+	ToAlibaba []string `json:"to_alibaba,omitempty" example:"169.254.21.16/30,169.254.21.20/30,169.254.22.16/30,169.254.22.20/30"`
+	ToTencent []string `json:"to_tencent,omitempty" example:"169.254.21.24/30,169.254.21.28/30,169.254.22.24/30,169.254.22.28/30"`
+	ToIbm     []string `json:"to_ibm,omitempty" example:"169.254.21.32/30,169.254.21.36/30,169.254.22.32/30,169.254.22.36/30"`
 }
 
 // GcpConfig represents GCP specific VPN configuration

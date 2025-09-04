@@ -23,7 +23,8 @@ output "azure_vpn_info" {
       }
     },
     // Azure VPN connection details
-    try(module.conn_aws_azure.azure_vpn_conn_info, {})
+    # var.vpn_config.aws != null ? try(module.conn_aws_azure.azure_vpn_conn_info, {}) : {},
+    # var.vpn_config.alibaba != null ? try(module.conn_alibaba_azure.azure_vpn_conn_info, {}) : {}
     // To be added, Azure VPN connection details with other providers
     // e.g., Alibaba, GCP, etc.
   )

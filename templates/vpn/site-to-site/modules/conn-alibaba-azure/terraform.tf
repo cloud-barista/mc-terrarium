@@ -1,13 +1,5 @@
-# providers.tf
 terraform {
-  required_version = ">=1.8.3"
-
   required_providers {
-    # AWS provider
-    aws = {
-      source  = "registry.opentofu.org/hashicorp/aws"
-      version = "~>5.42"
-    }
     # Azure provider
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -17,6 +9,11 @@ terraform {
     azapi = {
       source  = "azure/azapi"
       version = "~>1.12"
+    }
+    # Alibaba Cloud provider
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "~>1.243.0"
     }
   }
 }
