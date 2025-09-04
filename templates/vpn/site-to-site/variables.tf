@@ -24,44 +24,44 @@ variable "vpn_config" {
 
       # BGP peering CIDR ranges for Azure connections to other CSPs
       bgp_peering_cidrs = optional(object({
-        # APIPA CIDRs for connection to AWS
+        # APIPA CIDRs for connection to AWS (2 in .21.x, 2 in .22.x)
         to_aws = optional(list(string), [
-          "169.254.21.0/30", # Tunnel 1 - Interface 0
-          "169.254.21.4/30", # Tunnel 1 - Interface 1  
-          "169.254.22.0/30", # Tunnel 2 - Interface 0
-          "169.254.22.4/30"  # Tunnel 2 - Interface 1
+          "169.254.21.0/30", # AWS Connection 1 - .21 subnet
+          "169.254.21.4/30", # AWS Connection 2 - .21 subnet
+          "169.254.22.0/30", # AWS Connection 3 - .22 subnet
+          "169.254.22.4/30"  # AWS Connection 4 - .22 subnet
         ])
 
-        # APIPA CIDRs for connection to GCP
+        # APIPA CIDRs for connection to GCP (2 in .21.x, 2 in .22.x)
         to_gcp = optional(list(string), [
-          "169.254.23.0/30", # Tunnel 1 - Interface 0
-          "169.254.23.4/30", # Tunnel 1 - Interface 1
-          "169.254.24.0/30", # Tunnel 2 - Interface 0  
-          "169.254.24.4/30"  # Tunnel 2 - Interface 1
+          "169.254.21.8/30",  # GCP Connection 1 - .21 subnet
+          "169.254.21.12/30", # GCP Connection 2 - .21 subnet
+          "169.254.22.8/30",  # GCP Connection 3 - .22 subnet
+          "169.254.22.12/30"  # GCP Connection 4 - .22 subnet
         ])
 
-        # APIPA CIDRs for connection to Alibaba Cloud
+        # APIPA CIDRs for connection to Alibaba Cloud (2 in .21.x, 2 in .22.x)
         to_alibaba = optional(list(string), [
-          "169.254.25.0/30", # Tunnel 1 - Interface 0
-          "169.254.25.4/30", # Tunnel 1 - Interface 1
-          "169.254.26.0/30", # Tunnel 2 - Interface 0
-          "169.254.26.4/30"  # Tunnel 2 - Interface 1
+          "169.254.21.16/30", # Alibaba Connection 1 - .21 subnet
+          "169.254.21.20/30", # Alibaba Connection 2 - .21 subnet
+          "169.254.22.16/30", # Alibaba Connection 3 - .22 subnet
+          "169.254.22.20/30"  # Alibaba Connection 4 - .22 subnet
         ])
 
-        # APIPA CIDRs for connection to Tencent Cloud
+        # APIPA CIDRs for connection to Tencent Cloud (2 in .21.x, 2 in .22.x)
         to_tencent = optional(list(string), [
-          "169.254.27.0/30", # Tunnel 1 - Interface 0
-          "169.254.27.4/30", # Tunnel 1 - Interface 1
-          "169.254.28.0/30", # Tunnel 2 - Interface 0
-          "169.254.28.4/30"  # Tunnel 2 - Interface 1
+          "169.254.21.24/30", # Tencent Connection 1 - .21 subnet
+          "169.254.21.28/30", # Tencent Connection 2 - .21 subnet
+          "169.254.22.24/30", # Tencent Connection 3 - .22 subnet
+          "169.254.22.28/30"  # Tencent Connection 4 - .22 subnet
         ])
 
-        # APIPA CIDRs for connection to IBM Cloud
+        # APIPA CIDRs for connection to IBM Cloud (2 in .21.x, 2 in .22.x)
         to_ibm = optional(list(string), [
-          "169.254.29.0/30", # Tunnel 1 - Interface 0
-          "169.254.29.4/30", # Tunnel 1 - Interface 1
-          "169.254.30.0/30", # Tunnel 2 - Interface 0
-          "169.254.30.4/30"  # Tunnel 2 - Interface 1
+          "169.254.21.32/30", # IBM Connection 1 - .21 subnet
+          "169.254.21.36/30", # IBM Connection 2 - .21 subnet
+          "169.254.22.32/30", # IBM Connection 3 - .22 subnet
+          "169.254.22.36/30"  # IBM Connection 4 - .22 subnet
         ])
         }), {
         # Default values if not specified
@@ -90,8 +90,8 @@ variable "vpn_config" {
     alibaba = optional(object({
       region       = optional(string, "ap-northeast-2") # Seoul
       vpc_id       = string
-      vswitch_id_1 = string                    # Add this field
-      vswitch_id_2 = string                    # Add this field
+      vswitch_id_1 = string                    # Primary VSwitch (required)
+      vswitch_id_2 = optional(string)          # Disaster recovery VSwitch (optional)
       bgp_asn      = optional(string, "65532") # default value
     }))
     tencent = optional(object({
