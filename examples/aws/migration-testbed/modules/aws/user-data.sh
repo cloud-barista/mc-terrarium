@@ -116,8 +116,8 @@ case "${service_role}" in
     ufw deny 5432/tcp comment 'Block PostgreSQL'
     # Allow JMX monitoring from internal network
     ufw allow from 10.0.0.0/16 to any port 9999 comment 'JMX monitoring'
-    # Allow app-specific ports
-    ufw allow from 10.0.0.0/16 to any port 8000:8100/tcp comment 'App range'
+    # Allow app-specific ports (using individual port ranges)
+    ufw allow from 10.0.0.0/16 to any port 8000:8100 proto tcp comment 'App range'
     ;;
     
   "haproxy")
@@ -128,7 +128,7 @@ case "${service_role}" in
     # Allow HAProxy stats page from internal network
     ufw allow from 10.0.0.0/16 to any port 8404 comment 'HAProxy stats'
     # Allow backend health check ports
-    ufw allow from 10.0.0.0/16 to any port 8080:8090/tcp comment 'Backend health'
+    ufw allow from 10.0.0.0/16 to any port 8080:8090 proto tcp comment 'Backend health'
     # Allow custom load balancer ports
     ufw allow 8000/tcp comment 'Custom LB port'
     ufw allow 9000/tcp comment 'Admin interface'
@@ -170,8 +170,9 @@ ufw deny 135/tcp comment 'Block RPC'
 ufw deny 139/tcp comment 'Block NetBIOS'
 ufw deny 445/tcp comment 'Block SMB'
 
-# Allow ping but limit rate
-ufw allow in on any to any port 8 comment 'Allow ping'
+# Allow ICMP ping (already allowed by default ICMP rule, but explicit for clarity)
+# Note: ICMP is already allowed via earlier ingress rule, this is redundant
+# ufw allow proto icmp comment 'Allow ping'
 
 # Log dropped packets for monitoring
 ufw logging on
