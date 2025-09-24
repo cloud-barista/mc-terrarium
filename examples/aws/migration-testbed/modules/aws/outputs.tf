@@ -1,3 +1,5 @@
+# AWS Migration Testbed Module - Outputs
+
 output "ssh_info" {
   description = "SSH connection information"
   sensitive   = true
@@ -23,6 +25,7 @@ output "testbed_info" {
     subnet_id    = aws_subnet.main.id
     subnet_cidr  = aws_subnet.main.cidr_block
     vm_count     = length(var.vm_configurations)
+    region       = var.aws_region
   }
 }
 
@@ -75,5 +78,28 @@ output "service_roles" {
   description = "Service roles assigned to each VM"
   value = {
     for vm_key, vm_config in var.vm_configurations : vm_key => vm_config.service_role
+  }
+}
+
+# Network Information
+output "network_info" {
+  description = "Network infrastructure information"
+  value = {
+    vpc_id              = aws_vpc.main.id
+    vpc_cidr            = aws_vpc.main.cidr_block
+    subnet_id           = aws_subnet.main.id
+    subnet_cidr         = aws_subnet.main.cidr_block
+    internet_gateway_id = aws_internet_gateway.main.id
+    route_table_id      = aws_route_table.main.id
+    availability_zone   = aws_subnet.main.availability_zone
+  }
+}
+
+# Key Pair Information
+output "key_pair_info" {
+  description = "SSH key pair information"
+  value = {
+    key_name    = aws_key_pair.main.key_name
+    fingerprint = aws_key_pair.main.fingerprint
   }
 }
