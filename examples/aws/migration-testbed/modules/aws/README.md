@@ -96,17 +96,17 @@ Each VM is configured with UFW firewall rules specific to its service role:
 
 ```bash
 # Extract private key
-terraform output -json ssh_info | jq -r .private_key > private_key.pem
+tofu output -json ssh_info | jq -r .private_key > private_key.pem
 chmod 600 private_key.pem
 
 # Connect to VMs
-terraform output -json ssh_info | jq -r '.vms.vm1.command'
+tofu output -json ssh_info | jq -r '.vms.vm1.command'
 # Outputs: ssh -i private_key.pem ubuntu@<public_ip>
 ```
 
 ## Requirements
 
-- Terraform >= 1.0
+- OpenTofu/Terraform >= 1.0
 - AWS Provider ~> 5.42
 - TLS Provider ~> 4.0
 

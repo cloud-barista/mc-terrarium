@@ -27,18 +27,20 @@ migration-testbed/
 ### Option 1: Use the Module (Recommended)
 
 1. **Configure variables**:
+
    ```bash
    cp terraform-module.tfvars terraform.tfvars
    # Edit terraform.tfvars with your settings
    ```
 
 2. **Deploy using module**:
+
    ```bash
    # Use module-based configuration
    cp main-module.tf main.tf
    cp variables-module.tf variables.tf
    cp outputs-module.tf outputs.tf
-   
+
    # Initialize and deploy
    tofu init
    tofu plan
@@ -48,12 +50,13 @@ migration-testbed/
 ### Option 2: Use Direct Configuration (Legacy)
 
 1. **Use existing files**:
+
    ```bash
    # Files are already present:
    # - main.tf (direct resources)
-   # - variables.tf (direct variables)  
+   # - variables.tf (direct variables)
    # - output.tf (direct outputs)
-   
+
    # Initialize and deploy
    tofu init
    tofu plan
@@ -64,45 +67,51 @@ migration-testbed/
 
 The testbed creates 6 VMs with different specifications and service roles:
 
-| VM  | Instance Type | vCPU | Memory | Service Role | UFW Firewall Rules |
-|-----|---------------|------|--------|-------------|-------------------|
-| vm1 | t3.small      | 2    | 4 GB   | nginx       | HTTP/HTTPS, 8080 (blocks DB) |
-| vm2 | t3.xlarge     | 4    | 16 GB  | nfs         | NFS ports (blocks web) |
-| vm3 | t3.large      | 2    | 8 GB   | mariadb     | MySQL internal only |
-| vm4 | m5.xlarge     | 4    | 16 GB  | tomcat      | App server ports (blocks DB) |
-| vm5 | m5.2xlarge    | 8    | 32 GB  | haproxy     | Load balancer ports (blocks DB) |
-| vm6 | m5.2xlarge    | 8    | 32 GB  | general     | General ports, internal DB access |
+| VM  | Instance Type | vCPU | Memory | Service Role | UFW Firewall Rules                |
+| --- | ------------- | ---- | ------ | ------------ | --------------------------------- |
+| vm1 | t3.small      | 2    | 4 GB   | nginx        | HTTP/HTTPS, 8080 (blocks DB)      |
+| vm2 | t3.xlarge     | 4    | 16 GB  | nfs          | NFS ports (blocks web)            |
+| vm3 | t3.large      | 2    | 8 GB   | mariadb      | MySQL internal only               |
+| vm4 | m5.xlarge     | 4    | 16 GB  | tomcat       | App server ports (blocks DB)      |
+| vm5 | m5.2xlarge    | 8    | 32 GB  | haproxy      | Load balancer ports (blocks DB)   |
+| vm6 | m5.2xlarge    | 8    | 32 GB  | general      | General ports, internal DB access |
 
 ## Service Roles and Firewall Configuration
 
 Each VM automatically configures UFW firewall rules based on its service role:
 
 ### nginx (Web Server)
+
 - **Allowed**: 22 (SSH), 80 (HTTP), 443 (HTTPS), 8080 (Alt HTTP)
 - **Blocked**: Database ports (3306, 5432, 27017, 6379)
 - **Use Case**: Web frontend, reverse proxy
 
 ### nfs (File Server)
+
 - **Allowed**: 22 (SSH), 2049 (NFS), 111 (RPC), 20048 (NFS mountd)
 - **Blocked**: Web ports (80, 443, 8080)
 - **Use Case**: Network file sharing
 
 ### mariadb (Database Server)
+
 - **Allowed**: 22 (SSH), 3306 (MySQL internal only), 4567-4568 (Galera)
 - **Blocked**: External database access, web ports
 - **Use Case**: Database backend
 
 ### tomcat (Application Server)
+
 - **Allowed**: 22 (SSH), 80, 443, 8080, 8443
 - **Blocked**: Database ports (3306, 5432, 27017, 6379)
 - **Use Case**: Java application server
 
 ### haproxy (Load Balancer)
+
 - **Allowed**: 22 (SSH), 80, 443, 8404 (stats)
 - **Blocked**: Database ports (3306, 5432, 27017, 6379)
 - **Use Case**: Load balancing, high availability
 
 ### general (General Purpose)
+
 - **Allowed**: 22 (SSH), 80, 443, 3000, 5000, internal DB access
 - **Use Case**: Flexible services, development
 
@@ -147,14 +156,66 @@ ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2)
 # ... etc
 ```
 
+## Firewall Verification
+
+### Check UFW Status on All VMs
+
+```bash
+# Use the provided script to check all VMs at once
+./check-firewall.sh
+
+# For a quick status check of all VMs
+./simple-firewall-check.sh
+
+# Or check individual VMs manually
+ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) "sudo ufw status verbose"
+```
+
+### Firewall Check Scripts
+
+- **`check-firewall.sh`**: Comprehensive check with system info, UFW status, service roles, and error detection
+- **`simple-firewall-check.sh`**: Basic UFW status check for all VMs
+- **`quick-firewall-check.sh`**: Ultra-quick connectivity and UFW status check
+
+### Expected Firewall Rules by Service Role
+
+- **nginx**: HTTP/HTTPS ports open, database ports blocked
+- **nfs**: NFS ports (2049, 111, 20048) open, web ports blocked
+- **mariadb**: MySQL port (3306) internal-only, web ports blocked
+- **tomcat**: App server ports (8080, 8443) and web ports open, database ports blocked
+- **haproxy**: Load balancer ports (80, 443, 8404) open, database ports blocked
+- **general**: Web and app ports open, database ports internal-only
+
+### Troubleshooting Firewall Issues
+
+```bash
+# If a VM fails firewall configuration during deployment
+ssh -i private_key.pem ubuntu@<VM_IP> "sudo journalctl -u cloud-final"
+
+# Check user-data execution logs
+ssh -i private_key.pem ubuntu@<VM_IP> "sudo tail -f /var/log/user-data-debug.log"
+
+# Manually reconfigure UFW if needed
+ssh -i private_key.pem ubuntu@<VM_IP> "
+  sudo ufw --force reset
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow ssh
+  # Add service-specific rules...
+  sudo ufw --force enable
+"
+```
+
 ## Outputs
 
 ### Infrastructure Information
+
 - `testbed_info`: Basic infrastructure details
 - `network_info`: VPC, subnet, gateway information
 - `security_group_info`: Security group configuration
 
 ### VM Information
+
 - `vm_details`: Detailed VM specifications and IPs
 - `vm_summary`: Summary with service roles
 - `vm_public_ips`: Public IP addresses only
@@ -162,11 +223,13 @@ ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2)
 - `service_roles`: Service role assignments
 
 ### SSH and Access
+
 - `ssh_info`: Complete SSH information (sensitive)
 - `quick_ssh_commands`: SSH commands for each VM (sensitive)
 - `key_pair_info`: SSH key pair details
 
 ### Deployment Summary
+
 - `deployment_summary`: Overall deployment statistics
 
 ## Customization
@@ -176,7 +239,7 @@ ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2)
 ```hcl
 vm_configurations = {
   # Existing VMs...
-  
+
   vm7 = {
     instance_type = "t3.medium"
     vcpu          = 2
@@ -209,10 +272,10 @@ allowed_cidr_blocks = [
 ```hcl
 module "migration_testbed" {
   source = "github.com/your-org/migration-testbed//modules/aws"
-  
+
   terrarium_id = "my-test-env"
   aws_region   = "us-west-2"
-  
+
   vm_configurations = {
     web = {
       instance_type = "t3.small"
@@ -221,13 +284,13 @@ module "migration_testbed" {
       service_role  = "nginx"
     }
     db = {
-      instance_type = "t3.medium" 
+      instance_type = "t3.medium"
       vcpu          = 2
       memory_gb     = 4
       service_role  = "mariadb"
     }
   }
-  
+
   allowed_cidr_blocks = [
     "203.0.113.0/24"
   ]
@@ -250,6 +313,7 @@ tofu destroy
 ## Support
 
 This testbed is designed for:
+
 - Migration testing scenarios
 - Multi-service application testing
 - Network connectivity testing
