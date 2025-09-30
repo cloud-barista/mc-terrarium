@@ -1,0 +1,41 @@
+# Example values for AWS and DCS VPN connection
+# Copy this file to terraform.tfvars and modify the values according to your environment
+
+# DCS Connection Settings
+# Connection credentials are loaded from environment variables.
+# Before running OpenTofu, execute:
+# source ../../secrets/load-openstack-cred-env.sh
+#
+# Make sure to configure the following file with your DCS credentials:
+# ../../secrets/credential-openstack.env
+
+# AWS Configuration
+aws_region     = "ap-northeast-2"  # Seoul region
+aws_vpc_cidr   = "10.0.0.0/16"
+aws_subnet_cidr = "10.0.1.0/24"
+
+# DCS Network Configuration
+openstack_network_cidr = "192.168.0.0/24"
+openstack_subnet_cidr  = "192.168.0.0/26"
+
+# VPN Configuration
+vpn_shared_secret = "MyVPNSharedSecret123!"
+
+# Project Configuration
+project_name = "aws-dcs-vpn"
+environment  = "demo"
+
+# Key Pair Configuration (make sure these key pairs exist in both clouds)
+aws_key_pair_name       = "my-aws-key-pair"
+openstack_key_pair_name = "my-openstack-key-pair"
+
+# VPN Configuration
+vpn_shared_secret = "MyVPNSharedSecret123!"
+
+# Project Configuration
+project_name = "aws-dcs-vpn"
+environment  = "demo"
+
+# Key Pair Configuration (make sure these key pairs exist in both clouds)
+aws_key_pair_name       = "my-aws-key-pair"
+openstack_key_pair_name = "my-openstack-key-pair"
