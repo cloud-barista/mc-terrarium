@@ -1,4 +1,4 @@
-# DevStack Infrastructure Outputs
+# DCS (DevStack Cloud Service) Infrastructure Outputs
 
 # SSH Key Information
 output "ssh_private_key" {
@@ -36,9 +36,9 @@ output "secondary_instance_info" {
 output "ssh_commands" {
   description = "SSH commands for accessing instances"
   value = {
-    primary       = "# Save private key first: tofu output -raw ssh_private_key > devstack-key.pem && chmod 600 devstack-key.pem"
-    primary_ssh   = "ssh -i devstack-key.pem ubuntu@${openstack_networking_floatingip_v2.main.address}"
-    secondary_ssh = "ssh -i devstack-key.pem ubuntu@${openstack_networking_floatingip_v2.secondary.address}"
+    primary       = "# Save private key first: tofu output -raw ssh_private_key > dcs-key.pem && chmod 600 dcs-key.pem"
+    primary_ssh   = "ssh -i dcs-key.pem ubuntu@${openstack_networking_floatingip_v2.main.address}"
+    secondary_ssh = "ssh -i dcs-key.pem ubuntu@${openstack_networking_floatingip_v2.secondary.address}"
   }
 }
 

@@ -1,4 +1,4 @@
-# DevStack Networking Resources
+# DCS (DevStack Cloud Service) Networking Resources
 
 # Data source for external network
 data "openstack_networking_network_v2" "external" {

@@ -1,4 +1,4 @@
-# DevStack Compute Resources
+# DCS (DevStack Cloud Service) Compute Resources
 
 # Generate SSH key pair
 resource "tls_private_key" "ssh" {
