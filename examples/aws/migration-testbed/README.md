@@ -4,13 +4,21 @@ This project provides a complete AWS migration testbed infrastructure with 6 VMs
 
 ## Project Structure
 
-```
+````
 migration-testbed/
 ├── modules/
 │   └── aws/                    # AWS Migration Testbed Module
 │       ├── main.tf            # Module infrastructure
 │       ├── variables.tf       # Module variables
-│       ├── outputs.tf         # Module outputs
+│    ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) "
+echo '=== Service Status ===' &&
+systemctl is-active ufw &&
+echo -e '\n=== Available Ports ===' &&
+ss -tlnp | grep -E ':(80|443|3000|5000|8080)' &&
+echo -e '\n=== System Resources ===' &&
+free -h && df -h /
+"
+```puts.tf         # Module outputs
 │       ├── terraform.tf       # Module requirements
 │       ├── user-data.sh      # VM initialization script
 │       └── README.md         # Module documentation
@@ -20,7 +28,7 @@ migration-testbed/
 ├── terraform-module.tfvars    # Example configuration
 ├── provider.tf               # Provider configuration
 └── README.md                 # This file
-```
+````
 
 ## Quick Start
 
@@ -450,12 +458,7 @@ ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq
 #### General Server (vm6)
 
 ```bash
-ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) \
-  "systemctl is-active ufw"
-```
-
 # Check general purpose server
-
 ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) "
 echo '=== Service Status ===' &&
 systemctl is-active ufw &&
@@ -464,8 +467,7 @@ ss -tlnp | grep -E ':(80|443|3000|5000|8080)' &&
 echo -e '\n=== System Resources ===' &&
 free -h && df -h /
 "
-
-````
+```
 
 ### Quick Health Check Script
 
@@ -535,7 +537,7 @@ chmod +x check-services.sh
 ./simple-firewall-check.sh
 
 # Or check individual VMs manually
-ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) "sudo ufw status verbose"
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) "sudo ufw status verbose"
 ```
 
 ### Firewall Check Scripts
@@ -557,13 +559,13 @@ ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) "s
 
 ```bash
 # If a VM fails firewall configuration during deployment
-ssh -i private_key.pem ubuntu@<VM_IP> "sudo journalctl -u cloud-final"
+ssh -i private_key_mig_testbed.pem ubuntu@<VM_IP> "sudo journalctl -u cloud-final"
 
 # Check user-data execution logs
-ssh -i private_key.pem ubuntu@<VM_IP> "sudo tail -f /var/log/user-data-debug.log"
+ssh -i private_key_mig_testbed.pem ubuntu@<VM_IP> "sudo tail -f /var/log/user-data-debug.log"
 
 # Manually reconfigure UFW if needed
-ssh -i private_key.pem ubuntu@<VM_IP> "
+ssh -i private_key_mig_testbed.pem ubuntu@<VM_IP> "
   sudo ufw --force reset
   sudo ufw default deny incoming
   sudo ufw default allow outgoing
@@ -690,4 +692,3 @@ This testbed is designed for:
 ## License
 
 This project is provided as-is for testing and educational purposes.
-````
