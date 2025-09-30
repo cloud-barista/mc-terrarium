@@ -73,7 +73,7 @@ The testbed creates 6 VMs with different specifications and service roles:
 | vm2 | t3.xlarge     | 4    | 16 GB  | nfs          | NFS ports (blocks web)            |
 | vm3 | t3.large      | 2    | 8 GB   | mariadb      | MySQL internal only               |
 | vm4 | m5.xlarge     | 4    | 16 GB  | tomcat       | App server ports (blocks DB)      |
-| vm5 | m5.2xlarge    | 8    | 32 GB  | haproxy      | Load balancer ports (blocks DB)   |
+| vm5 | m5.2xlarge    | 8    | 32 GB  | haproxy      | MariaDB container ports           |
 | vm6 | m5.2xlarge    | 8    | 32 GB  | general      | General ports, internal DB access |
 
 ## Service Roles and Firewall Configuration
@@ -137,8 +137,8 @@ Each VM automatically configures UFW firewall rules based on its service role:
 
 ```bash
 # Get private key
-tofu output -json ssh_info | jq -r .private_key > private_key.pem
-chmod 600 private_key.pem
+tofu output -json ssh_info | jq -r .private_key > private_key_mig_testbed.pem
+chmod 600 private_key_mig_testbed.pem
 
 # Get all SSH commands
 tofu output -json ssh_info | jq -r '.vms[] | .command'
@@ -151,9 +151,376 @@ tofu output -json ssh_info | jq -r '.vms.vm1'
 
 ```bash
 # Connect to specific VMs
-ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1)
-ssh -i private_key.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2)
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1)
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2)
 # ... etc
+```
+
+## Software Installation on the deployed infrastructure
+
+### Install Nginx on vm1
+
+```bash
+# Execute WordPress installation script remotely
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) \
+  "curl -s https://raw.githubusercontent.com/cloud-barista/cm-grasshopper/refs/heads/main/examples/software-install-scripts/package/install-wordpress.sh | sudo bash"
+```
+
+### Install NFS Server on vm2
+
+```bash
+# Execute NFS installation script remotely
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2) \
+  "curl -s https://raw.githubusercontent.com/cloud-barista/cm-grasshopper/refs/heads/main/examples/software-install-scripts/package/install-nfs.sh | sudo bash"
+```
+
+### Install MariaDB on vm3
+
+```bash
+# Execute WordPress installation script remotely
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm3) \
+  "curl -s https://raw.githubusercontent.com/cloud-barista/cm-grasshopper/refs/heads/main/examples/software-install-scripts/package/install-wordpress.sh | sudo bash"
+```
+
+### Install Tomcat container on vm4
+
+TBD
+
+### Install MariaDB container on vm5
+
+TBD
+
+## Software Status Verification
+
+### Check Installed Software Status
+
+```bash
+# Check all VMs software status at once
+for vm in vm1 vm2 vm3 vm4 vm5 vm6; do
+  echo "=== $vm Software Status ==="
+  ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .$vm) \
+    "echo 'Service Role:' && cat /etc/vm-service-role 2>/dev/null"
+done
+```
+
+### Quick Software Version Summary
+
+```bash
+# Get software versions summary from all VMs
+echo "=== Migration Testbed Software Status ==="
+
+for vm in vm1 vm2 vm3 vm4 vm5 vm6; do
+  echo "--- $vm ---"
+
+  # Get VM IP and check connectivity
+  VM_IP=$(tofu output -json vm_public_ips | jq -r .$vm 2>/dev/null)
+  if [ "$VM_IP" = "null" ] || [ -z "$VM_IP" ]; then
+    echo "Error: Cannot get IP for $vm"
+    continue
+  fi
+
+  # Get service role
+  ROLE=$(ssh -i private_key_mig_testbed.pem -o ConnectTimeout=5 -o StrictHostKeyChecking=no ubuntu@$VM_IP "cat /etc/vm-service-role 2>/dev/null || echo 'unknown'")
+  echo "Role: $ROLE"
+
+  case $ROLE in
+    nginx)
+      echo "Software versions:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        nginx -v 2>&1 | head -n 1 || echo 'Nginx: Not installed'
+        php -v 2>/dev/null | head -n 1 || echo 'PHP: Not installed'
+        mysql --version 2>/dev/null || echo 'MariaDB: Not installed'
+      " 2>/dev/null
+      ;;
+    nfs)
+      echo "Software versions:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        dpkg -l nfs-kernel-server 2>/dev/null | grep '^ii' | awk '{print \$2 \" \" \$3}' || echo 'NFS: Not installed'
+        cat /proc/fs/nfsd/versions 2>/dev/null | sed 's/^/NFS Protocol: /' || echo 'NFS Protocol: Not available'
+        systemctl is-active nfs-kernel-server 2>/dev/null || echo 'NFS: Not running'
+      " 2>/dev/null
+      ;;
+    mariadb)
+      echo "Software versions:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        mysql --version 2>/dev/null || echo 'MariaDB: Not installed'
+        nginx -v 2>&1 | head -n 1 || echo 'Nginx: Not installed'
+        php -v 2>/dev/null | head -n 1 || echo 'PHP: Not installed'
+      " 2>/dev/null
+      ;;
+    tomcat)
+      echo "Container status:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        docker --version 2>/dev/null || echo 'Docker: Not installed'
+        docker ps --format 'table {{.Names}}\t{{.Status}}' 2>/dev/null | grep -v NAMES || echo 'No containers running'
+      " 2>/dev/null
+      ;;
+    haproxy)
+      echo "Container status:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        docker --version 2>/dev/null || echo 'Docker: Not installed'
+        docker ps --format 'table {{.Names}}\t{{.Status}}' 2>/dev/null | grep -v NAMES || echo 'No containers running'
+      " 2>/dev/null
+      ;;
+    general)
+      echo "System info:"
+      ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "
+        systemctl is-active ufw 2>/dev/null || echo 'UFW: Not active'
+        docker --version 2>/dev/null || echo 'Docker: Not installed'
+      " 2>/dev/null
+      ;;
+    *)
+      echo "Unknown role or not configured"
+      ;;
+  esac
+  echo
+done
+```
+
+### Service-Specific Software Checks
+
+#### Nginx Server (vm1) - WordPress
+
+```bash
+# Check service status and versions
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm1) "
+echo '=== VM1 (Nginx) Software Status ==='
+echo 'Service Status:'
+systemctl is-active nginx php8.1-fpm mariadb 2>/dev/null || echo 'Some services not installed'
+echo
+echo 'Software Versions:'
+nginx -v 2>&1 || echo 'Nginx: Not installed'
+php -v 2>/dev/null | head -n 1 || echo 'PHP: Not installed'
+mysql --version 2>/dev/null || echo 'MariaDB: Not installed'
+echo
+echo 'Process Check:'
+pgrep -f nginx > /dev/null && echo 'Nginx: Running' || echo 'Nginx: Not running'
+pgrep -f php-fpm > /dev/null && echo 'PHP-FPM: Running' || echo 'PHP-FPM: Not running'
+pgrep -f mysql > /dev/null && echo 'MariaDB: Running' || echo 'MariaDB: Not running'
+"
+```
+
+#### NFS Server (vm2)
+
+```bash
+# Check NFS service status and version
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm2) "
+echo '=== VM2 (NFS) Software Status ==='
+echo 'Service Status:'
+systemctl is-active nfs-kernel-server rpcbind 2>/dev/null || echo 'NFS services not installed'
+echo
+echo 'NFS Version:'
+nfsstat -v 2>/dev/null || echo 'NFS: Not installed'
+echo
+echo 'Process Check:'
+pgrep -f nfsd > /dev/null && echo 'NFS Server: Running' || echo 'NFS Server: Not running'
+pgrep -f rpcbind > /dev/null && echo 'RPC Bind: Running' || echo 'RPC Bind: Not running'
+echo
+echo 'Exports Status:'
+showmount -e localhost 2>/dev/null || echo 'No exports configured'
+"
+```
+
+#### MariaDB Server (vm3) - WordPress
+
+```bash
+# Check MariaDB and web services status
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm3) "
+echo '=== VM3 (MariaDB) Software Status ==='
+echo 'Service Status:'
+systemctl is-active mariadb nginx php8.1-fpm 2>/dev/null || echo 'Some services not installed'
+echo
+echo 'Software Versions:'
+mysql --version 2>/dev/null || echo 'MariaDB: Not installed'
+nginx -v 2>&1 || echo 'Nginx: Not installed'
+php -v 2>/dev/null | head -n 1 || echo 'PHP: Not installed'
+echo
+echo 'Process Check:'
+pgrep -f mysql > /dev/null && echo 'MariaDB: Running' || echo 'MariaDB: Not running'
+pgrep -f nginx > /dev/null && echo 'Nginx: Running' || echo 'Nginx: Not running'
+pgrep -f php-fpm > /dev/null && echo 'PHP-FPM: Running' || echo 'PHP-FPM: Not running'
+echo
+echo 'Database Status:'
+mysql -uroot -e 'SELECT VERSION();' 2>/dev/null || echo 'Database connection failed'
+"
+```
+
+#### Tomcat Server (vm4) - Container
+
+```bash
+# Check Docker and Tomcat container status
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm4) "
+echo '=== VM4 (Tomcat Container) Software Status ==='
+echo 'Docker Status:'
+systemctl is-active docker 2>/dev/null || echo 'Docker: Not installed'
+docker --version 2>/dev/null || echo 'Docker: Not installed'
+echo
+echo 'Docker Process:'
+pgrep -f dockerd > /dev/null && echo 'Docker Daemon: Running' || echo 'Docker Daemon: Not running'
+echo
+echo 'Container Status:'
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' 2>/dev/null || echo 'No containers or Docker not running'
+echo
+echo 'Tomcat Container Check:'
+docker ps | grep tomcat > /dev/null && echo 'Tomcat Container: Running' || echo 'Tomcat Container: Not running'
+"
+```
+
+#### MariaDB Container Server (vm5)
+
+```bash
+# Check Docker and MariaDB container status
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm5) "
+echo '=== VM5 (MariaDB Container) Software Status ==='
+echo 'Docker Status:'
+systemctl is-active docker 2>/dev/null || echo 'Docker: Not installed'
+docker --version 2>/dev/null || echo 'Docker: Not installed'
+echo
+echo 'Container Status:'
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' 2>/dev/null || echo 'No containers running'
+echo
+echo 'MariaDB Container Check:'
+docker ps | grep mariadb > /dev/null && echo 'MariaDB Container: Running' || echo 'MariaDB Container: Not running'
+"
+```
+
+### Quick Access to WordPress Sites
+
+```bash
+# Get WordPress URLs (after installation)
+echo "WordPress on Nginx (vm1): http://$(tofu output -json vm_public_ips | jq -r .vm1)/"
+echo "WordPress on MariaDB (vm3): http://$(tofu output -json vm_public_ips | jq -r .vm3)/"
+
+# Test WordPress accessibility
+curl -I http://$(tofu output -json vm_public_ips | jq -r .vm1)/ || echo "WordPress not yet installed on vm1"
+curl -I http://$(tofu output -json vm_public_ips | jq -r .vm3)/ || echo "WordPress not yet installed on vm3"
+```
+
+### NFS Mount Test
+
+```bash
+# Test NFS mount from general server (vm6) after NFS installation
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) "
+  sudo apt-get update &&
+  sudo apt-get install -y nfs-common &&
+  sudo mkdir -p /mnt/nfs-test &&
+  sudo mount -t nfs $(tofu output -json vm_private_ips | jq -r .vm2):/nfs/share /mnt/nfs-test &&
+  echo 'NFS mount successful - creating test file' &&
+  echo 'Hello from vm6' | sudo tee /mnt/nfs-test/test-from-vm6.txt &&
+  ls -la /mnt/nfs-test/ &&
+  sudo umount /mnt/nfs-test
+" || echo "NFS not yet installed or accessible"
+```
+
+### Quick Access to WordPress Sites
+
+```bash
+# Get WordPress URLs (after installation)
+echo "WordPress on Nginx (vm1): http://$(tofu output -json vm_public_ips | jq -r .vm1)/"
+echo "WordPress on MariaDB (vm3): http://$(tofu output -json vm_public_ips | jq -r .vm3)/"
+
+# Test WordPress accessibility
+curl -I http://$(tofu output -json vm_public_ips | jq -r .vm1)/ || echo "WordPress not yet installed on vm1"
+curl -I http://$(tofu output -json vm_public_ips | jq -r .vm3)/ || echo "WordPress not yet installed on vm3"
+```
+
+### NFS Mount Test
+
+```bash
+# Test NFS mount from general server (vm6) after NFS installation
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) "
+  sudo apt-get update &&
+  sudo apt-get install -y nfs-common &&
+  sudo mkdir -p /mnt/nfs-test &&
+  sudo mount -t nfs $(tofu output -json vm_private_ips | jq -r .vm2):/nfs/share /mnt/nfs-test &&
+  echo 'NFS mount successful - creating test file' &&
+  echo 'Hello from vm6' | sudo tee /mnt/nfs-test/test-from-vm6.txt &&
+  ls -la /mnt/nfs-test/ &&
+  sudo umount /mnt/nfs-test
+" || echo "NFS not yet installed or accessible"
+```
+
+#### HAProxy Server (vm5)
+
+```bash
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm5) \
+  "test -f /etc/haproxy/haproxy.cfg && echo 'HAProxy installed' || echo 'HAProxy not installed'"
+```
+
+#### General Server (vm6)
+
+```bash
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) \
+  "systemctl is-active ufw"
+```
+
+# Check general purpose server
+
+ssh -i private_key_mig_testbed.pem ubuntu@$(tofu output -json vm_public_ips | jq -r .vm6) "
+echo '=== Service Status ===' &&
+systemctl is-active ufw &&
+echo -e '\n=== Available Ports ===' &&
+ss -tlnp | grep -E ':(80|443|3000|5000|8080)' &&
+echo -e '\n=== System Resources ===' &&
+free -h && df -h /
+"
+
+````
+
+### Quick Health Check Script
+
+```bash
+# Create a comprehensive health check script
+cat << 'EOF' > check-services.sh
+#!/bin/bash
+# Quick service health check for all VMs
+
+for vm in vm1 vm2 vm3 vm4 vm5 vm6; do
+  echo "=== $vm Health Check ==="
+  VM_IP=$(tofu output -json vm_public_ips | jq -r .$vm)
+
+  # Basic connectivity
+  if ping -c 1 -W 3 $VM_IP &>/dev/null; then
+    echo "✓ Network: Reachable"
+  else
+    echo "✗ Network: Unreachable"
+    continue
+  fi
+
+  # SSH connectivity
+  if ssh -i private_key_mig_testbed.pem -o ConnectTimeout=5 -o StrictHostKeyChecking=no ubuntu@$VM_IP "exit" &>/dev/null; then
+    echo "✓ SSH: Connected"
+
+    # Service role and basic services
+    ROLE=$(ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "cat /etc/vm-service-role 2>/dev/null || echo 'unknown'")
+    echo "  Role: $ROLE"
+
+    SSH_STATUS=$(ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "systemctl is-active ssh" 2>/dev/null)
+    UFW_STATUS=$(ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "systemctl is-active ufw" 2>/dev/null)
+    echo "  SSH: $SSH_STATUS, UFW: $UFW_STATUS"
+
+    # Role-specific checks
+    case $ROLE in
+      nginx|mariadb)
+        WP_STATUS=$(ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "curl -s -o /dev/null -w '%{http_code}' http://localhost/" 2>/dev/null)
+        echo "  WordPress HTTP: $WP_STATUS"
+        ;;
+      nfs)
+        NFS_STATUS=$(ssh -i private_key_mig_testbed.pem ubuntu@$VM_IP "systemctl is-active nfs-kernel-server" 2>/dev/null)
+        echo "  NFS: $NFS_STATUS"
+        ;;
+    esac
+  else
+    echo "✗ SSH: Connection failed"
+  fi
+  echo
+done
+EOF
+
+chmod +x check-services.sh
+
+# Run the health check
+./check-services.sh
 ```
 
 ## Firewall Verification
@@ -323,3 +690,4 @@ This testbed is designed for:
 ## License
 
 This project is provided as-is for testing and educational purposes.
+````

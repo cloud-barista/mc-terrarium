@@ -10,7 +10,7 @@ output "ssh_info" {
         public_ip  = vm_instance.public_ip
         private_ip = vm_instance.private_ip
         user       = "ubuntu"
-        command    = "ssh -i private_key.pem ubuntu@${vm_instance.public_ip}"
+        command    = "ssh -i private_key_mig_testbed.pem ubuntu@${vm_instance.public_ip}"
       }
     }
   }

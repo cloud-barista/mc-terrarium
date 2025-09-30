@@ -101,7 +101,7 @@ case "${service_role}" in
     ;;
     
   "tomcat")
-    echo "Configuring UFW for Tomcat container server (${vm_name})"
+    echo "Configuring UFW for Tomcat application server (${vm_name})"
     # Allow Tomcat default ports
     ufw allow 8080/tcp comment 'Tomcat HTTP'
     ufw allow 8443/tcp comment 'Tomcat HTTPS'
