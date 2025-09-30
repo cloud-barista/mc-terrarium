@@ -138,6 +138,13 @@ resource "aws_instance" "vms" {
 
   associate_public_ip_address = true
 
+  # Root block device configuration
+  root_block_device {
+    volume_size           = 50
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
   user_data = templatefile("${path.module}/user-data.sh", {
     ssh_public_key = tls_private_key.ssh.public_key_openssh
     service_role   = each.value.service_role
