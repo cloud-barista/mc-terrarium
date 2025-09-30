@@ -1,6 +1,6 @@
-# DevStack Basic Infrastructure Example
+# DCS Basic Infrastructure Example
 
-This example demonstrates how to create basic networking and compute infrastructure in DevStack (OpenStack) using OpenTofu.
+This example demonstrates how to create basic networking and compute infrastructure in DCS (DevStack Cloud Service) using OpenTofu.
 
 ## Overview
 
@@ -15,7 +15,7 @@ This example creates a minimal but complete infrastructure including:
 ## Architecture
 
 ```
-DevStack Infrastructure
+DCS Infrastructure
 ├── Private Network
 │   ├── Subnet (192.168.100.0/26)
 │   ├── Router (connected to external network)
@@ -32,13 +32,13 @@ DevStack Infrastructure
 
 ## Prerequisites
 
-### DevStack Environment
+### DCS Environment
 
-1. **DevStack Installation**: Working DevStack environment
+1. **DCS Installation**: Working DCS environment
 2. **Images**: Ubuntu 22.04 image available in Glance
 3. **Flavors**: m1.medium flavor available
 4. **Networks**: External network 'public' configured with floating IP pool
-5. **Access**: Network connectivity to DevStack API endpoints
+5. **Access**: Network connectivity to DCS API endpoints
 
 ### Required Tools
 
@@ -53,14 +53,14 @@ SSH keys are automatically generated using the TLS provider. No manual key setup
 ### 1. Set up OpenStack credentials
 
 ```bash
-# Edit the credential file with your DevStack settings
+# Edit the credential file with your DCS (DevStack Cloud Service) settings
 vi ../../secrets/credential-openstack.env
 
 # Example content:
 # OS_USERNAME=demo
 # OS_PROJECT_NAME=demo
 # OS_PASSWORD=your_password
-# OS_AUTH_URL=http://your-devstack-ip:5000/v3
+# OS_AUTH_URL=http://your-dcs-ip:5000/v3
 # OS_REGION_NAME=RegionOne
 
 # Load the credentials
@@ -83,7 +83,7 @@ vi terraform.tfvars
 
 ## Verification of Prerequisites
 
-Before running OpenTofu, verify your DevStack environment:
+Before running OpenTofu, verify your DCS (DevStack Cloud Service) environment:
 
 ```bash
 # Test OpenStack CLI connectivity (optional)
@@ -124,11 +124,11 @@ tofu output instance_info
 tofu output secondary_instance_info
 
 # Save the private key to a file
-tofu output -raw ssh_private_key > devstack-key.pem
-chmod 600 devstack-key.pem
+tofu output -raw ssh_private_key > dcs-key.pem
+chmod 600 dcs-key.pem
 
 # SSH to instances
-ssh -i devstack-key.pem ubuntu@<floating_ip>
+ssh -i dcs-key.pem ubuntu@<floating_ip>
 
 # Test web server
 curl http://<floating_ip>
@@ -138,7 +138,7 @@ curl http://<floating_ip>
 
 ```bash
 # From primary instance, ping secondary instance
-ssh -i devstack-key.pem ubuntu@<primary_floating_ip>
+ssh -i dcs-key.pem ubuntu@<primary_floating_ip>
 ping <secondary_private_ip>
 ```
 
@@ -165,13 +165,13 @@ ping <secondary_private_ip>
 
    ```bash
    # Ensure private key was saved correctly
-   tofu output -raw ssh_private_key > devstack-key.pem
+   tofu output -raw ssh_private_key > dcs-key.pem
 
    # Set correct permissions (IMPORTANT!)
-   chmod 600 devstack-key.pem
+   chmod 600 dcs-key.pem
 
    # Test SSH connection with verbose output
-   ssh -i devstack-key.pem -v ubuntu@<floating_ip>
+   ssh -i dcs-key.pem -v ubuntu@<floating_ip>
 
    # If ping fails but SSH works, this is normal
    # Some OpenStack environments block ICMP but allow SSH
@@ -195,6 +195,6 @@ Once basic infrastructure is working:
 
 ## References
 
-- [DevStack Documentation](https://docs.openstack.org/devstack/latest/)
-- [OpenStack Terraform Provider](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs)
+- [DevStack company](https://www.devstack.co.kr/)
 - [OpenTofu Documentation](https://opentofu.org/docs/)
+- [OpenStack Terraform Provider](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs)

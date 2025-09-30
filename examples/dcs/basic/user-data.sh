@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DevStack Instance Initialization Script
+# DCS (DevStack Cloud Service) Instance Initialization Script
 # This script is executed when the instance first boots
 
 # Update package list and install essential packages
@@ -12,7 +12,7 @@ cat > /var/www/html/index.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DevStack Instance - ${instance_name}</title>
+    <title>DCS Instance - ${instance_name}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -22,7 +22,7 @@ cat > /var/www/html/index.html << EOF
 </head>
 <body>
     <div class="container">
-        <h1 class="success">✅ DevStack Instance Running</h1>
+        <h1 class="success">✅ DCS Instance Running</h1>
         <div class="info">
             <h3>Instance Information</h3>
             <p><strong>Instance:</strong> ${instance_name}</p>
@@ -45,4 +45,4 @@ systemctl start nginx
 systemctl enable nginx
 
 # Log completion
-echo "$(date): DevStack instance ${instance_name} setup completed" >> /var/log/devstack-init.log
+echo "$(date): DCS instance ${instance_name} setup completed" >> /var/log/dcs-init.log
