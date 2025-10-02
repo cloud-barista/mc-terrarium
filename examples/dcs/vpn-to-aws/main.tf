@@ -65,3 +65,8 @@ resource "openstack_compute_keypair_v2" "main" {
 # Note: APIPA addresses are now auto-assigned by AWS
 # No need to manually specify tunnel inside CIDRs
 # All configuration is managed through variables
+
+resource "random_id" "suffix" {
+  count       = var.add_random_suffix ? 1 : 0
+  byte_length = 2
+}

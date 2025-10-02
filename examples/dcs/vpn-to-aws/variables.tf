@@ -1,4 +1,4 @@
-# 네이밍
+# naming
 variable "name_prefix" {
   type    = string
   default = "tofu"
@@ -7,6 +7,20 @@ variable "name_prefix" {
 variable "add_random_suffix" {
   type    = bool
   default = true
+}
+
+# Shared
+
+variable "psk_override" {
+  type      = string
+  default   = null
+  sensitive = true
+}
+
+variable "vpn_psk" {
+  type      = string
+  default   = null
+  sensitive = true
 }
 
 # AWS
