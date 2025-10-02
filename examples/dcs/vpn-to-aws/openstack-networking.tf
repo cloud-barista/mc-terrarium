@@ -95,7 +95,8 @@ resource "openstack_vpnaas_site_connection_v2" "to_aws1" {
   vpnservice_id  = openstack_vpnaas_service_v2.vpn.id
   ikepolicy_id   = openstack_vpnaas_ike_policy_v2.ike.id
   ipsecpolicy_id = openstack_vpnaas_ipsec_policy_v2.ipsec.id
-  psk            = aws_vpn_connection.to_dcs.tunnel1_preshared_key
+  # psk            = aws_vpn_connection.to_dcs.tunnel1_preshared_key
+  psk = var.psk_override != null && var.psk_override != "" ? var.psk_override : aws_vpn_connection.to_dcs.tunnel1_preshared_key
 
   peer_address = aws_vpn_connection.to_dcs.tunnel1_address
   peer_id      = aws_vpn_connection.to_dcs.tunnel1_address
@@ -119,7 +120,8 @@ resource "openstack_vpnaas_site_connection_v2" "to_aws2" {
   vpnservice_id  = openstack_vpnaas_service_v2.vpn.id
   ikepolicy_id   = openstack_vpnaas_ike_policy_v2.ike.id
   ipsecpolicy_id = openstack_vpnaas_ipsec_policy_v2.ipsec.id
-  psk            = aws_vpn_connection.to_dcs.tunnel2_preshared_key
+  # psk            = aws_vpn_connection.to_dcs.tunnel2_preshared_key
+  psk = var.psk_override != null && var.psk_override != "" ? var.psk_override : aws_vpn_connection.to_dcs.tunnel2_preshared_key
 
   peer_address = aws_vpn_connection.to_dcs.tunnel2_address
   peer_id      = aws_vpn_connection.to_dcs.tunnel2_address
