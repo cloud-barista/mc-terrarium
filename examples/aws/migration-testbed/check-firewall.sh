@@ -8,10 +8,10 @@ echo "$(date)"
 echo
 
 # Check if private key exists
-if [[ ! -f "private_key.pem" ]]; then
-    echo "❌ private_key.pem not found. Please run:"
-    echo "   tofu output -json ssh_info | jq -r .private_key > private_key.pem"
-    echo "   chmod 600 private_key.pem"
+if [[ ! -f "private_key_mig_testbed.pem" ]]; then
+    echo "❌ private_key_mig_testbed.pem not found. Please run:"
+    echo "   tofu output -json ssh_info | jq -r .private_key > private_key_mig_testbed.pem"
+    echo "   chmod 600 private_key_mig_testbed.pem"
     exit 1
 fi
 
@@ -49,7 +49,7 @@ check_vm() {
     echo "🔍 Checking $vm_name ($service_role) - $vm_ip"
     echo "========================================="
     
-    if ssh -i private_key.pem -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@$vm_ip "
+    if ssh -i private_key_mig_testbed.pem -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@$vm_ip "
         echo '=== System Information ===';
         echo \"Hostname: \$(hostname)\";
         echo \"Uptime: \$(uptime -p)\";
@@ -57,17 +57,22 @@ check_vm() {
         echo \"Private IP: \$(hostname -I | awk '{print \$1}')\";
         echo;
         
-        echo '=== UFW Status ===';
-        if sudo ufw status 2>/dev/null | head -20; then
-            echo;
-            UFW_STATUS=\$(sudo ufw status | grep 'Status:' | awk '{print \$2}');
-            if [[ \"\$UFW_STATUS\" == \"active\" ]]; then
-                echo \"✅ UFW is active\";
-            else
-                echo \"❌ UFW is not active\";
-            fi;
+        echo '=== Firewall Configuration ===';
+        if [[ \"$service_role\" == \"general\" ]]; then
+            echo \"🔧 Security Group only (UFW not used for general purpose VMs)\";
+            echo \"✅ Firewall managed by AWS Security Group\";
         else
-            echo '❌ UFW not configured';
+            if sudo ufw status 2>/dev/null | head -20; then
+                echo;
+                UFW_STATUS=\$(sudo ufw status | grep 'Status:' | awk '{print \$2}');
+                if [[ \"\$UFW_STATUS\" == \"active\" ]]; then
+                    echo \"✅ UFW is active\";
+                else
+                    echo \"❌ UFW is not active\";
+                fi;
+            else
+                echo '❌ UFW not configured';
+            fi;
         fi;
         echo;
         

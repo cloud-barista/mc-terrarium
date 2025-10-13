@@ -35,19 +35,22 @@ sed -i -e 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' \
 # Restart SSH service
 systemctl restart ssh
 
-# Install and configure UFW (Uncomplicated Firewall)
-apt-get update
-apt-get install -y ufw
+# Configure firewall based on VM role
+if [ "${service_role}" != "general" ]; then
+    # Install and configure UFW (Uncomplicated Firewall) for service-specific VMs
+    apt-get update
+    apt-get install -y ufw
 
-# Reset UFW to defaults
-ufw --force reset
+    # Reset UFW to defaults
+    ufw --force reset
 
-# Set default policies
-ufw default deny incoming
-ufw default allow outgoing
+    # Set default policies
+    ufw default deny incoming
+    ufw default allow outgoing
 
-# Always allow SSH (required for management)
-ufw allow ssh
+    # Always allow SSH (required for management)
+    ufw allow ssh
+fi
 
 # Configure service-specific firewall rules based on VM role
 case "${service_role}" in
@@ -142,49 +145,42 @@ case "${service_role}" in
     ;;
     
   "general"|*)
-    echo "Configuring UFW for general purpose server (${vm_name})"
-    # Allow common web ports
-    ufw allow 80/tcp comment 'HTTP'
-    ufw allow 443/tcp comment 'HTTPS'
-    # Allow common application ports
-    ufw allow 8080/tcp comment 'Alt HTTP'
-    ufw allow 3000/tcp comment 'Node.js apps'
-    ufw allow 5000/tcp comment 'Flask/Python apps'
-    # Allow database access from internal network only
-    ufw allow from 10.0.0.0/16 to any port 3306 comment 'MySQL internal'
-    ufw allow from 10.0.0.0/16 to any port 5432 comment 'PostgreSQL internal'
-    # Allow monitoring
-    ufw allow from 10.0.0.0/16 to any port 9100 comment 'Node exporter'
+    echo "General purpose server (${vm_name}) - Security Group handles firewall rules"
+    # For general purpose VMs, rely entirely on Security Group rules
+    # Skip UFW configuration to avoid conflicts with AWS Security Groups
+    echo "Skipping UFW configuration for general purpose VM - using Security Group only"
     ;;
 esac
 
-# Common security rules for all VMs
-echo "Applying common security rules..."
+# Apply firewall configuration based on VM role
+if [ "${service_role}" != "general" ]; then
+    # Common security rules for service-specific VMs
+    echo "Applying common security rules for ${service_role} VM..."
 
-# Allow internal network communication
-ufw allow from 10.0.0.0/16 comment 'Internal VPC traffic'
+    # Allow internal network communication
+    ufw allow from 10.0.0.0/16 comment 'Internal VPC traffic'
 
-# Block common attack ports
-ufw deny 23/tcp comment 'Block Telnet'
-ufw deny 135/tcp comment 'Block RPC'
-ufw deny 139/tcp comment 'Block NetBIOS'
-ufw deny 445/tcp comment 'Block SMB'
+    # Block common attack ports
+    ufw deny 23/tcp comment 'Block Telnet'
+    ufw deny 135/tcp comment 'Block RPC'
+    ufw deny 139/tcp comment 'Block NetBIOS'
+    ufw deny 445/tcp comment 'Block SMB'
 
-# Allow ICMP ping (already allowed by default ICMP rule, but explicit for clarity)
-# Note: ICMP is already allowed via earlier ingress rule, this is redundant
-# ufw allow proto icmp comment 'Allow ping'
+    # Log dropped packets for monitoring
+    ufw logging on
 
-# Log dropped packets for monitoring
-ufw logging on
+    # Enable UFW
+    ufw --force enable
 
-# Enable UFW
-ufw --force enable
-
-# Log UFW status and rules for verification
-echo "=== UFW Status for ${vm_name} (${service_role}) ===" > /var/log/ufw-status.log
-ufw status verbose >> /var/log/ufw-status.log
-echo "=== UFW Rules ===" >> /var/log/ufw-status.log
-ufw show added >> /var/log/ufw-status.log
+    # Log UFW status and rules for verification
+    echo "=== UFW Status for ${vm_name} (${service_role}) ===" > /var/log/ufw-status.log
+    ufw status verbose >> /var/log/ufw-status.log
+    echo "=== UFW Rules ===" >> /var/log/ufw-status.log
+    ufw show added >> /var/log/ufw-status.log
+else
+    echo "=== Security Group Only for ${vm_name} (${service_role}) ===" > /var/log/ufw-status.log
+    echo "UFW not configured - using AWS Security Group rules only" >> /var/log/ufw-status.log
+fi
 
 # Create service role indicator file
 echo "${service_role}" > /etc/vm-service-role
