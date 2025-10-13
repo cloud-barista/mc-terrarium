@@ -6,7 +6,7 @@ This module creates a comprehensive AWS migration testbed with 6 VMs configured 
 
 - **VPC with Internet Gateway**: Complete networking setup
 - **6 EC2 Instances**: Configurable VM specifications and service roles
-- **Security Group**: Unified security configuration with UFW firewall per VM
+- **Security Group**: Unified security configuration with service-specific UFW firewall
 - **SSH Key Management**: Auto-generated SSH keys for secure access
 - **Service-Specific Configuration**: Each VM configured for specific services (nginx, nfs, mariadb, tomcat, haproxy, general)
 
@@ -70,14 +70,14 @@ vm_configurations = {
 
 ## Service Roles
 
-Each VM is configured with UFW firewall rules specific to its service role:
+Each VM is configured with firewall rules specific to its service role:
 
-- **nginx**: Web server (ports 80, 443, 8080)
-- **nfs**: File server (ports 2049, 111, 20048)
-- **mariadb**: Database server (port 3306 internal only)
-- **tomcat**: Application server (ports 8080, 8443, 80, 443)
-- **haproxy**: Load balancer (ports 80, 443, 8404)
-- **general**: General purpose (ports 80, 443, 3000, 5000)
+- **nginx**: Web server with UFW (ports 80, 443, 8080)
+- **nfs**: File server with UFW (ports 2049, 111, 20048)
+- **mariadb**: Database server with UFW (port 3306 internal only)
+- **tomcat**: Application server with UFW (ports 8080, 8443, 80, 443)
+- **haproxy**: Load balancer with UFW (ports 80, 443, 8404)
+- **general**: General purpose with Security Group only (no UFW)
 
 ## Outputs
 
@@ -123,6 +123,7 @@ tofu output -json ssh_info | jq -r '.vms.vm1.command'
 ## Security
 
 - All VMs use the same Security Group with basic network access
-- Individual VM-level security is handled by UFW firewall
+- Service-specific VMs use UFW for detailed port management
+- General purpose VMs rely on Security Group rules only
 - SSH access from VPC CIDR and specified additional CIDRs
 - Private SSH keys are marked as sensitive outputs
