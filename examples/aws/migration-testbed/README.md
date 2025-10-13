@@ -180,8 +180,16 @@ chmod 600 private_key_mig_testbed.pem
 # Get all SSH commands
 tofu output -json ssh_info | jq -r '.vms[] | .command'
 
-# Get specific VM info
-# tofu output -json ssh_info | jq -r '.vms.vm1'
+```
+
+Note - the following command will be used for migration test on cloud-migrtor portal
+
+```bash
+# Create one-line private key file (useful for environment variables or API calls)
+tofu output -json ssh_info | jq -r .private_key | awk '{printf "%s\\n", $0}' | sed 's/\\n$//' > private_key_mig_testbed_oneline.pem
+
+# Get all private IPs of all VMs
+tofu output -json vm_private_ips | jq -r 'to_entries[] | "\(.key): \(.value)"'
 ```
 
 #### Test to connect to VMs (optional)
