@@ -27,9 +27,12 @@ AWS VPC (10.0.0.0/16)                    DCS Network (192.168.0.0/24)
 
 1. DCS environment running and accessible
 2. OpenStack CLI tools installed and configured
-3. Key pair created in DCS
-4. VPNaaS plugin enabled in DCS
-5. External network configured in DCS
+3. VPNaaS plugin enabled in DCS
+4. External network configured in DCS
+
+### Network Requirements
+
+- **Non-overlapping CIDRs**: Ensure that the AWS VPC CIDR (default `10.0.0.0/16`) and DCS Network CIDR (default `192.168.0.0/24`) do not overlap with each other or your local network.
 
 ### Required Tools
 
@@ -51,14 +54,11 @@ AWS VPC (10.0.0.0/16)                    DCS Network (192.168.0.0/24)
    # AWS Configuration
    aws_region     = "ap-northeast-2"
    aws_vpc_cidr   = "10.0.0.0/16"
-   aws_key_pair_name = "your-aws-key-pair"
 
    # DCS Configuration
-   openstack_user_name    = "your-username"
-   openstack_tenant_name  = "your-project"
-   openstack_password     = "your-password"
-   openstack_auth_url     = "http://your-dcs-ip:5000/v3"
-   openstack_key_pair_name = "your-openstack-key-pair"
+   # Note: Credentials are best set via environment variables
+   openstack_network_cidr = "192.168.0.0/24"
+   openstack_subnet_cidr  = "192.168.0.0/26"
 
    # VPN Configuration
    vpn_shared_secret = "your-secure-shared-secret"
@@ -115,60 +115,139 @@ AWS VPC (10.0.0.0/16)                    DCS Network (192.168.0.0/24)
 **AWS VPN Connection:**
 
 ```bash
-aws ec2 describe-vpn-connections --region ap-northeast-2
+# Get VPN Connection ID
+VPN_ID=$(tofu output -json aws_vpn_connection_id | jq -r .connection_1)
+
+# Check Status
+aws ec2 describe-vpn-connections --vpn-connection-ids $VPN_ID --region ap-northeast-2 --output table
 ```
 
 **OpenStack VPN Status:**
 
 ```bash
+# List Site Connections
 openstack vpn ipsec site connection list
+
+# Check Specific Connection Details
+# Replace <connection-id> with ID from the list above
 openstack vpn ipsec site connection show <connection-id>
 ```
 
 ### Test Connectivity
 
-1. **SSH to AWS instance:**
+Follow these steps to verify the VPN connection and test cross-cloud connectivity.
 
-   ```bash
-   ssh -i ~/.ssh/your-key.pem ubuntu@<aws-instance-public-ip>
-   ```
+#### 1. Prepare SSH Key
 
-2. **SSH to OpenStack instance:**
+First, save the generated SSH private key and set the correct permissions.
 
-   ```bash
-   ssh -i ~/.ssh/your-key.pem ubuntu@<openstack-floating-ip>
-   ```
+```bash
+# Save the private key to a file
+tofu output -raw ssh_private_key_pem > key.pem
 
-3. **Test cross-cloud connectivity:**
+# Set read-only permissions for the owner (required for SSH)
+chmod 600 key.pem
+```
 
-   ```bash
-   # From AWS instance, ping OpenStack instance
-   ping <openstack-instance-private-ip>
+#### 2. Retrieve Instance Information
 
-   # From OpenStack instance, ping AWS instance
-   ping <aws-instance-private-ip>
-   ```
+Get the Public and Private IP addresses for both AWS and OpenStack instances.
+
+**AWS Instance:**
+
+```bash
+# Get Public IP
+AWS_PUBLIC_IP=$(tofu output -json aws_instance_info | jq -r .public_ip)
+echo "AWS Public IP: $AWS_PUBLIC_IP"
+
+# Get Private IP
+AWS_PRIVATE_IP=$(tofu output -json aws_instance_info | jq -r .private_ip)
+echo "AWS Private IP: $AWS_PRIVATE_IP"
+```
+
+**OpenStack Instance:**
+
+```bash
+# Get Floating IP (Public)
+OS_FLOATING_IP=$(tofu output -json openstack_instance_info | jq -r .floating_ip)
+echo "OpenStack Floating IP: $OS_FLOATING_IP"
+
+# Get Private IP
+OS_PRIVATE_IP=$(tofu output -json openstack_instance_info | jq -r .private_ip)
+echo "OpenStack Private IP: $OS_PRIVATE_IP"
+```
+
+#### 3. Access Instances via SSH
+
+You can SSH into each instance using the saved key and the retrieved Public IPs.
+
+**Connect to AWS Instance:**
+
+```bash
+ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$AWS_PUBLIC_IP
+```
+
+**Connect to OpenStack Instance:**
+
+```bash
+ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$OS_FLOATING_IP
+```
+
+#### 4. Perform Ping Test (Cross-Cloud)
+
+Verify that the instances can communicate with each other using their **Private IPs** through the VPN tunnel.
+
+**Option A: Automated One-Liner (Run from your local machine)**
+
+Ping OpenStack Private IP **from** AWS Instance:
+
+```bash
+ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$AWS_PUBLIC_IP \
+  ping -c 4 $OS_PRIVATE_IP
+```
+
+Ping AWS Private IP **from** OpenStack Instance:
+
+```bash
+ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$OS_FLOATING_IP \
+  ping -c 4 $AWS_PRIVATE_IP
+```
+
+**Option B: Manual Test**
+
+1.  SSH into the AWS Instance:
+    ```bash
+    ssh -i key.pem ubuntu@$AWS_PUBLIC_IP
+    ```
+2.  Ping the OpenStack Private IP:
+    ```bash
+    # Replace <OS_PRIVATE_IP> with the actual IP (e.g., 192.168.0.x)
+    ping <OS_PRIVATE_IP>
+    ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **VPN Tunnel Down:**
+1.  **VPN Tunnel Down (Phase 2 Negotiation Failed):**
 
-   - Check security groups allow VPN traffic
-   - Verify shared secrets match
-   - Check IKE/IPSec policy compatibility
+    - **Traffic Selectors**: Ensure that the Local/Remote CIDRs match exactly on both sides.
+      - AWS: `0.0.0.0/0` (Any) is recommended for maximum compatibility.
+      - OpenStack: Uses the subnet CIDR (e.g., `192.168.0.0/26`) as the local selector.
+    - **Shared Secret**: Verify that the Pre-Shared Key (PSK) matches in both AWS and OpenStack configurations.
 
-2. **BGP Issues:**
+2.  **Ping Fails but Tunnel is UP:**
 
-   - Verify BGP ASN numbers are different
-   - Check APIPA address configuration
-   - Ensure proper routing table entries
+    - **Security Groups**: Check if ICMP (Ping) is allowed in the Security Groups for both AWS and OpenStack instances.
+    - **Routing**: Verify that the Route Tables in AWS and the Router in OpenStack have the correct routes to the peer network.
+    - **DVR (Distributed Virtual Router)**: In some OpenStack environments (like DCS), DVR may cause routing issues with VPNaaS.
+      - _Solution_: Ensure `distributed = false` is set in the `openstack_networking_router_v2` resource.
 
-3. **OpenStack VPNaaS Issues:**
-   - Verify VPNaaS plugin is enabled: `openstack extension list | grep vpn`
-   - Check router has external gateway: `openstack router show <router-id>`
-   - Verify external network connectivity
+3.  **OpenStack VPNaaS Issues:**
+    - Verify VPNaaS plugin is enabled: `openstack extension list | grep vpn`
+    - Check router has external gateway: `openstack router show <router-id>`
+
+- Verify external network connectivity
 
 ### Logs and Debugging
 
