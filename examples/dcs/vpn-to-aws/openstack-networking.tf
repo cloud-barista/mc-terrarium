@@ -25,6 +25,10 @@ resource "openstack_networking_router_v2" "main" {
   name                = "${var.name_prefix}-router"
   admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.external.id
+
+  # Enable Distributed Virtual Router (DVR)
+  # distributed = true
+  distributed = false
 }
 
 # Attach subnet to router
