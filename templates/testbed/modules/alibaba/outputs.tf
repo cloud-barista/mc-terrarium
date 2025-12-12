@@ -6,6 +6,7 @@ output "testbed_info" {
     vswitch_1_cidr = alicloud_vswitch.main.cidr_block
     vswitch_2_id   = alicloud_vswitch.secondary.id
     vswitch_2_cidr = alicloud_vswitch.secondary.cidr_block
+    private_ip     = alicloud_instance.main.private_ip
   }
 }
 

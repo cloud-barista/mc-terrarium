@@ -44,13 +44,19 @@ variable "vpn_config" {
         subnet_id = string
         # bgp_asn   = optional(string, "65533") # default value
       }))
+      dcs = optional(object({
+        region    = optional(string)
+        router_id = string
+        subnet_id = string
+        bgp_asn   = optional(string, "65000")
+      }))
 
     })
   })
 
   validation {
-    condition     = contains(["gcp", "azure", "alibaba", "tencent", "ibm"], var.vpn_config.target_csp.type)
-    error_message = "Target CSP type must be one of: gcp, azure, alibaba, tencent, ibm"
+    condition     = contains(["gcp", "azure", "alibaba", "tencent", "ibm", "dcs"], var.vpn_config.target_csp.type)
+    error_message = "Target CSP type must be one of: gcp, azure, alibaba, tencent, ibm, dcs"
   }
 
   validation {
@@ -59,7 +65,8 @@ variable "vpn_config" {
       var.vpn_config.target_csp.type == "azure" ? var.vpn_config.target_csp.azure != null :
       var.vpn_config.target_csp.type == "alibaba" ? var.vpn_config.target_csp.alibaba != null :
       var.vpn_config.target_csp.type == "tencent" ? var.vpn_config.target_csp.tencent != null :
-      var.vpn_config.target_csp.type == "ibm" ? var.vpn_config.target_csp.ibm != null : false
+      var.vpn_config.target_csp.type == "ibm" ? var.vpn_config.target_csp.ibm != null :
+      var.vpn_config.target_csp.type == "dcs" ? var.vpn_config.target_csp.dcs != null : false
     )
     error_message = "Configuration for the selected CSP must be provided"
   }

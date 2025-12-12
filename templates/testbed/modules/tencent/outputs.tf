@@ -5,6 +5,7 @@ output "testbed_info" {
     vpc_cidr    = tencentcloud_vpc.main.cidr_block
     subnet_id   = tencentcloud_subnet.main.id
     subnet_cidr = tencentcloud_subnet.main.cidr_block
+    private_ip  = tencentcloud_instance.main.private_ip
   }
 }
 

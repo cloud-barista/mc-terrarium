@@ -20,6 +20,7 @@ tofu output -json gcp_testbed_info
 tofu output -json alibaba_testbed_info
 tofu output -json tencent_testbed_inf
 tofu output -json ibm_testbed_info
+tofu output -json dcs_testbed_info
 
 # Example: Get Azure gateway subnet CIDR
 tofu output -json azure_testbed_info | jq -r .gateway_subnet_cidr
@@ -74,6 +75,12 @@ tofu output -json tencent_testbed_ssh_info | jq -r .command
 tofu output -json ibm_testbed_ssh_info | jq -r .command
 ```
 
+### DCS Instance
+
+```shell
+tofu output -json dcs_testbed_ssh_info | jq -r .command
+```
+
 ## All at once
 
 ```shell
@@ -84,6 +91,7 @@ tofu output -json gcp_testbed_info
 tofu output -json alibaba_testbed_info
 tofu output -json tencent_testbed_info
 tofu output -json ibm_testbed_info
+tofu output -json dcs_testbed_info
 
 # Example: Get Azure gateway subnet CIDR
 tofu output -json azure_testbed_info | jq -r .gateway_subnet_cidr
@@ -95,6 +103,7 @@ tofu output -json gcp_testbed_ssh_info | jq -r .command
 tofu output -json alibaba_testbed_ssh_info | jq -r .command
 tofu output -json tencent_testbed_ssh_info | jq -r .command
 tofu output -json ibm_testbed_ssh_info | jq -r .command
+tofu output -json dcs_testbed_ssh_info | jq -r .command
 ```
 
 ## Need to delete as a separate process during testing

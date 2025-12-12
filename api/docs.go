@@ -4560,6 +4560,28 @@ const docTemplate = `{
                 }
             }
         },
+        "model.DcsConfig": {
+            "type": "object",
+            "properties": {
+                "bgp_asn": {
+                    "type": "string",
+                    "default": "65000",
+                    "example": "65000"
+                },
+                "region": {
+                    "type": "string",
+                    "example": "RegionOne"
+                },
+                "router_id": {
+                    "type": "string",
+                    "example": "router-12345678"
+                },
+                "subnet_id": {
+                    "type": "string",
+                    "example": "subnet-12345678"
+                }
+            }
+        },
         "model.GcpConfig": {
             "type": "object",
             "properties": {
@@ -4642,6 +4664,9 @@ const docTemplate = `{
                 "azure": {
                     "$ref": "#/definitions/model.AzureConfig"
                 },
+                "dcs": {
+                    "$ref": "#/definitions/model.DcsConfig"
+                },
                 "gcp": {
                     "$ref": "#/definitions/model.GcpConfig"
                 },
@@ -4665,6 +4690,9 @@ const docTemplate = `{
                 },
                 "azure": {
                     "$ref": "#/definitions/model.AzureConfig"
+                },
+                "dcs": {
+                    "$ref": "#/definitions/model.DcsConfig"
                 },
                 "gcp": {
                     "$ref": "#/definitions/model.GcpConfig"
@@ -4769,7 +4797,8 @@ const docTemplate = `{
                         "gcp",
                         "alibaba",
                         "tencent",
-                        "ibm"
+                        "ibm",
+                        "dcs"
                     ]
                 },
                 "terrarium_id": {

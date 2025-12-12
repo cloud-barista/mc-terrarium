@@ -3,7 +3,7 @@
 ##############################################################
 
 # Using a specific version of golang based on alpine for building the application
-FROM golang:1.23.0-alpine AS builder
+FROM golang:1.25.0-alpine AS builder
 
 # Installing necessary packages
 # sqlite-libs and sqlite-dev for SQLite support
