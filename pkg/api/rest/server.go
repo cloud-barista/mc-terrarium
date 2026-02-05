@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -130,26 +131,44 @@ func RunServer(port string) {
 	apiUser := config.Terrarium.API.Username
 	apiPass := config.Terrarium.API.Password
 
+	// Check if apiPass is a bcrypt hash (starts with $2a$, $2b$, or $2y$)
+	isBcryptHash := strings.HasPrefix(apiPass, "$2a$") ||
+		strings.HasPrefix(apiPass, "$2b$") ||
+		strings.HasPrefix(apiPass, "$2y$")
+
 	if enableAuth {
 		e.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
 			// Skip authentication for some routes that do not require authentication
 			Skipper: func(c echo.Context) bool {
 				if c.Path() == "/terrarium/readyz" ||
-					c.Path() == "/terrarium/httpVersion" {
+					c.Path() == "/terrarium/httpVersion" ||
+					c.Path() == "/favicon.ico" ||
+					strings.HasPrefix(c.Path(), "/terrarium/api") {
 					return true
 				}
 				return false
 			},
 			Validator: func(username, password string, c echo.Context) (bool, error) {
-				// Be careful to use constant time comparison to prevent timing attacks
-				if subtle.ConstantTimeCompare([]byte(username), []byte(apiUser)) == 1 {
-					// bcrypt verification
+				// Username verification using constant time comparison to prevent timing attacks
+				if subtle.ConstantTimeCompare([]byte(username), []byte(apiUser)) != 1 {
+					return false, nil // Authentication failed: invalid username
+				}
+
+				// Password verification
+				if isBcryptHash {
+					// Verify password using bcrypt
 					err := bcrypt.CompareHashAndPassword([]byte(apiPass), []byte(password))
-					if err == nil {
-						return true, nil
+					if err != nil {
+						return false, nil // Authentication failed: invalid password (bcrypt)
+					}
+				} else {
+					// Verify password using constant time comparison (plaintext, backward compatibility)
+					if subtle.ConstantTimeCompare([]byte(password), []byte(apiPass)) != 1 {
+						return false, nil // Authentication failed: invalid password (plaintext)
 					}
 				}
-				return false, nil
+
+				return true, nil // Authentication successful
 			},
 		}))
 	}

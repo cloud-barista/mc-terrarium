@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 ##############################################################
 ## Stage 1 - Go Build
 ##############################################################
@@ -6,38 +8,68 @@
 FROM golang:1.25.0-alpine AS builder
 
 # Installing necessary packages
-# sqlite-libs and sqlite-dev for SQLite support
 # build-base for common build requirements
-RUN apk add --no-cache sqlite-libs sqlite-dev build-base curl
+RUN apk add --no-cache build-base
 
-# Copying only necessary files for the build
-COPY . /go/src/github.com/cloud-barista/mc-terrarium
 WORKDIR /go/src/github.com/cloud-barista/mc-terrarium
-# COPY go.mod go.sum go.work go.work.sum ./
-RUN go mod download
-# COPY .terrarium ./.terrarium
-# COPY cmd ./cmd
-# COPY conf ./conf
-# COPY pkg ./pkg
 
-# Building the Go application with specific flags
-# Note - "make prod" executes the command, 
-# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -tags mc-terrarium -v -o mc-terrarium main.go
-RUN make prod
+# Cache dependencies - copy go.mod/go.sum first for better layer caching
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
 
-# Installing OpenTofu
-RUN ./scripts/install-tofu.sh
+# Copying necessary source files for the build
+COPY cmd ./cmd
+COPY pkg ./pkg
+COPY api ./api
+COPY conf ./conf
+COPY templates ./templates
+COPY scripts ./scripts
+COPY .terrarium ./.terrarium
+
+# Building the Go application with cache mounts
+# Note - "make prod" executes: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o mc-terrarium main.go
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    cd cmd/mc-terrarium && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o mc-terrarium main.go
+
+# [Legacy] Building with Makefile (without cache optimization)
+# COPY . .
+# RUN make prod
+
+# [Legacy] Installing OpenTofu via script in builder stage
+# RUN ./scripts/install-tofu.sh
+
+
+##############################################################
+## Stage 2 - OpenTofu Binary
+##############################################################
+
+# Using minimal OpenTofu image for multi-stage build
+# See https://opentofu.org/docs/intro/install/docker/
+FROM ghcr.io/opentofu/opentofu:1.11.4-minimal AS tofu
 
 
 #############################################################
-## Stage 2 - Application Setup
-##############################################################
+## Stage 3 - Application Setup
+#############################################################
 
-# Using the latest Ubuntu image for the production stage
-FROM ubuntu:22.04 AS prod
+# Using Alpine for a lightweight production image
+FROM alpine:3.21 AS prod
 
-# Coying the tofu binary from the builder stage
-COPY --from=builder /usr/bin/tofu /usr/bin/tofu
+# [Legacy] Using Ubuntu image for the production stage
+# FROM ubuntu:22.04 AS prod
+
+# Installing ca-certificates for HTTPS connections
+RUN apk add --no-cache ca-certificates
+
+# Copying the tofu binary from the minimal OpenTofu image
+COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+
+# [Legacy] Copying the tofu binary from the builder stage (when using install-tofu.sh)
+# COPY --from=builder /usr/bin/tofu /usr/bin/tofu
 
 # Setting the working directory for the application
 WORKDIR /app
