@@ -5,6 +5,7 @@ output "testbed_info" {
     resource_group_name  = azurerm_resource_group.main.name
     virtual_network_name = azurerm_virtual_network.main.name
     gateway_subnet_cidr  = "10.2.2.0/24" # Reserved for VPN Gateway
+    private_ip           = azurerm_network_interface.main.private_ip_address
   }
 }
 

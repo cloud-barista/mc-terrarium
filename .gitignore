@@ -71,7 +71,7 @@ secrets/**
 !secrets/load-alibaba-cred-env.sh
 !secrets/load-all-cred-env.sh
 !secrets/load-ibm-cred-env.sh
-!secrets/load-openstack-cred-env.sh
+!secrets/load-dcs-cred-env.sh
 !secrets/load-tencent-cred-env.sh
 
 # Ignore container volumes

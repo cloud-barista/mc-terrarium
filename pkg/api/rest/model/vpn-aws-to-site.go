@@ -21,6 +21,7 @@ type TargetCspConfig struct {
 	Alibaba *AlibabaConfig `json:"alibaba,omitempty"`
 	Ibm     *IbmConfig     `json:"ibm,omitempty"`
 	Tencent *TencentConfig `json:"tencent,omitempty"`
+	Dcs     *DcsConfig     `json:"dcs,omitempty"`
 }
 
 // Validate validates the AWS to Site VPN configuration
@@ -65,10 +66,11 @@ func validateTargetCspConfig(targetCsp TargetCspConfig) error {
 		"alibaba": true,
 		"ibm":     true,
 		"tencent": true,
+		"dcs":     true,
 	}
 
 	if !validTypes[targetCsp.Type] {
-		return fmt.Errorf("invalid target_csp.type: %s. Must be one of: gcp, azure, alibaba, ibm, tencent", targetCsp.Type)
+		return fmt.Errorf("invalid target_csp.type: %s. Must be one of: gcp, azure, alibaba, ibm, tencent, dcs", targetCsp.Type)
 	}
 
 	// Validate that the corresponding CSP configuration is provided
@@ -106,6 +108,13 @@ func validateTargetCspConfig(targetCsp TargetCspConfig) error {
 			return fmt.Errorf("tencent configuration is required when target_csp.type is 'tencent'")
 		}
 		if err := validateTencentConfig(*targetCsp.Tencent); err != nil {
+			return err
+		}
+	case "dcs":
+		if targetCsp.Dcs == nil {
+			return fmt.Errorf("dcs configuration is required when target_csp.type is 'dcs'")
+		}
+		if err := validateDcsConfig(*targetCsp.Dcs); err != nil {
 			return err
 		}
 	}
@@ -184,6 +193,17 @@ func validateIbmConfig(ibm IbmConfig) error {
 	return nil
 }
 
+// validateDcsConfig validates DCS configuration
+func validateDcsConfig(dcs DcsConfig) error {
+	if dcs.RouterId == "" {
+		return fmt.Errorf("dcs.router_id is required")
+	}
+	if dcs.SubnetId == "" {
+		return fmt.Errorf("dcs.subnet_id is required")
+	}
+	return nil
+}
+
 /*
  * Output/response body of the AWS to site VPN information
  */
@@ -197,6 +217,7 @@ type VpnInfo struct {
 	Alibaba   *AlibabaVpnInfo `json:"alibaba,omitempty"`
 	Tencent   *TencentVpnInfo `json:"tencent,omitempty"`
 	Ibm       *IbmInfo        `json:"ibm,omitempty"`
+	Dcs       *DcsVpnInfo     `json:"dcs,omitempty"`
 }
 
 // * AWS section
@@ -485,4 +506,30 @@ type IbmStatusReason struct {
 type IbmTunnel struct {
 	ResourceType string `json:"resource_type"`
 	Address      string `json:"address"`
+}
+
+// * DCS section
+
+// DcsVpnInfo represents DCS-specific target CSP information
+type DcsVpnInfo struct {
+	VpnService      *DcsVpnService      `json:"vpn_service,omitempty"`
+	SiteConnections []DcsSiteConnection `json:"site_connections"`
+}
+
+// DcsVpnService represents DCS VPN service information
+type DcsVpnService struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	RouterID     string `json:"router_id"`
+	ExternalIP   string `json:"external_ip"`
+}
+
+// DcsSiteConnection represents DCS site connection information
+type DcsSiteConnection struct {
+	ResourceType string `json:"resource_type"`
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	PeerAddress  string `json:"peer_address"`
+	PeerID       string `json:"peer_id"`
 }

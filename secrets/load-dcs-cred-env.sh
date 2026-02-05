@@ -14,7 +14,7 @@ fi
 
 # Find the script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="$SCRIPT_DIR/credential-openstack.env"
+ENV_FILE="$SCRIPT_DIR/credential-dcs.env"
 
 echo "Loading credential from '${ENV_FILE##*/}'"
 

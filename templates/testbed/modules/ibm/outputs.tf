@@ -5,6 +5,7 @@ output "testbed_info" {
     vpc_crn     = ibm_is_vpc.main.crn # The VPC CRN (Cloud Resource Name) to provide DNS server addresses for this VPC
     subnet_id   = ibm_is_subnet.main.id
     subnet_cidr = ibm_is_subnet.main.ipv4_cidr_block
+    private_ip  = ibm_is_instance.main.primary_network_interface[0].primary_ip[0].address
   }
 }
 output "ssh_info" {

@@ -159,6 +159,22 @@ definitions:
       testbed_config:
         $ref: '#/definitions/model.TestbedConfigDetail'
     type: object
+  model.DcsConfig:
+    properties:
+      bgp_asn:
+        default: "65000"
+        example: "65000"
+        type: string
+      region:
+        example: RegionOne
+        type: string
+      router_id:
+        example: router-12345678
+        type: string
+      subnet_id:
+        example: subnet-12345678
+        type: string
+    type: object
   model.GcpConfig:
     properties:
       bgp_asn:
@@ -218,6 +234,8 @@ definitions:
         $ref: '#/definitions/model.AwsConfig'
       azure:
         $ref: '#/definitions/model.AzureConfig'
+      dcs:
+        $ref: '#/definitions/model.DcsConfig'
       gcp:
         $ref: '#/definitions/model.GcpConfig'
       ibm:
@@ -234,6 +252,8 @@ definitions:
         $ref: '#/definitions/model.AlibabaConfig'
       azure:
         $ref: '#/definitions/model.AzureConfig'
+      dcs:
+        $ref: '#/definitions/model.DcsConfig'
       gcp:
         $ref: '#/definitions/model.GcpConfig'
       ibm:
@@ -308,6 +328,7 @@ definitions:
         - alibaba
         - tencent
         - ibm
+        - dcs
         items:
           type: string
         type: array

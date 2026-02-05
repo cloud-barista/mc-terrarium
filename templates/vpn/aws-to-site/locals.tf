@@ -4,6 +4,7 @@ locals {
   is_alibaba = var.vpn_config.target_csp.type == "alibaba"
   is_tencent = var.vpn_config.target_csp.type == "tencent"
   is_ibm     = var.vpn_config.target_csp.type == "ibm"
+  is_dcs     = var.vpn_config.target_csp.type == "dcs"
 
   # a local variable to reference CSP config easily
   csp_config = (
@@ -11,7 +12,8 @@ locals {
     local.is_azure ? var.vpn_config.target_csp.azure :
     local.is_alibaba ? var.vpn_config.target_csp.alibaba :
     local.is_tencent ? var.vpn_config.target_csp.tencent :
-    local.is_ibm ? var.vpn_config.target_csp.ibm : null
+    local.is_ibm ? var.vpn_config.target_csp.ibm :
+    local.is_dcs ? var.vpn_config.target_csp.dcs : null
   )
 
   name_prefix = var.vpn_config.terrarium_id

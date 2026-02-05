@@ -5,6 +5,7 @@ output "testbed_info" {
     vpc_cidr    = aws_vpc.main.cidr_block
     subnet_id   = aws_subnet.main.id
     subnet_cidr = aws_subnet.main.cidr_block
+    private_ip  = aws_instance.main.private_ip
   }
 }
 

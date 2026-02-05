@@ -21,6 +21,7 @@ type SiteToSiteVpnConfig struct {
 	Alibaba     *AlibabaConfig `json:"alibaba,omitempty"`
 	Tencent     *TencentConfig `json:"tencent,omitempty"`
 	Ibm         *IbmConfig     `json:"ibm,omitempty"`
+	Dcs         *DcsConfig     `json:"dcs,omitempty"`
 }
 
 // AwsConfig represents AWS specific VPN configuration
@@ -82,6 +83,14 @@ type IbmConfig struct {
 	VpcCidr  string `json:"vpc_cidr" example:"10.0.0.0/16"`
 	SubnetId string `json:"subnet_id" example:"0717-abc12345-6789-abcd-ef01-234567890abc"`
 	// BgpAsn    *string `json:"bgp_asn,omitempty" default:"65533" example:"65533"`
+}
+
+// DcsConfig represents DCS (OpenStack) specific VPN configuration
+type DcsConfig struct {
+	Region   string `json:"region,omitempty" example:"RegionOne"`
+	RouterId string `json:"router_id" example:"router-12345678"`
+	SubnetId string `json:"subnet_id" example:"subnet-12345678"`
+	BgpAsn   string `json:"bgp_asn,omitempty" default:"65000" example:"65000"`
 }
 
 // Validate validates the VpnConfig structure
