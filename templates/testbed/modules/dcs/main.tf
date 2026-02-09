@@ -99,7 +99,11 @@ resource "openstack_networking_floatingip_v2" "main" {
   pool = var.external_network_name
 }
 
-resource "openstack_compute_floatingip_associate_v2" "main" {
+resource "openstack_networking_floatingip_associate_v2" "main" {
   floating_ip = openstack_networking_floatingip_v2.main.address
-  instance_id = openstack_compute_instance_v2.main.id
+  port_id     = openstack_networking_port_v2.main.id
+
+  # Ensure the router interface is established before associating the floating IP.
+  # Without this, OpenStack cannot find a path from the subnet to the external network.
+  depends_on = [openstack_networking_router_interface_v2.main]
 }

@@ -5,6 +5,7 @@ output "testbed_info" {
     vpc_cidr    = aws_vpc.main.cidr_block
     subnet_id   = aws_subnet.main.id
     subnet_cidr = aws_subnet.main.cidr_block
+    public_ip   = aws_eip.main.public_ip
     private_ip  = aws_instance.main.private_ip
   }
 }
@@ -12,9 +13,9 @@ output "testbed_info" {
 output "ssh_info" {
   sensitive = true
   value = {
-    public_ip  = aws_instance.main.public_ip
+    public_ip  = aws_eip.main.public_ip
     private_ip = aws_instance.main.private_ip
     user       = "ubuntu"
-    command    = "ssh -i private_key.pem ubuntu@${aws_instance.main.public_ip}"
+    command    = "ssh -i private_key.pem ubuntu@${aws_eip.main.public_ip}"
   }
 }
