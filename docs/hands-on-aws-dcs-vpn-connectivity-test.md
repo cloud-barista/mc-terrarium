@@ -213,6 +213,7 @@ Expected response (example):
       "vpc_cidr": "10.0.0.0/16",
       "subnet_id": "subnet-0abc1234def56789",
       "subnet_cidr": "10.0.1.0/24",
+      "public_ip": "y.y.y.y",
       "private_ip": "10.0.1.xxx"
     },
     "dcs_testbed_info": {
@@ -235,11 +236,12 @@ From the response above, note the following values. You will need them in Step 6
 | ---------------- | ------------------------------------- | -------------------------------------- |
 | `AWS_VPC_ID`     | `.detail.aws_testbed_info.vpc_id`     | `vpc-0abc1234def56789`                 |
 | `AWS_SUBNET_ID`  | `.detail.aws_testbed_info.subnet_id`  | `subnet-0abc1234def56789`              |
+| `AWS_PUBLIC_IP`  | `.detail.aws_testbed_info.public_ip`  | `y.y.y.y`                             |
 | `AWS_PRIVATE_IP` | `.detail.aws_testbed_info.private_ip` | `10.0.1.xxx`                           |
 | `DCS_ROUTER_ID`  | `.detail.dcs_testbed_info.router_id`  | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
 | `DCS_SUBNET_ID`  | `.detail.dcs_testbed_info.subnet_id`  | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
+| `DCS_PUBLIC_IP`  | `.detail.dcs_testbed_info.public_ip`  | `x.x.x.x`                             |
 | `DCS_PRIVATE_IP` | `.detail.dcs_testbed_info.private_ip` | `10.6.0.x`                             |
-| `DCS_PUBLIC_IP`  | `.detail.dcs_testbed_info.public_ip`  | `x.x.x.x`                              |
 
 ### Step 5: Create a Terrarium for VPN
 
@@ -345,16 +347,20 @@ Expected response (example):
 
 Test network connectivity between the AWS EC2 instance and the DCS VM through the VPN tunnel by pinging the **private IP** addresses.
 
+#### Preparation: Get the SSH Private Key
+
+Before SSH-ing into either VM, extract the SSH private key from the testbed:
+
+```bash
+curl -s -X GET -u default:default \
+  "http://localhost:8055/terrarium/tr/testbed01/testbed?detail=raw" \
+  | jq -r '.list[] | select(.type == "tls_private_key") | .values.private_key_pem' > /tmp/testbed-key.pem
+chmod 600 /tmp/testbed-key.pem
+```
+
 #### Option A: SSH into the DCS VM and ping the AWS VM
 
 ```bash
-# Get the SSH private key from the testbed
-curl -s -X GET -u default:default \
-  "http://localhost:8055/terrarium/tr/testbed01/testbed?detail=raw" \
-  | jq -r '.detail.ssh_info.value.private_key' > /tmp/testbed-key.pem
-chmod 600 /tmp/testbed-key.pem
-
-# SSH into the DCS VM and ping the AWS VM's private IP
 # Replace <DCS_PUBLIC_IP> and <AWS_PRIVATE_IP> with actual values from Step 4
 ssh -i /tmp/testbed-key.pem -o StrictHostKeyChecking=no ubuntu@<DCS_PUBLIC_IP> \
   "ping -c 5 <AWS_PRIVATE_IP>"
@@ -377,13 +383,7 @@ PING 10.0.1.xxx (10.0.1.xxx) 56(84) bytes of data.
 #### Option B: SSH into the AWS VM and ping the DCS VM
 
 ```bash
-# Get AWS VM's public IP from the testbed (raw detail)
-curl -s -X GET -u default:default \
-  "http://localhost:8055/terrarium/tr/testbed01/testbed?detail=raw" \
-  | jq -r '.detail.aws_testbed_ssh_info.value.public_ip'
-
-# SSH into the AWS VM and ping the DCS VM's private IP
-# Replace <AWS_PUBLIC_IP> and <DCS_PRIVATE_IP> with actual values
+# Replace <AWS_PUBLIC_IP> and <DCS_PRIVATE_IP> with actual values from Step 4
 ssh -i /tmp/testbed-key.pem -o StrictHostKeyChecking=no ubuntu@<AWS_PUBLIC_IP> \
   "ping -c 5 <DCS_PRIVATE_IP>"
 ```

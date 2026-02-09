@@ -107,9 +107,19 @@ resource "aws_instance" "main" {
 
   vpc_security_group_ids = [aws_security_group.main.id]
 
-  associate_public_ip_address = true
-
   tags = {
     Name = "${var.terrarium_id}-ec2"
   }
+}
+
+# Elastic IP for the EC2 instance
+resource "aws_eip" "main" {
+  domain   = "vpc"
+  instance = aws_instance.main.id
+
+  tags = {
+    Name = "${var.terrarium_id}-eip"
+  }
+
+  depends_on = [aws_internet_gateway.main]
 }
