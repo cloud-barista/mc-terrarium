@@ -41,9 +41,11 @@ terraform.tfvars.json
 project-gcp.txt
 *.pem
 kubeconfig
+!register-credentials.py
 
 # Sensitive data
 .env
+secrets/openbao-init.json
 
 # Binaries
 pkg/mc-terrarium

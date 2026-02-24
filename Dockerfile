@@ -63,7 +63,7 @@ FROM alpine:3.21 AS prod
 # FROM ubuntu:22.04 AS prod
 
 # Installing ca-certificates for HTTPS connections
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates curl
 
 # Copying the tofu binary from the minimal OpenTofu image
 COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
@@ -73,6 +73,13 @@ COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 
 # Setting the working directory for the application
 WORKDIR /app
+
+# Create non-root user for secure execution
+RUN addgroup -g 1000 appgroup && \
+    adduser -u 1000 -G appgroup -D -h /app appuser
+
+# Create writable directories owned by appuser
+RUN mkdir -p /app/log && chown appuser:appgroup /app/log
 
 # Copying necessary files from the builder stage to the production stage
 # Assets, scripts, and configuration files are copied excluding credentials.conf
@@ -99,9 +106,9 @@ ENV TERRARIUM_API_ALLOW_ORIGINS=* \
     TERRARIUM_API_PASSWORD='$2a$10$cKUlDfR8k4VUubhhRwCV9.sFvKV3KEc9RJ.H8R/thIeVOrhQ.nuuW'
 
 ## Logger configuration
-# Set log file path (default logfile path: ./log/terrarium.log)
+# Set log file path (relative to TERRARIUM_ROOT, joined as /app/log/terrarium.log)
 # Set log level, such as trace, debug info, warn, error, fatal, and panic
-ENV TERRARIUM_LOGFILE_PATH=/app/log/terrarium.log \
+ENV TERRARIUM_LOGFILE_PATH=log/terrarium.log \
     TERRARIUM_LOGFILE_MAXSIZE=1000 \
     TERRARIUM_LOGFILE_MAXBACKUPS=3 \
     TERRARIUM_LOGFILE_MAXAGE=30 \
@@ -114,6 +121,16 @@ ENV TERRARIUM_NODE_ENV=production
 
 ## Set period for auto control goroutine invocation
 ENV TERRARIUM_AUTOCONTROL_DURATION_MS=10000
+
+## OpenBao (secrets management) configuration
+## Set by docker-compose.yaml at runtime.
+## OpenTofu vault provider auto-reads VAULT_ADDR and VAULT_TOKEN.
+ENV VAULT_ADDR=http://localhost:8200 \
+    VAULT_TOKEN=
+
+# Run as non-root user (UID 1000)
+# See: https://docs.docker.com/build/building/best-practices/#user
+USER appuser
 
 # Setting the entrypoint for the application
 ENTRYPOINT [ "/app/mc-terrarium" ]

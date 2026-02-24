@@ -9,7 +9,9 @@ GO := $(GOPROXY_OPTION) go
 GOPATH := $(shell go env GOPATH)
 SWAG := ~/go/bin/swag
 
-.PHONY: all dependency lint update swag swagger build arm prod run stop clean help bcrypt
+.PHONY: all dependency lint update swag swagger build arm prod run stop clean \
+	prepare-volumes compose compose-up compose-down tr-up tr-down \
+	help bcrypt
 
 all: swag build ## Default target: build the project
 
@@ -85,31 +87,33 @@ clean: ## Remove previous build
 	@cd cmd/$(MODULE_NAME) && $(GO) clean
 	@echo "Cleaned!"
 
-compose: swag ## Build and up services by docker compose
-	@if docker network ls | grep -q "terrarium_network"; then \
-		echo "terrarium_network exists, will use existing network"; \
-	else \
-		echo "Creating terrarium_network..."; \
-		docker network create terrarium_network; \
-	fi
-	@echo "Building and starting services by docker compose..."
-	@DOCKER_BUILDKIT=1 docker compose up --build
+prepare-volumes: ## Create bind-mount directories with current user ownership
+	@echo "Preparing container-volume directories..."
+	@mkdir -p container-volume/mc-terrarium-container/.terrarium
+	@mkdir -p container-volume/openbao-data
+	@echo "Prepared!"
+# Note: Still needed because Docker auto-creates missing bind-mount dirs as root,
+# which makes them unwritable by the non-root appuser (UID 1000) inside the container.
+# Running mkdir -p here ensures ownership matches the host user (typically UID 1000).
 
-compose-up: ## Up services by docker compose
-	@if docker network ls | grep -q "terrarium_network"; then \
-		echo "terrarium_network exists, will use existing network"; \
-	else \
-		echo "Creating terrarium_network..."; \
-		docker network create terrarium_network; \
-	fi
-	@echo "Pulling the latest edge images..."
-	@docker pull cloudbaristaorg/mc-terrarium:edge
-	@echo "Starting services by docker compose..."
-	@docker compose up
+# ── Docker Compose targets ──────────────────────────────────────────
+# docker-compose.yaml includes both mc-terrarium and OpenBao services.
 
-compose-down: ## Down services by docker compose
-	@echo "Removing services by docker compose..."
-	@docker compose down	
+compose: swag prepare-volumes ## Build and start all services
+	@echo "Building and starting all services..."
+	@DOCKER_BUILDKIT=1 docker compose up --build -d
+	@echo "Trying to unseal OpenBao (if not already unsealed)..."
+	@bash init/unseal-openbao.sh || true
+
+compose-up: prepare-volumes ## Start all services
+	@echo "Starting all services..."
+	@docker compose up -d
+	@echo "Trying to unseal OpenBao (if not already unsealed)..."
+	@bash init/unseal-openbao.sh || true
+
+compose-down: ## Stop and remove all services
+	@echo "Stopping all services..."
+	@docker compose down
 
 bcrypt: ## Generate bcrypt hash for given password (usage: make bcrypt PASSWORD=mypassword)
 	@if [ -z "$(PASSWORD)" ]; then \

@@ -236,11 +236,11 @@ From the response above, note the following values. You will need them in Step 6
 | ---------------- | ------------------------------------- | -------------------------------------- |
 | `AWS_VPC_ID`     | `.detail.aws_testbed_info.vpc_id`     | `vpc-0abc1234def56789`                 |
 | `AWS_SUBNET_ID`  | `.detail.aws_testbed_info.subnet_id`  | `subnet-0abc1234def56789`              |
-| `AWS_PUBLIC_IP`  | `.detail.aws_testbed_info.public_ip`  | `y.y.y.y`                             |
+| `AWS_PUBLIC_IP`  | `.detail.aws_testbed_info.public_ip`  | `y.y.y.y`                              |
 | `AWS_PRIVATE_IP` | `.detail.aws_testbed_info.private_ip` | `10.0.1.xxx`                           |
 | `DCS_ROUTER_ID`  | `.detail.dcs_testbed_info.router_id`  | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
 | `DCS_SUBNET_ID`  | `.detail.dcs_testbed_info.subnet_id`  | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
-| `DCS_PUBLIC_IP`  | `.detail.dcs_testbed_info.public_ip`  | `x.x.x.x`                             |
+| `DCS_PUBLIC_IP`  | `.detail.dcs_testbed_info.public_ip`  | `x.x.x.x`                              |
 | `DCS_PRIVATE_IP` | `.detail.dcs_testbed_info.private_ip` | `10.6.0.x`                             |
 
 ### Step 5: Create a Terrarium for VPN
