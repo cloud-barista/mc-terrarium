@@ -1,8 +1,25 @@
+# MC-Terrarium Docker Compose
+#
+# Usage:
+#   docker compose up -d
+#
+# Prerequisites:
+#   - Copy .env.example to .env and set VAULT_TOKEN
+#   - First run: ./init/init.sh (initializes OpenBao + imports credentials)
+#   - After restart: OpenBao unseal is handled automatically by Makefile targets
+#
+# With UI-enabled OpenBao image:
+#   docker build -f third-party/openbao-ui/Dockerfile -t openbao:dev-ui .
+#   OPENBAO_IMAGE=openbao:dev-ui docker compose up -d
+
 networks:
-  terrarium_network:
-    external: true
+  internal_network:
+    internal: true
+  external_network:
+    driver: bridge
 
 services:
+  # ── MC-Terrarium ────────────────────────────────────────────────────
   mc-terrarium:
     image: cloudbaristaorg/mc-terrarium:0.0.22
     container_name: mc-terrarium
@@ -10,7 +27,8 @@ services:
       context: .
       dockerfile: Dockerfile
     networks:
-      - terrarium_network
+      - internal_network # Inter-service communication (OpenBao access)
+      - external_network # CSP API calls (requires internet access)
     ports:
       - target: 8055
         published: 8055
@@ -34,7 +52,7 @@ services:
       # - TERRARIUM_API_AUTH_ENABLED=true
       # - TERRARIUM_API_USERNAME=default
       # - TERRARIUM_API_PASSWORD=$$2a$$10$$cKUlDfR8k4VUubhhRwCV9.sFvKV3KEc9RJ.H8R/thIeVOrhQ.nuuW
-      # - TERRARIUM_LOGFILE_PATH=/app/log/terrarium.log
+      # - TERRARIUM_LOGFILE_PATH=log/terrarium.log   # relative to TERRARIUM_ROOT (joined as /app/log/terrarium.log)
       # - TERRARIUM_LOGFILE_MAXSIZE=1000
       # - TERRARIUM_LOGFILE_MAXBACKUPS=3
       # - TERRARIUM_LOGFILE_MAXAGE=30
@@ -43,9 +61,79 @@ services:
       # - TERRARIUM_LOGWRITER=both
       # - TERRARIUM_NODE_ENV=production
       # - TERRARIUM_AUTOCONTROL_DURATION_MS=10000
-    healthcheck: # for MC-Terrarirum (remove '-q' to see healthcheck output)
+      #
+      # Note: OpenBao does not have its own OpenTofu/Terraform provider yet.
+      # The only available option is the hashicorp/vault provider, which
+      # exclusively reads VAULT_ADDR and VAULT_TOKEN from env vars.
+      # That's why we use VAULT_* (not BAO_*) here.
+      # See: https://registry.terraform.io/providers/hashicorp/vault/latest/docs#token
+      - VAULT_ADDR=http://openbao:8200
+      - VAULT_TOKEN=${VAULT_TOKEN:-}
+    healthcheck: # for MC-Terrarium (remove '-q' to see healthcheck output)
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8055/terrarium/readyz"]
       interval: 10m
       timeout: 5s
       retries: 3
       start_period: 10s
+    depends_on:
+      openbao:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── OpenBao (secrets management) ────────────────────────────────────
+  # OpenBao securely stores and provides CSP credentials via API.
+  #
+  # [Persistent mode] (default)
+  #   - File-based storage — secrets survive restarts
+  #   - Requires one-time initialization + unseal after every restart
+  #   - First run:  ./init/init.sh
+  #   - After restart: ./init/unseal-openbao.sh (or use make compose-up)
+  #
+  # [Dev mode]
+  #   - In-memory storage — secrets are LOST on container restart
+  #   - Auto-initialized, auto-unsealed, root token set by BAO_DEV_ROOT_TOKEN_ID
+  #   - To switch: see "Switching to dev mode" comments below
+  openbao:
+    image: ${OPENBAO_IMAGE:-openbao/openbao:2.5.1}
+    container_name: openbao
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - internal_network # Inter-service communication (terrarium connects here)
+      - external_network # Host port exposure (for CLI/API access from host)
+    ports:
+      - target: 8200
+        published: 8200
+        protocol: tcp
+
+    # ── Persistent mode (active) ─────────────────────────────────────
+    environment:
+      - BAO_ADDR=http://0.0.0.0:8200 # BAO_ADDR is for binding listerner inside container
+      - SKIP_SETCAP=true
+    command: server -config=/openbao/config/openbao-config.hcl
+    volumes:
+      - ./container-volume/openbao-data:/openbao/data
+      - ./conf/openbao-config.hcl:/openbao/config/openbao-config.hcl:ro
+
+    # ── Dev mode (inactive) ────────────────────────────────────────
+    # To switch to dev mode:
+    #   1. Comment out the "Persistent mode" environment, command, and volumes above
+    #   2. Uncomment the "Dev mode" environment and command below
+    #   3. Run: docker compose up -d
+    #   (No init/unseal needed — dev mode is auto-initialized and auto-unsealed)
+    #
+    # environment:
+    #   - BAO_ADDR=http://0.0.0.0:8200
+    #   - BAO_DEV_ROOT_TOKEN_ID=${VAULT_TOKEN:-root-token}
+    # command: server -dev
+
+    healthcheck:
+      # 'bao status' exit codes:
+      #   0 = unsealed, 1 = sealed but running, 2 = uninitialized (first run)
+      # All three mean the OpenBao process is up and accepting API calls.
+      test: ["CMD", "sh", "-c", "rc=0; bao status || rc=$$?; [ $$rc -le 2 ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
