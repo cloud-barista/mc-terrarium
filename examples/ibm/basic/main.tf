@@ -6,11 +6,28 @@ terraform {
       source  = "IBM-Cloud/ibm"
       version = "1.76.0"
     }
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read IBM Cloud credentials from OpenBao ──────────────────────
+data "vault_kv_secret_v2" "ibm" {
+  mount = "secret"
+  name  = "csp/ibm"
+}
+
+# ── IBM Cloud Provider using OpenBao credentials ────────────────
 provider "ibm" {
-  region = "jp-tok" # Tokyo, Japan
+  region           = "jp-tok" # Tokyo, Japan
+  ibmcloud_api_key = data.vault_kv_secret_v2.ibm.data["IC_API_KEY"]
 }
 
 resource "ibm_is_vpc" "example_vpc" {

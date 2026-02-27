@@ -18,15 +18,32 @@ terraform {
       source  = "registry.opentofu.org/hashicorp/tls"
       version = "~>4.0"
     }
+
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
-# OpenStack Provider Configuration for DCS (DevStack Cloud Service)
-# Uses environment variables: OS_USERNAME, OS_PROJECT_NAME, OS_PASSWORD, OS_AUTH_URL, OS_REGION_NAME
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read OpenStack credentials from OpenBao ──────────────────────
+data "vault_kv_secret_v2" "openstack" {
+  mount = "secret"
+  name  = "csp/openstack"
+}
+
+# ── OpenStack Provider using OpenBao credentials ────────────────
 provider "openstack" {
-  # Configuration will be read from environment variables
-  # Make sure to source the credential file before running:
-  # source ../../secrets/load-openstack-cred-env.sh
+  auth_url    = data.vault_kv_secret_v2.openstack.data["OS_AUTH_URL"]
+  user_name   = data.vault_kv_secret_v2.openstack.data["OS_USERNAME"]
+  password    = data.vault_kv_secret_v2.openstack.data["OS_PASSWORD"]
+  domain_name = data.vault_kv_secret_v2.openstack.data["OS_DOMAIN_NAME"]
+  tenant_name = data.vault_kv_secret_v2.openstack.data["OS_PROJECT_NAME"]
 }
 
 

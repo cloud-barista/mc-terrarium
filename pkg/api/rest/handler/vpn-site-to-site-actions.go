@@ -144,17 +144,6 @@ func initSiteToSiteVpn(c echo.Context) (model.Response, error) {
 		log.Warn().Err(err).Msg(err2.Error())
 	}
 
-	/*
-	 * NOTE: Set CSPs' credentials for the terrarium environment
-	 */
-	for _, provider := range providers {
-		err = terrarium.SetCredentials(trId, enrichments, provider)
-		if err != nil {
-			log.Error().Err(err).Msg(err.Error())
-			return emptyRes, err
-		}
-	}
-
 	// Set the tfvars
 	// Transform the request to match Terraform variables structure
 	tfVars := map[string]interface{}{

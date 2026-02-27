@@ -117,15 +117,6 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	/*
-	 * NOTE: Set CSPs' credentials for the terrarium environment
-	 */
-	err = terrarium.SetCredentials(trId, enrichments, "gcp")
-	if err != nil {
-		log.Error().Err(err).Msg(err.Error())
-		return emptyRes, err
-	}
-
 	// Set the tfvars
 	err = terrarium.SaveTfVars(trId, enrichments, req)
 	if err != nil {

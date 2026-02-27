@@ -256,6 +256,7 @@ func SetCustomOutputsTf(trId, enrichments string, customOutputs string) error {
 }
 
 // SetCredentials sets the credentials for the terrarium environment
+// Deprecated: Templates now use OpenBao vault provider for credential management.
 func SetCredentials(trId, enrichments string, csps ...string) error {
 
 	// Check if the terrarium environment exists (i.e., a terrarium environment)

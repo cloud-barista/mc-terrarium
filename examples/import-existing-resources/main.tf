@@ -1,4 +1,4 @@
-# Define the required version of Terraform and the providers that will be used in the project
+# Define the required version of OpenTofu and the providers that will be used in the project
 terraform {
   required_version = ">=1.8.3"
 
@@ -13,6 +13,12 @@ terraform {
     google = {
       source  = "hashicorp/google"
       version = "~>5.21"
+    }
+
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
     }
   }
 }

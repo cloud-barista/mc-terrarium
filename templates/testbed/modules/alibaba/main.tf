@@ -115,9 +115,9 @@ resource "alicloud_instance" "main" {
   internet_max_bandwidth_out = 5
   key_name                   = alicloud_ecs_key_pair.main.key_pair_name
 
-  # Use spot instance for better availability and lower cost
-  spot_strategy = "SpotAsPriceGo"
-  spot_duration = 1
+  # Use on-demand instance (some accounts do not support Spot)
+  # To use spot pricing, change to: spot_strategy = "SpotAsPriceGo"
+  spot_strategy = "NoSpot"
 
   user_data = base64encode(<<-EOF
               #!/bin/bash

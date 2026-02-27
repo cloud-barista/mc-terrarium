@@ -147,22 +147,6 @@ func InitEnvForObjectStorage(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	if provider == "gcp" {
-		// Always overwrite credential-gcp.json
-		credentialPath := workingDir + "/credential-gcp.json"
-
-		err = tfutil.CopyGCPCredentials(credentialPath)
-		if err != nil {
-			err2 := fmt.Errorf("failed to copy gcp credentials")
-			log.Error().Err(err).Msg(err2.Error())
-			res := model.Response{
-				Success: false,
-				Message: err2.Error(),
-			}
-			return c.JSON(http.StatusInternalServerError, res)
-		}
-	}
-
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/object-storage
 	// init: subcommand
 	ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "init")

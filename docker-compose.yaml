@@ -33,16 +33,19 @@ services:
       - target: 8055
         published: 8055
         protocol: tcp
-    env_file:
-      - ${HOME}/.cloud-barista/secrets/credentials # AWS credential
-      - ${HOME}/.cloud-barista/secrets/credential-azure.env # Azure credential
-      - ${HOME}/.cloud-barista/secrets/credential-alibaba.env # Alibaba credential
-      # - ${HOME}/.cloud-barista/secrets/credential-tencent.env # Tencent credential
-      - ${HOME}/.cloud-barista/secrets/credential-ibm.env # IBM credential
-      - ${HOME}/.cloud-barista/secrets/credential-ncp.env # NCP credential
-      - ${HOME}/.cloud-barista/secrets/credential-dcs.env # DCS (OpenStack) credential
+    # [Legacy] CSP credentials via env_file — replaced by OpenBao centralized credential management.
+    # Credentials are now read from OpenBao at runtime via the vault provider.
+    # env_file:
+    #   - ${HOME}/.cloud-barista/secrets/credentials # AWS credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-azure.env # Azure credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-alibaba.env # Alibaba credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-tencent.env # Tencent credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-ibm.env # IBM credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-ncp.env # NCP credential
+    #   - ${HOME}/.cloud-barista/secrets/credential-dcs.env # DCS (OpenStack) credential
     volumes:
-      - ${HOME}/.cloud-barista/secrets/credential-gcp.json:/app/secrets/credential-gcp.json:ro # GCP credential
+      # [Legacy] GCP credential file mount — replaced by OpenBao.
+      # - ${HOME}/.cloud-barista/secrets/credential-gcp.json:/app/secrets/credential-gcp.json:ro # GCP credential
       - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
       - /etc/ssl/certs:/etc/ssl/certs:ro
     environment:

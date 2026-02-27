@@ -112,33 +112,6 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Always overwrite credential-gcp.json
-	gcpCredentialPath := workingDir + "/credential-gcp.json"
-
-	err = tfutil.CopyGCPCredentials(gcpCredentialPath)
-	if err != nil {
-		err2 := fmt.Errorf("failed to copy gcp credentials")
-		log.Error().Err(err).Msg(err2.Error())
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	// Always overwrite credential-azure.env
-	azureCredentialPath := workingDir + "/credential-azure.env"
-	err = tfutil.CopyAzureCredentials(azureCredentialPath)
-	if err != nil {
-		err2 := fmt.Errorf("failed to copy azure credentials")
-		log.Error().Err(err).Msg(err2.Error())
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
 	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-azure
 	// init: subcommand
 	ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "init")

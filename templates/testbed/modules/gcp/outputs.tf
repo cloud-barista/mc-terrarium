@@ -4,7 +4,7 @@ output "testbed_info" {
     vpc_name    = google_compute_network.main.name
     subnet_name = google_compute_subnetwork.main.name
     subnet_cidr = google_compute_subnetwork.main.ip_cidr_range
-    project_id  = jsondecode(file("credential-gcp.json")).project_id
+    project_id  = var.gcp_project_id
     private_ip  = google_compute_instance.main.network_interface[0].network_ip
   }
 }
