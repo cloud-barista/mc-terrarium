@@ -1,7 +1,7 @@
 # Multi-Cloud Terrarium
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/84238cbf-aef0-49ac-a1b5-2750ac1d2a9d" width="50%" height="50%" >
+  <img src="https://github.com/user-attachments/assets/84238cbf-aef0-49ac-a1b5-2750ac1d2a9d" width="75%" height="75%" >
 </p>
 
 <p align="center">
