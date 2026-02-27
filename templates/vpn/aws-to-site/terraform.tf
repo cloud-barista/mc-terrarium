@@ -38,5 +38,13 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = "~>1.76.0"
     }
+    # Vault provider for OpenBao credential management
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
+
+# Vault provider reads VAULT_ADDR and VAULT_TOKEN from environment
+provider "vault" {}

@@ -41,6 +41,7 @@ func SaveTfVars(tfVars interface{}, file string) error {
 }
 
 // CopyGCPCredentials copies the GCP credentials file.
+// Deprecated: Templates now use OpenBao vault provider for credential management.
 func CopyGCPCredentials(des string) error {
 	projectRoot := config.Terrarium.Root
 	if projectRoot == "" {
@@ -53,6 +54,7 @@ func CopyGCPCredentials(des string) error {
 }
 
 // CopyAzureCredentials copies the Azure credentials file.
+// Deprecated: Templates now use OpenBao vault provider for credential management.
 func CopyAzureCredentials(des string) error {
 	projectRoot := config.Terrarium.Root
 	if projectRoot == "" {

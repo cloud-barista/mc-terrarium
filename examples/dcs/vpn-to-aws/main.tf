@@ -24,20 +24,45 @@ terraform {
       source  = "registry.opentofu.org/hashicorp/tls"
       version = "~>4.0"
     }
+
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
-# AWS Provider Configuration
-provider "aws" {
-  region = var.aws_region
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read AWS credentials from OpenBao ─────────────────────────────
+data "vault_kv_secret_v2" "aws" {
+  mount = "secret"
+  name  = "csp/aws"
 }
 
-# OpenStack Provider Configuration for DCS
-# Uses environment variables: OS_USERNAME, OS_PROJECT_NAME, OS_PASSWORD, OS_AUTH_URL, OS_REGION_NAME
+# ── Read OpenStack credentials from OpenBao ──────────────────────
+data "vault_kv_secret_v2" "openstack" {
+  mount = "secret"
+  name  = "csp/openstack"
+}
+
+# ── AWS Provider using OpenBao credentials ────────────────────────
+provider "aws" {
+  region     = var.aws_region
+  access_key = data.vault_kv_secret_v2.aws.data["AWS_ACCESS_KEY_ID"]
+  secret_key = data.vault_kv_secret_v2.aws.data["AWS_SECRET_ACCESS_KEY"]
+}
+
+# ── OpenStack Provider using OpenBao credentials ────────────────
 provider "openstack" {
-  # Configuration will be read from environment variables
-  # Make sure to source the credential file before running:
-  # source ../../secrets/load-openstack-cred-env.sh
+  auth_url    = data.vault_kv_secret_v2.openstack.data["OS_AUTH_URL"]
+  user_name   = data.vault_kv_secret_v2.openstack.data["OS_USERNAME"]
+  password    = data.vault_kv_secret_v2.openstack.data["OS_PASSWORD"]
+  domain_name = data.vault_kv_secret_v2.openstack.data["OS_DOMAIN_NAME"]
+  tenant_name = data.vault_kv_secret_v2.openstack.data["OS_PROJECT_NAME"]
 }
 
 # Generate SSH key pair for instances (shared between AWS and OpenStack)

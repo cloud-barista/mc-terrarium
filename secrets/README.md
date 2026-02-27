@@ -1,216 +1,79 @@
-## CSP secrets
+## CSP Credentials
 
-This is a directory for CSP credentials to run and use MC-Terrarium.
+This directory previously held CSP credential files used directly by OpenTofu templates.
 
 > [!IMPORTANT]
-> It would be best if you managed CSP credentials securely.
+> MC-Terrarium now uses **OpenBao** (Vault-compatible) for centralized credential management.
+> CSP credentials are stored in OpenBao KV v2 (`secret/csp/{provider}`) and accessed
+> at runtime via the `hashicorp/vault` provider — no credential files are copied to working directories.
 
-> [!WARNING]
-> Take special pay attention to prevent leakage to the outside.
+### Setup
 
-This is a sample to get credentials.
+For credential setup instructions, see [init/README.md](../init/README.md).
+
+**Quick summary:**
+
+1. Prepare `~/.cloud-barista/credentials.yaml` (from [CB-Tumblebug template](https://github.com/cloud-barista/cb-tumblebug/tree/main/init))
+2. Encrypt it with `encCredential.sh`
+3. Run `bash init/init.sh` — this decrypts and registers credentials into OpenBao
+
+### Legacy Files
+
+The credential template files below are kept for reference but are **no longer used** by templates or the application at runtime:
+
+| File                              | CSP       | Status |
+| --------------------------------- | --------- | ------ |
+| `template-credentials`            | AWS       | Legacy |
+| `template-azure.env`              | Azure     | Legacy |
+| `template-credential-gcp.json`    | GCP       | Legacy |
+| `template-credential-alibaba.env` | Alibaba   | Legacy |
+| `template-credential-ibm.env`     | IBM       | Legacy |
+| `template-credential-ncp.env`     | NCP       | Legacy |
+| `template-credential-dcs.env`     | OpenStack | Legacy |
+| `template-credential-tencent.env` | Tencent   | Legacy |
+
+### CSP Credential Reference
+
+Below is a reference for preparing CSP credentials. Once prepared, add them to `~/.cloud-barista/credentials.yaml`.
 
 #### AWS
 
-1. Install AWS CLI (It should be checked.)
-2. Prepare your AWS credential
+Prepare your AWS credential (Access Key ID and Secret Access Key).
 
 See [Set and view configuration settings using commands](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods)
 
-<details>
-  <summary>Click to see sample</summary>
+#### Azure
 
-    ```
-    [default]
-    AWS_ACCESS_KEY_ID=A2KXXXXXXXXXXX4XXXSD
-    AWS_SECRET_ACCESS_KEY=AB2YjXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    ```
+Prepare an Azure service principal (Client ID, Client Secret, Tenant ID, Subscription ID).
 
-</details>
-
-3. Store your AWS credential `secrets/credentials`
-
-4. (For source code build and run) Store your AWS credential `~/.aws/credentials`
-
-#### MS Azure
-
-1. Install MS Azure CLI (It should be checked.)
-
-See [How to install the Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
-
-2. Prepare your MS Azure credential (i.e., a service principal)
-
-See [Create a service principal for use with Microsoft Purview](https://learn.microsoft.com/en-us/purview/create-service-principal-azure)
 See [Create an Azure service principal with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/azure-cli-sp-tutorial-1?tabs=bash)
-
-3. Store MS Azure credential `secrets/credential-azure.env`
-
-<details>
-  <summary>Click to see sample</summary>
-
-    ```
-    ARM_CLIENT_ID=asd9f234-1fs2-xxxx-xxxx-xxxxxxxxxxxx
-    ARM_CLIENT_SECRET=a23i11G~nxxxxXxxXXxx-xxxXXXX3XxxxXXXXxxx
-    ARM_TENANT_ID=asdf231d-8s7s-11xx-x111-111111xxx111
-    ARM_SUBSCRIPTION_ID=e14fhg99-11xx-1111-11x1-111xx11x1x11
-    ```
-
-</details>
-
-4. (For source code build and run) Run
-
-```shell
-source secrets/credential-azure.env
-az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID"
-```
 
 #### GCP
 
-1. Prepare your GCP credential
+Prepare a GCP service account key (JSON format).
 
 See [Service account credentials](https://developers.google.com/workspace/guides/create-credentials#service-account)
 
-2. Store your GCP credential `secrets/credential-gcp.json`
+#### Alibaba Cloud
 
-<details>
-  <summary>Click to see sample</summary>
+Prepare your Alibaba Cloud credential on Resource Access Management (RAM).
 
-    ```json
-    {
-        "type": "service_account",
-        "project_id": "YOUR_PROJECT_ID",
-        "private_key_id": "xx0x0x0x0x0xx0xxxxx0xx0xx0x0x0xx0x0xxxx0",
-        "private_key": "-----BEGIN PRIVATE KEY-----\YOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEYYOURPRIVATEKEY==\n-----END PRIVATE KEY-----\n",
-        "client_email": "YOUR_SERVICE_ACCOUNT@YOUR_PROJECT_ID.iam.gserviceaccount.com",
-        "client_id": "000000000000000000000",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/YOUR_SERVICE_ACCOUNT%40YOUR_PROJECT_ID.iam.gserviceaccount.com"
-    }
-    ```
+See [Alibaba Cloud RAM](https://www.alibabacloud.com/help/en/ram/)
 
-</details>
+#### IBM Cloud
 
-#### Alibaba CLoud
+Prepare your IBM Cloud API key (My Page > Manage > Access (IAM) > API Key).
 
-1. Access Alibaba Cloud (https://www.alibabacloud.com/)
-2. Prepare your Alibaba Cloud credential (on Resource Access Management (RAM))
+#### NCP (Naver Cloud Platform)
 
-<details>
-  <summary>Click to see sample</summary>
+Prepare your NCP API authentication key (My Page > Manage Auth Key).
 
-    ```
-    ALIBABA_CLOUD_ACCESS_KEY_ID=xxxxxxxxxxxxxxxx
-    ALIBABA_CLOUD_ACCESS_KEY_SECRET=xxxxxxxxxxxxxxxxx
-    ALIBABA_CLOUD_REGION=xxxxxxxxx
-    ```
+#### Tencent Cloud
 
-</details>
+Prepare your Tencent Cloud API key (Secret ID and Secret Key).
 
-3. Store your AWS credential `secrets/credential-alibaba.env`
+See [Tencent Cloud CAM](https://www.tencentcloud.com/document/product/598)
 
-4. (Before using `tofu`) Execute `source secrets/load-alibaba-cred-env.sh` to set Alibaba Cloud credential as environment variables
+#### OpenStack / DCS
 
-#### IBM
-
-1. Access IBM Cloud (https://www.ibm.com/cloud)
-2. Prepare your credential (My Page > Manage > Access (IAM) > API Key)
-
-Note - Set your access policy for the credential
-
-<details>
-  <summary>Click to see sample</summary>
-
-    ```
-    IC_API_KEY=YOUR_API_KEY
-    ```
-
-</details>
-
-3. Store your AWS credential `secrets/credential-ibm.env`
-
-4. (Before using `tofu`) Execute `source secrets/load-ibm-cred-env.sh` to set IBM Cloud credential as environment variables
-
-#### NCP
-
-1. Access NCP (https://www.ncloud.com/)
-2. Prepare your NCP credential (My Page > Manage Auth Key Create a New API Authentication Key)
-
-<details>
-  <summary>Click to see sample</summary>
-
-    ```
-    NCLOUD_ACCESS_KEY=YOUR_ACCESS_KEY
-    NCLOUD_SECRET_KEY=YOUR_SECRET_KEY
-    ```
-
-</details>
-
-3. Store your AWS credential `secrets/credential-ncp.env`
-
-4. (Before using `tofu`) Execute `source secrets/load-ncp-cred-env.sh` to set NCP credential as environment variables
-
-## Getting started
-
-### Quick start
-
-```shell
-cd ~/mc-terrarium
-docker compose up -d
-```
-
-(optional) Build and run
-
-```shell
-cd ~/mc-terrarium
-make compose
-```
-
-### Source code based build and run
-
-#### Build
-
-```shell
-cd ~/mc-terrarium
-make
-```
-
-#### Run API server binary
-
-```shell
-cd ~/mc-terrarium
-make run
-```
-
-### Container based run
-
-Check a tag of mc-terrarium container image in cloudbaristaorg/mc-terrarium
-
-#### Run mc-terrarium container
-
-Note - Credentials must be prepared and injected when running a container.
-
-Note - Modify `source="${PWD}"/secrets/` to the appropriate path.
-
-Note - About credential injection:
-
-- Set AWS credential as environment variable: `--env-file "${PWD}"/secrets/credentials`
-- Set Azure credential as environment variable: `--env-file "${PWD}"/secrets/credential-azure.env`
-- Mount GCP credential file: `--mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json`
-- Set Alibaba CLoud credential as environment variable: `--env-file "${PWD}"/secrets/credential-alibaba.env`
-- Set IBM credential as environment variable: `--env-file "${PWD}"/secrets/./secrets/credential-ibm.env`
-- Set NCP credential as environment variable: `--env-file "${PWD}"/secrets/./secrets/credential-ncp.env`
-
-```shell
-docker run \
---env-file "${PWD}"/secrets/credentials \
---env-file "${PWD}"/secrets/credential-azure.env \
---mount type=bind,source="${PWD}"/secrets/credential-gcp.json,target=/app/secrets/credential-gcp.json \
---env-file "${PWD}"/secrets/credential-alibaba.env \
---env-file "${PWD}"/secrets/credential-ibm.env \
---env-file "${PWD}"/secrets/credential-ncp.env \
--p 8055:8055 \
---name mc-terrarium \
-cloudbaristaorg/mc-terrarium:latest
-```
+Prepare your OpenStack credentials (Auth URL, Username, Password, Domain Name, Project Name).

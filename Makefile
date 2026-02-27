@@ -10,7 +10,8 @@ GOPATH := $(shell go env GOPATH)
 SWAG := ~/go/bin/swag
 
 .PHONY: all dependency lint update swag swagger build arm prod run stop clean \
-	prepare-volumes compose compose-up compose-down tr-up tr-down \
+	prepare-volumes compose compose-up compose-down logs \
+	init unseal tr-up tr-down \
 	help bcrypt
 
 all: swag build ## Default target: build the project
@@ -99,21 +100,30 @@ prepare-volumes: ## Create bind-mount directories with current user ownership
 # ── Docker Compose targets ──────────────────────────────────────────
 # docker-compose.yaml includes both mc-terrarium and OpenBao services.
 
-compose: swag prepare-volumes ## Build and start all services
-	@echo "Building and starting all services..."
-	@DOCKER_BUILDKIT=1 docker compose up --build -d
+init: ## Initialize OpenBao and register credentials (first-time setup)
+	@echo "Initializing OpenBao and registering credentials..."
+	@bash init/init.sh
+
+unseal: ## Unseal OpenBao (needed after every restart)
 	@echo "Trying to unseal OpenBao (if not already unsealed)..."
 	@bash init/unseal-openbao.sh || true
 
-compose-up: prepare-volumes ## Start all services
+compose: swag prepare-volumes ## Build and start all services (+ unseal OpenBao)
+	@echo "Building and starting all services..."
+	@DOCKER_BUILDKIT=1 docker compose up --build -d
+	@$(MAKE) unseal
+
+compose-up: prepare-volumes ## Start all services (+ unseal OpenBao)
 	@echo "Starting all services..."
 	@docker compose up -d
-	@echo "Trying to unseal OpenBao (if not already unsealed)..."
-	@bash init/unseal-openbao.sh || true
+	@$(MAKE) unseal
 
 compose-down: ## Stop and remove all services
 	@echo "Stopping all services..."
 	@docker compose down
+
+logs: ## Follow logs of all services (Ctrl+C to stop)
+	@docker compose logs -f
 
 bcrypt: ## Generate bcrypt hash for given password (usage: make bcrypt PASSWORD=mypassword)
 	@if [ -z "$(PASSWORD)" ]; then \

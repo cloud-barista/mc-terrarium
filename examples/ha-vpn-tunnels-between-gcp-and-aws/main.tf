@@ -1,6 +1,6 @@
-# Define the required version of Terraform and the providers that will be used in the project
+# Define the required version of OpenTofu and the providers that will be used in the project
 terraform {
-  # Required Tofu version
+  # Required OpenTofu version
   required_version = ">=1.8.3"
 
   required_providers {
@@ -15,24 +15,54 @@ terraform {
       source  = "registry.opentofu.org/hashicorp/google"
       version = "~>5.21"
     }
+
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
-# Provider block for AWS specifies the configuration for the provider
-provider "aws" {
-  region = "ap-northeast-2"
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read AWS credentials from OpenBao ─────────────────────────────
+data "vault_kv_secret_v2" "aws" {
+  mount = "secret"
+  name  = "csp/aws"
 }
 
-# Provider block for Google specifies the configuration for the provider
-# CAUTION: Manage your credentials carefully to avoid disclosure.
+# ── Read GCP credentials from OpenBao ─────────────────────────────
+data "vault_kv_secret_v2" "gcp" {
+  mount = "secret"
+  name  = "csp/gcp"
+}
+
 locals {
-  # Read and assign credential JSON string
-  my_gcp_credential = file("credential-gcp.json")
-  # Decode JSON string and get project ID
-  my_gcp_project_id = jsondecode(local.my_gcp_credential).project_id
+  # Reconstruct GCP service account JSON from OpenBao secrets
+  my_gcp_credential = jsonencode({
+    type           = "service_account"
+    project_id     = data.vault_kv_secret_v2.gcp.data["project_id"]
+    private_key_id = data.vault_kv_secret_v2.gcp.data["private_key_id"]
+    private_key    = replace(data.vault_kv_secret_v2.gcp.data["private_key"], "\\n", "\n")
+    client_email   = data.vault_kv_secret_v2.gcp.data["client_email"]
+    client_id      = data.vault_kv_secret_v2.gcp.data["client_id"]
+    auth_uri       = "https://accounts.google.com/o/oauth2/auth"
+    token_uri      = "https://oauth2.googleapis.com/token"
+  })
+  my_gcp_project_id = data.vault_kv_secret_v2.gcp.data["project_id"]
 }
 
-# Provider block for Google specifies the configuration for the provider
+# ── AWS Provider using OpenBao credentials ────────────────────────
+provider "aws" {
+  region     = "ap-northeast-2"
+  access_key = data.vault_kv_secret_v2.aws.data["AWS_ACCESS_KEY_ID"]
+  secret_key = data.vault_kv_secret_v2.aws.data["AWS_SECRET_ACCESS_KEY"]
+}
+
+# ── Google Provider using OpenBao credentials ────────────────────
 provider "google" {
   credentials = local.my_gcp_credential
 

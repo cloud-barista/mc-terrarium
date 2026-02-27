@@ -10,5 +10,10 @@ terraform {
       source  = "registry.opentofu.org/hashicorp/tls"
       version = "~>4.0"
     }
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }

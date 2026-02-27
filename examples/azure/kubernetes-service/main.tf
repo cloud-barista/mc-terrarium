@@ -1,15 +1,36 @@
-# Terraform and Azure Provider configuration
+# OpenTofu and Azure Provider configuration
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 3.0"
     }
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read Azure credentials from OpenBao ───────────────────────────
+data "vault_kv_secret_v2" "azure" {
+  mount = "secret"
+  name  = "csp/azure"
+}
+
+# ── Azure Provider using OpenBao credentials ─────────────────────
 provider "azurerm" {
   features {}
+
+  client_id       = data.vault_kv_secret_v2.azure.data["ARM_CLIENT_ID"]
+  client_secret   = data.vault_kv_secret_v2.azure.data["ARM_CLIENT_SECRET"]
+  tenant_id       = data.vault_kv_secret_v2.azure.data["ARM_TENANT_ID"]
+  subscription_id = data.vault_kv_secret_v2.azure.data["ARM_SUBSCRIPTION_ID"]
 }
 
 # Data source to get existing Resource Group

@@ -84,11 +84,13 @@ RUN mkdir -p /app/log && chown appuser:appgroup /app/log
 # Copying necessary files from the builder stage to the production stage
 # Assets, scripts, and configuration files are copied excluding credentials.conf
 # which should be specified in .dockerignore
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/.terrarium/ /app/.terrarium/
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/templates/ /app/templates/
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/conf/
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/scripts/
-COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
+# --chown=appuser:appgroup ensures files are owned by the non-root user,
+# so that restrictive source permissions (e.g., 600 on private_key.pem) remain readable at runtime.
+COPY --from=builder --chown=appuser:appgroup /go/src/github.com/cloud-barista/mc-terrarium/.terrarium/ /app/.terrarium/
+COPY --from=builder --chown=appuser:appgroup /go/src/github.com/cloud-barista/mc-terrarium/templates/ /app/templates/
+COPY --from=builder --chown=appuser:appgroup /go/src/github.com/cloud-barista/mc-terrarium/conf/ /app/conf/
+COPY --from=builder --chown=appuser:appgroup /go/src/github.com/cloud-barista/mc-terrarium/scripts/ /app/scripts/
+COPY --from=builder --chown=appuser:appgroup /go/src/github.com/cloud-barista/mc-terrarium/cmd/mc-terrarium/mc-terrarium /app/
 # COPY --from=builder /go/src/github.com/cloud-barista/mc-terrarium/secrets/ /app/secrets/
 
 # Setting various environment variables required by the application

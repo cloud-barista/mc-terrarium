@@ -66,7 +66,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	enrichments := "vpn/gcp-aws"
 
 	// Read and set the enrichments to terrarium information
-	trInfo, _,err := terrarium.GetInfo(trId)
+	trInfo, _, err := terrarium.GetInfo(trId)
 	if err != nil {
 		err2 := fmt.Errorf("failed to read terrarium information")
 		log.Error().Err(err).Msg(err2.Error())
@@ -101,20 +101,6 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 	err = tfutil.CopyFiles(templateTfsPath, workingDir)
 	if err != nil {
 		err2 := fmt.Errorf("failed to copy template files to working directory")
-		log.Error().Err(err).Msg(err2.Error())
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	// Always overwrite credential-gcp.json
-	credentialPath := workingDir + "/credential-gcp.json"
-
-	err = tfutil.CopyGCPCredentials(credentialPath)
-	if err != nil {
-		err2 := fmt.Errorf("failed to copy gcp credentials")
 		log.Error().Err(err).Msg(err2.Error())
 		res := model.Response{
 			Success: false,
@@ -541,7 +527,6 @@ func CreateGcpAwsVpn(c echo.Context) error {
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
 
-
 	// Excute the apply command
 	ret, err := terrarium.Apply(trId, reqId)
 	if err != nil {
@@ -644,7 +629,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 		res := model.Response{
 			Success: false,
 			Message: err.Error(),
-			Detail: ret,
+			Detail:  ret,
 		}
 		return c.JSON(http.StatusInternalServerError, res)
 	}

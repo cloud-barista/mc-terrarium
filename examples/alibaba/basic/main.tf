@@ -6,11 +6,29 @@ terraform {
       source  = "aliyun/alicloud"
       version = "1.243.0"
     }
+    # Vault provider for OpenBao credential access
+    vault = {
+      source  = "registry.opentofu.org/hashicorp/vault"
+      version = "~>4.0"
+    }
   }
 }
 
+# ── OpenBao Provider (Vault-compatible) ───────────────────────────
+# Reads VAULT_ADDR and VAULT_TOKEN from environment variables.
+provider "vault" {}
+
+# ── Read Alibaba Cloud credentials from OpenBao ──────────────────
+data "vault_kv_secret_v2" "alibaba" {
+  mount = "secret"
+  name  = "csp/alibaba"
+}
+
+# ── AliCloud Provider using OpenBao credentials ─────────────────
 provider "alicloud" {
-  region = "ap-northeast-2"
+  region     = "ap-northeast-2"
+  access_key = data.vault_kv_secret_v2.alibaba.data["ALIBABA_CLOUD_ACCESS_KEY_ID"]
+  secret_key = data.vault_kv_secret_v2.alibaba.data["ALIBABA_CLOUD_ACCESS_KEY_SECRET"]
 }
 
 # Create a new ECS instance for VPC

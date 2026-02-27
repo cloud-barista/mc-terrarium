@@ -280,6 +280,47 @@ def register_credential(provider, credentials):
         return provider, "fail", str(e)
 
 
+def register_placeholder_secrets(registered_providers):
+    """Register placeholder secrets for CSPs not present in the credential file.
+
+    This ensures vault_kv_secret_v2 data sources do not hard-fail during
+    tofu plan/apply when a CSP's credentials have not been provided yet.
+    Providers will receive empty strings and fail gracefully at auth time
+    rather than crashing the entire plan.
+    """
+    headers = {
+        "X-Vault-Token": VAULT_TOKEN,
+        "Content-Type": "application/json",
+    }
+    placeholder_count = 0
+
+    for provider, key_mapping in KEY_MAP.items():
+        if provider in registered_providers:
+            continue
+
+        # Check if secret already exists in OpenBao
+        url = f"{VAULT_ADDR}/v1/{KV_MOUNT}/data/{SECRET_PREFIX}/{provider}"
+        try:
+            resp = requests.get(url, headers=headers, timeout=5)
+            if resp.status_code == 200:
+                # Secret already exists (registered outside this script)
+                continue
+        except requests.RequestException:
+            pass
+
+        # Build placeholder data with empty strings for all expected keys
+        placeholder_data = {v: "" for v in key_mapping.values()}
+        try:
+            resp = requests.post(url, json={"data": placeholder_data}, headers=headers, timeout=10)
+            resp.raise_for_status()
+            print(f"  {Fore.YELLOW}PLCH{Style.RESET_ALL} {provider:12s}  placeholder registered (keys=[{', '.join(placeholder_data.keys())}])")
+            placeholder_count += 1
+        except requests.RequestException as e:
+            print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider:12s}  placeholder failed: {e}")
+
+    return placeholder_count
+
+
 # ── Main ──────────────────────────────────────────────────────────
 
 
@@ -401,12 +442,14 @@ def main():
             success_count = 0
             skip_count = 0
             fail_count = 0
+            registered_providers = set()
 
             for provider, credentials in cred_data.items():
                 provider_name, status, message = register_credential(provider, credentials)
                 if status == "ok":
                     print(f"  {Fore.GREEN}OK  {Style.RESET_ALL} {provider_name:12s}  {message}")
                     success_count += 1
+                    registered_providers.add(provider_name)
                 elif status == "skip":
                     print(f"  {Fore.YELLOW}SKIP{Style.RESET_ALL} {provider_name:12s}  ({message})")
                     skip_count += 1
@@ -414,11 +457,17 @@ def main():
                     print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider_name:12s}  {message}")
                     fail_count += 1
 
+            # Register placeholder secrets for CSPs not in the credential file.
+            # This prevents vault_kv_secret_v2 data sources from hard-failing
+            # during tofu plan when credentials haven't been provided yet.
+            placeholder_count = register_placeholder_secrets(registered_providers)
+
             print()
             print(
                 f"Results: {Fore.GREEN}{success_count} registered{Style.RESET_ALL}, "
                 f"{Fore.YELLOW}{skip_count} skipped{Style.RESET_ALL}, "
                 f"{Fore.RED}{fail_count} failed{Style.RESET_ALL}"
+                + (f", {Fore.CYAN}{placeholder_count} placeholders{Style.RESET_ALL}" if placeholder_count > 0 else "")
             )
 
             if fail_count > 0:
