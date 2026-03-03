@@ -28,6 +28,10 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = "~>1.76.0"
     }
+    openstack = {
+      source  = "registry.opentofu.org/terraform-provider-openstack/openstack"
+      version = "~>3.3"
+    }
     # Vault provider for OpenBao credential management
     vault = {
       source  = "hashicorp/vault"
