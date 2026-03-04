@@ -23,7 +23,7 @@ output "vpn_info" {
     }
     ibm = {
       vpn_gateway = {
-        resource_type = try(ibm_is_vpn_gateway.vpn_gw.resource_type, "")
+        resource_type = "ibm_is_vpn_gateway"
         name          = try(ibm_is_vpn_gateway.vpn_gw.name, "")
         id            = try(ibm_is_vpn_gateway.vpn_gw.id, "")
         public_ip_1   = try(ibm_is_vpn_gateway.vpn_gw.public_ip_address, "")
@@ -31,7 +31,7 @@ output "vpn_info" {
       }
       vpn_connections = [
         for conn in ibm_is_vpn_gateway_connection.to_aws : {
-          resource_type      = try(conn.resource_type, "")
+          resource_type      = "ibm_is_vpn_gateway_connection"
           name               = try(conn.name, "")
           id                 = try(conn.id, "")
           crn                = try(conn.crn, "")
@@ -47,7 +47,7 @@ output "vpn_info" {
           ]
           tunnels = [
             for tunnel in conn.tunnels : {
-              resource_type = try(tunnel.resource_type, "")
+              resource_type = "ibm_is_vpn_gateway_connection_tunnel"
               address       = try(tunnel.address, "")
             }
           ]

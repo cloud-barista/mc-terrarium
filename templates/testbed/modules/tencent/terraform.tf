@@ -6,7 +6,7 @@ terraform {
     # Tencent Cloud provider
     tencentcloud = {
       source  = "tencentcloudstack/tencentcloud"
-      version = "~>1.81.173"
+      version = "~>1.82.0"
     }
   }
 }

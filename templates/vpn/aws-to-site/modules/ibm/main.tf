@@ -111,7 +111,15 @@ locals {
 # Set route separately to avoid RoutingTable locking issue
 
 # First VPN route
+#
+# [Note] Explicit depends_on for all VPN connections ensures proper destroy ordering.
+# IBM Cloud API rejects VPN connection deletion while ANY route to the same destination exists.
+# Since all routes chain through depends_on (route_4 -> route_3 -> route_2 -> route_1),
+# making route_1 depend on all connections forces the destroy order:
+#   routes (4 -> 3 -> 2 -> 1) first, then all connections.
 resource "ibm_is_vpc_routing_table_route" "vpn_route_1" {
+
+  depends_on = [ibm_is_vpn_gateway_connection.to_aws]
 
   name          = "${var.name_prefix}-to-aws-1"
   vpc           = var.vpc_id

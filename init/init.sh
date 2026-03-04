@@ -115,7 +115,7 @@ START_TIME=$(date +%s)
 
 echo
 echo "Running the initialization..."
-uv run register-credentials.py "$@"
+uv run init.py "$@"
 
 # Elapsed time
 END_TIME=$(date +%s)

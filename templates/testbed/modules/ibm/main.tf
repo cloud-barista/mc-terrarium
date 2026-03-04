@@ -3,12 +3,18 @@ resource "ibm_is_vpc" "main" {
   name = "${var.terrarium_id}-vpc"
 }
 
-# Add address prefix to VPC, 
+locals {
+  # Derive a /24 subnet CIDR from the vpc_cidr
+  # e.g., "10.4.0.0/16" -> "10.4.0.0/24"
+  subnet_cidr = cidrsubnet(var.vpc_cidr, 24 - tonumber(split("/", var.vpc_cidr)[1]), 0)
+}
+
+# Address prefix and subnet share the same CIDR (1:1 policy, aligned with cb-spider)
 resource "ibm_is_vpc_address_prefix" "main" {
   name = "${var.terrarium_id}-addr-prefix"
   vpc  = ibm_is_vpc.main.id
   zone = "au-syd-1" # Sydney, Australia (Zones: au-syd-1, au-syd-2, au-syd-3)
-  cidr = "10.4.0.0/16"
+  cidr = local.subnet_cidr
 }
 
 resource "ibm_is_subnet" "main" {
@@ -17,7 +23,7 @@ resource "ibm_is_subnet" "main" {
   name            = "${var.terrarium_id}-subnet"
   vpc             = ibm_is_vpc.main.id
   zone            = ibm_is_vpc_address_prefix.main.zone
-  ipv4_cidr_block = "10.4.1.0/24"
+  ipv4_cidr_block = local.subnet_cidr
 }
 
 # Security group

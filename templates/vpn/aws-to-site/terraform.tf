@@ -31,12 +31,17 @@ terraform {
     # Tencent Cloud provider
     tencentcloud = {
       source  = "tencentcloudstack/tencentcloud"
-      version = "~>1.81.173"
+      version = "~>1.82.0"
     }
     # IBM Cloud provider
     ibm = {
       source  = "ibm-cloud/ibm"
       version = "~>1.76.0"
+    }
+    # OpenStack provider (DCS)
+    openstack = {
+      source  = "registry.opentofu.org/terraform-provider-openstack/openstack"
+      version = "~>3.3"
     }
     # Vault provider for OpenBao credential management
     vault = {

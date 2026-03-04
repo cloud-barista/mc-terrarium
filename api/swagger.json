@@ -309,6 +309,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "custom request ID",
                         "name": "x-request-id",
@@ -793,6 +800,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -1281,6 +1295,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -1778,6 +1799,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2202,6 +2230,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2324,6 +2359,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -2751,6 +2793,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2869,6 +2918,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -3336,6 +3392,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -3810,6 +3873,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -4231,6 +4301,13 @@
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {

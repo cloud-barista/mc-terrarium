@@ -507,6 +507,7 @@ func CreateSqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
+// @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
@@ -552,6 +553,22 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+
+	// Refresh the state to sync with the current CSP status (default: true)
+	refreshParam := strings.ToLower(c.QueryParam("refresh"))
+	if refreshParam != "" && refreshParam != "true" && refreshParam != "false" {
+		err := fmt.Errorf("invalid refresh value (%s), allowed values: true, false", refreshParam)
+		log.Warn().Msg(err.Error())
+		res := model.Response{Success: false, Message: err.Error()}
+		return c.JSON(http.StatusBadRequest, res)
+	}
+	if refreshParam != "false" {
+		log.Info().Msgf("Refreshing state for terrarium (trId: %s) to sync with CSP", trId)
+		_, err := terrarium.Refresh(trId, reqId)
+		if err != nil {
+			log.Warn().Err(err).Msg("Failed to refresh state, proceeding with cached state")
+		}
+	}
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information

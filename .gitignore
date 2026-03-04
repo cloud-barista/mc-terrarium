@@ -41,7 +41,7 @@ terraform.tfvars.json
 project-gcp.txt
 *.pem
 kubeconfig
-!register-credentials.py
+!init.py
 
 # Sensitive data
 .env

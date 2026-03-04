@@ -700,6 +700,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: custom request ID
         in: header
         name: x-request-id
@@ -1029,6 +1034,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: custom request ID
         in: header
         name: x-request-id
@@ -1359,6 +1369,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: custom request ID
         in: header
         name: x-request-id
@@ -1692,6 +1707,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -1939,6 +1959,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -2060,6 +2085,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -2307,6 +2337,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -2427,6 +2462,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: custom request ID
         in: header
         name: x-request-id
@@ -2745,6 +2785,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -3064,6 +3109,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
@@ -3311,6 +3361,11 @@ paths:
         in: query
         name: detail
         type: string
+      - default: true
+        description: Refresh the state before getting the info
+        in: query
+        name: refresh
+        type: boolean
       - description: Custom request ID
         in: header
         name: x-request-id
