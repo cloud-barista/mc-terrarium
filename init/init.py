@@ -9,11 +9,11 @@ Designed for compatibility with cb-tumblebug's credential format,
 enabling unified Cloud-Barista credential management.
 
 Usage:
-  uv run register-credentials.py                                    # Full init (interactive)
-  uv run register-credentials.py -y                                 # Non-interactive
-  uv run register-credentials.py --credentials-only                 # Credential import only
-  uv run register-credentials.py --openbao-only                     # OpenBao init/unseal only
-  uv run register-credentials.py --key-file ~/.cloud-barista/.tmp_enc_key
+  uv run init.py                                    # Full init (interactive)
+  uv run init.py -y                                 # Non-interactive
+  uv run init.py --credentials-only                 # Credential import only
+  uv run init.py --openbao-only                     # OpenBao init/unseal only
+  uv run init.py --key-file ~/.cloud-barista/.tmp_enc_key
 """
 
 import argparse

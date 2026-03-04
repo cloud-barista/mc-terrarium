@@ -61,7 +61,7 @@ bash init/init.sh
 
 > [!NOTE]
 > **Placeholder secrets**: For any CSP defined in the key mapping but not found in your credential file,
-> `register-credentials.py` automatically creates a placeholder secret with empty string values.
+> `init.py` automatically creates a placeholder secret with empty string values.
 > This ensures `vault_kv_secret_v2` data sources do not hard-fail during `tofu plan`/`apply`,
 > allowing multi-CSP templates (e.g., testbed, VPN) to initialize without requiring all CSP credentials upfront.
 > Already-existing secrets in OpenBao are never overwritten by placeholders.
@@ -74,7 +74,7 @@ template.credentials.yaml   (from cb-tumblebug)
 ~/.cloud-barista/credentials.yaml
         ↓ encCredential.sh (AES-256-CBC)
 ~/.cloud-barista/credentials.yaml.enc
-        ↓ init/init.sh → register-credentials.py
+        ↓ init/init.sh → init.py
 OpenBao KV v2 (secret/csp/aws, secret/csp/gcp, ...)
         ↓ vault provider in OpenTofu
 Templates / Examples read credentials at runtime
@@ -84,10 +84,10 @@ Templates / Examples read credentials at runtime
 
 - **Algorithm**: AES-256-CBC with PBKDF2 (via `openssl enc`)
 - **Key Management**: Encryption key is stored at `~/.cloud-barista/.tmp_enc_key` (auto-generated if not provided)
-- **Decryption**: `register-credentials.py` decrypts in-memory before registering to OpenBao
+- **Decryption**: `init.py` decrypts in-memory before registering to OpenBao
 
 ## Reference
 
 - [CB-Tumblebug init/ directory](https://github.com/cloud-barista/cb-tumblebug/tree/main/init) — credential template, encryption/decryption scripts
-- [init/register-credentials.py](register-credentials.py) — decrypts and registers credentials to OpenBao
+- [init/init.py](init.py) — decrypts and registers credentials to OpenBao
 - [init/init.sh](init.sh) — orchestrates OpenBao init, unseal, and credential registration
