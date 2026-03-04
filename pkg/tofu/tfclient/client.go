@@ -451,6 +451,13 @@ func (c *Client) SetRefresh(refresh bool) *Client {
 	return c
 }
 
+// RefreshOnly sets the -refresh-only flag (used with apply command).
+// This updates state and recomputes outputs without modifying infrastructure.
+func (c *Client) RefreshOnly() *Client {
+	c.args = append(c.args, "-refresh-only")
+	return c
+}
+
 // Compact sets the compressed warning output format.
 func (c *Client) Compact() *Client {
 	c.args = append(c.args, "-compact-warnings")

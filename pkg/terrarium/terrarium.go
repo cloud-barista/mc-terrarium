@@ -604,7 +604,10 @@ func State(trId, reqId, subcommand string, args ...string) (string, error) {
 	return ret, nil
 }
 
-// Refresh refreshes the state file
+// Refresh refreshes the state and recomputes outputs without modifying infrastructure.
+// Uses 'tofu apply -refresh-only -auto-approve' instead of 'tofu refresh'
+// because 'tofu refresh' only updates resource attributes in state
+// but does NOT recompute output values.
 func Refresh(trId, reqId string) (string, error) {
 	// Get working directory
 	workingDir, err := GetTerrariumEnvPath(trId)
@@ -613,11 +616,12 @@ func Refresh(trId, reqId string) (string, error) {
 		return "", err
 	}
 
-	// Execute tofu command: refresh
+	// Execute tofu command: apply -refresh-only -auto-approve
+	// This refreshes state from CSPs AND recomputes output values
 	tfcli := tfclient.NewClient(trId, reqId)
 	tfcli.SetChdir(workingDir)
 
-	ret, err := tfcli.Refresh().Exec()
+	ret, err := tfcli.Apply().RefreshOnly().Auto().Exec()
 	if err != nil {
 		log.Error().Err(err).Msg("failed to execute tofu command")
 		return "", err

@@ -61,6 +61,7 @@ func CreateAwsToSiteVpn(c echo.Context) error {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
+// @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"

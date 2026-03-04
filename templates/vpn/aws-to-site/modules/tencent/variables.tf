@@ -18,3 +18,9 @@ variable "aws_vpc_cidr_block" {
   type        = string
   description = "CIDR block of the AWS VPC"
 }
+
+variable "tencent_bgp_asn" {
+  type        = number
+  description = "BGP ASN for the Tencent Cloud side (used in AWS Customer Gateway)"
+  default     = 65000
+}

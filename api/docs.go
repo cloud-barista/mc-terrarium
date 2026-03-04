@@ -315,6 +315,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "custom request ID",
                         "name": "x-request-id",
@@ -799,6 +806,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -1287,6 +1301,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -1784,6 +1805,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2208,6 +2236,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2330,6 +2365,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -2757,6 +2799,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -2875,6 +2924,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -3342,6 +3398,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {
@@ -3816,6 +3879,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
@@ -4237,6 +4307,13 @@ const docTemplate = `{
                         "default": "refined",
                         "description": "Resource info by detail (refined, raw)",
                         "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Refresh the state before getting the info",
+                        "name": "refresh",
                         "in": "query"
                     },
                     {

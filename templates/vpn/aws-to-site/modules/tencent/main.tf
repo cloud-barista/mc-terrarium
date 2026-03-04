@@ -6,7 +6,7 @@ resource "aws_customer_gateway" "tencent_gw" {
   tags = {
     Name = "${var.name_prefix}-tencent-side-gw-${count.index + 1}"
   }
-  # bgp_asn    = var.vpn_config.target_csp.tencent.bgp_asn
+  bgp_asn    = var.tencent_bgp_asn # Required by AWS API even when using static routing (static_routes_only = true)
   ip_address = tencentcloud_vpn_gateway.vpn_gw[count.index].public_ip_address
   type       = "ipsec.1"
 }
