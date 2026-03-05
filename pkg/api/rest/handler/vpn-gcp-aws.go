@@ -612,35 +612,8 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Remove the state of the imported resources
-	// global option to set working dir: -chdir=/home/ubuntu/dev/cloud-barista/mc-terrarium/.terrarium/{trId}/vpn/gcp-aws
-	// subcommand: state rm
-	ret, err := tofu.ExecuteCommand(trId, reqId, "-chdir="+workingDir, "state", "rm", "aws_route_table.imported_route_table")
-	if err != nil {
-		err2 := fmt.Errorf("failed to remove the state of the imported resources")
-		log.Error().Err(err).Msg(err2.Error()) // error
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-			Detail:  ret,
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
-	// Remove the imported resources to prevent destroying them
-	err = tfutil.TruncateFile(workingDir + "/imports.tf")
-	if err != nil {
-		err2 := fmt.Errorf("failed to truncate imports.tf")
-		log.Error().Err(err).Msg(err2.Error()) // error
-		res := model.Response{
-			Success: false,
-			Message: err2.Error(),
-		}
-		return c.JSON(http.StatusInternalServerError, res)
-	}
-
 	// Excute the destroy command
-	ret, err = terrarium.Destroy(trId, reqId)
+	ret, err := terrarium.Destroy(trId, reqId)
 	if err != nil {
 		log.Error().Err(err).Msg("") // error
 		res := model.Response{

@@ -1,6 +1,6 @@
-# Site-to-site VPN test results using Terrarium
+# AWS-to-site VPN test results using Terrarium
 
-This document shares the site-to-site VPN test results using Terrarium.
+This document shares the AWS to site VPN test results using Terrarium.
 
 ## Test environment
 

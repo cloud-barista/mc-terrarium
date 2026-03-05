@@ -6,6 +6,17 @@ resource "aws_vpn_gateway" "vpn_gw" {
   vpc_id = var.aws-vpc-id
 }
 
+# Get Route Table associated with the subnet
+data "aws_route_table" "selected" {
+  subnet_id = var.aws-subnet-id
+}
+
+# Enable Route Propagation
+resource "aws_vpn_gateway_route_propagation" "main" {
+  vpn_gateway_id = aws_vpn_gateway.vpn_gw.id
+  route_table_id = data.aws_route_table.selected.id
+}
+
 ########################################################
 # From here, GCP's resources are required.
 ########################################################
