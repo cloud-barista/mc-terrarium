@@ -354,7 +354,7 @@ func destroySiteToSiteVpn(c echo.Context) (model.Response, error) {
 		return emptyRes, err
 	}
 
-	trInfo, exists, err := terrarium.GetInfo(trId)
+	_, exists, err := terrarium.GetInfo(trId)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return emptyRes, err
@@ -367,37 +367,6 @@ func destroySiteToSiteVpn(c echo.Context) (model.Response, error) {
 
 	// Get the request ID
 	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
-
-	if Contains(trInfo.Providers, "aws") {
-		// Add a deferred function to refresh state if an error occurs
-		defer func() {
-			log.Info().Msg("recover imports.tf and refresh state for the next destroy request")
-
-			// Recover the imports.tf
-			recoverErr := terrarium.RecoverImportTf(trId)
-			if recoverErr != nil {
-				log.Error().Err(recoverErr).Msg("Failed to recover imports.tf")
-			} else {
-				log.Info().Msg("Successfully recovered imports.tf")
-			}
-
-			// Refresh the state
-			_, refreshErr := terrarium.Refresh(trId, reqId)
-			if refreshErr != nil {
-				log.Error().Err(refreshErr).Msg("Failed to refresh state after error")
-			} else {
-				log.Info().Msg("Successfully refreshed state after error")
-			}
-		}()
-
-		// Detach the imported route table for preventing to destroy the imported resource
-		err = terrarium.DetachImportedResource(trId, reqId, "aws_route_table.imported_route_table")
-		if err != nil {
-			err2 := fmt.Errorf("failed to remove the imported route table")
-			log.Error().Err(err).Msg(err2.Error())
-			return emptyRes, err
-		}
-	}
 
 	// Execute the destroy command
 	var ret string

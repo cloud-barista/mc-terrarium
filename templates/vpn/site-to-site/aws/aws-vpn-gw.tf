@@ -33,3 +33,14 @@ data "aws_subnet" "details" {
 locals {
   aws_subnet_cidrs = [for subnet in data.aws_subnet.details : subnet.cidr_block]
 }
+
+# Get Route Table associated with the subnet
+data "aws_route_table" "selected" {
+  subnet_id = var.vpn_config.aws.subnet_id
+}
+
+# Enable Route Propagation
+resource "aws_vpn_gateway_route_propagation" "main" {
+  vpn_gateway_id = aws_vpn_gateway.vpn_gw.id
+  route_table_id = data.aws_route_table.selected.id
+}
