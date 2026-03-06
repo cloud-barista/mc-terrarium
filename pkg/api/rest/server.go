@@ -32,7 +32,6 @@ import (
 	"github.com/cloud-barista/mc-terrarium/pkg/config"
 	"github.com/cloud-barista/mc-terrarium/pkg/readyz"
 	"github.com/rs/zerolog/log"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/handler"
 	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/middlewares"
@@ -131,10 +130,11 @@ func RunServer(port string) {
 	apiUser := config.Terrarium.API.Username
 	apiPass := config.Terrarium.API.Password
 
-	// Check if apiPass is a bcrypt hash (starts with $2a$, $2b$, or $2y$)
-	isBcryptHash := strings.HasPrefix(apiPass, "$2a$") ||
-		strings.HasPrefix(apiPass, "$2b$") ||
-		strings.HasPrefix(apiPass, "$2y$")
+	// [bcrypt] To re-enable bcrypt password hashing:
+	// 1. Import "golang.org/x/crypto/bcrypt"
+	// 2. Detect hash: isBcryptHash := strings.HasPrefix(apiPass, "$2a$") || strings.HasPrefix(apiPass, "$2b$") || strings.HasPrefix(apiPass, "$2y$")
+	// 3. In Validator, use: bcrypt.CompareHashAndPassword([]byte(apiPass), []byte(password))
+	// 4. Generate hash: make bcrypt PASSWORD=mypassword
 
 	if enableAuth {
 		e.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
@@ -154,18 +154,9 @@ func RunServer(port string) {
 					return false, nil // Authentication failed: invalid username
 				}
 
-				// Password verification
-				if isBcryptHash {
-					// Verify password using bcrypt
-					err := bcrypt.CompareHashAndPassword([]byte(apiPass), []byte(password))
-					if err != nil {
-						return false, nil // Authentication failed: invalid password (bcrypt)
-					}
-				} else {
-					// Verify password using constant time comparison (plaintext, backward compatibility)
-					if subtle.ConstantTimeCompare([]byte(password), []byte(apiPass)) != 1 {
-						return false, nil // Authentication failed: invalid password (plaintext)
-					}
+				// Password verification using constant time comparison (plaintext)
+				if subtle.ConstantTimeCompare([]byte(password), []byte(apiPass)) != 1 {
+					return false, nil // Authentication failed: invalid password
 				}
 
 				return true, nil // Authentication successful
