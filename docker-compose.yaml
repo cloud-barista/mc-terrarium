@@ -113,7 +113,12 @@ services:
     environment:
       - BAO_ADDR=http://0.0.0.0:8200 # BAO_ADDR is for binding listerner inside container
       - SKIP_SETCAP=true
-    command: server -config=/openbao/config/openbao-config.hcl
+    # Fix bind-mount ownership (host UID 1000 → container openbao UID 100)
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        chown openbao:openbao /openbao/data
+        exec docker-entrypoint.sh server -config=/openbao/config/openbao-config.hcl
     volumes:
       - ./container-volume/openbao-data:/openbao/data
       - ./conf/openbao-config.hcl:/openbao/config/openbao-config.hcl:ro
