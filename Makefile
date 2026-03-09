@@ -122,9 +122,8 @@ compose: swag prepare-volumes ## Build and start all services (auto init/unseal 
 	@if [ ! -f .env ] || ! grep -q '^VAULT_TOKEN=.\+' .env 2>/dev/null; then \
 		echo "VAULT_TOKEN not found — running first-time OpenBao initialization..."; \
 		bash init/init-openbao.sh; \
-	else \
-		$(MAKE) unseal; \
 	fi
+	@$(MAKE) unseal
 	@echo "Starting all services..."
 	@docker compose up -d
 	@echo ""
@@ -136,9 +135,8 @@ compose-up: prepare-volumes ## Start all services (auto init/unseal OpenBao)
 	@if [ ! -f .env ] || ! grep -q '^VAULT_TOKEN=.\+' .env 2>/dev/null; then \
 		echo "VAULT_TOKEN not found — running first-time OpenBao initialization..."; \
 		bash init/init-openbao.sh; \
-	else \
-		$(MAKE) unseal; \
 	fi
+	@$(MAKE) unseal
 	@echo "Starting all services..."
 	@docker compose up -d
 

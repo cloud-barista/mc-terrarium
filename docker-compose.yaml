@@ -111,13 +111,13 @@ services:
 
     # ── Persistent mode (active) ─────────────────────────────────────
     environment:
-      - BAO_ADDR=http://0.0.0.0:8200 # BAO_ADDR is for binding listerner inside container
+      - BAO_ADDR=http://0.0.0.0:8200 # BAO_ADDR is for binding listener inside container
       - SKIP_SETCAP=true
     # Fix bind-mount ownership (host UID 1000 → container openbao UID 100)
     entrypoint: ["sh", "-c"]
     command:
       - |
-        chown openbao:openbao /openbao/data
+        chown -R openbao:openbao /openbao/data || { echo "ERROR: chown failed on /openbao/data"; exit 1; }
         exec docker-entrypoint.sh server -config=/openbao/config/openbao-config.hcl
     volumes:
       - ./container-volume/openbao-data:/openbao/data
