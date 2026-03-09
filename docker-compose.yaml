@@ -21,11 +21,11 @@ networks:
 services:
   # ── MC-Terrarium ────────────────────────────────────────────────────
   mc-terrarium:
-    image: cloudbaristaorg/mc-terrarium:0.0.22
+    image: cloudbaristaorg/mc-terrarium:0.1.0
     container_name: mc-terrarium
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     networks:
       - internal_network # Inter-service communication (OpenBao access)
       - external_network # CSP API calls (requires internet access)

@@ -15,13 +15,13 @@ import (
 )
 
 /*
- * [API - Multi-Cloud Testbed] OpenTofu Actions (for fine-grained contorl)
+ * [API - Multi-Cloud Testbed] OpenTofu Actions (for fine-grained control)
  */
 
 // InitTestbed godoc
 // @Summary Init testbed
 // @Description Init testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
@@ -167,7 +167,7 @@ func initTestbed(c echo.Context) (model.Response, error) {
 // PlanTestbed godoc
 // @Summary Plan the testbed
 // @Description Plan the testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
@@ -225,7 +225,7 @@ func planTestbed(c echo.Context) (model.Response, error) {
 // ApplyTestbed godoc
 // @Summary Apply the testbed
 // @Description Apply the testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
@@ -283,7 +283,7 @@ func applyTestbed(c echo.Context) (model.Response, error) {
 // DestroyTestbed godoc
 // @Summary Destroy the testbed
 // @Description Destroy the testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
@@ -341,7 +341,7 @@ func destroyTestbed(c echo.Context) (model.Response, error) {
 // OutputTestbed godoc
 // @Summary Output the testbed
 // @Description Output the testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
@@ -586,7 +586,7 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 // EmptyOutTestbed godoc
 // @Summary EmptyOut the testbed
 // @Description EmptyOut the testbed
-// @Tags [Testbed] OpenTofu Actions (for fine-grained contorl)
+// @Tags [Testbed] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)

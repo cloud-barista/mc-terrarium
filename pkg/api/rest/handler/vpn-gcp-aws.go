@@ -36,7 +36,7 @@ import (
 // InitEnvForGcpAwsVpn godoc
 // @Summary Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
 // @Description Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -135,7 +135,7 @@ func InitEnvForGcpAwsVpn(c echo.Context) error {
 // ClearGcpAwsVpn godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -196,7 +196,7 @@ func ClearGcpAwsVpn(c echo.Context) error {
 // GetResourceInfoOfGcpAwsVpn godoc
 // @Summary Get resource info to configure GCP to AWS VPN tunnels
 // @Description Get resource info to configure GCP to AWS VPN tunnels
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -378,7 +378,7 @@ func GetResourceInfoOfGcpAwsVpn(c echo.Context) error {
 // CreateInfracodeOfGcpAwsVpn godoc
 // @Summary Create the infracode to configure GCP to AWS VPN tunnels
 // @Description Create the infracode to configure GCP to AWS VPN tunnels
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -465,7 +465,7 @@ func CreateInfracodeOfGcpAwsVpn(c echo.Context) error {
 // CheckInfracodeOfGcpAwsVpn godoc
 // @Summary Check and show changes by the current infracode to configure GCP to AWS VPN tunnels
 // @Description Check and show changes by the current infracode to configure GCP to AWS VPN tunnels
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -518,7 +518,7 @@ func CheckInfracodeOfGcpAwsVpn(c echo.Context) error {
 // CreateGcpAwsVpn godoc
 // @Summary Create network resources for VPN tunnel in GCP and AWS
 // @Description Create network resources for VPN tunnel in GCP and AWS
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -571,7 +571,7 @@ func CreateGcpAwsVpn(c echo.Context) error {
 // DestroyGcpAwsVpn godoc
 // @Summary Destroy network resources that were used to configure GCP as an AWS VPN tunnel
 // @Description Destroy network resources that were used to configure GCP as an AWS VPN tunnel
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -639,7 +639,7 @@ func DestroyGcpAwsVpn(c echo.Context) error {
 // GetRequestStatusOfGcpAwsVpn godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [VPN] GCP to AWS VPN tunnel configuration
+// @Tags [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)

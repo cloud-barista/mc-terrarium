@@ -15,13 +15,13 @@ import (
 )
 
 /*
- * [API - AWS to Site VPN] OpenTofu Actions (for fine-grained contorl)
+ * [API - AWS to Site VPN] OpenTofu Actions (for fine-grained control)
  */
 
 // InitAwsToSiteVpn godoc
 // @Summary Init AWS to site VPN
 // @Description Init AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -150,7 +150,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // PlanAwsToSiteVpn godoc
 // @Summary Plan AWS to site VPN
 // @Description Plan AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -208,7 +208,7 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // ApplyAwsToSiteVpn godoc
 // @Summary Apply AWS to site VPN
 // @Description Apply AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -266,7 +266,7 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // DestroyAwsToSiteVpn godoc
 // @Summary Destroy AWS to site VPN
 // @Description Destroy AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -359,7 +359,7 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // OutputAwsToSiteVpn godoc
 // @Summary Output AWS to site VPN
 // @Description Output AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -657,7 +657,7 @@ func mergeResourceInfo(existing, new map[string]any) {
 // EmptyOutAwsToSiteVpn godoc
 // @Summary EmptyOut AWS to site VPN
 // @Description EmptyOut AWS to site VPN
-// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained contorl)
+// @Tags [AWS to site VPN] OpenTofu Actions (for fine-grained control)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)

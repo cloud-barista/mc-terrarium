@@ -79,11 +79,11 @@ func init() {
 	lkvstore.Init(lkvstore.Config{
 		DbFilePath: dbFilePath,
 	})
-	
+
 }
 
 // @title Multi-Cloud Terrarium REST API
-// @version latest
+// @version v0.1.0
 // @description Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment to enrich multi-cloud infrastructure.
 
 // @contact.name API Support
@@ -96,25 +96,65 @@ func init() {
 // @BasePath /terrarium
 
 // @securityDefinitions.basic BasicAuth
+
+// @tag.name [System] Utility
+// @tag.description System utility and health check operations
+
+// @tag.name [Terrarium] An environment to enrich the multi-cloud infrastructure
+// @tag.description Terrarium workspace creation, management, and lifecycle operations
+
+// @tag.name [Testbed] Resource Operations
+// @tag.description Multi-cloud testbed infrastructure provisioning and management
+
+// @tag.name [Testbed] OpenTofu Actions (for fine-grained control)
+// @tag.description Fine-grained OpenTofu operations for testbed (init, plan, apply, destroy, output)
+
+// @tag.name [AWS to site VPN] Resource Operations
+// @tag.description AWS to site VPN connection provisioning and management
+
+// @tag.name [AWS to site VPN] OpenTofu Actions (for fine-grained control)
+// @tag.description Fine-grained OpenTofu operations for AWS to site VPN (init, plan, apply, destroy, output)
+
+// @tag.name [Site-to-Site VPN] Resource Operations (Under development - Paused)
+// @tag.description Multi-cloud site-to-site VPN connection operations (Development paused)
+
+// @tag.name [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
+// @tag.description Fine-grained OpenTofu operations for site-to-site VPN (Development paused)
+
+// @tag.name [VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)
+// @tag.description GCP to AWS VPN tunnel setup and management (Proof of Concept)
+
+// @tag.name [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
+// @tag.description GCP to Azure VPN tunnel setup and management (Proof of Concept)
+
+// @tag.name [Message Broker] Operations (PoC - Not officially supported)
+// @tag.description Message broker infrastructure operations (Proof of Concept)
+
+// @tag.name [Object Storage] Operations (PoC - Not officially supported)
+// @tag.description Object storage infrastructure operations (Proof of Concept)
+
+// @tag.name [SQL Database] Operations (PoC - Not officially supported)
+// @tag.description SQL database infrastructure operations (Proof of Concept)
+
 func main() {
 
 	log.Info().Msg("preparing to run mc-terrarium server...")
 
-		// Load the state from the file back into the key-value store
-		if err := lkvstore.LoadLkvStore(); err != nil {
-			log.Warn().Msg("The db file may not exist when first run.")
+	// Load the state from the file back into the key-value store
+	if err := lkvstore.LoadLkvStore(); err != nil {
+		log.Warn().Msg("The db file may not exist when first run.")
+	} else {
+		log.Info().Msg("Successfully loaded the lkvstore from file.")
+	}
+
+	defer func() {
+		// Save the current state of the key-value store to file
+		if err := lkvstore.SaveLkvStore(); err != nil {
+			log.Error().Msgf("Error saving: %v\n", err)
 		} else {
-			log.Info().Msg("Successfully loaded the lkvstore from file.")
+			log.Info().Msg("Successfully saved the lkvstore to file.")
 		}
-	
-		defer func() {
-			// Save the current state of the key-value store to file
-			if err := lkvstore.SaveLkvStore(); err != nil {
-				log.Error().Msgf("Error saving: %v\n", err)
-			} else {
-				log.Info().Msg("Successfully saved the lkvstore to file.")
-			}
-		}()
+	}()
 
 	// Set the default port number "8055" for the REST API server to listen on
 	port := flag.String("port", "8055", "port number for the restapiserver to listen to")

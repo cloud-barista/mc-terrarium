@@ -467,7 +467,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Multi-Cloud Terrarium REST API
-  version: latest
+  version: v0.1.0
 paths:
   /httpVersion:
     get:
@@ -683,7 +683,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy Message Broker
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
     get:
       consumes:
       - application/json
@@ -730,7 +730,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get resource info of Message Broker
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -767,7 +767,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create Message Broker
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
   /tr/{trId}/message-broker/env:
     delete:
       consumes:
@@ -812,7 +812,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Clear the entire directory and configuration files
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -858,7 +858,7 @@ paths:
       summary: Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ
         Broker (ActiveMQ))
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
   /tr/{trId}/message-broker/infracode:
     post:
       consumes:
@@ -902,7 +902,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create the infracode for Message Broker
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
   /tr/{trId}/message-broker/plan:
     post:
       consumes:
@@ -940,7 +940,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check and show changes by the current infracode
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
   /tr/{trId}/message-broker/request/{requestId}:
     get:
       consumes:
@@ -979,7 +979,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check the status of a specific request by its ID
       tags:
-      - '[Message Broker] Operations'
+      - '[Message Broker] Operations (PoC - Not officially supported)'
   /tr/{trId}/object-storage:
     delete:
       consumes:
@@ -1017,7 +1017,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy Object Storage
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
     get:
       consumes:
       - application/json
@@ -1064,7 +1064,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get resource info of Object Storage
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -1101,7 +1101,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create Object Storage
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
   /tr/{trId}/object-storage/env:
     delete:
       consumes:
@@ -1146,7 +1146,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Clear the entire directory and configuration files
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -1193,7 +1193,7 @@ paths:
       summary: Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3
         Bucket, Azure Blob Storage)
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
   /tr/{trId}/object-storage/infracode:
     post:
       consumes:
@@ -1237,7 +1237,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create the infracode for Object Storage
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
   /tr/{trId}/object-storage/plan:
     post:
       consumes:
@@ -1275,7 +1275,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check and show changes by the current infracode
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
   /tr/{trId}/object-storage/request/{requestId}:
     get:
       consumes:
@@ -1314,7 +1314,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check the status of a specific request by its ID
       tags:
-      - '[Object Storage] Operations'
+      - '[Object Storage] Operations (PoC - Not officially supported)'
   /tr/{trId}/sql-db:
     delete:
       consumes:
@@ -1352,7 +1352,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy SQL database
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
     get:
       consumes:
       - application/json
@@ -1399,7 +1399,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get resource info of SQL database
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -1436,7 +1436,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create SQL database
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
   /tr/{trId}/sql-db/env:
     delete:
       consumes:
@@ -1481,7 +1481,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Clear the entire directory and configuration files
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -1528,7 +1528,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Initialize a multi-cloud terrarium for SQL database
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
   /tr/{trId}/sql-db/infracode:
     post:
       consumes:
@@ -1572,7 +1572,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create the infracode for SQL database
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
   /tr/{trId}/sql-db/plan:
     post:
       consumes:
@@ -1610,7 +1610,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check and show changes by the current infracode
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
   /tr/{trId}/sql-db/request/{requestId}:
     get:
       consumes:
@@ -1649,7 +1649,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check the status of a specific request by its ID
       tags:
-      - '[SQL Database] Operations'
+      - '[SQL Database] Operations (PoC - Not officially supported)'
   /tr/{trId}/testbed:
     delete:
       consumes:
@@ -1818,7 +1818,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Apply the testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/testbed/actions/destroy:
     delete:
       consumes:
@@ -1856,7 +1856,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy the testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/testbed/actions/emptyout:
     delete:
       consumes:
@@ -1894,7 +1894,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: EmptyOut the testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/testbed/actions/init:
     post:
       consumes:
@@ -1938,7 +1938,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Init testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/testbed/actions/output:
     get:
       consumes:
@@ -1989,7 +1989,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Output the testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/testbed/actions/plan:
     post:
       consumes:
@@ -2027,7 +2027,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Plan the testbed
       tags:
-      - '[Testbed] OpenTofu Actions (for fine-grained contorl)'
+      - '[Testbed] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site:
     delete:
       consumes:
@@ -2196,7 +2196,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Apply AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site/actions/destroy:
     delete:
       consumes:
@@ -2234,7 +2234,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site/actions/emptyout:
     delete:
       consumes:
@@ -2272,7 +2272,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: EmptyOut AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site/actions/init:
     post:
       consumes:
@@ -2316,7 +2316,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Init AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site/actions/output:
     get:
       consumes:
@@ -2367,7 +2367,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Output AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/aws-to-site/actions/plan:
     post:
       consumes:
@@ -2405,7 +2405,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Plan AWS to site VPN
       tags:
-      - '[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)'
+      - '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
   /tr/{trId}/vpn/gcp-aws:
     delete:
       consumes:
@@ -2445,7 +2445,7 @@ paths:
       summary: Destroy network resources that were used to configure GCP as an AWS
         VPN tunnel
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
     get:
       consumes:
       - application/json
@@ -2492,7 +2492,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get resource info to configure GCP to AWS VPN tunnels
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -2529,7 +2529,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create network resources for VPN tunnel in GCP and AWS
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-aws/env:
     delete:
       consumes:
@@ -2567,7 +2567,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Clear the entire directory and configuration files
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -2604,7 +2604,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-aws/infracode:
     post:
       consumes:
@@ -2649,7 +2649,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create the infracode to configure GCP to AWS VPN tunnels
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-aws/plan:
     post:
       consumes:
@@ -2689,7 +2689,7 @@ paths:
       summary: Check and show changes by the current infracode to configure GCP to
         AWS VPN tunnels
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-aws/request/{requestId}:
     get:
       consumes:
@@ -2728,7 +2728,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check the status of a specific request by its ID
       tags:
-      - '[VPN] GCP to AWS VPN tunnel configuration'
+      - '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-azure:
     delete:
       consumes:
@@ -2768,7 +2768,7 @@ paths:
       summary: Destroy network resources that were used to configure GCP as an Azure
         VPN tunnel
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
     get:
       consumes:
       - application/json
@@ -2815,7 +2815,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get resource info to configure GCP to Azure VPN tunnels
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -2852,7 +2852,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create network resources for VPN tunnel in GCP and Azure
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-azure/env:
     delete:
       consumes:
@@ -2890,7 +2890,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Clear the entire directory and configuration files
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
     post:
       consumes:
       - application/json
@@ -2927,7 +2927,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-azure/infracode:
     post:
       consumes:
@@ -2972,7 +2972,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create the infracode to configure GCP to Azure VPN tunnels
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-azure/plan:
     post:
       consumes:
@@ -3012,7 +3012,7 @@ paths:
       summary: Check and show changes by the current infracode to configure GCP to
         Azure VPN tunnels
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/gcp-azure/request/{requestId}:
     get:
       consumes:
@@ -3051,7 +3051,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Check the status of a specific request by its ID
       tags:
-      - '[VPN] GCP to Azure VPN tunnel configuration (under development)'
+      - '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
   /tr/{trId}/vpn/site-to-site:
     delete:
       consumes:
@@ -3089,7 +3089,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Delete Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] Resource Operations'
+      - '[Site-to-Site VPN] Resource Operations (Under development - Paused)'
     get:
       consumes:
       - application/json
@@ -3139,7 +3139,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Get Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] Resource Operations'
+      - '[Site-to-Site VPN] Resource Operations (Under development - Paused)'
     post:
       consumes:
       - application/json
@@ -3182,7 +3182,7 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Create Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] Resource Operations'
+      - '[Site-to-Site VPN] Resource Operations (Under development - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/apply:
     post:
       consumes:
@@ -3220,7 +3220,8 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Apply Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/destroy:
     delete:
       consumes:
@@ -3258,7 +3259,8 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Destroy Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/emptyout:
     delete:
       consumes:
@@ -3296,7 +3298,8 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: EmptyOut Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/init:
     post:
       consumes:
@@ -3340,7 +3343,8 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Init Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/output:
     get:
       consumes:
@@ -3391,7 +3395,8 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Output Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
   /tr/{trId}/vpn/site-to-site/actions/plan:
     post:
       consumes:
@@ -3429,8 +3434,40 @@ paths:
             $ref: '#/definitions/model.Response'
       summary: Plan Site-to-Site VPN
       tags:
-      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)'
+      - '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+        - Paused)'
 securityDefinitions:
   BasicAuth:
     type: basic
 swagger: "2.0"
+tags:
+- description: System utility and health check operations
+  name: '[System] Utility'
+- description: Terrarium workspace creation, management, and lifecycle operations
+  name: '[Terrarium] An environment to enrich the multi-cloud infrastructure'
+- description: Multi-cloud testbed infrastructure provisioning and management
+  name: '[Testbed] Resource Operations'
+- description: Fine-grained OpenTofu operations for testbed (init, plan, apply, destroy,
+    output)
+  name: '[Testbed] OpenTofu Actions (for fine-grained control)'
+- description: AWS to site VPN connection provisioning and management
+  name: '[AWS to site VPN] Resource Operations'
+- description: Fine-grained OpenTofu operations for AWS to site VPN (init, plan, apply,
+    destroy, output)
+  name: '[AWS to site VPN] OpenTofu Actions (for fine-grained control)'
+- description: Multi-cloud site-to-site VPN connection operations (Development paused)
+  name: '[Site-to-Site VPN] Resource Operations (Under development - Paused)'
+- description: Fine-grained OpenTofu operations for site-to-site VPN (Development
+    paused)
+  name: '[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development
+    - Paused)'
+- description: GCP to AWS VPN tunnel setup and management (Proof of Concept)
+  name: '[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)'
+- description: GCP to Azure VPN tunnel setup and management (Proof of Concept)
+  name: '[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)'
+- description: Message broker infrastructure operations (Proof of Concept)
+  name: '[Message Broker] Operations (PoC - Not officially supported)'
+- description: Object storage infrastructure operations (Proof of Concept)
+  name: '[Object Storage] Operations (PoC - Not officially supported)'
+- description: SQL database infrastructure operations (Proof of Concept)
+  name: '[SQL Database] Operations (PoC - Not officially supported)'

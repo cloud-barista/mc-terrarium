@@ -295,7 +295,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Get resource info of Message Broker",
                 "parameters": [
@@ -364,7 +364,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create Message Broker",
                 "parameters": [
@@ -419,7 +419,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Destroy Message Broker",
                 "parameters": [
@@ -476,7 +476,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))",
                 "parameters": [
@@ -541,7 +541,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -608,7 +608,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create the infracode for Message Broker",
                 "parameters": [
@@ -674,7 +674,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check and show changes by the current infracode",
                 "parameters": [
@@ -731,7 +731,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Message Broker] Operations"
+                    "[Message Broker] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -789,7 +789,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Get resource info of Object Storage",
                 "parameters": [
@@ -858,7 +858,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create Object Storage",
                 "parameters": [
@@ -913,7 +913,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Destroy Object Storage",
                 "parameters": [
@@ -970,7 +970,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3 Bucket, Azure Blob Storage)",
                 "parameters": [
@@ -1036,7 +1036,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -1103,7 +1103,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create the infracode for Object Storage",
                 "parameters": [
@@ -1169,7 +1169,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check and show changes by the current infracode",
                 "parameters": [
@@ -1226,7 +1226,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Object Storage] Operations"
+                    "[Object Storage] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -1284,7 +1284,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Get resource info of SQL database",
                 "parameters": [
@@ -1353,7 +1353,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create SQL database",
                 "parameters": [
@@ -1408,7 +1408,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Destroy SQL database",
                 "parameters": [
@@ -1465,7 +1465,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for SQL database",
                 "parameters": [
@@ -1533,7 +1533,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -1600,7 +1600,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Create the infracode for SQL database",
                 "parameters": [
@@ -1666,7 +1666,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check and show changes by the current infracode",
                 "parameters": [
@@ -1723,7 +1723,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[SQL Database] Operations"
+                    "[SQL Database] Operations (PoC - Not officially supported)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -1975,7 +1975,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Apply the testbed",
                 "parameters": [
@@ -2032,7 +2032,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Destroy the testbed",
                 "parameters": [
@@ -2089,7 +2089,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "EmptyOut the testbed",
                 "parameters": [
@@ -2146,7 +2146,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Init testbed",
                 "parameters": [
@@ -2212,7 +2212,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Output the testbed",
                 "parameters": [
@@ -2287,7 +2287,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Testbed] OpenTofu Actions (for fine-grained contorl)"
+                    "[Testbed] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Plan the testbed",
                 "parameters": [
@@ -2538,7 +2538,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Apply AWS to site VPN",
                 "parameters": [
@@ -2595,7 +2595,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Destroy AWS to site VPN",
                 "parameters": [
@@ -2652,7 +2652,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "EmptyOut AWS to site VPN",
                 "parameters": [
@@ -2709,7 +2709,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Init AWS to site VPN",
                 "parameters": [
@@ -2775,7 +2775,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Output AWS to site VPN",
                 "parameters": [
@@ -2850,7 +2850,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[AWS to site VPN] OpenTofu Actions (for fine-grained contorl)"
+                    "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
                 ],
                 "summary": "Plan AWS to site VPN",
                 "parameters": [
@@ -2907,7 +2907,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Get resource info to configure GCP to AWS VPN tunnels",
                 "parameters": [
@@ -2976,7 +2976,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Create network resources for VPN tunnel in GCP and AWS",
                 "parameters": [
@@ -3031,7 +3031,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Destroy network resources that were used to configure GCP as an AWS VPN tunnel",
                 "parameters": [
@@ -3088,7 +3088,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for GCP to AWS VPN tunnel",
                 "parameters": [
@@ -3143,7 +3143,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -3200,7 +3200,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Create the infracode to configure GCP to AWS VPN tunnels",
                 "parameters": [
@@ -3266,7 +3266,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Check and show changes by the current infracode to configure GCP to AWS VPN tunnels",
                 "parameters": [
@@ -3323,7 +3323,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to AWS VPN tunnel configuration"
+                    "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -3381,7 +3381,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Get resource info to configure GCP to Azure VPN tunnels",
                 "parameters": [
@@ -3450,7 +3450,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Create network resources for VPN tunnel in GCP and Azure",
                 "parameters": [
@@ -3505,7 +3505,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Destroy network resources that were used to configure GCP as an Azure VPN tunnel",
                 "parameters": [
@@ -3562,7 +3562,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel",
                 "parameters": [
@@ -3617,7 +3617,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Clear the entire directory and configuration files",
                 "parameters": [
@@ -3674,7 +3674,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Create the infracode to configure GCP to Azure VPN tunnels",
                 "parameters": [
@@ -3740,7 +3740,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Check and show changes by the current infracode to configure GCP to Azure VPN tunnels",
                 "parameters": [
@@ -3797,7 +3797,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[VPN] GCP to Azure VPN tunnel configuration (under development)"
+                    "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
                 ],
                 "summary": "Check the status of a specific request by its ID",
                 "parameters": [
@@ -3855,7 +3855,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] Resource Operations"
+                    "[Site-to-Site VPN] Resource Operations (Under development - Paused)"
                 ],
                 "summary": "Get Site-to-Site VPN",
                 "parameters": [
@@ -3928,7 +3928,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] Resource Operations"
+                    "[Site-to-Site VPN] Resource Operations (Under development - Paused)"
                 ],
                 "summary": "Create Site-to-Site VPN",
                 "parameters": [
@@ -3992,7 +3992,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] Resource Operations"
+                    "[Site-to-Site VPN] Resource Operations (Under development - Paused)"
                 ],
                 "summary": "Delete Site-to-Site VPN",
                 "parameters": [
@@ -4049,7 +4049,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "Apply Site-to-Site VPN",
                 "parameters": [
@@ -4106,7 +4106,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "Destroy Site-to-Site VPN",
                 "parameters": [
@@ -4163,7 +4163,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "EmptyOut Site-to-Site VPN",
                 "parameters": [
@@ -4220,7 +4220,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "Init Site-to-Site VPN",
                 "parameters": [
@@ -4286,7 +4286,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "Output Site-to-Site VPN",
                 "parameters": [
@@ -4361,7 +4361,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control)"
+                    "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
                 ],
                 "summary": "Plan Site-to-Site VPN",
                 "parameters": [
@@ -5051,12 +5051,66 @@ const docTemplate = `{
         "BasicAuth": {
             "type": "basic"
         }
-    }
+    },
+    "tags": [
+        {
+            "description": "System utility and health check operations",
+            "name": "[System] Utility"
+        },
+        {
+            "description": "Terrarium workspace creation, management, and lifecycle operations",
+            "name": "[Terrarium] An environment to enrich the multi-cloud infrastructure"
+        },
+        {
+            "description": "Multi-cloud testbed infrastructure provisioning and management",
+            "name": "[Testbed] Resource Operations"
+        },
+        {
+            "description": "Fine-grained OpenTofu operations for testbed (init, plan, apply, destroy, output)",
+            "name": "[Testbed] OpenTofu Actions (for fine-grained control)"
+        },
+        {
+            "description": "AWS to site VPN connection provisioning and management",
+            "name": "[AWS to site VPN] Resource Operations"
+        },
+        {
+            "description": "Fine-grained OpenTofu operations for AWS to site VPN (init, plan, apply, destroy, output)",
+            "name": "[AWS to site VPN] OpenTofu Actions (for fine-grained control)"
+        },
+        {
+            "description": "Multi-cloud site-to-site VPN connection operations (Development paused)",
+            "name": "[Site-to-Site VPN] Resource Operations (Under development - Paused)"
+        },
+        {
+            "description": "Fine-grained OpenTofu operations for site-to-site VPN (Development paused)",
+            "name": "[Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)"
+        },
+        {
+            "description": "GCP to AWS VPN tunnel setup and management (Proof of Concept)",
+            "name": "[VPN] GCP to AWS VPN tunnel configuration (PoC - Not officially supported)"
+        },
+        {
+            "description": "GCP to Azure VPN tunnel setup and management (Proof of Concept)",
+            "name": "[VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)"
+        },
+        {
+            "description": "Message broker infrastructure operations (Proof of Concept)",
+            "name": "[Message Broker] Operations (PoC - Not officially supported)"
+        },
+        {
+            "description": "Object storage infrastructure operations (Proof of Concept)",
+            "name": "[Object Storage] Operations (PoC - Not officially supported)"
+        },
+        {
+            "description": "SQL database infrastructure operations (Proof of Concept)",
+            "name": "[SQL Database] Operations (PoC - Not officially supported)"
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "latest",
+	Version:          "v0.1.0",
 	Host:             "localhost:8055",
 	BasePath:         "/terrarium",
 	Schemes:          []string{},
