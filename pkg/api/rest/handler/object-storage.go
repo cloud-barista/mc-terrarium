@@ -50,7 +50,7 @@ func getValidProviderListForMessageBroker() []string {
 // InitEnvForObjectStorage godoc
 // @Summary Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3 Bucket, Azure Blob Storage)
 // @Description Initialize a multi-cloud terrarium for Object Storage (e.g., AWS S3 Bucket, Azure Blob Storage)
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -173,7 +173,7 @@ func InitEnvForObjectStorage(c echo.Context) error {
 // ClearEnvOfObjectStorage godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -244,7 +244,7 @@ func ClearEnvOfObjectStorage(c echo.Context) error {
 // CreateInfracodeForObjectStorage godoc
 // @Summary Create the infracode for Object Storage
 // @Description Create the infracode for Object Storage
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -340,7 +340,7 @@ func CreateInfracodeForObjectStorage(c echo.Context) error {
 // CheckInfracodeForObjectStorage godoc
 // @Summary Check and show changes by the current infracode
 // @Description Check and show changes by the current infracode
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -415,7 +415,7 @@ func CheckInfracodeForObjectStorage(c echo.Context) error {
 // CreateObjectStorage godoc
 // @Summary Create Object Storage
 // @Description Create Object Storage
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -513,7 +513,7 @@ func CreateObjectStorage(c echo.Context) error {
 // GetResourceInfoOfObjectStorage godoc
 // @Summary Get resource info of Object Storage
 // @Description Get resource info of Object Storage
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -703,7 +703,7 @@ func GetResourceInfoOfObjectStorage(c echo.Context) error {
 // DestroyObjectStorage godoc
 // @Summary Destroy Object Storage
 // @Description Destroy Object Storage
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -779,7 +779,7 @@ func DestroyObjectStorage(c echo.Context) error {
 // GetRequestStatusOfObjectStorage godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [Object Storage] Operations
+// @Tags [Object Storage] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)

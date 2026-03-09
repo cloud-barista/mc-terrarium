@@ -14,7 +14,7 @@ import (
 // CreateSiteToSiteVpn godoc
 // @Summary Create Site-to-Site VPN
 // @Description Create Site-to-Site VPN between two cloud sites
-// @Tags [Site-to-Site VPN] Resource Operations
+// @Tags [Site-to-Site VPN] Resource Operations (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -56,7 +56,7 @@ func CreateSiteToSiteVpn(c echo.Context) error {
 // GetSiteToSiteVpn godoc
 // @Summary Get Site-to-Site VPN
 // @Description Get Site-to-Site VPN information
-// @Tags [Site-to-Site VPN] Resource Operations
+// @Tags [Site-to-Site VPN] Resource Operations (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -120,7 +120,7 @@ func GetSiteToSiteVpn(c echo.Context) error {
 // DeleteSiteToSiteVpn godoc
 // @Summary Delete Site-to-Site VPN
 // @Description Delete Site-to-Site VPN
-// @Tags [Site-to-Site VPN] Resource Operations
+// @Tags [Site-to-Site VPN] Resource Operations (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)

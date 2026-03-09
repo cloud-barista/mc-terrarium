@@ -36,7 +36,7 @@ import (
 // InitEnvForGcpAzureVpn godoc
 // @Summary Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
 // @Description Initialize a multi-cloud terrarium for GCP to Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -138,7 +138,7 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 // ClearGcpAzureVpn godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -199,7 +199,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // GetResourceInfoOfGcpAzureVpn godoc
 // @Summary Get resource info to configure GCP to Azure VPN tunnels
 // @Description Get resource info to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -381,7 +381,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // CreateInfracodeOfGcpAzureVpn godoc
 // @Summary Create the infracode to configure GCP to Azure VPN tunnels
 // @Description Create the infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -467,7 +467,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CheckInfracodeOfGcpAzureVpn godoc
 // @Summary Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
 // @Description Check and show changes by the current infracode to configure GCP to Azure VPN tunnels
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -535,7 +535,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 // CreateGcpAzureVpn godoc
 // @Summary Create network resources for VPN tunnel in GCP and Azure
 // @Description Create network resources for VPN tunnel in GCP and Azure
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -602,7 +602,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // DestroyGcpAzureVpn godoc
 // @Summary Destroy network resources that were used to configure GCP as an Azure VPN tunnel
 // @Description Destroy network resources that were used to configure GCP as an Azure VPN tunnel
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -670,7 +670,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // GetRequestStatusOfGcpAzureVpn godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [VPN] GCP to Azure VPN tunnel configuration (under development)
+// @Tags [VPN] GCP to Azure VPN tunnel configuration (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)

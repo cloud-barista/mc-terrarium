@@ -50,7 +50,7 @@ func getValidProvidersForMessageBroker() []string {
 // InitEnvForMessageBroker godoc
 // @Summary Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))
 // @Description Initialize a multi-cloud terrarium for Message Broker (e.g., AWS MQ Broker (ActiveMQ))
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -173,7 +173,7 @@ func InitEnvForMessageBroker(c echo.Context) error {
 // ClearEnvOfMessageBroker godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -244,7 +244,7 @@ func ClearEnvOfMessageBroker(c echo.Context) error {
 // CreateInfracodeForMessageBroker godoc
 // @Summary Create the infracode for Message Broker
 // @Description Create the infracode for Message Broker
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -340,7 +340,7 @@ func CreateInfracodeForMessageBroker(c echo.Context) error {
 // CheckInfracodeForMessageBroker godoc
 // @Summary Check and show changes by the current infracode
 // @Description Check and show changes by the current infracode
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -415,7 +415,7 @@ func CheckInfracodeForMessageBroker(c echo.Context) error {
 // CreateMessageBroker godoc
 // @Summary Create Message Broker
 // @Description Create Message Broker
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -513,7 +513,7 @@ func CreateMessageBroker(c echo.Context) error {
 // GetResourceInfoOfMessageBroker godoc
 // @Summary Get resource info of Message Broker
 // @Description Get resource info of Message Broker
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -703,7 +703,7 @@ func GetResourceInfoOfMessageBroker(c echo.Context) error {
 // DestroyMessageBroker godoc
 // @Summary Destroy Message Broker
 // @Description Destroy Message Broker
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -779,7 +779,7 @@ func DestroyMessageBroker(c echo.Context) error {
 // GetRequestStatusOfMessageBroker godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [Message Broker] Operations
+// @Tags [Message Broker] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)

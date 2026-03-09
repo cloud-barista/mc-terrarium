@@ -24,7 +24,7 @@ import (
 // InitSiteToSiteVpn godoc
 // @Summary Init Site-to-Site VPN
 // @Description Init Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -209,7 +209,7 @@ func getProvidersFromRequest(req *model.CreateSiteToSiteVpnRequest) []string {
 // PlanSiteToSiteVpn godoc
 // @Summary Plan Site-to-Site VPN
 // @Description Plan Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -265,7 +265,7 @@ func planSiteToSiteVpn(c echo.Context) (model.Response, error) {
 // ApplySiteToSiteVpn godoc
 // @Summary Apply Site-to-Site VPN
 // @Description Apply Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -322,7 +322,7 @@ func applySiteToSiteVpn(c echo.Context) (model.Response, error) {
 // DestroySiteToSiteVpn godoc
 // @Summary Destroy Site-to-Site VPN
 // @Description Destroy Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -400,7 +400,7 @@ func Contains(slice []string, item string) bool {
 // OutputSiteToSiteVpn godoc
 // @Summary Output Site-to-Site VPN
 // @Description Output Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -657,7 +657,7 @@ func outputSiteToSiteVpn(c echo.Context) (model.Response, error) {
 // EmptyOutSiteToSiteVpn godoc
 // @Summary EmptyOut Site-to-Site VPN
 // @Description EmptyOut Site-to-Site VPN
-// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control)
+// @Tags [Site-to-Site VPN] OpenTofu Actions (for fine-grained control) (Under development - Paused)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)

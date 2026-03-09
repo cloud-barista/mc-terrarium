@@ -40,7 +40,7 @@ var validProvidersForSqlDb = map[string]bool{
 // InitEnvForSqlDb godoc
 // @Summary Initialize a multi-cloud terrarium for SQL database
 // @Description Initialize a multi-cloud terrarium for SQL database
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept json
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -162,7 +162,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 // ClearEnvOfSqlDb godoc
 // @Summary Clear the entire directory and configuration files
 // @Description Clear the entire directory and configuration files
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -233,7 +233,7 @@ func ClearEnvOfSqlDb(c echo.Context) error {
 // CreateInfracodeForSqlDb godoc
 // @Summary Create the infracode for SQL database
 // @Description Create the infracode for SQL database
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -329,7 +329,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 // CheckInfracodeForSqlDb godoc
 // @Summary Check and show changes by the current infracode
 // @Description Check and show changes by the current infracode
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -404,7 +404,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 // CreateSqlDb godoc
 // @Summary Create SQL database
 // @Description Create SQL database
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -502,7 +502,7 @@ func CreateSqlDb(c echo.Context) error {
 // GetResourceInfoOfSqlDb godoc
 // @Summary Get resource info of SQL database
 // @Description Get resource info of SQL database
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -692,7 +692,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 // DestroySqlDb godoc
 // @Summary Destroy SQL database
 // @Description Destroy SQL database
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
@@ -768,7 +768,7 @@ func DestroySqlDb(c echo.Context) error {
 // GetRequestStatusOfSqlDb godoc
 // @Summary Check the status of a specific request by its ID
 // @Description Check the status of a specific request by its ID
-// @Tags [SQL Database] Operations
+// @Tags [SQL Database] Operations (PoC - Not officially supported)
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
