@@ -467,7 +467,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Multi-Cloud Terrarium REST API
-  version: v0.1.0
+  version: v0.1.1
 paths:
   /httpVersion:
     get:

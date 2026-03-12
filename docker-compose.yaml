@@ -21,7 +21,7 @@ networks:
 services:
   # ── MC-Terrarium ────────────────────────────────────────────────────
   mc-terrarium:
-    image: cloudbaristaorg/mc-terrarium:0.1.0
+    image: cloudbaristaorg/mc-terrarium:0.1.1
     container_name: mc-terrarium
     # build:
     #   context: .
