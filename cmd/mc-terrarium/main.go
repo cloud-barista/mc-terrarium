@@ -83,7 +83,7 @@ func init() {
 }
 
 // @title Multi-Cloud Terrarium REST API
-// @version v0.1.0
+// @version v0.1.1
 // @description Multi-Cloud Terrarium (mc-terrarium) aims to provide an environment to enrich multi-cloud infrastructure.
 
 // @contact.name API Support

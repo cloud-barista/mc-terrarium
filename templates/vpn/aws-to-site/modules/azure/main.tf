@@ -57,7 +57,11 @@ resource "azurerm_public_ip" "pub_ip" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
-  zones               = ["1", "2", "3"] # Availability zones
+
+  # Note: Availability Zones are only supported with a Standard SKU and in select regions at this time. 
+  # Standard SKU Public IP Addresses that do not specify a zone are not zone-redundant by default.
+  # ref) https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip
+  # zones               = ["1", "2", "3"] # Availability zones
 }
 
 # Azure VPN Gateway with pre-allocated APIPA addresses
