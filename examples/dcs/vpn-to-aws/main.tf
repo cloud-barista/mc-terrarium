@@ -62,7 +62,7 @@ provider "openstack" {
   user_name   = data.vault_kv_secret_v2.openstack.data["OS_USERNAME"]
   password    = data.vault_kv_secret_v2.openstack.data["OS_PASSWORD"]
   domain_name = data.vault_kv_secret_v2.openstack.data["OS_DOMAIN_NAME"]
-  tenant_name = data.vault_kv_secret_v2.openstack.data["OS_PROJECT_NAME"]
+  tenant_id   = data.vault_kv_secret_v2.openstack.data["OS_PROJECT_ID"]
 }
 
 # Generate SSH key pair for instances (shared between AWS and OpenStack)
