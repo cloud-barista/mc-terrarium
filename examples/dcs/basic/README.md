@@ -58,7 +58,7 @@ vi ../../secrets/credential-openstack.env
 
 # Example content:
 # OS_USERNAME=demo
-# OS_PROJECT_NAME=demo
+# OS_PROJECT_ID=demo-project-id
 # OS_PASSWORD=your_password
 # OS_AUTH_URL=http://your-dcs-ip:5000/v3
 # OS_REGION_NAME=RegionOne

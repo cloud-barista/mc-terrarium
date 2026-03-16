@@ -78,7 +78,7 @@ AWS VPC (10.0.0.0/16)                    DCS Network (192.168.0.0/24)
    export OS_AUTH_URL="http://your-dcs-ip:5000/v3"
    export OS_USERNAME="your-username"
    export OS_PASSWORD="your-password"
-   export OS_PROJECT_NAME="your-project"
+   export OS_PROJECT_ID="your-project-id"
    export OS_USER_DOMAIN_NAME="Default"
    export OS_PROJECT_DOMAIN_NAME="Default"
    ```
@@ -230,14 +230,12 @@ ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$OS_FLOATING_IP \
 ### Common Issues
 
 1.  **VPN Tunnel Down (Phase 2 Negotiation Failed):**
-
     - **Traffic Selectors**: Ensure that the Local/Remote CIDRs match exactly on both sides.
       - AWS: `0.0.0.0/0` (Any) is recommended for maximum compatibility.
       - OpenStack: Uses the subnet CIDR (e.g., `192.168.0.0/26`) as the local selector.
     - **Shared Secret**: Verify that the Pre-Shared Key (PSK) matches in both AWS and OpenStack configurations.
 
 2.  **Ping Fails but Tunnel is UP:**
-
     - **Security Groups**: Check if ICMP (Ping) is allowed in the Security Groups for both AWS and OpenStack instances.
     - **Routing**: Verify that the Route Tables in AWS and the Router in OpenStack have the correct routes to the peer network.
     - **DVR (Distributed Virtual Router)**: In some OpenStack environments (like DCS), DVR may cause routing issues with VPNaaS.

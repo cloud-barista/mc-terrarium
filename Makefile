@@ -10,7 +10,7 @@ GOPATH := $(shell go env GOPATH)
 SWAG := ~/go/bin/swag
 
 .PHONY: all dependency lint update swag swagger build arm prod run stop clean \
-	prepare-volumes compose compose-up compose-down logs \
+	prepare-volumes up down compose compose-down logs \
 	init unseal clean-data clean-all \
 	help bcrypt
 
@@ -110,6 +110,10 @@ init: ## Register CSP credentials into OpenBao (run manually after compose)
 	@echo "Initializing OpenBao and registering credentials..."
 	@bash init/init.sh
 
+up: compose ## Build and start all services (auto init/unseal OpenBao)
+
+down: compose-down ## Stop and remove all services
+
 unseal: ## Unseal OpenBao (needed after every restart)
 	@echo "Trying to unseal OpenBao (if not already unsealed)..."
 	@bash init/unseal-openbao.sh || true
@@ -128,17 +132,7 @@ compose: swag prepare-volumes ## Build and start all services (auto init/unseal 
 	@docker compose up -d
 	@echo ""
 	@echo "To register CSP credentials, run:  make init"
-
-compose-up: prepare-volumes ## Start all services (auto init/unseal OpenBao)
-	@echo "Starting OpenBao..."
-	@docker compose up -d openbao
-	@if [ ! -f .env ] || ! grep -q '^VAULT_TOKEN=.\+' .env 2>/dev/null; then \
-		echo "VAULT_TOKEN not found — running first-time OpenBao initialization..."; \
-		bash init/init-openbao.sh; \
-	fi
-	@$(MAKE) unseal
-	@echo "Starting all services..."
-	@docker compose up -d
+	@$(MAKE) logs
 
 compose-down: ## Stop and remove all services
 	@echo "Stopping all services..."

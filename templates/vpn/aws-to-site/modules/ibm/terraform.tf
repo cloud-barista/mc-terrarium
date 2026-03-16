@@ -8,5 +8,10 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = "~>1.76.0"
     }
+    # Time provider for destroy-time delays (IBM Cloud eventual consistency workaround)
+    time = {
+      source  = "hashicorp/time"
+      version = "~>0.11"
+    }
   }
 }

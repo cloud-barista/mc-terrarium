@@ -139,7 +139,7 @@ KEY_MAP = {
         "Username": "OS_USERNAME",
         "Password": "OS_PASSWORD",
         "DomainName": "OS_DOMAIN_NAME",
-        "ProjectID": "OS_PROJECT_NAME",
+        "ProjectID": "OS_PROJECT_ID",
     },
 }
 

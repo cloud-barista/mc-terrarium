@@ -81,7 +81,7 @@ provider "aws" {
 | IBM Cloud     | `secret/csp/ibm`       | `IC_API_KEY`                                                                     |
 | NCP           | `secret/csp/ncp`       | `NCLOUD_ACCESS_KEY`, `NCLOUD_SECRET_KEY`                                         |
 | Tencent Cloud | `secret/csp/tencent`   | `TENCENTCLOUD_SECRET_ID`, `TENCENTCLOUD_SECRET_KEY`                              |
-| OpenStack/DCS | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_NAME` |
+| OpenStack/DCS | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_ID` |
 
 ## Directory Structure
 

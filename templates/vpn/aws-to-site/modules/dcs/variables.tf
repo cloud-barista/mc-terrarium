@@ -3,10 +3,11 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "router_id" {
-  description = "ID of the OpenStack Router"
-  type        = string
-}
+# retrieved by subnet_id variable
+# variable "router_id" {
+#   description = "ID of the OpenStack Router"
+#   type        = string
+# }
 
 variable "subnet_id" {
   description = "ID of the OpenStack Subnet"

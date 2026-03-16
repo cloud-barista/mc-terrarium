@@ -128,7 +128,7 @@ This deletes everything: terrarium workspaces, OpenBao data, unseal key, and tok
 | IBM       | `secret/csp/ibm`       | `IC_API_KEY`                                                                     |
 | NCP       | `secret/csp/ncp`       | `NCLOUD_ACCESS_KEY`, `NCLOUD_SECRET_KEY`                                         |
 | Tencent   | `secret/csp/tencent`   | `TENCENTCLOUD_SECRET_ID`, `TENCENTCLOUD_SECRET_KEY`                              |
-| OpenStack | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_NAME` |
+| OpenStack | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_ID` |
 
 ## How It Works
 

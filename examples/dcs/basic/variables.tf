@@ -1,6 +1,6 @@
 # DCS (DevStack Cloud Service) Connection Variables
 # These are handled by environment variables:
-# OS_USERNAME, OS_PROJECT_NAME, OS_PASSWORD, OS_AUTH_URL, OS_REGION_NAME
+# OS_USERNAME, OS_PROJECT_ID, OS_PASSWORD, OS_AUTH_URL, OS_REGION_NAME
 # Load them using: source ../../secrets/load-openstack-cred-env.sh
 
 # Network Configuration

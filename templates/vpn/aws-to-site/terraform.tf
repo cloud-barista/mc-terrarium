@@ -38,6 +38,11 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = "~>1.76.0"
     }
+    # Time provider (used in IBM module for destroy-time delay)
+    time = {
+      source  = "hashicorp/time"
+      version = "~>0.11"
+    }
     # OpenStack provider (DCS)
     openstack = {
       source  = "registry.opentofu.org/terraform-provider-openstack/openstack"

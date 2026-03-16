@@ -195,9 +195,9 @@ func validateIbmConfig(ibm IbmConfig) error {
 
 // validateDcsConfig validates DCS configuration
 func validateDcsConfig(dcs DcsConfig) error {
-	if dcs.RouterId == "" {
-		return fmt.Errorf("dcs.router_id is required")
-	}
+	// if dcs.RouterId == "" { // Retrieved from subnet_id, not user input
+	// 	return fmt.Errorf("dcs.router_id is required")
+	// }
 	if dcs.SubnetId == "" {
 		return fmt.Errorf("dcs.subnet_id is required")
 	}

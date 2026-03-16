@@ -110,16 +110,32 @@ locals {
 # [Note] 
 # Set route separately to avoid RoutingTable locking issue
 
-# First VPN route
+# [Note] IBM Cloud eventual consistency workaround.
+# After route deletion, IBM Cloud's internal system takes time to remove the
+# route-to-connection association. Immediately deleting a VPN connection that
+# was referenced as a next_hop results in a 409 error:
+#   "vpn_connection_not_deleted_route_exist"
+# even though the route was already successfully deleted by the API.
 #
-# [Note] Explicit depends_on for all VPN connections ensures proper destroy ordering.
-# IBM Cloud API rejects VPN connection deletion while ANY route to the same destination exists.
-# Since all routes chain through depends_on (route_4 -> route_3 -> route_2 -> route_1),
-# making route_1 depend on all connections forces the destroy order:
-#   routes (4 -> 3 -> 2 -> 1) first, then all connections.
-resource "ibm_is_vpc_routing_table_route" "vpn_route_1" {
+# To address this, a time_sleep resource is inserted between the routes and the
+# VPN connections in the destroy dependency graph:
+#   routes (4 -> 3 -> 2 -> 1) -> time_sleep (30s) -> connections
+#
+# Dependency relationships:
+#   - time_sleep depends_on connections  (destroy: time_sleep before connections)
+#   - vpn_route_1 depends_on time_sleep  (destroy: route_1 before time_sleep)
+# Combined destroy order: routes -> time_sleep (30s wait) -> connections
+resource "time_sleep" "wait_before_connection_destroy" {
 
   depends_on = [ibm_is_vpn_gateway_connection.to_aws]
+
+  destroy_duration = "30s"
+}
+
+# First VPN route
+resource "ibm_is_vpc_routing_table_route" "vpn_route_1" {
+
+  depends_on = [time_sleep.wait_before_connection_destroy]
 
   name          = "${var.name_prefix}-to-aws-1"
   vpc           = var.vpc_id

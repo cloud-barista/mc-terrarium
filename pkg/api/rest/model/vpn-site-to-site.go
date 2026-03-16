@@ -88,9 +88,9 @@ type IbmConfig struct {
 // DcsConfig represents DCS (OpenStack) specific VPN configuration
 type DcsConfig struct {
 	Region   string `json:"region,omitempty" example:"RegionOne"`
-	RouterId string `json:"router_id" example:"router-12345678"`
 	SubnetId string `json:"subnet_id" example:"subnet-12345678"`
 	BgpAsn   string `json:"bgp_asn,omitempty" default:"65000" example:"65000"`
+	// RouterId string `json:"router_id" example:"router-12345678"` // Retrieved from subnet_id, not user input
 }
 
 // Validate validates the VpnConfig structure
