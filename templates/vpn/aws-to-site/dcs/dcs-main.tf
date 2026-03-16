@@ -4,9 +4,9 @@ module "dcs" {
 
   # Input variables
   name_prefix = var.vpn_config.terrarium_id
-  router_id   = var.vpn_config.target_csp.dcs.router_id
   subnet_id   = var.vpn_config.target_csp.dcs.subnet_id
   bgp_asn     = try(var.vpn_config.target_csp.dcs.bgp_asn, "65000")
+  # router_id   = var.vpn_config.target_csp.dcs.router_id # Retrieved from subnet_id, not user input
 
   # AWS resource
   aws_vpn_gateway_id = aws_vpn_gateway.vpn_gw.id

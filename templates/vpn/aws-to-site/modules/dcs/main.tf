@@ -1,6 +1,17 @@
-# Get DCS Subnet CIDR
+# Read DCS Subnet CIDR
 data "openstack_networking_subnet_v2" "dcs_subnet" {
   subnet_id = var.subnet_id
+}
+
+# Read Router Interface Port to retrieve Router ID
+data "openstack_networking_port_v2" "router_interface" {
+  network_id = data.openstack_networking_subnet_v2.dcs_subnet.network_id
+  fixed_ip   = data.openstack_networking_subnet_v2.dcs_subnet.gateway_ip
+}
+
+# Set local variable for router ID
+locals {
+  router_id = data.openstack_networking_port_v2.router_interface.device_id
 }
 
 # Create IKE Policy
@@ -39,7 +50,7 @@ resource "openstack_vpnaas_ipsec_policy_v2" "ipsec" {
 resource "openstack_vpnaas_service_v2" "vpn" {
   name        = "${var.name_prefix}-vpn-service"
   description = "VPN Service for AWS connection"
-  router_id   = var.router_id
+  router_id   = local.router_id
 }
 
 # Create Endpoint Group for local subnets

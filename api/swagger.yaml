@@ -168,9 +168,6 @@ definitions:
       region:
         example: RegionOne
         type: string
-      router_id:
-        example: router-12345678
-        type: string
       subnet_id:
         example: subnet-12345678
         type: string
@@ -467,7 +464,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Multi-Cloud Terrarium REST API
-  version: v0.1.1
+  version: v0.1.2
 paths:
   /httpVersion:
     get:

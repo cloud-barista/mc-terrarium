@@ -46,9 +46,9 @@ variable "vpn_config" {
       }))
       dcs = optional(object({
         region    = optional(string)
-        router_id = string
         subnet_id = string
         bgp_asn   = optional(string, "65000")
+        # router_id = string # Retrieved from subnet_id, not user input (--- IGNORE ---)
       }))
 
     })
