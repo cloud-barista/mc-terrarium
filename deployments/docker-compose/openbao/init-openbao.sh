@@ -15,14 +15,14 @@
 #   - .env updated with VAULT_TOKEN
 #
 # Usage:
-#   ./init/init-openbao.sh
+#   ./deployments/docker-compose/openbao/init-openbao.sh
 #
 # ==============================================================================
 
 set -euo pipefail
 
 VAULT_ADDR="${VAULT_ADDR:-http://localhost:8200}"
-INIT_OUTPUT="secrets/openbao-init.json"
+INIT_OUTPUT="../secrets/openbao-init.json"
 
 # Colors for output
 RED='\033[0;31m'
@@ -113,20 +113,20 @@ fi
 # and docker-compose.yaml injection).
 # Note: BAO_TOKEN was replaced by VAULT_TOKEN for OpenTofu compatibility.
 
-if [ -f ".env" ]; then
+if [ -f "../.env" ]; then
     # Update VAULT_TOKEN
-    if grep -q "^VAULT_TOKEN=" .env; then
-        sed -i "s|^VAULT_TOKEN=.*|VAULT_TOKEN=${ROOT_TOKEN}|" .env
+    if grep -q "^VAULT_TOKEN=" ../.env; then
+        sed -i "s|^VAULT_TOKEN=.*|VAULT_TOKEN=${ROOT_TOKEN}|" ../.env
     else
-        echo "VAULT_TOKEN=${ROOT_TOKEN}" >> .env
+        echo "VAULT_TOKEN=${ROOT_TOKEN}" >> ../.env
     fi
     # Ensure VAULT_ADDR is present
-    if ! grep -q "^VAULT_ADDR=" .env; then
-        echo "VAULT_ADDR=${VAULT_ADDR}" >> .env
+    if ! grep -q "^VAULT_ADDR=" ../.env; then
+        echo "VAULT_ADDR=${VAULT_ADDR}" >> ../.env
     fi
     echo -e "${GREEN}[init-openbao]${NC} Updated VAULT_TOKEN in .env"
 else
-    cat > .env <<EOF
+    cat > ../.env <<EOF
 # OpenBao / OpenTofu vault provider token
 VAULT_TOKEN=${ROOT_TOKEN}
 
@@ -165,5 +165,5 @@ echo "  Unseal Key : ${UNSEAL_KEY}"
 echo "  Init File  : ${INIT_OUTPUT}"
 echo ""
 echo "  After container restart, run:"
-echo "    ./init/unseal-openbao.sh"
+echo "    ./unseal-openbao.sh"
 echo "============================================================"

@@ -23,9 +23,9 @@ services:
   mc-terrarium:
     image: cloudbaristaorg/mc-terrarium:0.1.2
     container_name: mc-terrarium
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build:
+      context: ${PROJECT_ROOT:-../../}
+      dockerfile: Dockerfile
     networks:
       - internal_network # Inter-service communication (OpenBao access)
       - external_network # CSP API calls (requires internet access)
@@ -46,7 +46,7 @@ services:
     volumes:
       # [Legacy] GCP credential file mount — replaced by OpenBao.
       # - ${HOME}/.cloud-barista/secrets/credential-gcp.json:/app/secrets/credential-gcp.json:ro # GCP credential
-      - ./container-volume/mc-terrarium-container/.terrarium:/app/.terrarium
+      - ./data/mc-terrarium-container/.terrarium:/app/.terrarium
       - /etc/ssl/certs:/etc/ssl/certs:ro
     environment:
       - TERRARIUM_ROOT=/app
@@ -120,8 +120,8 @@ services:
         chown -R openbao:openbao /openbao/data || { echo "ERROR: chown failed on /openbao/data"; exit 1; }
         exec docker-entrypoint.sh server -config=/openbao/config/openbao-config.hcl
     volumes:
-      - ./container-volume/openbao-data:/openbao/data
-      - ./conf/openbao-config.hcl:/openbao/config/openbao-config.hcl:ro
+      - ./data/openbao-data:/openbao/data
+      - ./openbao/openbao-config.hcl:/openbao/config/openbao-config.hcl:ro
 
     # ── Dev mode (inactive) ────────────────────────────────────────
     # To switch to dev mode:

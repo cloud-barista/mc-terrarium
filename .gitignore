@@ -45,7 +45,8 @@ kubeconfig
 
 # Sensitive data
 .env
-secrets/openbao-init.json
+# deployments/docker-compose/.env is also sensitive
+deployments/docker-compose/.env
 
 # Binaries
 pkg/mc-terrarium
@@ -76,5 +77,6 @@ secrets/**
 !secrets/load-dcs-cred-env.sh
 !secrets/load-tencent-cred-env.sh
 
-# Ignore container volumes
-container-volume/
+# Ignore container volumes and secrets in deployments folder
+deployments/docker-compose/data/
+deployments/docker-compose/secrets/

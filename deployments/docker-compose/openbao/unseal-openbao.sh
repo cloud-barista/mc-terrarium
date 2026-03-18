@@ -11,14 +11,14 @@
 #   Sealed            → read unseal key from init output and unseal
 #
 # Usage:
-#   ./init/unseal-openbao.sh
+#   ./deployments/docker-compose/openbao/unseal-openbao.sh
 #
 # ==============================================================================
 
 set -euo pipefail
 
 VAULT_ADDR="${VAULT_ADDR:-http://localhost:8200}"
-INIT_OUTPUT="secrets/openbao-init.json"
+INIT_OUTPUT="../secrets/openbao-init.json"
 
 # Colors for output
 RED='\033[0;31m'
@@ -54,11 +54,11 @@ SEALED=$(echo "$SEAL_STATUS" | python3 -c "import sys,json; print(json.load(sys.
 # State: Not initialized
 if [ "$INITIALIZED" = "False" ] || [ "$INITIALIZED" = "false" ]; then
     echo -e "${YELLOW}[unseal-openbao]${NC} OpenBao is not yet initialized."
-    echo "  Run 'bash init/init.sh' to initialize OpenBao, unseal it,"
-    echo "  and register CSP credentials."
+    echo "  Run 'make init' from project root to initialize OpenBao,"
+    echo "  unseal it, and register CSP credentials."
     echo ""
     SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-    bash "${SCRIPT_DIR}/init.sh" --help
+    bash "${SCRIPT_DIR}/../../../init/init.sh" --help
     exit 1
 fi
 

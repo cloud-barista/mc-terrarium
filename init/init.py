@@ -174,9 +174,9 @@ def check_openbao_status():
 
 
 def run_script(script_name):
-    """Run a shell script from the init/ directory."""
-    script_path = os.path.join(SCRIPT_DIR, script_name)
-    result = subprocess.run([script_path], cwd=PROJECT_DIR)
+    """Run a shell script from the deployments/docker-compose/openbao/ directory."""
+    script_path = os.path.join(PROJECT_DIR, "deployments", "docker-compose", "openbao", script_name)
+    result = subprocess.run([script_path], cwd=os.path.join(PROJECT_DIR, "deployments", "docker-compose", "openbao"))
     if result.returncode != 0:
         print(Fore.RED + f"{script_name} failed with exit code {result.returncode}")
         sys.exit(result.returncode)
@@ -248,21 +248,30 @@ def register_credential(provider, credentials):
     secret_data = {}
     key_map = KEY_MAP.get(provider, {})
     mapped_keys = []
+    placeholder_keys = []
 
-    for yaml_key, value in credentials.items():
-        if not value:
-            continue
-        terrarium_key = key_map.get(yaml_key)
-        if terrarium_key:
-            secret_data[terrarium_key] = value
-            mapped_keys.append(terrarium_key)
-
-    if not mapped_keys:
+    if key_map:
+        # Map existing values and fill missing with placeholders from KEY_MAP
+        for yaml_key, terrarium_key in key_map.items():
+            value = credentials.get(yaml_key)
+            if value:
+                secret_data[terrarium_key] = value
+                mapped_keys.append(terrarium_key)
+            else:
+                secret_data[terrarium_key] = ""
+                placeholder_keys.append(terrarium_key)
+    else:
         # No mapping found — store raw keys as-is
         for yaml_key, value in credentials.items():
             if value:
                 secret_data[yaml_key] = value
-        mapped_keys = list(secret_data.keys())
+                mapped_keys.append(yaml_key)
+            else:
+                secret_data[yaml_key] = ""
+                placeholder_keys.append(yaml_key)
+
+    if not mapped_keys and not placeholder_keys:
+        return provider, "skip", "No keys to register"
 
     # Register to OpenBao via KV v2 API
     # KV v2 write path: /v1/{mount}/data/{prefix}/{name}
@@ -275,9 +284,14 @@ def register_credential(provider, credentials):
         resp = requests.post(url, json={"data": secret_data}, headers=headers, timeout=10)
         resp.raise_for_status()
         version = resp.json().get("data", {}).get("version", "?")
-        return provider, "ok", f"v{version}  keys=[{', '.join(mapped_keys)}]"
+
+        total_keys = len(mapped_keys) + len(placeholder_keys)
+        if placeholder_keys:
+            p_msg = f"including {len(placeholder_keys)} placeholder(s)"
+            return provider, "ok", f"v{version}  ({total_keys} keys, {p_msg})"
+        return provider, "ok", f"v{version}  ({total_keys} keys)"
     except requests.RequestException as e:
-        return provider, "fail", str(e)
+        return provider, "fail", str(e).split(":")[0]
 
 
 def register_placeholder_secrets(registered_providers):
@@ -313,10 +327,12 @@ def register_placeholder_secrets(registered_providers):
         try:
             resp = requests.post(url, json={"data": placeholder_data}, headers=headers, timeout=10)
             resp.raise_for_status()
-            print(f"  {Fore.YELLOW}PLCH{Style.RESET_ALL} {provider:12s}  placeholder registered (keys=[{', '.join(placeholder_data.keys())}])")
+            print(
+                f"  {Fore.YELLOW}PLCH{Style.RESET_ALL} {provider:12s}  placeholder registered ({len(placeholder_data)} keys, all placeholders)"
+            )
             placeholder_count += 1
         except requests.RequestException as e:
-            print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider:12s}  placeholder failed: {e}")
+            print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider:12s}  placeholder failed: {str(e).split(':')[0]}")
 
     return placeholder_count
 
@@ -352,7 +368,9 @@ def main():
 
     # Determine if password input will be required (tumblebug pattern)
     # If password is needed, it serves as confirmation (skip "proceed?" prompt)
-    password_required = run_credentials and os.path.isfile(ENC_FILE) and not args.key_file and not os.path.isfile(KEY_FILE)
+    password_required = (
+        run_credentials and os.path.isfile(ENC_FILE) and not args.key_file and not os.path.isfile(KEY_FILE)
+    )
 
     # Decrypt credentials BEFORE confirm prompt (tumblebug pattern)
     # Password input itself serves as user confirmation
@@ -398,7 +416,7 @@ def main():
         print()
 
         # Reload .env to pick up VAULT_TOKEN
-        load_env_file(os.path.join(PROJECT_DIR, ".env"))
+        load_env_file(os.path.join(PROJECT_DIR, "deployments", "docker-compose", ".env"))
 
     # ── Step 2: Register CSP credentials ────────────────────────────
     if run_credentials:
@@ -406,9 +424,12 @@ def main():
 
         # Ensure VAULT_TOKEN is available
         if not VAULT_TOKEN:
-            load_env_file(os.path.join(PROJECT_DIR, ".env"))
+            load_env_file(os.path.join(PROJECT_DIR, "deployments", "docker-compose", ".env"))
         if not VAULT_TOKEN:
-            print(Fore.RED + "VAULT_TOKEN not set. Run init-openbao.sh first.")
+            print(
+                Fore.RED
+                + "VAULT_TOKEN not set. Run make compose first (or init-openbao.sh in deployments/docker-compose/openbao/)."
+            )
             sys.exit(1)
 
         # Check OpenBao is ready
@@ -431,8 +452,8 @@ def main():
             try:
                 data = yaml.safe_load(decrypted_content)
                 cred_data = data["credentialholder"]["admin"]
-            except Exception as e:
-                print(Fore.RED + f"Error parsing credentials YAML: {e}")
+            except Exception:
+                print(Fore.RED + "Error parsing credentials YAML. Ensure the format is correct.")
                 sys.exit(1)
 
             # Register each CSP
@@ -487,7 +508,9 @@ def main():
     if run_credentials:
         print("To verify a credential:")
         print("  source .env")
-        print(f'  curl -s -H "X-Vault-Token: $VAULT_TOKEN" {VAULT_ADDR}/v1/{KV_MOUNT}/data/{SECRET_PREFIX}/aws | jq .data.data')
+        print(
+            f'  curl -s -H "X-Vault-Token: $VAULT_TOKEN" {VAULT_ADDR}/v1/{KV_MOUNT}/data/{SECRET_PREFIX}/aws | jq .data.data'
+        )
         print(f"  bao kv get {KV_MOUNT}/{SECRET_PREFIX}/aws")
         print()
 

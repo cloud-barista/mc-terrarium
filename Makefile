@@ -11,7 +11,7 @@ SWAG := ~/go/bin/swag
 
 .PHONY: all dependency lint update swag swagger build arm prod run stop clean \
 	prepare-volumes up down compose compose-down logs \
-	init unseal clean-data clean-all \
+	init unseal clean-db clean-all \
 	help bcrypt
 
 all: swag build ## Default target: build the project
@@ -90,8 +90,8 @@ clean: ## Remove previous build
 
 prepare-volumes: ## Create bind-mount directories with current user ownership
 	@echo "Preparing container-volume directories..."
-	@mkdir -p container-volume/mc-terrarium-container/.terrarium
-	@mkdir -p container-volume/openbao-data
+	@mkdir -p deployments/docker-compose/data/mc-terrarium-container/.terrarium
+	@mkdir -p deployments/docker-compose/data/openbao-data
 	@echo "Prepared!"
 # Note: mc-terrarium runs as appuser (UID 1000) inside the container.
 # Docker auto-creates missing bind-mount dirs as root, making them unwritable.
@@ -102,9 +102,9 @@ prepare-volumes: ## Create bind-mount directories with current user ownership
 # docker-compose.yaml includes both mc-terrarium and OpenBao services.
 #
 # Usage scenarios:
-#   1) Fresh start:       make compose → make init
-#   2) Reset app data:    make clean-data → make compose
-#   3) Full reset:        make clean-all  → make compose → make init
+#   1) Fresh start:       make up → make init
+#   2) Reset app data:    make clean-db → make up
+#   3) Full reset:        make clean-all  → make up → make init
 
 init: ## Register CSP credentials into OpenBao (run manually after compose)
 	@echo "Initializing OpenBao and registering credentials..."
@@ -116,42 +116,42 @@ down: compose-down ## Stop and remove all services
 
 unseal: ## Unseal OpenBao (needed after every restart)
 	@echo "Trying to unseal OpenBao (if not already unsealed)..."
-	@bash init/unseal-openbao.sh || true
+	@cd deployments/docker-compose/openbao && bash unseal-openbao.sh || true
 
 compose: swag prepare-volumes ## Build and start all services (auto init/unseal OpenBao)
 	@echo "Building images..."
-	@DOCKER_BUILDKIT=1 docker compose build
+	@cd deployments/docker-compose && DOCKER_BUILDKIT=1 docker compose build
 	@echo "Starting OpenBao..."
-	@docker compose up -d openbao
-	@if [ ! -f .env ] || ! grep -q '^VAULT_TOKEN=.\+' .env 2>/dev/null; then \
+	@cd deployments/docker-compose && docker compose up -d openbao
+	@if [ ! -f deployments/docker-compose/.env ] || ! grep -q '^VAULT_TOKEN=.\+' deployments/docker-compose/.env 2>/dev/null; then \
 		echo "VAULT_TOKEN not found — running first-time OpenBao initialization..."; \
-		bash init/init-openbao.sh; \
+		cd deployments/docker-compose/openbao && bash init-openbao.sh; \
 	fi
 	@$(MAKE) unseal
 	@echo "Starting all services..."
-	@docker compose up -d
+	@cd deployments/docker-compose && docker compose up -d
 	@echo ""
 	@echo "To register CSP credentials, run:  make init"
 	@$(MAKE) logs
 
 compose-down: ## Stop and remove all services
 	@echo "Stopping all services..."
-	@docker compose down
+	@cd deployments/docker-compose && docker compose down
 
-clean-data: compose-down ## Reset terrarium data (keep OpenBao)
+clean-db: compose-down ## Reset terrarium data (keep OpenBao)
 	@echo "Cleaning terrarium data (keeping OpenBao data)..."
-	@rm -rf container-volume/mc-terrarium-container
-	@echo "Cleaned! Run 'make compose' to restart."
+	sudo rm -rf deployments/docker-compose/data/mc-terrarium-container
+	@echo "Cleaned! Run 'make up' to restart."
 
 clean-all: compose-down ## Full reset including OpenBao (requires re-init)
 	@echo "Cleaning all data including OpenBao..."
-	sudo rm -rf container-volume
-	@rm -f secrets/openbao-init.json
-	@sed -i 's/^VAULT_TOKEN=.*/VAULT_TOKEN=/' .env 2>/dev/null || true
-	@echo "Cleaned! Run 'make compose' to rebuild and re-initialize."
+	sudo rm -rf deployments/docker-compose/data
+	@rm -f deployments/docker-compose/secrets/openbao-init.json
+	@sed -i 's/^VAULT_TOKEN=.*/VAULT_TOKEN=/' deployments/docker-compose/.env 2>/dev/null || true
+	@echo "Cleaned! Run 'make up' to rebuild and re-initialize."
 
 logs: ## Follow logs of all services (Ctrl+C to stop)
-	@docker compose logs -f
+	@cd deployments/docker-compose && docker compose logs -f
 
 bcrypt: ## Generate bcrypt hash for given password (usage: make bcrypt PASSWORD=mypassword)
 	@if [ -z "$(PASSWORD)" ]; then \
