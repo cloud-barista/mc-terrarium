@@ -11,10 +11,9 @@
 # projects (e.g., cb-tumblebug) for unified Cloud-Barista initialization.
 #
 # Usage:
-#   ./init/init.sh                        # Full initialization (interactive)
-#   ./init/init.sh -y                     # Non-interactive (auto-confirm)
-#   ./init/init.sh --credentials-only     # Register CSP credentials only (skip OpenBao init)
-#   ./init/init.sh --openbao-only         # OpenBao init/unseal only (skip credentials)
+#   ./openbao-register-creds.sh                        # Full registration (interactive)
+#   ./openbao-register-creds.sh -y                     # Non-interactive (auto-confirm)
+#   ./openbao-register-creds.sh --key-file PATH        # Run with key file
 #
 # Prerequisites:
 #   - OpenBao container running
@@ -23,13 +22,13 @@
 #
 # Environment Variables:
 #   VAULT_ADDR          OpenBao endpoint (default: http://localhost:8200)
-#   VAULT_TOKEN       OpenBao root token (auto-set by init-openbao.sh)
+#   VAULT_TOKEN       OpenBao root token (auto-set by openbao-init.sh)
 
 # Check for help option
 if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
     echo "MC-Terrarium Initialization Script"
     echo ""
-    echo "Usage: init/init.sh [OPTIONS]"
+    echo "Usage: deployments/docker-compose/openbao/openbao-register-creds.sh [OPTIONS]"
     echo ""
     echo "This script initializes MC-Terrarium by setting up OpenBao"
     echo "and registering CSP credentials from Cloud-Barista shared credentials."
@@ -37,20 +36,16 @@ if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
     echo "Options:"
     echo "  -h, --help                    Show this help message"
     echo "  -y, --yes                     Automatically answer yes to prompts"
-    echo "  --credentials, --credentials-only"
-    echo "                                Register CSP credentials only"
-    echo "  --openbao, --openbao-only     OpenBao init/unseal only"
     echo "  --key-file PATH               Path to decryption key file"
     echo ""
     echo "Examples:"
-    echo "  init/init.sh                            # Run all steps (default)"
-    echo "  init/init.sh -y                         # Run all steps without confirmation"
-    echo "  init/init.sh --credentials-only         # Register CSP credentials only"
-    echo "  init/init.sh --openbao-only             # Init/unseal OpenBao only"
+    echo "  ./openbao-register-creds.sh                     # Run all steps (default)"
+    echo "  ./openbao-register-creds.sh -y                  # Run without confirmation"
+    echo "  ./openbao-register-creds.sh --key-file PATH     # Run with key file"
     echo ""
     echo "Environment Variables:"
     echo "  VAULT_ADDR              OpenBao endpoint (default: http://localhost:8200)"
-    echo "  VAULT_TOKEN             OpenBao root token (auto-set by init-openbao.sh)"
+    echo "  VAULT_TOKEN             OpenBao root token (auto-set by openbao-init.sh)"
     echo ""
     exit 0
 fi
@@ -114,8 +109,7 @@ fi
 START_TIME=$(date +%s)
 
 echo
-echo "Running the initialization..."
-uv run init.py "$@"
+uv run openbao-register-creds.py "$@"
 
 # Elapsed time
 END_TIME=$(date +%s)

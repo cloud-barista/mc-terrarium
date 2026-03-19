@@ -9,15 +9,12 @@ Designed for compatibility with cb-tumblebug's credential format,
 enabling unified Cloud-Barista credential management.
 
 Usage:
-  uv run init.py                                    # Full init (interactive)
-  uv run init.py -y                                 # Non-interactive
-  uv run init.py --credentials-only                 # Credential import only
-  uv run init.py --openbao-only                     # OpenBao init/unseal only
-  uv run init.py --key-file ~/.cloud-barista/.tmp_enc_key
+  uv run openbao-register-creds.py                      # Full init (interactive)
+  uv run openbao-register-creds.py -y                   # Non-interactive
+  uv run openbao-register-creds.py --key-file PATH      # Use key file for decryption
 """
 
 import argparse
-
 # import json
 import os
 import subprocess
@@ -41,8 +38,6 @@ parser = argparse.ArgumentParser(
 Examples:
   %(prog)s                                # Full initialization (interactive)
   %(prog)s -y                             # Non-interactive (auto-confirm)
-  %(prog)s --credentials-only             # Import credentials only
-  %(prog)s --openbao-only                 # OpenBao init/unseal only
   %(prog)s --key-file /path/to/keyfile    # Use key file for decryption
     """,
 )
@@ -53,36 +48,52 @@ parser.add_argument(
     help="Automatically proceed without confirmation prompts",
 )
 parser.add_argument(
-    "--credentials",
-    "--credentials-only",
-    action="store_true",
-    dest="credentials_only",
-    help="Register CSP credentials only (skip OpenBao init/unseal)",
-)
-parser.add_argument(
-    "--openbao",
-    "--openbao-only",
-    action="store_true",
-    dest="openbao_only",
-    help="OpenBao init/unseal only (skip credential registration)",
-)
-parser.add_argument(
     "--key-file",
     type=str,
     default=None,
     help="Path to decryption key file (default: ~/.cloud-barista/.tmp_enc_key, then prompt)",
 )
+parser.add_argument(
+    "--env-file",
+    type=str,
+    default=".env",
+    help="Path to .env file for OpenBao config (default: .env)",
+)
 args = parser.parse_args()
-
-# Determine operations
-run_all = not (args.credentials_only or args.openbao_only)
-run_openbao = run_all or args.openbao_only
-run_credentials = run_all or args.credentials_only
 
 # ── Configuration ─────────────────────────────────────────────────
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
+
+
+def get_project_root():
+    """Find the project root directory by looking for .git or go.mod."""
+    # Method 1: Try Git
+    try:
+        git_root = (
+            subprocess.check_output(["git", "rev-parse", "--show-toplevel"], stderr=subprocess.STDOUT).decode().strip()
+        )
+        if os.path.isdir(git_root):
+            return git_root
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    # Method 2: Search upwards for markers
+    curr_dir = os.path.abspath(SCRIPT_DIR)
+    while curr_dir != os.path.dirname(curr_dir):
+        if any(os.path.exists(os.path.join(curr_dir, marker)) for marker in [".git", "go.mod", "pyproject.toml"]):
+            # Special case for openbao/pyproject.toml — keep searching if it's the current one
+            if os.path.exists(os.path.join(curr_dir, "openbao-register-creds.py")):
+                curr_dir = os.path.dirname(curr_dir)
+                continue
+            return curr_dir
+        curr_dir = os.path.dirname(curr_dir)
+
+    # Method 3: Fallback to fixed depth
+    return os.path.dirname(os.path.dirname(os.path.dirname(SCRIPT_DIR)))
+
+
+PROJECT_DIR = get_project_root()
 
 VAULT_ADDR = os.getenv("VAULT_ADDR", "http://localhost:8200")
 VAULT_TOKEN = os.getenv("VAULT_TOKEN", "")
@@ -147,9 +158,32 @@ KEY_MAP = {
 # ── Helper functions ──────────────────────────────────────────────
 
 
-def load_env_file(path):
-    """Load VAULT_TOKEN from .env file."""
+def load_env_file(path_arg):
+    """Load VAULT_TOKEN and VAULT_ADDR from .env file, with fallback to docker-compose/.env."""
     global VAULT_TOKEN
+    global VAULT_ADDR
+
+    # Priority 1: Specified path (if exists)
+    path = path_arg
+
+    # Priority 2: If default ".env" not found, try deployments/docker-compose/.env
+    if path == ".env" and not os.path.isfile(path):
+        fallback_path = os.path.join("deployments", "docker-compose", ".env")
+        if os.path.isfile(fallback_path):
+            print(Fore.YELLOW + "Using fallback .env: " + fallback_path)
+            path = fallback_path
+        else:
+            # Maybe we are running from inside deployments/docker-compose/openbao?
+            # Try reaching up to project root .env
+            up_path = os.path.join(PROJECT_DIR, ".env")
+            if os.path.isfile(up_path):
+                path = up_path
+            else:
+                # Try reaching up to deployments/docker-compose/.env
+                up_fallback = os.path.join(PROJECT_DIR, "deployments", "docker-compose", ".env")
+                if os.path.isfile(up_fallback):
+                    path = up_fallback
+
     if os.path.isfile(path):
         with open(path) as f:
             for line in f:
@@ -157,6 +191,9 @@ def load_env_file(path):
                 if line.startswith("VAULT_TOKEN="):
                     VAULT_TOKEN = line.split("=", 1)[1].strip()
                     os.environ["VAULT_TOKEN"] = VAULT_TOKEN
+                elif line.startswith("VAULT_ADDR="):
+                    VAULT_ADDR = line.split("=", 1)[1].strip()
+                    os.environ["VAULT_ADDR"] = VAULT_ADDR
 
 
 def check_openbao_status():
@@ -168,18 +205,8 @@ def check_openbao_status():
         return data["initialized"], data["sealed"]
     except requests.RequestException:
         print(Fore.RED + f"Cannot reach OpenBao at {VAULT_ADDR}.")
-        print(Fore.YELLOW + "Start it first:")
-        print("  docker compose up -d openbao")
+        print(Fore.YELLOW + "Please start and initialize OpenBao via your deployment scripts.")
         sys.exit(1)
-
-
-def run_script(script_name):
-    """Run a shell script from the deployments/docker-compose/openbao/ directory."""
-    script_path = os.path.join(PROJECT_DIR, "deployments", "docker-compose", "openbao", script_name)
-    result = subprocess.run([script_path], cwd=os.path.join(PROJECT_DIR, "deployments", "docker-compose", "openbao"))
-    if result.returncode != 0:
-        print(Fore.RED + f"{script_name} failed with exit code {result.returncode}")
-        sys.exit(result.returncode)
 
 
 def decrypt_credentials(enc_file_path, key):
@@ -230,6 +257,13 @@ def get_decrypted_content():
         password = getpass(f"Enter the password for credentials.yaml.enc (attempt {attempt}/3): ")
         content, error = decrypt_credentials(ENC_FILE, password)
         if error is None:
+            # Save verified password to KEY_FILE for reuse by other scripts
+            try:
+                with open(KEY_FILE, "w") as kf:
+                    kf.write(password)
+                os.chmod(KEY_FILE, 0o600)
+            except Exception:
+                pass
             return content, False  # (content, used_key_file=False)
         print(Fore.RED + error)
 
@@ -328,7 +362,8 @@ def register_placeholder_secrets(registered_providers):
             resp = requests.post(url, json={"data": placeholder_data}, headers=headers, timeout=10)
             resp.raise_for_status()
             print(
-                f"  {Fore.YELLOW}PLCH{Style.RESET_ALL} {provider:12s}  placeholder registered ({len(placeholder_data)} keys, all placeholders)"
+                f"  {Fore.YELLOW}PLCH{Style.RESET_ALL} {provider:12s}  placeholder registered "
+                f"({len(placeholder_data)} keys, all placeholders)"
             )
             placeholder_count += 1
         except requests.RequestException as e:
@@ -356,26 +391,50 @@ def main():
     print(f" - {Fore.CYAN}KEY_FILE:{Fore.RESET} {KEY_FILE}")
     print()
 
-    # Show operations
-    print(Fore.YELLOW + "Operations to be performed:")
-    step = 1
-    if run_openbao:
-        print(f"  {Fore.CYAN}{step}. Initialize / Unseal OpenBao")
-        step += 1
-    if run_credentials:
-        print(f"  {Fore.CYAN}{step}. Register CSP credentials → OpenBao")
+    # ── Step 1: OpenBao Status Check ──────────────────────────────
+    # Load .env variables first
+    load_env_file(args.env_file)
+
+    print(Style.BRIGHT + "── OpenBao Initialization Check ──" + Style.RESET_ALL)
+    initialized, sealed = check_openbao_status()
+
+    if not initialized:
+        print(Fore.RED + "OpenBao is not yet initialized.")
+        print(Fore.YELLOW + "Please run your deployment's openbao-init.sh first.")
+        sys.exit(1)
+    elif sealed:
+        print(Fore.RED + "OpenBao is sealed.")
+        print(Fore.YELLOW + "Please run your deployment's openbao-unseal.sh first.")
+        sys.exit(1)
+    else:
+        print(Fore.GREEN + "OpenBao is initialized and unsealed. Ready.")
     print()
 
-    # Determine if password input will be required (tumblebug pattern)
-    # If password is needed, it serves as confirmation (skip "proceed?" prompt)
-    password_required = (
-        run_credentials and os.path.isfile(ENC_FILE) and not args.key_file and not os.path.isfile(KEY_FILE)
-    )
+    # ── Step 2: Register CSP credentials ────────────────────────────
+    if os.path.isfile(ENC_FILE):
+        print(Style.BRIGHT + "── CSP Credential Registration ──" + Style.RESET_ALL)
 
-    # Decrypt credentials BEFORE confirm prompt (tumblebug pattern)
-    # Password input itself serves as user confirmation
-    decrypted_content = None
-    if run_credentials and os.path.isfile(ENC_FILE):
+        # Ensure VAULT_TOKEN is available
+        if not VAULT_TOKEN:
+            load_env_file(args.env_file)
+        if not VAULT_TOKEN:
+            print(Fore.RED + "VAULT_TOKEN not set. Ensure .env exists in project root or deployments/docker-compose/.")
+            sys.exit(1)
+
+        # Check OpenBao is ready
+        initialized, sealed = check_openbao_status()
+        if not initialized:
+            print(Fore.RED + "OpenBao is not initialized. Run openbao-init.sh first.")
+            sys.exit(1)
+        if sealed:
+            print(Fore.RED + "OpenBao is sealed. Run openbao-unseal.sh first.")
+            sys.exit(1)
+
+        # Determine if password input will be required (tumblebug pattern)
+        # If password is needed, it serves as confirmation (skip "proceed?" prompt)
+        password_required = not args.key_file and not os.path.isfile(KEY_FILE)
+
+        # Decrypt credentials BEFORE proceed (tumblebug pattern)
         if password_required:
             print(Fore.CYAN + "Enter the credential password to proceed...")
         print(Fore.CYAN + "Decrypting credentials...")
@@ -390,129 +449,75 @@ def main():
                 print(Fore.GREEN + "Cancelled.")
                 sys.exit(0)
             print()
-    elif not args.yes:
-        # No credentials to import - ask for confirmation
-        confirm = input(Fore.CYAN + "Proceed? (y/n): " + Style.RESET_ALL).lower()
-        if confirm not in ("y", "yes"):
-            print(Fore.GREEN + "Cancelled.")
-            sys.exit(0)
-        print()
 
-    start_time = time.time()
+        start_time = time.time()
 
-    # ── Step 1: OpenBao init / unseal ─────────────────────────────
-    if run_openbao:
-        print(Style.BRIGHT + "── OpenBao Initialization ──" + Style.RESET_ALL)
-        initialized, sealed = check_openbao_status()
-
-        if not initialized:
-            print(Fore.CYAN + "OpenBao not yet initialized. Running init-openbao.sh...")
-            run_script("init-openbao.sh")
-        elif sealed:
-            print(Fore.CYAN + "OpenBao is sealed. Running unseal-openbao.sh...")
-            run_script("unseal-openbao.sh")
-        else:
-            print(Fore.GREEN + "OpenBao is already initialized and unsealed.")
-        print()
-
-        # Reload .env to pick up VAULT_TOKEN
-        load_env_file(os.path.join(PROJECT_DIR, "deployments", "docker-compose", ".env"))
-
-    # ── Step 2: Register CSP credentials ────────────────────────────
-    if run_credentials:
-        print(Style.BRIGHT + "── CSP Credential Registration ──" + Style.RESET_ALL)
-
-        # Ensure VAULT_TOKEN is available
-        if not VAULT_TOKEN:
-            load_env_file(os.path.join(PROJECT_DIR, "deployments", "docker-compose", ".env"))
-        if not VAULT_TOKEN:
-            print(
-                Fore.RED
-                + "VAULT_TOKEN not set. Run make compose first (or init-openbao.sh in deployments/docker-compose/openbao/)."
-            )
+        # Parse YAML
+        try:
+            data = yaml.safe_load(decrypted_content)
+            cred_data = data["credentialholder"]["admin"]
+        except Exception:
+            print(Fore.RED + "Error parsing credentials YAML. Ensure the format is correct.")
             sys.exit(1)
 
-        # Check OpenBao is ready
-        initialized, sealed = check_openbao_status()
-        if not initialized:
-            print(Fore.RED + "OpenBao is not initialized. Run ./init/init-openbao.sh first.")
-            sys.exit(1)
-        if sealed:
-            print(Fore.RED + "OpenBao is sealed. Run ./init/unseal-openbao.sh first.")
-            sys.exit(1)
-
-        # Check encrypted file and decrypted content
-        if not os.path.isfile(ENC_FILE):
-            print(Fore.YELLOW + f"Skipping: {ENC_FILE} not found.")
-            print(Fore.YELLOW + "Generate it using cb-tumblebug/init/encCredential.sh")
-        elif decrypted_content is None:
-            print(Fore.RED + "Decrypted content is empty. Skipping credential import.")
-        else:
-            # Parse YAML
-            try:
-                data = yaml.safe_load(decrypted_content)
-                cred_data = data["credentialholder"]["admin"]
-            except Exception:
-                print(Fore.RED + "Error parsing credentials YAML. Ensure the format is correct.")
-                sys.exit(1)
-
-            # Register each CSP
-            print(Fore.CYAN + "Registering credentials to OpenBao...")
-            print()
-
-            success_count = 0
-            skip_count = 0
-            fail_count = 0
-            registered_providers = set()
-
-            for provider, credentials in cred_data.items():
-                provider_name, status, message = register_credential(provider, credentials)
-                if status == "ok":
-                    print(f"  {Fore.GREEN}OK  {Style.RESET_ALL} {provider_name:12s}  {message}")
-                    success_count += 1
-                    registered_providers.add(provider_name)
-                elif status == "skip":
-                    print(f"  {Fore.YELLOW}SKIP{Style.RESET_ALL} {provider_name:12s}  ({message})")
-                    skip_count += 1
-                else:
-                    print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider_name:12s}  {message}")
-                    fail_count += 1
-
-            # Register placeholder secrets for CSPs not in the credential file.
-            # This prevents vault_kv_secret_v2 data sources from hard-failing
-            # during tofu plan when credentials haven't been provided yet.
-            placeholder_count = register_placeholder_secrets(registered_providers)
-
-            print()
-            print(
-                f"Results: {Fore.GREEN}{success_count} registered{Style.RESET_ALL}, "
-                f"{Fore.YELLOW}{skip_count} skipped{Style.RESET_ALL}, "
-                f"{Fore.RED}{fail_count} failed{Style.RESET_ALL}"
-                + (f", {Fore.CYAN}{placeholder_count} placeholders{Style.RESET_ALL}" if placeholder_count > 0 else "")
-            )
-
-            if fail_count > 0:
-                print(Fore.RED + "\nSome credentials failed to register.")
-
+        # Register each CSP
+        print(Fore.CYAN + "Registering credentials to OpenBao...")
         print()
 
-    # Summary
-    elapsed = int(time.time() - start_time)
-    print(Style.BRIGHT + Fore.GREEN)
-    print("=" * 60)
-    print(f"  Initialization complete! ({elapsed}s)")
-    print("=" * 60)
-    print(Style.RESET_ALL)
+        success_count = 0
+        skip_count = 0
+        fail_count = 0
+        registered_providers = set()
+
+        for provider, credentials in cred_data.items():
+            provider_name, status, message = register_credential(provider, credentials)
+            if status == "ok":
+                print(f"  {Fore.GREEN}OK  {Style.RESET_ALL} {provider_name:12s}  {message}")
+                success_count += 1
+                registered_providers.add(provider_name)
+            elif status == "skip":
+                print(f"  {Fore.YELLOW}SKIP{Style.RESET_ALL} {provider_name:12s}  ({message})")
+                skip_count += 1
+            else:
+                print(f"  {Fore.RED}FAIL{Style.RESET_ALL} {provider_name:12s}  {message}")
+                fail_count += 1
+
+        # Register placeholder secrets for CSPs not in the credential file.
+        placeholder_count = register_placeholder_secrets(registered_providers)
+
+        print()
+        print(
+            f"Results: {Fore.GREEN}{success_count} registered{Style.RESET_ALL}, "
+            f"{Fore.YELLOW}{skip_count} skipped{Style.RESET_ALL}, "
+            f"{Fore.RED}{fail_count} failed{Style.RESET_ALL}"
+            + (f", {Fore.CYAN}{placeholder_count} placeholders{Style.RESET_ALL}" if placeholder_count > 0 else "")
+        )
+
+        if fail_count > 0:
+            print(Fore.RED + "\nSome credentials failed to register.")
+
+        # Summary
+        elapsed = int(time.time() - start_time)
+        print(Style.BRIGHT + Fore.GREEN)
+        print("=" * 60)
+        print(f"  Initialization complete! ({elapsed}s)")
+        print("=" * 60)
+        print(Style.RESET_ALL)
+    else:
+        print(Fore.YELLOW + f"Skipping: {ENC_FILE} not found.")
+        print(Fore.YELLOW + "Generate it using cb-tumblebug/init/encCredential.sh")
+
+    print()
 
     # Usage hint
-    if run_credentials:
-        print("To verify a credential:")
-        print("  source .env")
-        print(
-            f'  curl -s -H "X-Vault-Token: $VAULT_TOKEN" {VAULT_ADDR}/v1/{KV_MOUNT}/data/{SECRET_PREFIX}/aws | jq .data.data'
-        )
-        print(f"  bao kv get {KV_MOUNT}/{SECRET_PREFIX}/aws")
-        print()
+    print("To verify a credential:")
+    print("  source .env")
+    print(
+        f'  curl -s -H "X-Vault-Token: $$VAULT_TOKEN" {VAULT_ADDR}/v1/{KV_MOUNT}/data/{SECRET_PREFIX}/aws '
+        "| jq .data.data"
+    )
+    print(f"  bao kv get {KV_MOUNT}/{SECRET_PREFIX}/aws")
+    print()
 
 
 if __name__ == "__main__":

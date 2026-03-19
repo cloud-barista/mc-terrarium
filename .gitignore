@@ -45,8 +45,13 @@ kubeconfig
 
 # Sensitive data
 .env
-# deployments/docker-compose/.env is also sensitive
 deployments/docker-compose/.env
+
+# Ignore container volumes and secrets in deployments folder
+deployments/docker-compose/data/
+deployments/docker-compose/secrets/
+deployments/docker-compose/openbao/secrets/*
+!deployments/docker-compose/openbao/secrets/.gitkeep
 
 # Binaries
 pkg/mc-terrarium
@@ -66,17 +71,13 @@ logs/
 !.terrarium/.keep
 
 !secrets
-secrets/**
+**/secrets/*
+!**/secrets/.gitkeep
+!**/secrets/README.md
 !secrets/template-*
-!secrets/.keep
-!secrets/README.md
 !secrets/load-ncp-cred-env.sh
 !secrets/load-alibaba-cred-env.sh
 !secrets/load-all-cred-env.sh
 !secrets/load-ibm-cred-env.sh
 !secrets/load-dcs-cred-env.sh
 !secrets/load-tencent-cred-env.sh
-
-# Ignore container volumes and secrets in deployments folder
-deployments/docker-compose/data/
-deployments/docker-compose/secrets/
