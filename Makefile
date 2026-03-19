@@ -1,4 +1,5 @@
 # Makefile for MC-Terrarium in Cloud-Barista.
+SHELL := /bin/bash
 
 MODULE_NAME := mc-terrarium
 PROJECT_NAME := github.com/cloud-barista/$(MODULE_NAME)
@@ -107,8 +108,35 @@ prepare-volumes: ## Create bind-mount directories with current user ownership
 #   3) Full reset:        make clean-all  → make up → make init
 
 init: ## Register CSP credentials into OpenBao (run manually after compose)
-	@echo "Initializing OpenBao and registering credentials..."
-	@bash init/init.sh
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "MC-Terrarium OpenBao Initialization"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@if [ ! -f ~/.cloud-barista/.tmp_enc_key ]; then \
+		printf "Enter the password for credentials.yaml.enc: "; \
+		read -s PASS; \
+		echo ""; \
+		printf "%s" "$$PASS" > ~/.cloud-barista/.tmp_enc_key; \
+		os_type=$$(uname); \
+		if [ "$$os_type" = "Linux" ]; then \
+			chmod 600 ~/.cloud-barista/.tmp_enc_key; \
+		else \
+			chmod 600 ~/.cloud-barista/.tmp_enc_key; \
+		fi; \
+		IS_TMP_KEY=1; \
+	fi; \
+	( \
+		echo "Initializing OpenBao and registering credentials..."; \
+		chmod +x deployments/docker-compose/openbao/openbao-register-creds.sh 2>/dev/null || true; \
+		deployments/docker-compose/openbao/openbao-register-creds.sh -y; \
+	); \
+	EXIT_CODE=$$?; \
+	if [ "$$EXIT_CODE" -ne 0 ]; then \
+		rm -f ~/.cloud-barista/.tmp_enc_key; \
+		exit $$EXIT_CODE; \
+	fi; \
+	if [ "$$IS_TMP_KEY" = "1" ]; then \
+		rm -f ~/.cloud-barista/.tmp_enc_key; \
+	fi
 
 up: compose ## Build and start all services (auto init/unseal OpenBao)
 
@@ -116,23 +144,18 @@ down: compose-down ## Stop and remove all services
 
 unseal: ## Unseal OpenBao (needed after every restart)
 	@echo "Trying to unseal OpenBao (if not already unsealed)..."
-	@cd deployments/docker-compose/openbao && bash unseal-openbao.sh || true
+	@cd deployments/docker-compose/openbao && bash openbao-unseal.sh || true
 
 compose: swag prepare-volumes ## Build and start all services (auto init/unseal OpenBao)
-	@echo "Building images..."
-	@cd deployments/docker-compose && DOCKER_BUILDKIT=1 docker compose build
 	@echo "Starting OpenBao..."
 	@cd deployments/docker-compose && docker compose up -d openbao
 	@if [ ! -f deployments/docker-compose/.env ] || ! grep -q '^VAULT_TOKEN=.\+' deployments/docker-compose/.env 2>/dev/null; then \
 		echo "VAULT_TOKEN not found — running first-time OpenBao initialization..."; \
-		cd deployments/docker-compose/openbao && bash init-openbao.sh; \
+		cd deployments/docker-compose/openbao && bash openbao-init.sh; \
 	fi
 	@$(MAKE) unseal
 	@echo "Starting all services..."
-	@cd deployments/docker-compose && docker compose up -d
-	@echo ""
-	@echo "To register CSP credentials, run:  make init"
-	@$(MAKE) logs
+	@cd deployments/docker-compose && DOCKER_BUILDKIT=1 docker compose up --build
 
 compose-down: ## Stop and remove all services
 	@echo "Stopping all services..."
@@ -146,7 +169,8 @@ clean-db: compose-down ## Reset terrarium data (keep OpenBao)
 clean-all: compose-down ## Full reset including OpenBao (requires re-init)
 	@echo "Cleaning all data including OpenBao..."
 	sudo rm -rf deployments/docker-compose/data
-	@rm -f deployments/docker-compose/secrets/openbao-init.json
+	@rm -f deployments/docker-compose/openbao/secrets/openbao-init.json
+	@find deployments/docker-compose/openbao/secrets -type f ! -name ".gitkeep" -delete
 	@sed -i 's/^VAULT_TOKEN=.*/VAULT_TOKEN=/' deployments/docker-compose/.env 2>/dev/null || true
 	@echo "Cleaned! Run 'make up' to rebuild and re-initialize."
 
