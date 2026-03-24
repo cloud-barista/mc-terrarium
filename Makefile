@@ -111,31 +111,14 @@ init: ## Register CSP credentials into OpenBao (run manually after compose)
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo "MC-Terrarium OpenBao Initialization"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@if [ ! -f ~/.cloud-barista/.tmp_enc_key ]; then \
-		printf "Enter the password for credentials.yaml.enc: "; \
-		read -s PASS; \
-		echo ""; \
-		printf "%s" "$$PASS" > ~/.cloud-barista/.tmp_enc_key; \
-		os_type=$$(uname); \
-		if [ "$$os_type" = "Linux" ]; then \
-			chmod 600 ~/.cloud-barista/.tmp_enc_key; \
-		else \
-			chmod 600 ~/.cloud-barista/.tmp_enc_key; \
-		fi; \
-		IS_TMP_KEY=1; \
-	fi; \
-	( \
+	@( \
 		echo "Initializing OpenBao and registering credentials..."; \
 		chmod +x deployments/docker-compose/openbao/openbao-register-creds.sh 2>/dev/null || true; \
-		deployments/docker-compose/openbao/openbao-register-creds.sh -y; \
+		deployments/docker-compose/openbao/openbao-register-creds.sh; \
 	); \
 	EXIT_CODE=$$?; \
 	if [ "$$EXIT_CODE" -ne 0 ]; then \
-		rm -f ~/.cloud-barista/.tmp_enc_key; \
 		exit $$EXIT_CODE; \
-	fi; \
-	if [ "$$IS_TMP_KEY" = "1" ]; then \
-		rm -f ~/.cloud-barista/.tmp_enc_key; \
 	fi
 
 up: compose ## Build and start all services (auto init/unseal OpenBao)
