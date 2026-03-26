@@ -9,13 +9,13 @@ This directory previously held CSP credential files used directly by OpenTofu te
 
 ### Setup
 
-For credential setup instructions, see [init/README.md](../init/README.md).
+For credential setup instructions, see [OpenBao & Credential Initialization](../deployments/docker-compose/openbao/README.md).
 
 **Quick summary:**
 
 1. Prepare `~/.cloud-barista/credentials.yaml` (from [CB-Tumblebug template](https://github.com/cloud-barista/cb-tumblebug/tree/main/init))
 2. Encrypt it with `encCredential.sh`
-3. Run `bash init/init.sh` — this decrypts and registers credentials into OpenBao
+3. Run `make init` — this decrypts and registers credentials into OpenBao
 
 ### Legacy Files
 

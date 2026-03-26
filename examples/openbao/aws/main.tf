@@ -6,7 +6,7 @@
 #
 # Prerequisites:
 #   1. OpenBao running and unsealed (docker compose up -d openbao)
-#   2. Credentials registered (bash init/init.sh)
+#   2. Credentials registered (make init)
 #   3. VAULT_ADDR and VAULT_TOKEN set
 #
 # Usage (from this directory):
