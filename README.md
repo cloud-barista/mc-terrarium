@@ -70,7 +70,7 @@ chmod +x ./encCredential.sh
 ./encCredential.sh
 ```
 
-> For detailed steps (re-editing, decryption, supported CSPs), see [init/README.md](init/README.md).
+> For detailed steps (re-editing, decryption, supported CSPs), see [OpenBao & Credential Initialization](deployments/docker-compose/openbao/README.md).
 
 ## Development Tools
 
@@ -126,4 +126,4 @@ make init
 
 URL: http://localhost:8055/terrarium/swagger/index.html
 
-> For detailed initialization guide, credential setup, and troubleshooting, see [init/README.md](init/README.md).
+> For detailed initialization guide, credential setup, and troubleshooting, see [OpenBao & Credential Initialization](deployments/docker-compose/openbao/README.md).
