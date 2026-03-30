@@ -27,11 +27,11 @@ import (
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param ReqBody body model.CreateTestbedRequest true "Parameters requied to create a testbed"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/init [post]
 func InitTestbed(c echo.Context) error {
 
@@ -76,7 +76,7 @@ func initTestbed(c echo.Context) (model.Response, error) {
 	 */
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments and engaged providers
 	enrichments := "testbed"
@@ -173,11 +173,11 @@ func initTestbed(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/plan [post]
 func PlanTestbed(c echo.Context) error {
 
@@ -203,7 +203,7 @@ func planTestbed(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the plan command
 	ret, err := terrarium.Plan(trId, reqId)
@@ -232,11 +232,11 @@ func planTestbed(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/apply [post]
 func ApplyTestbed(c echo.Context) error {
 
@@ -262,7 +262,7 @@ func applyTestbed(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the apply command
 	ret, err := terrarium.Apply(trId, reqId)
@@ -291,11 +291,11 @@ func applyTestbed(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/destroy [delete]
 func DestroyTestbed(c echo.Context) error {
 
@@ -321,7 +321,7 @@ func destroyTestbed(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the destroy command
 	ret, err := terrarium.Destroy(trId, reqId)
@@ -352,11 +352,11 @@ func destroyTestbed(c echo.Context) (model.Response, error) {
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/output [get]
 func OutputTestbed(c echo.Context) error {
 
@@ -406,7 +406,7 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -596,11 +596,11 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/emptyout [delete]
 func EmptyOutTestbed(c echo.Context) error {
 

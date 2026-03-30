@@ -11,6 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package handler
+// Package model is to handle REST API model resources
+package model
 
-const HeaderXCredentialHolder = "X-Credential-Holder"
+const (
+	// HeaderXRequestId is a header key for x-request-id
+	HeaderXRequestId = "x-request-id"
+	// HeaderXCredentialHolder is a header key for x-credential-holder
+	HeaderXCredentialHolder = "x-credential-holder"
+)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cloud-barista/mc-terrarium/pkg/api/rest/model"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,23 +12,23 @@ func RequestIdAndDetailsIssuer(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// log.Debug().Msg("Start - Request ID middleware")
 
-		// Make X-Request-Id visible to all handlers
-		c.Response().Header().Set("Access-Control-Expose-Headers", echo.HeaderXRequestID)
+		// Make x-request-id visible to all handlers
+		c.Response().Header().Set("Access-Control-Expose-Headers", model.HeaderXRequestId)
 
 		// Get or generate Request ID
-		reqID := c.Request().Header.Get(echo.HeaderXRequestID)
+		reqID := c.Request().Header.Get(model.HeaderXRequestId)
 		if reqID == "" {
 			reqID = fmt.Sprintf("%d", time.Now().UnixNano())
-			c.Request().Header.Set(echo.HeaderXRequestID, reqID)
+			c.Request().Header.Set(model.HeaderXRequestId, reqID)
 		}
 
 		// //log.Trace().Msgf("(Request ID middleware) Request ID: %s", reqID)
 		// if _, ok := common.RequestMap.Load(reqID); ok {
-		// 	return fmt.Errorf("the X-Request-Id is already in use")
+		// 	return fmt.Errorf("the x-request-id is already in use")
 		// }
 
-		// Set "X-Request-Id" in response header
-		c.Response().Header().Set(echo.HeaderXRequestID, reqID)
+		// Set "x-request-id" in response header
+		c.Response().Header().Set(model.HeaderXRequestId, reqID)
 
 		// details := common.RequestDetails{
 		// 	StartTime:   time.Now(),

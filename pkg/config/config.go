@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const Version = "0.1.3"
+const Version = "0.1.4"
 
 var (
 	RuntimeConfig Config

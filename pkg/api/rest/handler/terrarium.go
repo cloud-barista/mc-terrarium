@@ -32,10 +32,11 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body model.TerrariumCreationRequest true "Information for a new terrarium"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr [post]
 func IssueTerrarium(c echo.Context) error {
 
@@ -46,7 +47,7 @@ func IssueTerrarium(c echo.Context) error {
 	}
 
 	// * Info: Get the credential profile (holder) from the header
-	credentialHolder := c.Request().Header.Get(HeaderXCredentialHolder)
+	credentialHolder := c.Request().Header.Get(model.HeaderXCredentialHolder)
 	if credentialHolder == "" {
 		credentialHolder = "admin"
 	}
@@ -104,6 +105,8 @@ func IssueTerrarium(c echo.Context) error {
 // @Tags [Terrarium] An environment to enrich the multi-cloud infrastructure
 // @Accept  json
 // @Produce  json
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {array} model.TerrariumInfo "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
@@ -122,6 +125,8 @@ func ReadAllTerrarium(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.TerrariumInfo "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
@@ -156,6 +161,8 @@ func ReadTerrarium(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"

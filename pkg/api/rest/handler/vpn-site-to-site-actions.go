@@ -30,11 +30,11 @@ import (
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ReqBody body model.CreateSiteToSiteVpnRequest true "Parameters required to create the Site-to-Site VPN"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/init [post]
 func InitSiteToSiteVpn(c echo.Context) error {
 
@@ -96,7 +96,7 @@ func initSiteToSiteVpn(c echo.Context) (model.Response, error) {
 	 */
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "vpn/site-to-site"
@@ -215,11 +215,11 @@ func getProvidersFromRequest(req *model.CreateSiteToSiteVpnRequest) []string {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/plan [post]
 func PlanSiteToSiteVpn(c echo.Context) error {
 
@@ -243,7 +243,7 @@ func planSiteToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the plan command
 	ret, err := terrarium.Plan(trId, reqId)
@@ -272,11 +272,11 @@ func planSiteToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/apply [post]
 func ApplySiteToSiteVpn(c echo.Context) error {
 
@@ -301,7 +301,7 @@ func applySiteToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the apply command
 	ret, err := terrarium.Apply(trId, reqId)
@@ -330,11 +330,11 @@ func applySiteToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/destroy [delete]
 func DestroySiteToSiteVpn(c echo.Context) error {
 
@@ -370,7 +370,7 @@ func destroySiteToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the destroy command
 	var ret string
@@ -411,11 +411,11 @@ func Contains(slice []string, item string) bool {
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/output [get]
 func OutputSiteToSiteVpn(c echo.Context) error {
 
@@ -464,7 +464,7 @@ func outputSiteToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -667,11 +667,11 @@ func outputSiteToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site/actions/emptyout [delete]
 func EmptyOutSiteToSiteVpn(c echo.Context) error {
 
