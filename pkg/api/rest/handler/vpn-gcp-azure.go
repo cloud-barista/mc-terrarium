@@ -45,6 +45,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/env [post]
 func InitEnvForGcpAzureVpn(c echo.Context) error {
 
@@ -147,6 +148,7 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/env [delete]
 func ClearGcpAzureVpn(c echo.Context) error {
 
@@ -210,6 +212,7 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [get]
 func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 
@@ -391,6 +394,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/infracode [post]
 func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 
@@ -418,8 +422,17 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 
 	projectRoot := config.Terrarium.Root
 
+	// Read and set the enrichments to terrarium information
+	trInfo, _, err := terrarium.GetInfo(trId)
+	if err != nil {
+		err2 := fmt.Errorf("failed to read terrarium information")
+		log.Error().Err(err).Msg(err2.Error())
+		res := model.Response{Success: false, Message: err2.Error()}
+		return c.JSON(http.StatusInternalServerError, res)
+	}
+
 	// Check if the working directory exists
-	workingDir := projectRoot + "/.terrarium/" + trId + "/vpn/gcp-azure"
+	workingDir := projectRoot + "/.terrarium/" + trId + "/" + trInfo.Enrichments
 	if _, err := os.Stat(workingDir); os.IsNotExist(err) {
 		err2 := fmt.Errorf("working directory dose not exist")
 		log.Warn().Err(err).Msg(err2.Error())
@@ -430,20 +443,12 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Save the tfVars to a file
-	tfVarsPath := workingDir + "/terraform.tfvars.json"
-	// Note
-	// Terraform also automatically loads a number of variable definitions files
-	// if they are present:
-	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
-	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
-
 	if req.TfVars.TerrariumId == "" {
 		log.Warn().Msgf("terrarium ID is not set, Use path param: %s", trId) // warn
 		req.TfVars.TerrariumId = trId
 	}
 
-	err := tfutil.SaveTfVars(req.TfVars, tfVarsPath)
+	err = terrarium.SaveTfVars(trId, trInfo.Enrichments, req.TfVars)
 	if err != nil {
 		err2 := fmt.Errorf("failed to save tfVars to a file")
 		log.Error().Err(err).Msg(err2.Error())
@@ -476,6 +481,7 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/plan [post]
 func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 
@@ -544,6 +550,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [post]
 func CreateGcpAzureVpn(c echo.Context) error {
 
@@ -612,6 +619,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [delete]
 func DestroyGcpAzureVpn(c echo.Context) error {
 
@@ -679,6 +687,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/request/{requestId} [get]
 func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 

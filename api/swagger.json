@@ -167,6 +167,12 @@
                         "schema": {
                             "$ref": "#/definitions/model.TerrariumCreationRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -320,6 +326,12 @@
                         "description": "custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -375,6 +387,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -429,6 +447,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -497,6 +521,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -561,6 +591,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -628,6 +664,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -684,6 +726,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -743,6 +791,12 @@
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -814,6 +868,12 @@
                         "description": "custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -869,6 +929,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -923,6 +989,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -992,6 +1064,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1056,6 +1134,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1123,6 +1207,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1179,6 +1269,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1238,6 +1334,12 @@
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1309,6 +1411,12 @@
                         "description": "custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1364,6 +1472,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1418,6 +1532,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1489,6 +1609,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1553,6 +1679,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1620,6 +1752,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1676,6 +1814,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1735,6 +1879,12 @@
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1810,6 +1960,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1874,6 +2030,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1928,6 +2090,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -1986,6 +2154,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2043,6 +2217,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2099,6 +2279,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2165,6 +2351,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2241,6 +2433,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2297,6 +2495,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2373,6 +2577,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2437,6 +2647,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2491,6 +2707,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2549,6 +2771,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2606,6 +2834,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2662,6 +2896,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2728,6 +2968,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2804,6 +3050,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2860,6 +3112,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -2932,6 +3190,12 @@
                         "description": "custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -2987,6 +3251,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3041,6 +3311,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3099,6 +3375,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3153,6 +3435,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3220,6 +3508,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3276,6 +3570,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3335,6 +3635,12 @@
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3406,6 +3712,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3461,6 +3773,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3515,6 +3833,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3573,6 +3897,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3627,6 +3957,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3694,6 +4030,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3750,6 +4092,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -3809,6 +4157,12 @@
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3884,6 +4238,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -3948,6 +4308,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -4002,6 +4368,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -4060,6 +4432,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -4117,6 +4495,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -4173,6 +4557,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -4239,6 +4629,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -4315,6 +4711,12 @@
                         "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -4371,6 +4773,12 @@
                         "type": "string",
                         "description": "Custom request ID",
                         "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "X-Credential-Holder",
                         "in": "header"
                     }
                 ],
@@ -4818,6 +5226,10 @@
                 "name"
             ],
             "properties": {
+                "credentialProfile": {
+                    "description": "The name of the credential profile (holder) used for this terrarium",
+                    "type": "string"
+                },
                 "description": {
                     "type": "string",
                     "default": "This terrarium enriches ...",

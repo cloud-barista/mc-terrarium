@@ -31,6 +31,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/init [post]
 func InitAwsToSiteVpn(c echo.Context) error {
 
@@ -75,7 +76,6 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 		log.Warn().Err(err).Msg("invalid request data")
 		return emptyRes, err
 	}
-
 	/*
 	 * [Process] Prepare and execute the init command
 	 */
@@ -159,6 +159,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/plan [post]
 func PlanAwsToSiteVpn(c echo.Context) error {
 
@@ -217,6 +218,7 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/apply [post]
 func ApplyAwsToSiteVpn(c echo.Context) error {
 
@@ -275,6 +277,7 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/destroy [delete]
 func DestroyAwsToSiteVpn(c echo.Context) error {
 
@@ -370,6 +373,7 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/output [get]
 func OutputAwsToSiteVpn(c echo.Context) error {
 
@@ -666,6 +670,7 @@ func mergeResourceInfo(existing, new map[string]any) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/emptyout [delete]
 func EmptyOutAwsToSiteVpn(c echo.Context) error {
 

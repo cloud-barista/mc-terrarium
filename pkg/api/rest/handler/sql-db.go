@@ -50,6 +50,7 @@ var validProvidersForSqlDb = map[string]bool{
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/env [post]
 func InitEnvForSqlDb(c echo.Context) error {
 
@@ -172,6 +173,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/env [delete]
 func ClearEnvOfSqlDb(c echo.Context) error {
 
@@ -243,6 +245,7 @@ func ClearEnvOfSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/infracode [post]
 func CreateInfracodeForSqlDb(c echo.Context) error {
 
@@ -292,20 +295,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, res)
 	}
 
-	// Save the tfVars to a file
-	tfVarsPath := workingDir + "/terraform.tfvars.json"
-	// Note
-	// Terraform also automatically loads a number of variable definitions files
-	// if they are present:
-	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
-	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
-
-	if req.TfVars.TerrariumID == "" {
-		log.Warn().Msgf("terrarium ID is not set, Use path param: %s", trId) // warn
-		req.TfVars.TerrariumID = trId
-	}
-
-	err = tfutil.SaveTfVars(req.TfVars, tfVarsPath)
+	err = terrarium.SaveTfVars(trId, trInfo.Enrichments, req.TfVars)
 	if err != nil {
 		err2 := fmt.Errorf("failed to save tfVars to a file")
 		log.Error().Err(err).Msg(err2.Error())
@@ -338,6 +328,7 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/plan [post]
 func CheckInfracodeForSqlDb(c echo.Context) error {
 
@@ -413,6 +404,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [post]
 func CreateSqlDb(c echo.Context) error {
 
@@ -513,6 +505,7 @@ func CreateSqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [get]
 func GetResourceInfoOfSqlDb(c echo.Context) error {
 
@@ -702,6 +695,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [delete]
 func DestroySqlDb(c echo.Context) error {
 
@@ -777,6 +771,7 @@ func DestroySqlDb(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/request/{requestId} [get]
 func GetRequestStatusOfSqlDb(c echo.Context) error {
 

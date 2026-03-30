@@ -1,7 +1,7 @@
 # Read Alibaba Cloud credentials from OpenBao
 data "vault_kv_secret_v2" "alibaba" {
   mount = "secret"
-  name  = "csp/alibaba"
+  name  = var.credential_profile == "admin" ? "csp/alibaba" : "users/${var.credential_profile}/csp/alibaba"
 }
 
 # Configure the Alibaba Cloud Provider

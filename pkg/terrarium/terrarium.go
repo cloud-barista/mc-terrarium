@@ -95,6 +95,28 @@ func DeleteInfo(trId string) error {
 	return nil
 }
 
+// ValidateCredentialProfile validates the credential profile (holder) of a terrarium.
+// It compares the provided profile with the one stored in the terrarium info.
+func ValidateCredentialProfile(trId string, providedProfile string) error {
+	trInfo, exists, err := GetInfo(trId)
+	if err != nil {
+		return fmt.Errorf("failed to get terrarium info: %w", err)
+	}
+	if !exists {
+		return fmt.Errorf("terrarium (trId: %s) does not exist", trId)
+	}
+
+	if trInfo.CredentialProfile == "" {
+		return fmt.Errorf("credential profile is missing for terrarium (trId: %s)", trId)
+	}
+
+	if trInfo.CredentialProfile != providedProfile {
+		return fmt.Errorf("credential profile mismatch: expected %s, but provided %s", trInfo.CredentialProfile, providedProfile)
+	}
+
+	return nil
+}
+
 // GetEnrichments gets the terrarium enrichments from the terrarium info
 func GetEnrichments(trId string) (string, bool, error) {
 	trInfo, exist, err := GetInfo(trId)
@@ -310,13 +332,36 @@ func SaveTfVars(trId, enrichments string, tfVars any) error {
 		}
 	}
 
+	// * Info: Get and inject the credential profile (holder)
+	trInfo, _, err := GetInfo(trId)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to get terrarium info for tfvars injection")
+		return err
+	}
+
+	// Create a map to inject the credential profile
+	var tfVarsMap map[string]interface{}
+	b, err := json.Marshal(tfVars)
+	if err != nil {
+		return fmt.Errorf("failed to marshal tfVars: %w", err)
+	}
+	err = json.Unmarshal(b, &tfVarsMap)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal tfVars to map: %w", err)
+	}
+
+	// Inject the credential_profile if it exists in the terrarium info
+	if trInfo.CredentialProfile != "" {
+		tfVarsMap["credential_profile"] = trInfo.CredentialProfile
+	}
+
 	// Create the tfvars file
 	// [Note] OpenTofu automatically loads variable definitions files
 	// if they are present:
 	// - Files named exactly terraform.tfvars or terraform.tfvars.json.
 	// - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
 	tfVarsPath := workingDir + "/terraform.tfvars.json"
-	err := tfutil.SaveTfVars(tfVars, tfVarsPath)
+	err = tfutil.SaveTfVars(tfVarsMap, tfVarsPath)
 	if err != nil {
 		err2 := fmt.Errorf("failed to create the tfvars file")
 		log.Error().Err(err).Msg(err2.Error())

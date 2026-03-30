@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 terraform {
 
   # Required OpenTofu version
@@ -23,7 +29,7 @@ provider "vault" {}
 # ── Read NCP credentials from OpenBao ─────────────────────────────
 data "vault_kv_secret_v2" "ncp" {
   mount = "secret"
-  name  = "csp/ncp"
+  name  = var.credential_profile == "admin" ? "csp/ncp" : "users/${var.credential_profile}/csp/ncp"
 }
 
 # ── NCP Provider using OpenBao credentials ───────────────────────

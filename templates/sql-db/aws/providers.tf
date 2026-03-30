@@ -23,7 +23,7 @@ provider "vault" {}
 # Read AWS credentials from OpenBao
 data "vault_kv_secret_v2" "aws" {
   mount = "secret"
-  name  = "csp/aws"
+  name  = var.credential_profile == "admin" ? "csp/aws" : "users/${var.credential_profile}/csp/aws"
 }
 
 # Provider block for AWS specifies the configuration for the provider

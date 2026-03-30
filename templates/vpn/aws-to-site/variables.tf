@@ -1,3 +1,4 @@
+
 variable "vpn_config" {
   description = "VPN configuration for AWS and target CSP connection"
   type = object({

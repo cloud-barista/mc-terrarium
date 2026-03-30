@@ -35,6 +35,7 @@ import (
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr [post]
 func IssueTerrarium(c echo.Context) error {
 
@@ -44,15 +45,22 @@ func IssueTerrarium(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, res)
 	}
 
+	// * Info: Get the credential profile (holder) from the header
+	credentialHolder := c.Request().Header.Get(HeaderXCredentialHolder)
+	if credentialHolder == "" {
+		credentialHolder = "admin"
+	}
+
 	projectRoot := config.Terrarium.Root
 
 	// * Info: Make sure the enrichments field is empty
 	terrariumInfo := &model.TerrariumInfo{
-		Name:        req.Name,
-		Description: req.Description,
-		Id:          req.Name,
-		Enrichments: "",
-		Providers:   []string{},
+		Name:              req.Name,
+		Description:       req.Description,
+		Id:                req.Name,
+		Enrichments:       "",
+		Providers:         []string{},
+		CredentialProfile: credentialHolder,
 	}
 	trId := terrariumInfo.Id
 

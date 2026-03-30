@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 # Define the required version of OpenTofu and the providers that will be used in the project
 terraform {
   # Required OpenTofu version
@@ -24,7 +30,7 @@ provider "vault" {}
 # ── Read GCP credentials from OpenBao ─────────────────────────────
 data "vault_kv_secret_v2" "gcp" {
   mount = "secret"
-  name  = "csp/gcp"
+  name  = var.credential_profile == "admin" ? "csp/gcp" : "users/${var.credential_profile}/csp/gcp"
 }
 
 locals {

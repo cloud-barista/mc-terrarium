@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 ## Configure the AliCloud Provider
 
 terraform {
@@ -21,7 +27,7 @@ provider "vault" {}
 # ── Read Alibaba Cloud credentials from OpenBao ──────────────────
 data "vault_kv_secret_v2" "alibaba" {
   mount = "secret"
-  name  = "csp/alibaba"
+  name  = var.credential_profile == "admin" ? "csp/alibaba" : "users/${var.credential_profile}/csp/alibaba"
 }
 
 # ── AliCloud Provider using OpenBao credentials ─────────────────

@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 variable "resource_group_name" {
   description = "The name of the existing Azure Resource Group where AKS will be deployed."
   type        = string

@@ -32,7 +32,7 @@ provider "vault" {}
 # ── Read Azure credentials from OpenBao ───────────────────────────
 data "vault_kv_secret_v2" "azure" {
   mount = "secret"
-  name  = "csp/azure"
+  name  = var.credential_profile == "admin" ? "csp/azure" : "users/${var.credential_profile}/csp/azure"
 }
 
 # Ref.) Azure Provider: Authenticating using a Service Principal with a Client Secret

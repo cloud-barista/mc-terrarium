@@ -9,6 +9,12 @@ variable "terrarium_id" {
   }
 }
 
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 #######################################################################
 # Amazon Web Services (AWS)
 variable "csp_region" {

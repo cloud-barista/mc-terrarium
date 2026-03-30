@@ -31,6 +31,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/init [post]
 func InitTestbed(c echo.Context) error {
 
@@ -176,6 +177,7 @@ func initTestbed(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/plan [post]
 func PlanTestbed(c echo.Context) error {
 
@@ -234,6 +236,7 @@ func planTestbed(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/apply [post]
 func ApplyTestbed(c echo.Context) error {
 
@@ -292,6 +295,7 @@ func applyTestbed(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/destroy [delete]
 func DestroyTestbed(c echo.Context) error {
 
@@ -352,6 +356,7 @@ func destroyTestbed(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/output [get]
 func OutputTestbed(c echo.Context) error {
 
@@ -595,6 +600,7 @@ func outputTestbed(c echo.Context) (model.Response, error) {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed/actions/emptyout [delete]
 func EmptyOutTestbed(c echo.Context) error {
 

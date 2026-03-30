@@ -1,3 +1,4 @@
+
 # variables.tf
 variable "terrarium_id" {
   type        = string

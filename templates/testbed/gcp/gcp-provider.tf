@@ -1,15 +1,15 @@
 # Read GCP credentials from OpenBao
 data "vault_kv_secret_v2" "gcp" {
   mount = "secret"
-  name  = "csp/gcp"
+  name  = var.credential_profile == "admin" ? "csp/gcp" : "users/${var.credential_profile}/csp/gcp"
 }
 
 # Reconstruct GCP credential JSON from OpenBao KV data
 locals {
   gcp_credential = jsonencode({
-    type                        = "service_account"
-    project_id                  = data.vault_kv_secret_v2.gcp.data["project_id"]
-    private_key_id              = data.vault_kv_secret_v2.gcp.data["private_key_id"]
+    type           = "service_account"
+    project_id     = data.vault_kv_secret_v2.gcp.data["project_id"]
+    private_key_id = data.vault_kv_secret_v2.gcp.data["private_key_id"]
     # Replace literal "\n" with actual newlines (OpenBao may store escaped newlines)
     private_key                 = replace(data.vault_kv_secret_v2.gcp.data["private_key"], "\\n", "\n")
     client_email                = data.vault_kv_secret_v2.gcp.data["client_email"]
