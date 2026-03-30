@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 # DCS (DevStack Cloud Service) Connection Variables
 # These are handled by environment variables:
 # OS_USERNAME, OS_PROJECT_ID, OS_PASSWORD, OS_AUTH_URL, OS_REGION_NAME

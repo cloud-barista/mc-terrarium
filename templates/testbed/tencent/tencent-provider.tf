@@ -1,7 +1,7 @@
 # Read Tencent Cloud credentials from OpenBao
 data "vault_kv_secret_v2" "tencent" {
   mount = "secret"
-  name  = "csp/tencent"
+  name  = var.credential_profile == "admin" ? "csp/tencent" : "users/${var.credential_profile}/csp/tencent"
 }
 
 # Configure the Tencent Cloud Provider

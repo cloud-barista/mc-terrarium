@@ -36,13 +36,13 @@ provider "vault" {}
 # Read GCP credentials from OpenBao
 data "vault_kv_secret_v2" "gcp" {
   mount = "secret"
-  name  = "csp/gcp"
+  name  = var.credential_profile == "admin" ? "csp/gcp" : "users/${var.credential_profile}/csp/gcp"
 }
 
 # Read Azure credentials from OpenBao
 data "vault_kv_secret_v2" "azure" {
   mount = "secret"
-  name  = "csp/azure"
+  name  = var.credential_profile == "admin" ? "csp/azure" : "users/${var.credential_profile}/csp/azure"
 }
 
 # Reconstruct GCP credential JSON from OpenBao KV data

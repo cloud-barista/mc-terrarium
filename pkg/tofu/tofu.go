@@ -19,7 +19,7 @@ var cliName = "tofu"
 
 // SetRunningStatus sets the running status for a given trId.
 func SetRunningStatus(trId, status string) {
-	lkvstore.Put("/tr/" + trId + "/status", status)
+	lkvstore.Put("/tr/"+trId+"/status", status)
 }
 
 // GetExecutionStatus gets the running status for a given trId.

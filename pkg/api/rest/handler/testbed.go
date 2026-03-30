@@ -24,6 +24,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [post]
 func CreateTestbed(c echo.Context) error {
 
@@ -67,6 +68,7 @@ func CreateTestbed(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [get]
 func GetTestbed(c echo.Context) error {
 
@@ -94,6 +96,7 @@ func GetTestbed(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [delete]
 func DeleteTestbed(c echo.Context) error {
 

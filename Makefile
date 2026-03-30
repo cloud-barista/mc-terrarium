@@ -40,8 +40,10 @@ update: ## Update all module dependencies
 swag swagger: ## Generate Swagger API documentation
 	@echo "Generating Swagger API documentation..."
 	@ln -sf cmd/$(MODULE_NAME)/main.go ./main.go
-	@$(SWAG) i --parseDependency --parseInternal --generalInfo ./main.go --dir ./ --output ./api
-	@rm ./main.go
+	@$(SWAG) i --parseDependency --parseInternal --generalInfo ./main.go --dir ./ --output ./api; \
+	EXIT_CODE=$$?; \
+	rm -f ./main.go; \
+	if [ $$EXIT_CODE -ne 0 ]; then exit $$EXIT_CODE; fi
 	@echo "Generated Swagger API documentation!"
 
 # build: lint swag ## Build the binary file for amd64

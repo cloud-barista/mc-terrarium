@@ -24,6 +24,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site [post]
 func CreateSiteToSiteVpn(c echo.Context) error {
 
@@ -67,6 +68,7 @@ func CreateSiteToSiteVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site [get]
 func GetSiteToSiteVpn(c echo.Context) error {
 
@@ -95,6 +97,7 @@ func GetSiteToSiteVpn(c echo.Context) error {
 // // @Failure 400 {object} model.Response "Bad Request"
 // // @Failure 500 {object} model.Response "Internal Server Error"
 // // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // // @Router /tr/{trId}/vpn/site-to-site [put]
 // func UpdateSiteToSiteVpn(c echo.Context) error {
 
@@ -129,6 +132,7 @@ func GetSiteToSiteVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/site-to-site [delete]
 func DeleteSiteToSiteVpn(c echo.Context) error {
 

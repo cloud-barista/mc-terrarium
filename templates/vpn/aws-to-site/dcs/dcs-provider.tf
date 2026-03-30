@@ -1,7 +1,7 @@
 # Read OpenStack/DCS credentials from OpenBao
 data "vault_kv_secret_v2" "openstack" {
   mount = "secret"
-  name  = "csp/openstack"
+  name  = var.credential_profile == "admin" ? "csp/openstack" : "users/${var.credential_profile}/csp/openstack"
 }
 
 # Configure OpenStack Provider (DCS)

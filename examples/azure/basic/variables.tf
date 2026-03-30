@@ -1,3 +1,9 @@
+variable "credential_profile" {
+  type        = string
+  description = "The name of the credential profile (holder) to use."
+  default     = "admin"
+}
+
 variable "resource_group_location" {
   type        = string
   default     = "eastus"

@@ -1,3 +1,4 @@
+
 variable "vpn_config" {
   description = "VPN configuration for multi-cloud site-to-site connections"
   type = object({

@@ -40,13 +40,13 @@ provider "vault" {}
 # ── Read AWS credentials from OpenBao ─────────────────────────────
 data "vault_kv_secret_v2" "aws" {
   mount = "secret"
-  name  = "csp/aws"
+  name  = var.credential_profile == "admin" ? "csp/aws" : "users/${var.credential_profile}/csp/aws"
 }
 
 # ── Read OpenStack credentials from OpenBao ──────────────────────
 data "vault_kv_secret_v2" "openstack" {
   mount = "secret"
-  name  = "csp/openstack"
+  name  = var.credential_profile == "admin" ? "csp/openstack" : "users/${var.credential_profile}/csp/openstack"
 }
 
 # ── AWS Provider using OpenBao credentials ────────────────────────

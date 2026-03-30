@@ -41,10 +41,10 @@ func SaveLkvStore() error {
 		// Create the directory if it does not exist
 		err = os.MkdirAll(dir, 0755) // Set permissions as needed
 		if err != nil {
-			log.Error().Msgf("Failed to Create the DB Directory: : [%v]", err)	
+			log.Error().Msgf("Failed to Create the DB Directory: : [%v]", err)
 		}
 	}
-			
+
 	file, err := os.Create(dbFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to create db file: %w", err)
@@ -112,7 +112,7 @@ func GetWithPrefix(keyPrefix string) ([]string, bool) {
 	var exists bool
 
 	lkvstore.Range(func(key, value interface{}) bool {
-		if strings.HasPrefix(key.(string), keyPrefix) {			
+		if strings.HasPrefix(key.(string), keyPrefix) {
 			results = append(results, value.(string))
 			exists = true
 		}

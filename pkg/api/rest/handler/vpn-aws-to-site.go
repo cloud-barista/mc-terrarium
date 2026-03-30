@@ -24,6 +24,7 @@ import (
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site [post]
 func CreateAwsToSiteVpn(c echo.Context) error {
 
@@ -67,6 +68,7 @@ func CreateAwsToSiteVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site [get]
 func GetAwsToSiteVpn(c echo.Context) error {
 
@@ -94,6 +96,7 @@ func GetAwsToSiteVpn(c echo.Context) error {
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
+// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site [delete]
 func DeleteAwsToSiteVpn(c echo.Context) error {
 

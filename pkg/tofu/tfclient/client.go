@@ -30,19 +30,19 @@ type Client struct {
 // String converts GlobalOptions to command line arguments format.
 func (opts *GlobalOptions) String() []string {
 	var options []string
-	
+
 	if opts.Chdir != "" {
 		options = append(options, fmt.Sprintf("-chdir=%s", opts.Chdir))
 	}
-	
+
 	if opts.Help {
 		options = append(options, "-help")
 	}
-	
+
 	if opts.Version {
 		options = append(options, "-version")
 	}
-	
+
 	return options
 }
 
@@ -97,35 +97,35 @@ func (c *Client) Async(async bool) *Client {
 // buildArgs builds the command and arguments.
 func (c *Client) buildArgs() []string {
 	args := []string{}
-	
+
 	// Add global options
 	if c.globalOpts != nil {
 		args = append(args, c.globalOpts.String()...)
 	}
-	
+
 	// Add command
 	if c.cmd != "" {
 		args = append(args, c.cmd)
 	}
-	
+
 	// Add arguments
 	args = append(args, c.args...)
-	
+
 	return args
 }
 
 // Exec executes the configured command.
 func (c *Client) Exec() (string, error) {
 	args := c.buildArgs()
-	
+
 	if len(args) == 0 {
 		return "", errors.New("no command specified")
 	}
-	
+
 	if c.async {
 		return tofu.ExecuteCommandAsync(c.trId, c.reqId, args...)
 	}
-	
+
 	return tofu.ExecuteCommand(c.trId, c.reqId, args...)
 }
 
