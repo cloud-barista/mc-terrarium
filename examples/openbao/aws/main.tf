@@ -44,9 +44,29 @@ provider "vault" {}
 
 # ── Read AWS credentials from OpenBao ─────────────────────────────
 
+variable "credential_profile" {
+  type        = string
+  description = "OpenBao credential profile name (e.g., 'admin', 'user1')"
+  default     = "admin"
+}
+
+# Note: Auto-discovery (vault_identity_entity) is disabled by default 
+# because it fails when using a Root Token (which has no identity).
+# data "vault_identity_entity" "me" {}
+
+locals {
+  # Use the provided profile (defaults to 'admin')
+  effective_profile = var.credential_profile
+
+  # Path logic:
+  # - 'admin' -> secret/csp/aws
+  # - others  -> secret/users/{profile}/csp/aws
+  vault_secret_path = local.effective_profile == "admin" ? "csp/aws" : "users/${local.effective_profile}/csp/aws"
+}
+
 data "vault_kv_secret_v2" "aws" {
   mount = "secret"
-  name  = "csp/aws"
+  name  = local.vault_secret_path
 }
 
 # ── AWS Provider using OpenBao credentials ────────────────────────
@@ -94,5 +114,5 @@ output "vpc_id" {
 
 output "credential_source" {
   description = "Where the credentials came from"
-  value       = "OpenBao KV v2 → secret/csp/aws"
+  value       = "OpenBao KV v2 → secret/${local.vault_secret_path} (Profile: ${local.effective_profile})"
 }
