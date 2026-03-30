@@ -41,7 +41,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	// echo-swagger middleware
-	_ "github.com/cloud-barista/mc-terrarium/api"
+	apiDocs "github.com/cloud-barista/mc-terrarium/api"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -84,6 +84,10 @@ const (
 func RunServer(port string) {
 
 	log.Info().Msg("Setting mc-terrarium REST API server")
+
+	// Set dynamically Swagger info
+	apiDocs.SwaggerInfo.Host = config.Terrarium.Self.Endpoint
+	apiDocs.SwaggerInfo.Version = config.Version
 
 	e := echo.New()
 

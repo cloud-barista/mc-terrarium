@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const Version = "0.1.3"
+
 var (
 	RuntimeConfig Config
 	Terrarium     TerrariumConfig
