@@ -31,7 +31,7 @@ func TracingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		// [NOTE]
 		// For now, we will use the request ID as the trace ID
 		// and generate a new span ID for each request
-		traceId := c.Response().Header().Get(echo.HeaderXRequestID)
+		traceId := c.Response().Header().Get("x-request-id")
 		spanId := fmt.Sprintf("%d", time.Now().UnixNano())
 
 		ctx = context.WithValue(ctx, logger.TraceIdKey, traceId)

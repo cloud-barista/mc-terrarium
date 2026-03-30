@@ -41,11 +41,11 @@ import (
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/env [post]
 func InitEnvForGcpAzureVpn(c echo.Context) error {
 
@@ -61,7 +61,7 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "vpn/gcp-azure"
@@ -144,11 +144,11 @@ func InitEnvForGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/env [delete]
 func ClearGcpAzureVpn(c echo.Context) error {
 
@@ -208,11 +208,11 @@ func ClearGcpAzureVpn(c echo.Context) error {
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [get]
 func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 
@@ -252,7 +252,7 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -390,11 +390,11 @@ func GetResourceInfoOfGcpAzureVpn(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ParamsForInfracode body model.CreateInfracodeOfGcpAzureVpnRequest true "Parameters requied to create the infracode to configure GCP to Azure VPN tunnels"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/infracode [post]
 func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 
@@ -477,11 +477,11 @@ func CreateInfracodeOfGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/plan [post]
 func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 
@@ -497,7 +497,7 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 
@@ -546,11 +546,11 @@ func CheckInfracodeOfGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [post]
 func CreateGcpAzureVpn(c echo.Context) error {
 
@@ -566,7 +566,7 @@ func CreateGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 
@@ -614,12 +614,12 @@ func CreateGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure [delete]
 func DestroyGcpAzureVpn(c echo.Context) error {
 
@@ -635,7 +635,7 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 
@@ -683,11 +683,12 @@ func DestroyGcpAzureVpn(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param requestId path string true "Request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/gcp-azure/request/{requestId} [get]
 func GetRequestStatusOfGcpAzureVpn(c echo.Context) error {
 

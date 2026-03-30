@@ -56,11 +56,11 @@ func getValidProviderListForMessageBroker() []string {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param provider query string false "Provider" Enums(aws, azure) default(aws)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage/env [post]
 func InitEnvForObjectStorage(c echo.Context) error {
 
@@ -98,7 +98,7 @@ func InitEnvForObjectStorage(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "object-storage"
@@ -180,11 +180,11 @@ func InitEnvForObjectStorage(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param action query string false "Action" Enums(force) default()
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage/env [delete]
 func ClearEnvOfObjectStorage(c echo.Context) error {
 
@@ -252,11 +252,11 @@ func ClearEnvOfObjectStorage(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ParamsForInfracode body model.CreateInfracodeOfObjectStorageRequest true "Parameters of infracode for Object Storage"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage/infracode [post]
 func CreateInfracodeForObjectStorage(c echo.Context) error {
 
@@ -335,11 +335,11 @@ func CreateInfracodeForObjectStorage(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage/plan [post]
 func CheckInfracodeForObjectStorage(c echo.Context) error {
 
@@ -355,7 +355,7 @@ func CheckInfracodeForObjectStorage(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -411,11 +411,11 @@ func CheckInfracodeForObjectStorage(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage [post]
 func CreateObjectStorage(c echo.Context) error {
 
@@ -431,7 +431,7 @@ func CreateObjectStorage(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -511,12 +511,12 @@ func CreateObjectStorage(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
-// @Param x-request-id header string false "custom request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage [get]
 func GetResourceInfoOfObjectStorage(c echo.Context) error {
 
@@ -556,7 +556,7 @@ func GetResourceInfoOfObjectStorage(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -701,12 +701,12 @@ func GetResourceInfoOfObjectStorage(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage [delete]
 func DestroyObjectStorage(c echo.Context) error {
 
@@ -722,7 +722,7 @@ func DestroyObjectStorage(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -778,11 +778,12 @@ func DestroyObjectStorage(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param requestId path string true "Request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/object-storage/request/{requestId} [get]
 func GetRequestStatusOfObjectStorage(c echo.Context) error {
 

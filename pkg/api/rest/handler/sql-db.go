@@ -46,11 +46,11 @@ var validProvidersForSqlDb = map[string]bool{
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param provider query string false "Provider" Enums(aws, azure, gcp, ncp) default(aws)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/env [post]
 func InitEnvForSqlDb(c echo.Context) error {
 
@@ -87,7 +87,7 @@ func InitEnvForSqlDb(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "sql-db"
@@ -169,11 +169,11 @@ func InitEnvForSqlDb(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param action query string false "Action" Enums(force) default()
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/env [delete]
 func ClearEnvOfSqlDb(c echo.Context) error {
 
@@ -241,11 +241,11 @@ func ClearEnvOfSqlDb(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ParamsForInfracode body model.CreateInfracodeOfSqlDbRequest true "Parameters of infracode for SQL database"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/infracode [post]
 func CreateInfracodeForSqlDb(c echo.Context) error {
 
@@ -324,11 +324,11 @@ func CreateInfracodeForSqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/plan [post]
 func CheckInfracodeForSqlDb(c echo.Context) error {
 
@@ -344,7 +344,7 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -400,11 +400,11 @@ func CheckInfracodeForSqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [post]
 func CreateSqlDb(c echo.Context) error {
 
@@ -420,7 +420,7 @@ func CreateSqlDb(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -500,12 +500,12 @@ func CreateSqlDb(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
-// @Param x-request-id header string false "custom request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [get]
 func GetResourceInfoOfSqlDb(c echo.Context) error {
 
@@ -545,7 +545,7 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -690,12 +690,12 @@ func GetResourceInfoOfSqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db [delete]
 func DestroySqlDb(c echo.Context) error {
 
@@ -711,7 +711,7 @@ func DestroySqlDb(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -767,11 +767,12 @@ func DestroySqlDb(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param requestId path string true "Request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/sql-db/request/{requestId} [get]
 func GetRequestStatusOfSqlDb(c echo.Context) error {
 

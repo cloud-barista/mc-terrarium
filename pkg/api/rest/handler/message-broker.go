@@ -56,11 +56,11 @@ func getValidProvidersForMessageBroker() []string {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param provider query string false "Provider" Enums(aws) default(aws)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker/env [post]
 func InitEnvForMessageBroker(c echo.Context) error {
 
@@ -98,7 +98,7 @@ func InitEnvForMessageBroker(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "message-broker"
@@ -180,11 +180,11 @@ func InitEnvForMessageBroker(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param action query string false "Action" Enums(force) default()
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker/env [delete]
 func ClearEnvOfMessageBroker(c echo.Context) error {
 
@@ -252,11 +252,11 @@ func ClearEnvOfMessageBroker(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ParamsForInfracode body model.CreateInfracodeOfMessageBrokerRequest true "Parameters of infracode for Message Broker"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker/infracode [post]
 func CreateInfracodeForMessageBroker(c echo.Context) error {
 
@@ -335,11 +335,11 @@ func CreateInfracodeForMessageBroker(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker/plan [post]
 func CheckInfracodeForMessageBroker(c echo.Context) error {
 
@@ -355,7 +355,7 @@ func CheckInfracodeForMessageBroker(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -411,11 +411,11 @@ func CheckInfracodeForMessageBroker(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker [post]
 func CreateMessageBroker(c echo.Context) error {
 
@@ -431,7 +431,7 @@ func CreateMessageBroker(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -511,12 +511,12 @@ func CreateMessageBroker(c echo.Context) error {
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param detail query string false "Resource info by detail (refined, raw)" default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
-// @Param x-request-id header string false "custom request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker [get]
 func GetResourceInfoOfMessageBroker(c echo.Context) error {
 
@@ -556,7 +556,7 @@ func GetResourceInfoOfMessageBroker(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -701,12 +701,12 @@ func GetResourceInfoOfMessageBroker(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker [delete]
 func DestroyMessageBroker(c echo.Context) error {
 
@@ -722,7 +722,7 @@ func DestroyMessageBroker(c echo.Context) error {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	projectRoot := config.Terrarium.Root
 	// Read and set the enrichments to terrarium information
@@ -778,11 +778,12 @@ func DestroyMessageBroker(c echo.Context) error {
 // @Produce  json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param requestId path string true "Request ID"
+// @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/message-broker/request/{requestId} [get]
 func GetRequestStatusOfMessageBroker(c echo.Context) error {
 

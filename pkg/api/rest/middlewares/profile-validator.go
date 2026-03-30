@@ -23,8 +23,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const HeaderXCredentialHolder = "X-Credential-Holder"
-
 // CredentialProfileValidator is a middleware to validate the credential profile (holder)
 func CredentialProfileValidator(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -33,7 +31,7 @@ func CredentialProfileValidator(next echo.HandlerFunc) echo.HandlerFunc {
 			return next(c)
 		}
 
-		providedProfile := c.Request().Header.Get(HeaderXCredentialHolder)
+		providedProfile := c.Request().Header.Get(model.HeaderXCredentialHolder)
 		// TODO: Remove this later for more secure credential profile management
 		if providedProfile == "" {
 			providedProfile = "admin"

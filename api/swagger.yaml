@@ -467,7 +467,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Multi-Cloud Terrarium REST API
-  version: v0.1.3
+  version: v0.1.4
 paths:
   /httpVersion:
     get:
@@ -536,6 +536,15 @@ paths:
       consumes:
       - application/json
       description: Read all terrarium
+      parameters:
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      - description: Credential holder (profile) name
+        in: header
+        name: x-credential-holder
+        type: string
       produces:
       - application/json
       responses:
@@ -567,9 +576,13 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.TerrariumCreationRequest'
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -602,6 +615,14 @@ paths:
         name: trId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      - description: Credential holder (profile) name
+        in: header
+        name: x-credential-holder
+        type: string
       produces:
       - application/json
       responses:
@@ -631,6 +652,14 @@ paths:
         in: path
         name: trId
         required: true
+        type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
+      - description: Credential holder (profile) name
+        in: header
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -668,7 +697,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -713,13 +742,13 @@ paths:
         in: query
         name: refresh
         type: boolean
-      - description: custom request ID
+      - description: Custom request ID
         in: header
         name: x-request-id
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -760,7 +789,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -809,7 +838,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -858,7 +887,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -907,7 +936,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -949,7 +978,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -990,9 +1019,13 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1034,7 +1067,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1079,13 +1112,13 @@ paths:
         in: query
         name: refresh
         type: boolean
-      - description: custom request ID
+      - description: Custom request ID
         in: header
         name: x-request-id
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1126,7 +1159,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1175,7 +1208,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1225,7 +1258,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1274,7 +1307,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1316,7 +1349,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1357,9 +1390,13 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1401,7 +1438,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1446,13 +1483,13 @@ paths:
         in: query
         name: refresh
         type: boolean
-      - description: custom request ID
+      - description: Custom request ID
         in: header
         name: x-request-id
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1493,7 +1530,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1542,7 +1579,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1593,7 +1630,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1641,7 +1678,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1683,7 +1720,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1724,9 +1761,13 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1768,7 +1809,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1822,7 +1863,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1869,7 +1910,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1911,7 +1952,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1953,7 +1994,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -1995,7 +2036,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2043,7 +2084,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2098,7 +2139,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2140,7 +2181,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2182,7 +2223,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2236,7 +2277,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2283,7 +2324,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2325,7 +2366,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2367,7 +2408,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2409,7 +2450,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2457,7 +2498,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2512,7 +2553,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2554,7 +2595,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2597,7 +2638,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2643,13 +2684,13 @@ paths:
         in: query
         name: refresh
         type: boolean
-      - description: custom request ID
+      - description: Custom request ID
         in: header
         name: x-request-id
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2690,7 +2731,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2732,7 +2773,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2773,7 +2814,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2822,7 +2863,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2865,7 +2906,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2907,9 +2948,13 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -2952,7 +2997,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3004,7 +3049,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3045,7 +3090,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3087,7 +3132,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3128,7 +3173,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3177,7 +3222,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3220,7 +3265,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3262,9 +3307,13 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Custom request ID
+        in: header
+        name: x-request-id
+        type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3306,7 +3355,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3360,7 +3409,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3407,7 +3456,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3449,7 +3498,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3492,7 +3541,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3535,7 +3584,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3584,7 +3633,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3640,7 +3689,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json
@@ -3683,7 +3732,7 @@ paths:
         type: string
       - description: Credential holder (profile) name
         in: header
-        name: X-Credential-Holder
+        name: x-credential-holder
         type: string
       produces:
       - application/json

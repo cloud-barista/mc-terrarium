@@ -20,11 +20,11 @@ import (
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param ReqBody body model.CreateTestbedRequest true "Parameters requied to create a testbed"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [post]
 func CreateTestbed(c echo.Context) error {
 
@@ -64,11 +64,11 @@ func CreateTestbed(c echo.Context) error {
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [get]
 func GetTestbed(c echo.Context) error {
 
@@ -92,11 +92,11 @@ func GetTestbed(c echo.Context) error {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(testbed01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/testbed [delete]
 func DeleteTestbed(c echo.Context) error {
 

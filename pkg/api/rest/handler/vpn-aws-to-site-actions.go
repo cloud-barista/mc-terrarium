@@ -27,11 +27,11 @@ import (
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param ReqBody body model.CreateAwsToSiteVpnRequest true "Parameters requied to create the AWS to site VPN"
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/init [post]
 func InitAwsToSiteVpn(c echo.Context) error {
 
@@ -81,7 +81,7 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	 */
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Set the enrichments
 	enrichments := "vpn/aws-to-site"
@@ -155,11 +155,11 @@ func initAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/plan [post]
 func PlanAwsToSiteVpn(c echo.Context) error {
 
@@ -185,7 +185,7 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the plan command
 	ret, err := terrarium.Plan(trId, reqId)
@@ -214,11 +214,11 @@ func planAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 201 {object} model.Response "Created"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/apply [post]
 func ApplyAwsToSiteVpn(c echo.Context) error {
 
@@ -244,7 +244,7 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Execute the apply command
 	ret, err := terrarium.Apply(trId, reqId)
@@ -273,11 +273,11 @@ func applyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/destroy [delete]
 func DestroyAwsToSiteVpn(c echo.Context) error {
 
@@ -303,7 +303,7 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Define err variable to track errors
 	var err error
@@ -369,11 +369,11 @@ func destroyAwsToSiteVpn(c echo.Context) (model.Response, error) {
 // @Param detail query string false "Resource info by detail (refined, raw)" Enums(refined, raw) default(refined)
 // @Param refresh query boolean false "Refresh the state before getting the info" default(true)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/output [get]
 func OutputAwsToSiteVpn(c echo.Context) error {
 
@@ -423,7 +423,7 @@ func outputAwsToSiteVpn(c echo.Context) (model.Response, error) {
 	}
 
 	// Get the request ID
-	reqId := c.Response().Header().Get(echo.HeaderXRequestID)
+	reqId := c.Response().Header().Get("x-request-id")
 
 	// Refresh the state to sync with the current CSP status (default: true)
 	refreshParam := strings.ToLower(c.QueryParam("refresh"))
@@ -666,11 +666,11 @@ func mergeResourceInfo(existing, new map[string]any) {
 // @Produce json
 // @Param trId path string true "Terrarium ID" default(tr01)
 // @Param x-request-id header string false "Custom request ID"
+// @Param x-credential-holder header string false "Credential holder (profile) name"
 // @Success 200 {object} model.Response "OK"
 // @Failure 400 {object} model.Response "Bad Request"
 // @Failure 500 {object} model.Response "Internal Server Error"
 // @Failure 503 {object} model.Response "Service Unavailable"
-// @Param X-Credential-Holder header string false "Credential holder (profile) name"
 // @Router /tr/{trId}/vpn/aws-to-site/actions/emptyout [delete]
 func EmptyOutAwsToSiteVpn(c echo.Context) error {
 

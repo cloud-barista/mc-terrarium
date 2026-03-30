@@ -128,6 +128,20 @@ const docTemplate = `{
                     "[Terrarium] An environment to enrich the multi-cloud infrastructure"
                 ],
                 "summary": "Read all terrarium",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "x-credential-holder",
+                        "in": "header"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -176,8 +190,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -224,6 +244,18 @@ const docTemplate = `{
                         "name": "trId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "x-credential-holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -267,6 +299,18 @@ const docTemplate = `{
                         "name": "trId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credential holder (profile) name",
+                        "name": "x-credential-holder",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -329,14 +373,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "custom request ID",
+                        "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
                     },
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -397,7 +441,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -458,7 +502,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -531,7 +575,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -602,7 +646,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -674,7 +718,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -737,7 +781,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -800,8 +844,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -871,14 +921,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "custom request ID",
+                        "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
                     },
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -939,7 +989,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1000,7 +1050,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1074,7 +1124,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1145,7 +1195,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1217,7 +1267,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1280,7 +1330,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1343,8 +1393,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1414,14 +1470,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "custom request ID",
+                        "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
                     },
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1482,7 +1538,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1543,7 +1599,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1619,7 +1675,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1690,7 +1746,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1762,7 +1818,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1825,7 +1881,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1888,8 +1944,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -1970,7 +2032,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2040,7 +2102,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2101,7 +2163,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2164,7 +2226,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2227,7 +2289,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2290,7 +2352,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2362,7 +2424,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2443,7 +2505,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2506,7 +2568,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2587,7 +2649,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2657,7 +2719,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2718,7 +2780,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2781,7 +2843,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2844,7 +2906,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2907,7 +2969,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -2979,7 +3041,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3060,7 +3122,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3123,7 +3185,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3193,14 +3255,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "custom request ID",
+                        "description": "Custom request ID",
                         "name": "x-request-id",
                         "in": "header"
                     },
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3261,7 +3323,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3322,7 +3384,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3385,7 +3447,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3446,7 +3508,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3518,7 +3580,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3581,7 +3643,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3644,8 +3706,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3722,7 +3790,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3783,7 +3851,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3844,7 +3912,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3907,7 +3975,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -3968,7 +4036,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4040,7 +4108,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4103,7 +4171,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4166,8 +4234,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Custom request ID",
+                        "name": "x-request-id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4248,7 +4322,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4318,7 +4392,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4379,7 +4453,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4442,7 +4516,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4505,7 +4579,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4568,7 +4642,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4640,7 +4714,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4721,7 +4795,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -4784,7 +4858,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Credential holder (profile) name",
-                        "name": "X-Credential-Holder",
+                        "name": "x-credential-holder",
                         "in": "header"
                     }
                 ],
@@ -5518,7 +5592,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "v0.1.3",
+	Version:          "v0.1.4",
 	Host:             "localhost:8055",
 	BasePath:         "/terrarium",
 	Schemes:          []string{},
