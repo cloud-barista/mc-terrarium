@@ -10,6 +10,7 @@ This guide covers how to prepare credentials, start OpenBao, and register creden
 MC-Terrarium shares the same credential format as [CB-Tumblebug](https://github.com/cloud-barista/cb-tumblebug/tree/main/init).
 
 ### 1.1 Download the template
+
 ```bash
 mkdir -p ~/.cloud-barista
 wget -O ~/.cloud-barista/credentials.yaml \
@@ -17,12 +18,15 @@ wget -O ~/.cloud-barista/credentials.yaml \
 ```
 
 ### 1.2 Edit with your credentials
+
 ```bash
 vi ~/.cloud-barista/credentials.yaml
 ```
+
 Fill in the sections for each CSP you plan to use (AWS, GCP, Azure, Alibaba, Tencent, IBM, NCP, etc.).
 
 ### 1.3 Encrypt the credential file
+
 ```bash
 # Get the encryption script
 wget -O ./encCredential.sh \
@@ -32,6 +36,7 @@ chmod +x ./encCredential.sh
 # Run encryption (requires a password)
 ./encCredential.sh
 ```
+
 This creates `~/.cloud-barista/credentials.yaml.enc` and removes the plaintext file.
 
 > [!TIP]
@@ -42,12 +47,14 @@ This creates `~/.cloud-barista/credentials.yaml.enc` and removes the plaintext f
 ```bash
 make compose
 ```
+
 This command performs the following automatically:
+
 1.  **Builds** the mc-terrarium Docker image.
 2.  **Starts** the OpenBao container.
 3.  **Initializes/Unseals** OpenBao:
-    *   **First run**: Generates unseal keys and root token (writes `VAULT_TOKEN` to `.env`).
-    *   **Restart**: Auto-unseals using stored keys.
+    - **First run**: Generates unseal keys and root token (writes `VAULT_TOKEN` to `.env`).
+    - **Restart**: Auto-unseals using stored keys.
 4.  **Starts** mc-terrarium with the generated token.
 
 ## 3. Register CSP Credentials
@@ -55,38 +62,42 @@ This command performs the following automatically:
 ```bash
 make init
 ```
+
 This command registers your encrypted credentials into OpenBao KV v2 (`secret/csp/{provider}`).
 
 ### Standardized User Experience
 
 To provide a consistent experience across **Terrarium, Tumblebug, and Beetle**, the registration script supports a single-password handover mechanism:
 
-*   **Interactive**: Prompts for the decryption password.
-*   **Automated (`MULTI_INIT_PWD`)**: If the `MULTI_INIT_PWD` environment variable is set, the script uses it automatically, enabling a single-prompt flow for multi-component systems.
-*   **Key File**: Supports `--key-file` for decryption without a password.
+- **Interactive**: Prompts for the decryption password.
+- **Automated (`MULTI_INIT_PWD`)**: If the `MULTI_INIT_PWD` environment variable is set, the script uses it automatically, enabling a single-prompt flow for multi-component systems.
+- **Key File**: Supports `--key-file` for decryption without a password.
 
 ### Infrastructure Placeholders
+
 The script also creates **placeholder secrets** (empty values) for CSPs not in your credential file. This prevents OpenTofu plans from failing when referencing data sources for unused CSPs.
 
 ## 4. Troubleshooting
 
-*   **"connection refused"**: OpenBao is not running. Run `make compose`.
-*   **"Vault is sealed"**: Run `make unseal` or `make compose`.
-*   **"secret not found"**: Credentials not registered. Run `make init`.
-*   **"permission denied"**: Token expired or missing. Check `.env` for `VAULT_TOKEN`.
+- **"connection refused"**: OpenBao is not running. Run `make compose`.
+- **"Vault is sealed"**: Run `make unseal` or `make compose`.
+- **"secret not found"**: Credentials not registered. Run `make init`.
+- **"permission denied"**: Token expired or missing. Check `.env` for `VAULT_TOKEN`.
 
 ## 5. Credential Paths in OpenBao
 
-| CSP           | Path                   | Key Names                                                                        |
-| ------------- | ---------------------- | -------------------------------------------------------------------------------- |
-| AWS           | `secret/csp/aws`       | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                     |
-| GCP           | `secret/csp/gcp`       | `project_id`, `client_email`, `private_key`, `private_key_id`, `client_id`       |
-| Azure         | `secret/csp/azure`     | `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_TENANT_ID`, `ARM_SUBSCRIPTION_ID`     |
-| Alibaba Cloud | `secret/csp/alibaba`   | `ALIBABA_CLOUD_ACCESS_KEY_ID`, `ALIBABA_CLOUD_ACCESS_KEY_SECRET`                 |
-| IBM Cloud     | `secret/csp/ibm`       | `IC_API_KEY`                                                                     |
-| NCP           | `secret/csp/ncp`       | `NCLOUD_ACCESS_KEY`, `NCLOUD_SECRET_KEY`                                         |
-| Tencent Cloud | `secret/csp/tencent`   | `TENCENTCLOUD_SECRET_ID`, `TENCENTCLOUD_SECRET_KEY`                              |
-| OpenStack/DCS | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_ID` |
+| CSP           | Path                   | Key Names                                                                                                                             |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS           | `secret/csp/aws`       | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                                                                          |
+| GCP           | `secret/csp/gcp`       | `project_id`, `client_email`, `private_key`, `private_key_id`, `client_id`, `GCP_S3_ACCESS_KEY`, `GCP_S3_SECRET_KEY`                  |
+| Azure         | `secret/csp/azure`     | `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_TENANT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_STORAGE_ACCOUNT_NAME`, `ARM_ACCESS_KEY`            |
+| Alibaba Cloud | `secret/csp/alibaba`   | `ALIBABA_CLOUD_ACCESS_KEY_ID`, `ALIBABA_CLOUD_ACCESS_KEY_SECRET`                                                                      |
+| IBM Cloud     | `secret/csp/ibm`       | `IC_API_KEY`, `IBM_S3_ACCESS_KEY`, `IBM_S3_SECRET_KEY`                                                                                |
+| NCP           | `secret/csp/ncp`       | `NCLOUD_ACCESS_KEY`, `NCLOUD_SECRET_KEY`                                                                                              |
+| Tencent Cloud | `secret/csp/tencent`   | `TENCENTCLOUD_SECRET_ID`, `TENCENTCLOUD_SECRET_KEY`                                                                                   |
+| KT Cloud      | `secret/csp/kt`        | `KT_IDENTITY_ENDPOINT`, `KT_USERNAME`, `KT_PASSWORD`, `KT_DOMAIN_NAME`, `KT_PROJECT_ID`, `KT_S3_ACCESS_KEY`, `KT_S3_SECRET_KEY`       |
+| NHN Cloud     | `secret/csp/nhn`       | `NHN_IDENTITY_ENDPOINT`, `NHN_USERNAME`, `NHN_PASSWORD`, `NHN_DOMAIN_NAME`, `NHN_TENANT_ID`, `NHN_S3_ACCESS_KEY`, `NHN_S3_SECRET_KEY` |
+| OpenStack/DCS | `secret/csp/openstack` | `OS_AUTH_URL`, `OS_USERNAME`, `OS_PASSWORD`, `OS_DOMAIN_NAME`, `OS_PROJECT_ID`, `OS_S3_ACCESS_KEY`, `OS_S3_SECRET_KEY`                |
 
 ## 6. How It Works (OpenTofu/Vault)
 
@@ -112,5 +123,5 @@ provider "aws" {
 
 ## 7. Reference
 
-*   [OpenBao Registration Script](openbao-register-creds.sh)
-*   [CB-Tumblebug Initialization](https://github.com/cloud-barista/cb-tumblebug/tree/main/init)
+- [OpenBao Registration Script](openbao-register-creds.sh)
+- [CB-Tumblebug Initialization](https://github.com/cloud-barista/cb-tumblebug/tree/main/init)
