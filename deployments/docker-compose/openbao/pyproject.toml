@@ -7,5 +7,5 @@ requires-python = ">=3.8.0"
 dependencies = [
     "colorama==0.4.6",
     "pyyaml==6.0.1",
-    "requests==2.32.4",
+    "requests==2.33.0",
 ]
