@@ -29,6 +29,7 @@ go.work
 *.tfstate
 *.tfstate.backup
 *.tfvars
+!*.tfvars.example
 .terraform/
 .terraform.lock.hcl
 .terraform.tfstate.lock.info

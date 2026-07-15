@@ -34,7 +34,13 @@ The testbed creates 6 VMs with different specifications and service roles:
 
 ### Service Roles and Firewall Configuration
 
-Each VM configures firewall rules based on its service role. Service-specific VMs use UFW for detailed port management, while general purpose VMs rely on Security Group rules only:
+Each VM configures firewall rules based on its service role. Service-specific VMs use UFW for detailed port management, while general purpose VMs rely on Security Group rules only.
+
+> **VM Initialization**: During deployment, each VM runs `modules/aws/user-data.sh` which:
+> - Sets up the `ubuntu` user with sudo privileges and SSH access
+> - Configures UFW firewall rules based on the assigned service role
+> - Creates `/etc/vm-service-role` file containing the service role name
+> - Does **NOT** install application software (that's done post-deployment)
 
 #### nginx (Web Server)
 
@@ -77,19 +83,21 @@ Each VM configures firewall rules based on its service role. Service-specific VM
 ```
 migration-testbed/
 ├── modules/
-│   └── aws/                    # AWS Migration Testbed Module
-│       ├── main.tf            # Module infrastructure
-│       ├── variables.tf       # Module variables
-|       ├── outputs.tf         # Module outputs
+│   └── aws/                   # AWS Migration Testbed Module
+│       ├── main.tf            # Module infrastructure resources
+│       ├── variables.tf       # Module input variables
+│       ├── outputs.tf         # Module outputs
 │       ├── terraform.tf       # Module requirements
-│       ├── user-data.sh      # VM initialization script
-│       └── README.md         # Module documentation
-├── main-module.tf             # Root configuration using module
-├── variables-module.tf        # Root variables
-├── outputs-module.tf          # Root outputs
-├── terraform-module.tfvars    # Example configuration
-├── provider.tf               # Provider configuration
-└── README.md                 # This file
+│       ├── user-data.sh       # VM initialization script
+│       └── README.md          # Module documentation
+├── main.tf                    # Root configuration (calls module)
+├── variables.tf               # Root variables with defaults
+├── outputs.tf                 # Root outputs (forwards module outputs)
+├── terraform.tf               # Terraform/Provider requirements
+├── provider.tf                # AWS provider configuration
+├── terraform.tfvars.example   # Example configuration (copy to terraform.tfvars)
+├── check-firewall.sh          # Firewall verification script
+└── README.md                  # This file
 ```
 
 <details>
@@ -97,19 +105,22 @@ migration-testbed/
 
 ### Configuration Files
 
-#### Module-based Configuration
+#### Root Configuration
 
-- `terraform-module.tfvars`: Example configuration for module usage
-- `main-module.tf`: Root configuration using the module
-- `variables-module.tf`: Root variables with validation
-- `outputs-module.tf`: Root outputs forwarding module outputs
+- **`main.tf`**: Root configuration that calls the AWS migration testbed module
+- **`variables.tf`**: All input variables with default values and validation rules
+- **`outputs.tf`**: Forwards all module outputs for easy access
+- **`terraform.tfvars`**: Override default values (optional - all variables have defaults)
+- **`provider.tf`**: AWS provider configuration
+- **`terraform.tf`**: Terraform and provider version requirements
 
-#### Direct Configuration (Legacy)
+#### Module Files (`modules/aws/`)
 
-- `terraform.tfvars`: Direct configuration variables
-- `main.tf`: Direct resource definitions
-- `variables.tf`: Direct variable definitions
-- `output.tf`: Direct output definitions
+- **`main.tf`**: Creates all AWS resources (VPC, EC2, Security Groups, etc.)
+- **`variables.tf`**: Module input variables
+- **`outputs.tf`**: Module outputs (SSH info, IPs, etc.)
+- **`user-data.sh`**: VM initialization script (user setup, firewall configuration)
+- **`terraform.tf`**: Module requirements
 
 ### Outputs
 
@@ -143,20 +154,21 @@ migration-testbed/
 
 ### Deploy testbed
 
-1. **Configure variables**:
+1. **Option A: Deploy with default configuration** (Quick start):
 
    ```bash
-   cp terraform-module.tfvars terraform.tfvars
-   # Edit terraform.tfvars with your settings
+   # All variables have default values, so you can deploy immediately
+   tofu init
+   tofu plan
+   tofu apply
    ```
 
-2. **Deploy using module**:
+2. **Option B: Deploy with custom configuration**:
 
    ```bash
-   # Use module-based configuration
-   cp main-module.tf main.tf
-   cp variables-module.tf variables.tf
-   cp outputs-module.tf outputs.tf
+   # Copy example configuration and customize
+   cp terraform.tfvars.example terraform.tfvars
+   vi terraform.tfvars
 
    # Initialize and deploy
    tofu init
@@ -164,11 +176,34 @@ migration-testbed/
    tofu apply
    ```
 
+   > **Note**: All variables have defaults in `variables.tf`, so `terraform.tfvars` is optional.
+   > See `terraform.tfvars.example` for a complete configuration template.
+
 3. **Cleanup resource**:
 
    ```bash
    tofu destroy
    ```
+
+### What Gets Deployed
+
+When you run `tofu apply`, the infrastructure is created with the following:
+
+✅ **Automatically configured**:
+- VPC, Subnet, Internet Gateway, Security Groups
+- 6 VMs (EC2 instances) with Ubuntu 22.04
+- SSH key pair and authorized_keys setup
+- **UFW firewall rules** based on service role (nginx, nfs, mariadb, tomcat, haproxy, general)
+- Service role indicator file (`/etc/vm-service-role`)
+
+❌ **NOT automatically installed**:
+- Application software (Nginx, MariaDB, Tomcat, NFS, etc.)
+- Docker or container runtimes
+- WordPress, databases, or other applications
+
+> **Important**: The VMs are created with OS and firewall configuration only. Software installation must be done **after deployment** using the commands in the "Software Installation" section below.
+
+---
 
 ### Extract SSH Access information
 
@@ -532,6 +567,57 @@ curl -I http://$(tofu output -json vm_public_ips | jq -r .vm4):8080/ || echo "To
 
 ---
 
+## Configuration Examples
+
+### terraform.tfvars Example
+
+The included `terraform.tfvars.example` shows a complete configuration template:
+
+```hcl
+# Basic configuration
+terrarium_id = "mig-testbed-module"
+aws_region   = "ap-northeast-2"
+
+# Network configuration
+vpc_cidr    = "10.0.0.0/16"
+subnet_cidr = "10.0.1.0/24"
+
+# Additional access (add your management IPs)
+allowed_cidr_blocks = [
+  "203.0.113.0/24",    # Example: Office network
+  "198.51.100.0/24",   # Example: VPN network
+  # Add your actual IPs here
+]
+
+# VM configurations
+vm_configurations = {
+  vm1 = {
+    instance_type = "t3.small"
+    vcpu          = 2
+    memory_gb     = 4
+    service_role  = "nginx"
+  }
+  vm2 = {
+    instance_type = "t3.xlarge"
+    vcpu          = 4
+    memory_gb     = 16
+    service_role  = "nfs"
+  }
+  # ... more VMs
+}
+
+# Additional tags
+tags = {
+  Project     = "Migration-Testbed"
+  Environment = "Development"
+  Owner       = "Infrastructure-Team"
+}
+```
+
+> **Note**: You can omit any variable to use its default value from `variables.tf`.
+
+---
+
 ## Customization
 
 ### Add More VMs
@@ -569,9 +655,15 @@ allowed_cidr_blocks = [
 
 ## Module Usage in Other Projects
 
+You can use this testbed module in your own Terraform/OpenTofu projects:
+
 ```hcl
+# In your own project's main.tf
 module "migration_testbed" {
-  source = "github.com/your-org/migration-testbed//modules/aws"
+  source = "git::https://github.com/cloud-barista/mc-terrarium.git//examples/aws/migration-testbed/modules/aws?ref=main"
+
+  # Or use local path for development
+  # source = "../../mc-terrarium/examples/aws/migration-testbed/modules/aws"
 
   terrarium_id = "my-test-env"
   aws_region   = "us-west-2"
@@ -584,16 +676,36 @@ module "migration_testbed" {
       service_role  = "nginx"
     }
     db = {
-      instance_type = "t3.medium"
+      instance_type = "t3.large"
       vcpu          = 2
-      memory_gb     = 4
+      memory_gb     = 8
       service_role  = "mariadb"
+    }
+    app = {
+      instance_type = "m5.xlarge"
+      vcpu          = 4
+      memory_gb     = 16
+      service_role  = "tomcat"
     }
   }
 
   allowed_cidr_blocks = [
-    "203.0.113.0/24"
+    "203.0.113.0/24"  # Your management network
   ]
+  
+  tags = {
+    Project = "My-Migration-Project"
+  }
+}
+
+# Use module outputs
+output "ssh_commands" {
+  value     = module.migration_testbed.quick_ssh_commands
+  sensitive = true
+}
+
+output "vm_ips" {
+  value = module.migration_testbed.vm_public_ips
 }
 ```
 
