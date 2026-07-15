@@ -1,0 +1,78 @@
+# AWS Migration Testbed Configuration
+# Copy this file to terraform.tfvars and customize with your settings:
+#   cp terraform.tfvars.example terraform.tfvars
+
+# Basic configuration
+terrarium_id = "mig-testbed-module"
+aws_region   = "ap-northeast-2"
+
+# Network configuration
+vpc_cidr    = "10.0.0.0/16"
+subnet_cidr = "10.0.1.0/24"
+
+# Additional access (add your management IPs here)
+allowed_cidr_blocks = [
+  "203.0.113.0/24",    # Example: Office network
+  "198.51.100.0/24",   # Example: VPN network
+  # Add your actual IPs here
+]
+
+# VM configurations - customize as needed
+vm_configurations = {
+  # Web server - nginx
+  vm1 = {
+    instance_type = "t3.small" # 2 vCPU, 4 GB RAM
+    vcpu          = 2
+    memory_gb     = 4
+    service_role  = "nginx"
+  }
+
+  # File server - NFS
+  vm2 = {
+    instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM
+    vcpu          = 4
+    memory_gb     = 16
+    service_role  = "nfs"
+  }
+
+  # Database server - MariaDB
+  vm3 = {
+    instance_type = "t3.large" # 2 vCPU, 8 GB RAM
+    vcpu          = 2
+    memory_gb     = 8
+    service_role  = "mariadb"
+  }
+
+  # Application server - Tomcat
+  vm4 = {
+    instance_type = "m5.xlarge" # 4 vCPU, 16 GB RAM
+    vcpu          = 4
+    memory_gb     = 16
+    service_role  = "tomcat"
+  }
+
+  # Load balancer - HAProxy (using mariadb for container testing)
+  vm5 = {
+    instance_type = "m5.2xlarge" # 8 vCPU, 32 GB RAM
+    vcpu          = 8
+    memory_gb     = 32
+    service_role  = "mariadb"
+  }
+
+  # General purpose server
+  vm6 = {
+    instance_type = "m5.2xlarge" # 8 vCPU, 32 GB RAM
+    vcpu          = 8
+    memory_gb     = 32
+    service_role  = "general"
+  }
+}
+
+# Additional tags
+tags = {
+  Project     = "Migration-Testbed"
+  Environment = "Development"
+  Owner       = "Infrastructure-Team"
+  ManagedBy   = "Terraform"
+  Purpose     = "Migration-Testing"
+}
