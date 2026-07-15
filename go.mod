@@ -10,7 +10,7 @@ require (
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
 	github.com/tidwall/gjson v1.17.1
-	golang.org/x/crypto v0.51.0
+	golang.org/x/crypto v0.52.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
