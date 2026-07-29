@@ -7,7 +7,77 @@ This project provides a complete AWS migration testbed infrastructure with 6 VMs
 - **OpenTofu/Terraform**: >= 1.0
 - **AWS Provider**: ~> 5.42
 - **TLS Provider**: ~> 4.0
-- **AWS CLI**: Configured with appropriate credentials
+- **Vault/OpenBao**: External Vault server with AWS credentials stored
+
+## Configuration
+
+### Vault Setup
+
+This project uses Vault (or OpenBao) to securely manage AWS credentials. You need to configure Vault connection before deployment.
+
+#### 1. Create Environment Configuration
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit with your Vault server details
+vi .env
+```
+
+#### 2. Configure `.env` File
+
+```bash
+# Set your Vault server address
+VAULT_ADDR=http://your-vault-server:8200
+
+# Set your Vault authentication token
+VAULT_TOKEN=hvs.CAESIF...your-token-here
+```
+
+#### 3. Load Environment Variables
+
+```bash
+# Load Vault configuration (IMPORTANT: use set -a to export variables)
+set -a && source .env && set +a
+
+# Verify variables are exported
+echo "VAULT_ADDR: $VAULT_ADDR"
+echo "VAULT_TOKEN: ${VAULT_TOKEN:0:15}..."
+```
+
+> **Important**: Use `set -a && source .env && set +a` instead of plain `source .env`.
+> The `set -a` command ensures all variables are exported to child processes (like `tofu`).
+
+#### 4. Verify Vault Connection (Optional)
+
+```bash
+# Check Vault server health
+curl -s -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health | jq
+
+# Verify AWS credentials are accessible
+curl -s -H "X-Vault-Token: $VAULT_TOKEN" \
+  $VAULT_ADDR/v1/secret/data/csp/aws | jq .data.data
+```
+
+### Required Vault Secrets
+
+Ensure your Vault server has AWS credentials stored at the following path:
+
+```
+Path: secret/data/csp/aws
+
+Required keys:
+  - AWS_ACCESS_KEY_ID
+  - AWS_SECRET_ACCESS_KEY
+```
+
+If using a different credential profile, the path will be:
+```
+Path: secret/data/users/<profile>/csp/aws
+```
+
+> **Security Note**: Add `.env` to `.gitignore` to prevent exposing your Vault token.
 
 ## Overview
 
@@ -150,13 +220,23 @@ migration-testbed/
 
 </details>
 
-## Getting-started
+## Getting Started
 
-### Deploy testbed
+### Prerequisites
+
+Before deploying, ensure you have:
+1. ✅ Vault server accessible with AWS credentials stored
+2. ✅ `.env` file configured with `VAULT_ADDR` and `VAULT_TOKEN`
+3. ✅ Environment variables loaded (`set -a && source .env && set +a`)
+
+### Deploy Testbed
 
 1. **Option A: Deploy with default configuration** (Quick start):
 
    ```bash
+   # Load Vault configuration
+   set -a && source .env && set +a
+   
    # All variables have default values, so you can deploy immediately
    tofu init
    tofu plan
@@ -166,6 +246,9 @@ migration-testbed/
 2. **Option B: Deploy with custom configuration**:
 
    ```bash
+   # Load Vault configuration
+   set -a && source .env && set +a
+   
    # Copy example configuration and customize
    cp terraform.tfvars.example terraform.tfvars
    vi terraform.tfvars
