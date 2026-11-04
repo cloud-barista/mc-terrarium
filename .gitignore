@@ -41,6 +41,8 @@ terraform.tfvars.json
 *credential*
 project-gcp.txt
 *.pem
+source_connections_*.csv
+source_connections_*.json
 kubeconfig
 !init.py
 

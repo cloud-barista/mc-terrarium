@@ -1,0 +1,123 @@
+# AWS AI Stack Migration Testbed Configuration (Hybrid Profile Example)
+# Copy this file to terraform.tfvars and customize with your settings:
+#   cp terraform.tfvars.example terraform.tfvars
+
+# Basic configuration
+terrarium_id = "ai-stack-testbed-01"
+aws_region   = "ap-northeast-2"
+
+# Network configuration
+vpc_cidr    = "10.0.0.0/16"
+subnet_cidr = "10.0.1.0/24"
+
+# AMI & AI Service Stack configuration
+ami_id              = "ami-0f3a440bbcff3d043" # Standard Ubuntu 22.04 LTS in ap-northeast-2
+gpu_ami_id          = "ami-00ffffe72a332c865" # GPU Ubuntu 22.04 AMI in ap-northeast-2 (AIMX)
+ai_service_root_dir = "/opt/aimx/ai-service"
+ai_model_name       = "gemma4:e2b"
+
+# Additional access (add your management IPs here - VPC CIDR 10.0.0.0/16 is automatically included)
+allowed_cidr_blocks = [
+  # "203.0.113.0/24",   # Example: Office network (RFC 5737)
+  # "198.51.100.10/32", # Example: Presenter public IP (RFC 5737)
+]
+
+# 10-Node VM configurations (9 Source Nodes in 3x3 Clusters + 1 Control Node)
+vm_configurations = {
+  # ── 0. Cloud-Migrator Node (1 Node) ───────────────────────────────
+  cloud-migrator = {
+    instance_type = "m5.2xlarge" # 8 vCPU, 32 GB RAM
+    vcpu          = 8
+    memory_gb     = 32
+    root_disk_gb  = 100
+    service_role  = "cloud-migrator"
+    description   = "Cloud-Migrator Node (CM-Beetle, CB-Tumblebug, CB-Spider, CM-Honeybee, MC-Terrarium)"
+  }
+
+  # ── 1. AI Inference Cluster (3 Source Nodes) ──────────────────────
+  ai-gpu-01 = {
+    instance_type = "g4dn.xlarge" # 4 vCPU, 16 GB RAM, 1x NVIDIA Tesla T4 (16GB VRAM)
+    vcpu          = 4
+    memory_gb     = 16
+    root_disk_gb  = 100
+    ami_id        = "ami-00ffffe72a332c865"
+    service_role  = "ai-webui"
+    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + Open WebUI (:3000)"
+  }
+  ai-gpu-02 = {
+    instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM
+    vcpu          = 4
+    memory_gb     = 16
+    root_disk_gb  = 80
+    service_role  = "ai-worker"
+    description   = "AI Inference Worker 1 - Ollama Runtime (:11434)"
+  }
+  ai-gpu-03 = {
+    instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM
+    vcpu          = 4
+    memory_gb     = 16
+    root_disk_gb  = 80
+    service_role  = "ai-worker"
+    description   = "AI Inference Worker 2 - vLLM / Vector Worker (:8000, :11434)"
+  }
+
+  # ── 2. Analytics Compute Cluster (3 Source Nodes) ─────────────────
+  data-master-01 = {
+    instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM
+    vcpu          = 4
+    memory_gb     = 16
+    root_disk_gb  = 50
+    service_role  = "spark-master"
+    description   = "Analytics Compute Master - Spark / Airflow Coordinator (:8080, :7077)"
+  }
+  data-worker-01 = {
+    instance_type = "t3.large" # 2 vCPU, 8 GB RAM
+    vcpu          = 2
+    memory_gb     = 8
+    root_disk_gb  = 50
+    service_role  = "spark-worker"
+    description   = "Analytics Compute Worker - PySpark Worker (:8081, :7077)"
+  }
+  data-etl-01 = {
+    instance_type = "t3.large" # 2 vCPU, 8 GB RAM
+    vcpu          = 2
+    memory_gb     = 8
+    root_disk_gb  = 50
+    service_role  = "etl"
+    description   = "Analytics Compute ETL - Kafka / Batch ETL Preprocessing (:9092, :5044)"
+  }
+
+  # ── 3. Backend & DB Cluster (3 Source Nodes) ──────────────────────
+  db-primary-01 = {
+    instance_type = "t3.large" # 2 vCPU, 8 GB RAM
+    vcpu          = 2
+    memory_gb     = 8
+    root_disk_gb  = 50
+    service_role  = "postgres"
+    description   = "Backend & DB - PostgreSQL Primary Database (:5432)"
+  }
+  backend-api-01 = {
+    instance_type = "t3.medium" # 2 vCPU, 4 GB RAM
+    vcpu          = 2
+    memory_gb     = 4
+    root_disk_gb  = 50
+    service_role  = "backend-api"
+    description   = "Backend & DB - FastAPI / Nginx Application Server (:80, :443, :8000)"
+  }
+  storage-gateway-01 = {
+    instance_type = "t3.medium" # 2 vCPU, 4 GB RAM
+    vcpu          = 2
+    memory_gb     = 4
+    root_disk_gb  = 50
+    service_role  = "storage"
+    description   = "Backend & DB - MinIO / NFS Storage Gateway (:9000, :9001, :2049)"
+  }
+}
+
+tags = {
+  Project     = "AI-Stack-Migration-Testbed"
+  Environment = "Conference-Demo"
+  Owner       = "Infrastructure-Team"
+  ManagedBy   = "OpenTofu"
+  Purpose     = "AI-Migration-Testing"
+}
