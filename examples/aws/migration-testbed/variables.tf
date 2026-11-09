@@ -76,45 +76,59 @@ variable "vm_configurations" {
     vcpu          = number
     memory_gb     = number
     service_role  = string
+    root_disk_gb  = optional(number, 50)
+    description   = optional(string, "")
   }))
   description = "VM configurations for migration testbed with service roles"
-  
+
   default = {
     vm1 = {
       instance_type = "t3.small"
       vcpu          = 2
       memory_gb     = 4
+      root_disk_gb  = 50
       service_role  = "nginx"
+      description   = "Web Server - Nginx HTTP/HTTPS (:80, :443, :8080)"
     }
     vm2 = {
       instance_type = "t3.xlarge"
       vcpu          = 4
       memory_gb     = 16
+      root_disk_gb  = 50
       service_role  = "nfs"
+      description   = "File Server - NFS Storage (:2049, :111)"
     }
     vm3 = {
       instance_type = "t3.large"
       vcpu          = 2
       memory_gb     = 8
+      root_disk_gb  = 50
       service_role  = "mariadb"
+      description   = "Database Server - MariaDB Primary (:3306)"
     }
     vm4 = {
       instance_type = "m5.xlarge"
       vcpu          = 4
       memory_gb     = 16
+      root_disk_gb  = 50
       service_role  = "tomcat"
+      description   = "Application Server - Apache Tomcat (:8080, :8443)"
     }
     vm5 = {
       instance_type = "m5.2xlarge"
       vcpu          = 8
       memory_gb     = 32
+      root_disk_gb  = 50
       service_role  = "haproxy"
+      description   = "Load Balancer - HAProxy (:80, :443, :9999, :8404)"
     }
     vm6 = {
       instance_type = "m5.2xlarge"
       vcpu          = 8
       memory_gb     = 32
+      root_disk_gb  = 50
       service_role  = "general"
+      description   = "General Purpose / Cloud-Migrator Node"
     }
   }
 

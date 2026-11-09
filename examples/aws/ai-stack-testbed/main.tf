@@ -39,7 +39,7 @@ locals {
 
   csv_rows_private = [
     for k in local.source_vm_keys : format(
-      "%s,\"%s\",%s,22,ubuntu,,\"%s\"",
+      "%s,\"%s\",%s,22,ubuntu,,\"%s\n\"",
       k,
       replace(coalesce(var.vm_configurations[k].description, "${var.vm_configurations[k].service_role} node"), "\"", "\"\""),
       module.ai_stack_testbed.vm_summary[k].private_ip,
@@ -49,7 +49,7 @@ locals {
 
   csv_rows_public = [
     for k in local.source_vm_keys : format(
-      "%s,\"%s\",%s,22,ubuntu,,\"%s\"",
+      "%s,\"%s\",%s,22,ubuntu,,\"%s\n\"",
       k,
       replace(coalesce(var.vm_configurations[k].description, "${var.vm_configurations[k].service_role} node"), "\"", "\"\""),
       module.ai_stack_testbed.vm_summary[k].public_ip,
@@ -126,5 +126,19 @@ resource "local_file" "source_connections_private_json" {
 resource "local_file" "source_connections_public_json" {
   content         = "${jsonencode(local.json_connections_public)}\n"
   filename        = "${path.module}/source_connections_public.json"
+  file_permission = "0600"
+}
+
+# 7. Auto-save Source Connections YAML (Private IP - For Beetle UX Lab YAML Import)
+resource "local_file" "source_connections_private_yaml" {
+  content         = yamlencode(local.json_connections_private)
+  filename        = "${path.module}/source_connections_private.yaml"
+  file_permission = "0600"
+}
+
+# 8. Auto-save Source Connections YAML (Public IP - For Beetle UX Lab YAML Import)
+resource "local_file" "source_connections_public_yaml" {
+  content         = yamlencode(local.json_connections_public)
+  filename        = "${path.module}/source_connections_public.yaml"
   file_permission = "0600"
 }

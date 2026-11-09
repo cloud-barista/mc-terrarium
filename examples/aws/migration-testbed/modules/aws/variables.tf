@@ -53,6 +53,8 @@ variable "vm_configurations" {
     vcpu          = number
     memory_gb     = number
     service_role  = string
+    root_disk_gb  = optional(number, 50)
+    description   = optional(string, "")
   }))
   description = "VM configurations for migration testbed with service roles"
 }
