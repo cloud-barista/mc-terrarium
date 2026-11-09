@@ -5,7 +5,7 @@
 ##############################################################
 
 # Using a specific version of golang based on alpine for building the application
-FROM golang:1.25.0-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 # Installing necessary packages
 # build-base for common build requirements
