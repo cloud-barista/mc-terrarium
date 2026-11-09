@@ -99,13 +99,13 @@ output "source_nodes_inventory" {
       ssh_user      = "ubuntu"
       instance_type = var.vm_configurations[vm_key].instance_type
       service_role  = var.vm_configurations[vm_key].service_role
-      description   = coalesce(var.vm_configurations[vm_key].description, "")
+      description   = coalesce(var.vm_configurations[vm_key].description, "${var.vm_configurations[vm_key].service_role} node")
     }
   }
 }
 
 output "generated_import_files" {
-  description = "Auto-generated PEM, CSV (cm-butterfly/cm-beetle), and JSON (cm-beetle UX Lab) bulk import files"
+  description = "Auto-generated PEM, CSV (cm-butterfly/cm-beetle), JSON, and YAML (cm-beetle UX Lab) bulk import files"
   value = {
     private_key_pem                 = local_file.private_key_pem.filename
     private_key_oneline_pem         = local_file.private_key_oneline_pem.filename
@@ -113,6 +113,8 @@ output "generated_import_files" {
     source_connections_public_csv   = local_file.source_connections_public_csv.filename
     source_connections_private_json = local_file.source_connections_private_json.filename
     source_connections_public_json  = local_file.source_connections_public_json.filename
+    source_connections_private_yaml = local_file.source_connections_private_yaml.filename
+    source_connections_public_yaml  = local_file.source_connections_public_yaml.filename
   }
 }
 

@@ -159,6 +159,7 @@ case "${service_role}" in
   "haproxy")
     ufw allow 80/tcp comment 'HAProxy HTTP'
     ufw allow 443/tcp comment 'HAProxy HTTPS'
+    ufw allow 9999/tcp comment 'HAProxy custom TCP'
     ufw allow from 10.0.0.0/16 to any port 8404 comment 'HAProxy stats'
     ;;
   "cloud-migrator"|"general"|*)

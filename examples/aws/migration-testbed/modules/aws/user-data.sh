@@ -4,7 +4,30 @@ set -euo pipefail
 # Redirect output to log file for debugging
 exec > >(tee /var/log/user-data-debug.log) 2>&1
 
-# Ensure ubuntu user exists with correct permissions
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=l
+export NEEDRESTART_SUSPEND=1
+
+# Disable unattended-upgrades and apt-daily timers immediately so background package upgrades
+# do not hold dpkg locks during boot or post-deployment setup scripts
+systemctl stop apt-daily.timer apt-daily-upgrade.timer unattended-upgrades.service 2>/dev/null || true
+systemctl disable apt-daily.timer apt-daily-upgrade.timer unattended-upgrades.service 2>/dev/null || true
+systemctl mask apt-daily.service apt-daily-upgrade.service unattended-upgrades.service 2>/dev/null || true
+if [ -d /etc/needrestart/conf.d ]; then
+    echo '$nrconf{restart} = "l";' > /etc/needrestart/conf.d/99-autorestart.conf || true
+fi
+
+# ============================================================
+# 1. Hostname Configuration (Required for Beetle Cluster Grouping)
+# ============================================================
+hostnamectl set-hostname "${vm_name}"
+if ! grep -q "127.0.1.1 ${vm_name}" /etc/hosts; then
+    echo "127.0.1.1 ${vm_name}" >> /etc/hosts
+fi
+
+# ============================================================
+# 2. User & SSH Access Configuration
+# ============================================================
 if ! id "ubuntu" &>/dev/null; then
     # Create user with sudo privileges
     useradd -m -s /bin/bash -G sudo ubuntu
@@ -24,22 +47,47 @@ chmod 700 /home/ubuntu/.ssh
 # Add SSH public key
 echo "${ssh_public_key}" > /home/ubuntu/.ssh/authorized_keys
 chmod 600 /home/ubuntu/.ssh/authorized_keys
+
+%{ if ssh_private_key != "" ~}
+# Install shared SSH private key on Cloud-Migrator / general node for passwordless access to source nodes
+cat << 'SSH_KEY_EOF' > /home/ubuntu/.ssh/id_rsa
+${ssh_private_key}
+SSH_KEY_EOF
+chmod 600 /home/ubuntu/.ssh/id_rsa
+cat << 'SSH_CFG_EOF' > /home/ubuntu/.ssh/config
+Host 10.0.*
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    User ubuntu
+    IdentityFile ~/.ssh/id_rsa
+SSH_CFG_EOF
+chmod 600 /home/ubuntu/.ssh/config
+
+mkdir -p /home/ubuntu/.cloud-barista
+chmod 700 /home/ubuntu/.cloud-barista
+chown -R ubuntu:ubuntu /home/ubuntu/.cloud-barista
+%{ endif ~}
+
 chown -R ubuntu:ubuntu /home/ubuntu/.ssh
 
-# Harden SSH configuration
+# Harden SSH configuration and enable SSH Agent Forwarding
 sed -i -e 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' \
        -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' \
        -e 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' \
+       -e 's/#AllowAgentForwarding yes/AllowAgentForwarding yes/g' \
        /etc/ssh/sshd_config
 
 # Restart SSH service
 systemctl restart ssh
 
+# Ensure rsync, curl, jq are installed on all VMs
+apt-get -o DPkg::Lock::Timeout=600 update -qq
+apt-get -o DPkg::Lock::Timeout=600 install -y -qq rsync curl jq
+
 # Configure firewall based on VM role
-if [ "${service_role}" != "general" ]; then
+if [ "${service_role}" != "general" ] && [ "${service_role}" != "cloud-migrator" ]; then
     # Install and configure UFW (Uncomplicated Firewall) for service-specific VMs
-    apt-get update
-    apt-get install -y ufw
+    apt-get -o DPkg::Lock::Timeout=600 install -y -qq ufw
 
     # Reset UFW to defaults
     ufw --force reset
@@ -128,6 +176,7 @@ case "${service_role}" in
     # Allow frontend ports
     ufw allow 80/tcp comment 'HAProxy HTTP'
     ufw allow 443/tcp comment 'HAProxy HTTPS'
+    ufw allow 9999/tcp comment 'HAProxy custom TCP'
     # Allow HAProxy stats page from internal network
     ufw allow from 10.0.0.0/16 to any port 8404 comment 'HAProxy stats'
     # Allow backend health check ports
@@ -144,8 +193,8 @@ case "${service_role}" in
     ufw allow out 8080/tcp comment 'Backend connections'
     ;;
     
-  "general"|*)
-    echo "General purpose server (${vm_name}) - Security Group handles firewall rules"
+  "cloud-migrator"|"general"|*)
+    echo "General purpose / Cloud-Migrator server (${vm_name}) - Security Group handles firewall rules"
     # For general purpose VMs, rely entirely on Security Group rules
     # Skip UFW configuration to avoid conflicts with AWS Security Groups
     echo "Skipping UFW configuration for general purpose VM - using Security Group only"
@@ -153,7 +202,7 @@ case "${service_role}" in
 esac
 
 # Apply firewall configuration based on VM role
-if [ "${service_role}" != "general" ]; then
+if [ "${service_role}" != "general" ] && [ "${service_role}" != "cloud-migrator" ]; then
     # Common security rules for service-specific VMs
     echo "Applying common security rules for ${service_role} VM..."
 

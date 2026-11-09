@@ -24,7 +24,9 @@ vm_configurations = {
     instance_type = "t3.small" # 2 vCPU, 4 GB RAM
     vcpu          = 2
     memory_gb     = 4
+    root_disk_gb  = 50
     service_role  = "nginx"
+    description   = "Web Server - Nginx HTTP/HTTPS (:80, :443, :8080)"
   }
 
   # File server - NFS
@@ -32,7 +34,9 @@ vm_configurations = {
     instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM
     vcpu          = 4
     memory_gb     = 16
+    root_disk_gb  = 50
     service_role  = "nfs"
+    description   = "File Server - NFS Storage (:2049, :111)"
   }
 
   # Database server - MariaDB
@@ -40,7 +44,9 @@ vm_configurations = {
     instance_type = "t3.large" # 2 vCPU, 8 GB RAM
     vcpu          = 2
     memory_gb     = 8
+    root_disk_gb  = 50
     service_role  = "mariadb"
+    description   = "Database Server - MariaDB Primary (:3306)"
   }
 
   # Application server - Tomcat
@@ -48,23 +54,29 @@ vm_configurations = {
     instance_type = "m5.xlarge" # 4 vCPU, 16 GB RAM
     vcpu          = 4
     memory_gb     = 16
+    root_disk_gb  = 50
     service_role  = "tomcat"
+    description   = "Application Server - Apache Tomcat (:8080, :8443)"
   }
 
-  # Load balancer - HAProxy (using mariadb for container testing)
+  # Load balancer - HAProxy
   vm5 = {
     instance_type = "m5.2xlarge" # 8 vCPU, 32 GB RAM
     vcpu          = 8
     memory_gb     = 32
-    service_role  = "mariadb"
+    root_disk_gb  = 50
+    service_role  = "haproxy"
+    description   = "Load Balancer - HAProxy (:80, :443, :9999, :8404)"
   }
 
-  # General purpose server
+  # General purpose / Cloud-Migrator server
   vm6 = {
     instance_type = "m5.2xlarge" # 8 vCPU, 32 GB RAM
     vcpu          = 8
     memory_gb     = 32
+    root_disk_gb  = 50
     service_role  = "general"
+    description   = "General Purpose / Cloud-Migrator Node"
   }
 }
 

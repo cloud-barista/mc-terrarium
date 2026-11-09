@@ -140,23 +140,26 @@ resource "aws_instance" "vms" {
 
   # Root block device configuration
   root_block_device {
-    volume_size           = 50
+    volume_size           = coalesce(each.value.root_disk_gb, 50)
     volume_type           = "gp3"
     delete_on_termination = true
   }
 
   user_data = templatefile("${path.module}/user-data.sh", {
-    ssh_public_key = tls_private_key.ssh.public_key_openssh
-    service_role   = each.value.service_role
-    vm_name        = each.key
+    ssh_public_key  = tls_private_key.ssh.public_key_openssh
+    ssh_private_key = contains(["cloud-migrator", "general"], each.value.service_role) ? tls_private_key.ssh.private_key_pem : ""
+    service_role    = each.value.service_role
+    vm_name         = each.key
   })
 
-  tags = {
+  tags = merge(var.tags, {
     Name        = "${var.terrarium_id}-${each.key}"
     Environment = var.terrarium_id
     VM          = each.key
-    vCPU        = each.value.vcpu
-    Memory_GB   = each.value.memory_gb
+    Hostname    = each.key
+    vCPU        = tostring(each.value.vcpu)
+    Memory_GB   = tostring(each.value.memory_gb)
+    RootDisk_GB = tostring(coalesce(each.value.root_disk_gb, 50))
     ServiceRole = each.value.service_role
-  }
+  })
 }

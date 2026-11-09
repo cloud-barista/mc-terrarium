@@ -18,10 +18,11 @@ This project uses Vault (or OpenBao) to securely manage AWS credentials. You nee
 #### 1. Create Environment Configuration
 
 ```bash
-# Copy the example file
-cp .env.example .env
+# Option A: If CM-Beetle is running locally, extract VAULT_ADDR and VAULT_TOKEN directly
+grep -E '^(VAULT_ADDR|VAULT_TOKEN)=' ../../../../cm-beetle/deployments/docker-compose/.env > .env
 
-# Edit with your Vault server details
+# Option B: Copy the example file and edit manually
+cp .env.example .env
 vi .env
 ```
 
@@ -99,7 +100,7 @@ The testbed creates 6 VMs with different specifications and service roles:
 | vm2 | t3.xlarge     | 4    | 16 GB  | nfs          | UFW: NFS ports (blocks web)       |
 | vm3 | t3.large      | 2    | 8 GB   | mariadb      | UFW: MySQL internal only          |
 | vm4 | m5.xlarge     | 4    | 16 GB  | tomcat       | UFW: App server ports (blocks DB) |
-| vm5 | m5.2xlarge    | 8    | 32 GB  | mariadb      | UFW: MariaDB container ports      |
+| vm5 | m5.2xlarge    | 8    | 32 GB  | haproxy      | UFW: HAProxy LB ports (80, 9999)  |
 | vm6 | m5.2xlarge    | 8    | 32 GB  | general      | Security Group only               |
 
 ### Service Roles and Firewall Configuration
@@ -288,10 +289,24 @@ When you run `tofu apply`, the infrastructure is created with the following:
 
 ---
 
+### Auto-Generated Bulk Import & SSH Files (`tofu apply`)
+
+Upon `tofu apply` completion, OpenTofu automatically generates the following files in this directory (`0600` permissions) for the **5 Source Nodes (`vm1`~`vm5`)** (excluding `vm6` which is `general`):
+
+1. **`private_key_mig_testbed.pem`** / **`private_key_mig_testbed_oneline.pem`**:
+   - Raw PEM private key for SSH access.
+2. **`source_connections_private.csv`** / **`source_connections_public.csv`**:
+   - **Cloud-Migrator Portal (`cm-butterfly`)** and **Beetle UX Lab (`cm-beetle`)** compatible CSV file with header:
+     `name,description,ip_address,ssh_port,user,password,private_key`
+3. **`source_connections_private.json`** / **`source_connections_public.json`**:
+   - **Beetle UX Lab (`Import CSV / JSON / YAML`)** compatible JSON array for 1-click registration of all 5 source servers.
+4. **`source_connections_private.yaml`** / **`source_connections_public.yaml`**:
+   - **Beetle UX Lab (`Import CSV / JSON / YAML`)** compatible YAML list for 1-click registration of all 5 source servers.
+
 ### Extract SSH Access information
 
 ```bash
-# Get private key
+# (Optional) Manual extraction if needed - private_key_mig_testbed.pem is already auto-generated on tofu apply
 tofu output -json ssh_info | jq -r .private_key > private_key_mig_testbed.pem
 chmod 600 private_key_mig_testbed.pem
 

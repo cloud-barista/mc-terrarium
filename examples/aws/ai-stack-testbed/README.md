@@ -87,6 +87,7 @@ When `tofu apply` completes, the following files are automatically generated in 
 - `private_key_ai_stack_testbed.pem` / `private_key_ai_stack_testbed_oneline.pem` (SSH private keys)
 - `source_connections_private.csv` / `source_connections_public.csv` (Bulk import CSV for the 9 source nodes)
 - `source_connections_private.json` / `source_connections_public.json` (Bulk import JSON for the 9 source nodes)
+- `source_connections_private.yaml` / `source_connections_public.yaml` (Bulk import YAML for the 9 source nodes)
 
 ---
 
