@@ -8,21 +8,25 @@ export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=l
 export NEEDRESTART_SUSPEND=1
 
+# ============================================================
+# 1. Hostname Configuration (Required for Beetle Cluster Grouping)
+# ============================================================
+mkdir -p /etc/cloud/cloud.cfg.d
+echo "preserve_hostname: true" > /etc/cloud/cloud.cfg.d/99-preserve-hostname.cfg
+if ! grep -q "127.0.1.1 ${vm_name}" /etc/hosts; then
+    echo "127.0.1.1 ${vm_name}" >> /etc/hosts
+fi
+echo "${vm_name}" > /etc/hostname
+hostname "${vm_name}" 2>/dev/null || true
+hostnamectl set-hostname "${vm_name}" 2>/dev/null || true
+
 # Disable unattended-upgrades and apt-daily timers immediately so background package upgrades
 # do not hold dpkg locks or restart containerd/docker during post-deployment setup scripts
-systemctl stop apt-daily.timer apt-daily-upgrade.timer unattended-upgrades.service 2>/dev/null || true
+systemctl stop --no-block apt-daily.timer apt-daily-upgrade.timer unattended-upgrades.service 2>/dev/null || true
 systemctl disable apt-daily.timer apt-daily-upgrade.timer unattended-upgrades.service 2>/dev/null || true
 systemctl mask apt-daily.service apt-daily-upgrade.service unattended-upgrades.service 2>/dev/null || true
 if [ -d /etc/needrestart/conf.d ]; then
     echo '$nrconf{restart} = "l";' > /etc/needrestart/conf.d/99-autorestart.conf || true
-fi
-
-# ============================================================
-# 1. Hostname Configuration (Required for Beetle Cluster Grouping)
-# ============================================================
-hostnamectl set-hostname "${vm_name}"
-if ! grep -q "127.0.1.1 ${vm_name}" /etc/hosts; then
-    echo "127.0.1.1 ${vm_name}" >> /etc/hosts
 fi
 
 # ============================================================
