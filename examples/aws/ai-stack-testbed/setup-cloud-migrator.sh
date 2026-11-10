@@ -115,9 +115,11 @@ REMOTE_EOF
 
 # Also copy auto-generated source connection files to ~/cm-beetle/ on Cloud-Migrator node for convenience
 if [[ -f "source_connections_private.csv" && -f "source_connections_private.json" ]]; then
-    echo "📂 Copying source_connections_private.{csv,json} to $VM_NAME:~/cm-beetle/..."
+    echo "📂 Copying source_connections_private.{csv,json,yaml} to $VM_NAME:~/cm-beetle/..."
+    FILES_TO_COPY=(source_connections_private.csv source_connections_private.json)
+    [[ -f "source_connections_private.yaml" ]] && FILES_TO_COPY+=(source_connections_private.yaml)
     scp -i "$PEM_FILE" -o StrictHostKeyChecking=no \
-        source_connections_private.csv source_connections_private.json \
+        "${FILES_TO_COPY[@]}" \
         ubuntu@"$VM_IP":~/cm-beetle/ >/dev/null
 fi
 
