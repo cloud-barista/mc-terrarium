@@ -70,10 +70,10 @@ echo "$(curl -s ifconfig.me)/32"
 # 2) Ensure your public IP/CIDR is included in allowed_cidr_blocks in terraform.tfvars
 vi terraform.tfvars
 
-# (Optional) To deploy the Full GPU profile where all 3 AI nodes use g4dn.xlarge:
+# (Optional) To deploy the Full GPU profile (1x g6.2xlarge + 2x g4dn.xlarge GPU nodes):
 # cp terraform.tfvars.full.example terraform.tfvars
 
-# 3) Initialize, plan, and apply (creates 25 resources: 10 VMs + network + local key/CSV/JSON files)
+# 3) Initialize, plan, and apply (creates 27 resources: 10 VMs + network + local key/CSV/JSON/YAML files)
 tofu init
 tofu plan
 tofu apply
@@ -175,9 +175,13 @@ curl -s "http://$AI_GPU_IP:11434/api/ps" | jq
 
 2. **Upload PDFs & Verify Citations / Mindmap**:
    - Upload PDF files in **`Files` -> `File Collection`** (`ollama` with `gemma4:12b` + `bge-m3`, `Docling` figure/table parser, Korean response language, `inline` citation, and `Mindmap` visualization are pre-configured as defaults).
-   - Select the indexed files in **`Chat`** and ask questions about the documents.
+   - When uploading multiple PDFs at once, `Docling` indexes them sequentially on the GPU. Check the `note` column in the **`Files`** list (`{"tokens": ..., "loader": "DoclingReader"}`) to verify each file has finished indexing; if a long batch disconnects in the browser, refresh (`F5`) and re-upload any remaining file with `Force reindex file` checked.
+   - In **`Chat`** (`File Collection` on the left):
+     - Choose **`Search In File(s)`** and select target document(s) when asking regulation- or document-specific questions so chunks from other documents do not crowd out top retrieval results.
+     - Choose **`Search All`** for broad cross-document questions.
    - Confirm that inline citations (`[1]`, `[2]`), right-panel highlighted evidence chunks (`[Preview]` PDF viewer), and mindmap diagrams render properly, and conversation threads are saved on the left.
-   - All state (uploaded PDFs, Chroma vectorstore, highlight coordinates, and chat threads) is persisted under `/opt/aimx/ai-service/ktem_app_data/` alongside `/opt/aimx/ai-service/ollama/`, ready for single-root migration to the target cloud GPU via `CM-Beetle` (`transx`).
+   - **Persisting UI setting changes**: Adjustments made in the bottom `Chat settings` bar apply only to the current browser session. To save changes permanently to `sql.db`, update them under the top **`Settings`** tab and click **`Save`**.
+   - **Pre-migration quiesce helper**: All state (uploaded PDFs, Chroma vectorstore, LanceDB docstore, SQLite `sql.db`, Ollama models, and `.nv` CUDA cache) lives under `/opt/aimx/ai-service/`. Before running `CM-Beetle` (`transx`) data transfer, `/opt/aimx/ai-service/prepare-for-migration.sh` can be invoked on `ai-gpu-01` to cleanly flush SQLite (`QUIESCED_DB_SHA256`) and normalize file ownership.
 
 3. **(Alternative) Access via SSH Local Port Forwarding**:
    If your client IP is not in `allowed_cidr_blocks` or port `7860` is restricted by a corporate firewall, forward the ports over SSH:
@@ -251,8 +255,10 @@ Upon `tofu apply` completion, OpenTofu automatically generates the following fil
 1. **`private_key_ai_stack_testbed.pem`** / **`private_key_ai_stack_testbed_oneline.pem`**:
    - Raw PEM private key for SSH access and `transx` data transfer.
 2. **`source_connections_private.csv`** / **`source_connections_public.csv`**:
-   - **CM-Butterfly (`Import Source Connection`)** & **CM-Beetle UX Lab (`Import CSV / JSON`)** compatible CSV file with header:
+   - **CM-Butterfly (`Import Source Connection`)** & **CM-Beetle UX Lab (`Import CSV / JSON / YAML`)** compatible CSV file with header:
      `name,description,ip_address,ssh_port,user,password,private_key`
    - Use `source_connections_private.csv` when Cloud-Migrator (Beetle/Honeybee/Butterfly) runs on `cloud-migrator` inside the same VPC (`10.0.1.0/24`).
 3. **`source_connections_private.json`** / **`source_connections_public.json`**:
-   - **CM-Beetle UX Lab (`Import CSV / JSON`)** compatible JSON array for 1-click registration of all 9 source servers.
+   - **CM-Beetle UX Lab (`Import CSV / JSON / YAML`)** compatible JSON array for 1-click registration of all 9 source servers.
+4. **`source_connections_private.yaml`** / **`source_connections_public.yaml`**:
+   - **CM-Beetle UX Lab (`Import CSV / JSON / YAML`)** compatible YAML list for 1-click registration of all 9 source servers (automatically copied to `~/cm-beetle/` by `./setup-cloud-migrator.sh`).
