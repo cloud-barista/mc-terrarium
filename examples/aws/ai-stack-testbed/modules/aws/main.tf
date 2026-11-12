@@ -152,6 +152,7 @@ resource "aws_instance" "vms" {
     vm_name             = each.key
     ai_service_root_dir = var.ai_service_root_dir
     ai_model_name       = var.ai_model_name
+    ai_embedding_model  = var.ai_embedding_model
   })
 
   tags = merge(var.tags, {

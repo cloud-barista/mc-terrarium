@@ -17,6 +17,7 @@ module "ai_stack_testbed" {
   gpu_ami_id          = var.gpu_ami_id
   ai_service_root_dir = var.ai_service_root_dir
   ai_model_name       = var.ai_model_name
+  ai_embedding_model  = var.ai_embedding_model
   allowed_cidr_blocks = var.allowed_cidr_blocks
 
   # Additional tags

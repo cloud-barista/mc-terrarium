@@ -96,7 +96,7 @@ fi
 
 case "${service_role}" in
   "ai-webui")
-    ufw allow 3000/tcp comment 'Open WebUI HTTP'
+    ufw allow 7860/tcp comment 'Kotaemon RAG UI HTTP'
     ufw allow 11434/tcp comment 'Ollama LLM API'
     ;;
   "ai-worker")

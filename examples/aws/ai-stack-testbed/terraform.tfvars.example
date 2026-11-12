@@ -15,6 +15,7 @@ ami_id              = "ami-0f3a440bbcff3d043" # Standard Ubuntu 22.04 LTS in ap-
 gpu_ami_id          = "ami-00ffffe72a332c865" # GPU Ubuntu 22.04 AMI in ap-northeast-2 (AIMX)
 ai_service_root_dir = "/opt/aimx/ai-service"
 ai_model_name       = "gemma4:e2b"
+ai_embedding_model  = "bge-m3"
 
 # Additional access (add your management IPs here - VPC CIDR 10.0.0.0/16 is automatically included)
 allowed_cidr_blocks = [
@@ -42,7 +43,7 @@ vm_configurations = {
     root_disk_gb  = 100
     ami_id        = "ami-00ffffe72a332c865"
     service_role  = "ai-webui"
-    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + Open WebUI (:3000)"
+    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + bge-m3 + Kotaemon (:7860)"
   }
   ai-gpu-02 = {
     instance_type = "t3.xlarge" # 4 vCPU, 16 GB RAM

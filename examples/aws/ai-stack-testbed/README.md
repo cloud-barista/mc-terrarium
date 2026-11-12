@@ -2,8 +2,8 @@
 
 10-Node AWS Conference Demo Testbed (**9 Source Infrastructure VMs across 3 Clusters + 1 Cloud-Migrator VM**) for demonstrating:
 
-1. **Multi-Cluster Source Discovery & Selective Infrastructure Migration** (`CM-Honeybee` ➔ `CM-Beetle` ➔ `CB-Tumblebug`)
-2. **AI Service Stack Migration (`AIMX` / `transx`)** — NVIDIA Tesla T4 GPU + Ollama (`gemma4:e2b`) + Open WebUI (`:3000`)
+1. **Multi-Cluster Source Discovery & Selective Infrastructure Migration** (`CM-Honeybee` -> `CM-Beetle` -> `CB-Tumblebug`)
+2. **AI Service Stack Migration (`AIMX` / `transx`)**: NVIDIA Tesla T4 GPU + Ollama (`gemma4:e2b` + `bge-m3`) + Kotaemon (`:7860`)
 
 ---
 
@@ -11,18 +11,18 @@
 
 The VM map keys are automatically applied as Linux **hostnames** (`/etc/hostname`), enabling **CM-Beetle** to auto-classify the 9 source nodes into 3 distinct clusters (`AI Inference`, `Analytics Compute`, `Backend & DB`), alongside a dedicated **Cloud-Migrator** node:
 
-| Category         | Cluster Group         | VM Key (Hostname)    | `service_role`   | Default Spec (Hybrid)             | Full Profile Spec | Root Disk | Configured Stack & UFW Ports                                                                    |
-| :--------------- | :-------------------- | :------------------- | :--------------- | :-------------------------------- | :---------------- | :-------- | :---------------------------------------------------------------------------------------------- |
-| **Platform (1)** | **Cloud-Migrator**    | `cloud-migrator`     | `cloud-migrator` | `m5.2xlarge` (8 vCPU, 32GB)       | `m5.2xlarge`      | **100GB** | CM-Beetle Stack (`~/cm-beetle`) + Shared SSH Key (`~/.ssh/id_rsa`)                              |
-| **Source (3)**   | **AI Inference**      | `ai-gpu-01`          | `ai-webui`       | **`g4dn.xlarge`** (Tesla T4 16GB) | `g4dn.xlarge`     | **100GB** | **Live AI Stack** (`/opt/aimx/ai-service`: Ollama `:11434` + `gemma4:e2b` + Open WebUI `:3000`) |
-|                  | **AI Inference**      | `ai-gpu-02`          | `ai-worker`      | `t3.xlarge` (4 vCPU, 16GB)        | `g4dn.xlarge`     | 80GB      | Ollama Worker (`22`, `11434`)                                                                   |
-|                  | **AI Inference**      | `ai-gpu-03`          | `ai-worker`      | `t3.xlarge` (4 vCPU, 16GB)        | `g4dn.xlarge`     | 80GB      | vLLM / Vector Worker (`22`, `8000`, `11434`)                                                    |
-| **Source (3)**   | **Analytics Compute** | `data-master-01`     | `spark-master`   | `t3.xlarge` (4 vCPU, 16GB)        | `m5.2xlarge`      | 50GB      | Spark / Airflow Master (`22`, `8080`, `7077`)                                                   |
-|                  | **Analytics Compute** | `data-worker-01`     | `spark-worker`   | `t3.large` (2 vCPU, 8GB)          | `m5.xlarge`       | 50GB      | PySpark Worker (`22`, `8081`, `7077`)                                                           |
-|                  | **Analytics Compute** | `data-etl-01`        | `etl`            | `t3.large` (2 vCPU, 8GB)          | `m5.xlarge`       | 50GB      | Kafka / Logstash ETL (`22`, `9092`, `5044`)                                                     |
-| **Source (3)**   | **Backend & DB**      | `db-primary-01`      | `postgres`       | `t3.large` (2 vCPU, 8GB)          | `r5.xlarge`       | 50GB      | PostgreSQL Primary (`22`, `5432`)                                                               |
-|                  | **Backend & DB**      | `backend-api-01`     | `backend-api`    | `t3.medium` (2 vCPU, 4GB)         | `t3.large`        | 50GB      | FastAPI / Nginx (`22`, `80`, `443`, `8000`)                                                     |
-|                  | **Backend & DB**      | `storage-gateway-01` | `storage`        | `t3.medium` (2 vCPU, 4GB)         | `t3.large`        | 50GB      | MinIO / NFS Gateway (`22`, `9000`, `9001`, `2049`)                                              |
+| Category         | Cluster Group         | VM Key (Hostname)    | `service_role`   | Default Spec (Hybrid)             | Full Profile Spec | Root Disk | Configured Stack & UFW Ports                                                                              |
+| :--------------- | :-------------------- | :------------------- | :--------------- | :-------------------------------- | :---------------- | :-------- | :-------------------------------------------------------------------------------------------------------- |
+| **Platform (1)** | **Cloud-Migrator**    | `cloud-migrator`     | `cloud-migrator` | `m5.2xlarge` (8 vCPU, 32GB)       | `m5.2xlarge`      | **100GB** | CM-Beetle Stack (`~/cm-beetle`) + Shared SSH Key (`~/.ssh/id_rsa`)                                        |
+| **Source (3)**   | **AI Inference**      | `ai-gpu-01`          | `ai-webui`       | **`g4dn.xlarge`** (Tesla T4 16GB) | `g4dn.xlarge`     | **100GB** | **Live AI Stack** (`/opt/aimx/ai-service`: Ollama `:11434` + `gemma4:e2b` + `bge-m3` + Kotaemon `:7860`) |
+|                  | **AI Inference**      | `ai-gpu-02`          | `ai-worker`      | `t3.xlarge` (4 vCPU, 16GB)        | `g4dn.xlarge`     | 80GB      | Ollama Worker (`22`, `11434`)                                                                             |
+|                  | **AI Inference**      | `ai-gpu-03`          | `ai-worker`      | `t3.xlarge` (4 vCPU, 16GB)        | `g4dn.xlarge`     | 80GB      | vLLM / Vector Worker (`22`, `8000`, `11434`)                                                              |
+| **Source (3)**   | **Analytics Compute** | `data-master-01`     | `spark-master`   | `t3.xlarge` (4 vCPU, 16GB)        | `m5.2xlarge`      | 50GB      | Spark / Airflow Master (`22`, `8080`, `7077`)                                                             |
+|                  | **Analytics Compute** | `data-worker-01`     | `spark-worker`   | `t3.large` (2 vCPU, 8GB)          | `m5.xlarge`       | 50GB      | PySpark Worker (`22`, `8081`, `7077`)                                                                     |
+|                  | **Analytics Compute** | `data-etl-01`        | `etl`            | `t3.large` (2 vCPU, 8GB)          | `m5.xlarge`       | 50GB      | Kafka / Logstash ETL (`22`, `9092`, `5044`)                                                               |
+| **Source (3)**   | **Backend & DB**      | `db-primary-01`      | `postgres`       | `t3.large` (2 vCPU, 8GB)          | `r5.xlarge`       | 50GB      | PostgreSQL Primary (`22`, `5432`)                                                                         |
+|                  | **Backend & DB**      | `backend-api-01`     | `backend-api`    | `t3.medium` (2 vCPU, 4GB)         | `t3.large`        | 50GB      | FastAPI / Nginx (`22`, `80`, `443`, `8000`)                                                               |
+|                  | **Backend & DB**      | `storage-gateway-01` | `storage`        | `t3.medium` (2 vCPU, 4GB)         | `t3.large`        | 50GB      | MinIO / NFS Gateway (`22`, `9000`, `9001`, `2049`)                                                        |
 
 ---
 
@@ -55,13 +55,13 @@ grep -E '^(VAULT_ADDR|VAULT_TOKEN)=' ../../../deployments/docker-compose/.env > 
 
 set -a && source .env && set +a
 
-# 4) Verify AWS credentials in OpenBao (Optional — requires OpenBao to be running & unsealed)
+# 4) Verify AWS credentials in OpenBao (Optional: requires OpenBao to be running & unsealed)
 curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/secret/data/csp/aws" | jq '.data.data | keys'
 ```
 
 ### Step 2. Configure `allowed_cidr_blocks` & Provision the 10-Node Testbed
 
-The AWS Security Group allows inbound traffic (SSH `:22`, Open WebUI `:3000`, Ollama `:11434`, etc.) only from inside the VPC (`10.0.0.0/16`) and the CIDR blocks listed in `allowed_cidr_blocks` in `terraform.tfvars`.
+The AWS Security Group allows inbound traffic (SSH `:22`, Kotaemon `:7860`, Ollama `:11434`, etc.) only from inside the VPC (`10.0.0.0/16`) and the CIDR blocks listed in `allowed_cidr_blocks` in `terraform.tfvars`.
 
 ```bash
 # 1) Check your current public IP address
@@ -122,7 +122,7 @@ CM_IP=$(tofu output -json vm_public_ips | jq -r '."cloud-migrator"')
 ssh -i private_key_ai_stack_testbed.pem ubuntu@$CM_IP
 ```
 
-> **Tip — Passwordless Private IP SSH from `cloud-migrator` to Source Nodes**:
+> **Tip - Passwordless Private IP SSH from `cloud-migrator` to Source Nodes**:
 > `cloud-migrator` is automatically provisioned with `/home/ubuntu/.ssh/id_rsa` and `~/.ssh/config` (`Host 10.0.*`). From inside `cloud-migrator`, you can SSH directly into any of the 9 source nodes using its private IP (`10.0.1.x`) without specifying a key file:
 >
 > ```bash
@@ -132,56 +132,60 @@ ssh -i private_key_ai_stack_testbed.pem ubuntu@$CM_IP
 
 ---
 
-### Step 4. Deploy & Verify AI Stack (Ollama + `gemma4:e2b` + Open WebUI) on `ai-gpu-01`
+### Step 4. Deploy & Verify AI Stack (Ollama + `gemma4:e2b` + `bge-m3` + Kotaemon) on `ai-gpu-01`
 
 #### 4-1. Run the Remote AI Stack Setup Script
 
-Run `./setup-ai-stack.sh` from your local terminal to remotely install/verify the NVIDIA GPU runtime, Docker Compose v2, and NVIDIA Container Toolkit on `ai-gpu-01`, deploy `aimx-ollama` (`:11434`) and `aimx-open-webui` (`:3000`), pull the **`gemma4:e2b`** model with real-time progress output, warm up GPU inference, and normalize file permissions for `transx`:
+Run `./setup-ai-stack.sh` from your local terminal to remotely install/verify the NVIDIA GPU runtime, Docker Compose v2, and NVIDIA Container Toolkit on `ai-gpu-01`, deploy `aimx-ollama` (`:11434`) and `aimx-kotaemon` (`:7860`), pull **`gemma4:e2b`** (LLM) and **`bge-m3`** (multilingual embeddings) so both stay co-resident in 16GB Tesla T4 VRAM, activate Ollama as the default model in Kotaemon `sql.db`, warm up GPU inference, and normalize file permissions for `transx`:
 
 ```bash
 ./setup-ai-stack.sh
 ```
 
-#### 4-2. Test Ollama API (`:11434`) & `gemma4:e2b` Inference via CLI
+#### 4-2. Test Ollama API (`:11434`), `gemma4:e2b` LLM, & `bge-m3` Embeddings via CLI
 
 ```bash
 AI_GPU_IP=$(tofu output -json vm_public_ips | jq -r '."ai-gpu-01"')
 
-# 1) Verify installed Ollama models (gemma4:e2b)
+# 1) Verify installed Ollama models (gemma4:e2b + bge-m3)
 curl -s "http://$AI_GPU_IP:11434/api/tags" | jq
 
 # 2) Run a test inference prompt against gemma4:e2b
 curl -s "http://$AI_GPU_IP:11434/api/generate" \
+  -H "Content-Type: application/json" \
   -d '{
     "model": "gemma4:e2b",
     "prompt": "Hello! Please introduce yourself in one sentence.",
     "stream": false
   }' | jq -r .response
+
+# 3) Verify active GPU VRAM co-residency (gemma4:e2b + bge-m3)
+curl -s "http://$AI_GPU_IP:11434/api/ps" | jq
 ```
 
-#### 4-3. Test Open WebUI (`:3000`) in a Web Browser
+#### 4-3. Upload Conference PDFs & Test Citation Highlighting in Kotaemon (`:7860`)
 
-1. **Get the Open WebUI URL**:
+1. **Get the Kotaemon URL**:
 
    ```bash
-   tofu output -json demo_endpoints | jq -r .source_openwebui_url
+   tofu output -json demo_endpoints | jq -r .source_kotaemon_url
    ```
 
-   Open the output URL (e.g., `http://<ai-gpu-01-public-ip>:3000`) in your web browser.
+   Open the output URL (e.g., `http://<ai-gpu-01-public-ip>:7860`) in your web browser and sign in with **`admin` / `admin`**.
 
-2. **Verify Chat & Persistent History**:
-   - Because `WEBUI_AUTH=False` is configured for demo convenience, Open WebUI opens directly to the chat workspace without requiring login or sign-up.
-   - Confirm that **`gemma4:e2b`** is selected in the model dropdown at the top-left.
-   - Send a test prompt and verify real-time GPU-accelerated streaming responses.
-   - Chat history is persisted in `/opt/aimx/ai-service/open-webui/webui.db` on the host volume, ready to be migrated to the target cloud via `transx`.
+2. **Upload Cloud-Barista Conference PDFs & Verify Slide Highlighting**:
+   - Upload conference presentation PDF files in the **`File Index`** panel (`ollama` with `gemma4:e2b` + `bge-m3` is pre-activated as default).
+   - Select the indexed files and ask 2-3 questions about the slides.
+   - Confirm that the built-in right-hand PDF viewer displays the original slide pages with **yellow citation highlights** and saves the conversation thread on the left.
+   - All state (uploaded PDFs, Chroma vectorstore, highlight coordinates, and chat threads) is persisted under `/opt/aimx/ai-service/ktem_app_data/` alongside `/opt/aimx/ai-service/ollama/`, ready for single-root migration to the target cloud GPU via `CM-Beetle` (`transx`).
 
 3. **(Alternative) Access via SSH Local Port Forwarding**:
-   If your client IP is not in `allowed_cidr_blocks` or port `3000` is restricted by a corporate firewall, forward the ports over SSH:
+   If your client IP is not in `allowed_cidr_blocks` or port `7860` is restricted by a corporate firewall, forward the ports over SSH:
    ```bash
    AI_GPU_IP=$(tofu output -json vm_public_ips | jq -r '."ai-gpu-01"')
-   ssh -i private_key_ai_stack_testbed.pem -L 3000:localhost:3000 -L 11434:localhost:11434 ubuntu@$AI_GPU_IP
+   ssh -i private_key_ai_stack_testbed.pem -L 7860:localhost:7860 -L 11434:localhost:11434 ubuntu@$AI_GPU_IP
    ```
-   While the SSH session is open, visit **`http://localhost:3000`** in your local browser.
+   While the SSH session is open, visit **`http://localhost:7860`** in your local browser.
 
 ---
 
@@ -189,7 +193,7 @@ curl -s "http://$AI_GPU_IP:11434/api/generate" \
 
 #### 5-1. Run the Remote Cloud-Migrator Pre-Provisioning Script
 
-Run `./setup-cloud-migrator.sh` from your local terminal to prepare the `cloud-migrator` node right up to `make up` (installs Docker Engine, Docker Compose v2, `uv`, clones `https://github.com/cloud-barista/cm-beetle.git` into `~/cm-beetle`, runs `make prepare-volumes`, configures `deployments/docker-compose/.env`, and copies `source_connections_private.{csv,json}` to `~/cm-beetle/`):
+Run `./setup-cloud-migrator.sh` from your local terminal to prepare the `cloud-migrator` node right up to `make up` (installs Docker Engine, Docker Compose v2, `uv`, clones `https://github.com/cloud-barista/cm-beetle.git` into `~/cm-beetle`, runs `make prepare-volumes`, configures `deployments/docker-compose/.env`, and copies `source_connections_private.{csv,json,yaml}` to `~/cm-beetle/`):
 
 ```bash
 ./setup-cloud-migrator.sh
