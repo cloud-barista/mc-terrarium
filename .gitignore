@@ -43,6 +43,8 @@ project-gcp.txt
 *.pem
 source_connections_*.csv
 source_connections_*.json
+source_connections_*.yaml
+source_connections_*.yml
 kubeconfig
 !init.py
 
