@@ -34,6 +34,7 @@ examples/
 ├── alibaba/           # Alibaba Cloud examples
 │   └── basic/
 ├── aws/               # AWS examples
+│   ├── ai-stack-testbed/
 │   ├── basic/
 │   ├── client-to-site-vpn/
 │   ├── dynamo-db/

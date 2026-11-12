@@ -56,7 +56,7 @@ variable "ai_service_root_dir" {
 variable "ai_model_name" {
   type        = string
   description = "Ollama LLM model tag to pull and serve on ai-gpu-01"
-  default     = "gemma4:e2b"
+  default     = "gemma4:12b"
 }
 
 variable "ai_embedding_model" {

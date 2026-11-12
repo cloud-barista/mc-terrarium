@@ -1,6 +1,6 @@
 # AWS AI Stack Migration Testbed Configuration (Full Spec Profile Example)
-# Uses 3x g4dn.xlarge GPU nodes + m5/r5 instances across all clusters.
-# Copy this file to terraform.tfvars if your AWS account has sufficient G-instance vCPU quota (>= 12 vCPUs):
+# Uses 1x g6.2xlarge (NVIDIA L4 24GB) + 2x g4dn.xlarge GPU nodes + m5/r5 instances across all clusters.
+# Copy this file to terraform.tfvars if your AWS account has sufficient G-instance vCPU quota (>= 16 vCPUs):
 #   cp terraform.tfvars.full.example terraform.tfvars
 
 terrarium_id = "ai-stack-testbed-full"
@@ -12,7 +12,7 @@ subnet_cidr = "10.0.1.0/24"
 ami_id              = "ami-0f3a440bbcff3d043"
 gpu_ami_id          = "ami-00ffffe72a332c865"
 ai_service_root_dir = "/opt/aimx/ai-service"
-ai_model_name       = "gemma4:e2b"
+ai_model_name       = "gemma4:12b"
 ai_embedding_model  = "bge-m3"
 
 allowed_cidr_blocks = [
@@ -31,15 +31,15 @@ vm_configurations = {
     description   = "Cloud-Migrator Node (CM-Beetle, CB-Tumblebug, CB-Spider, CM-Honeybee, MC-Terrarium)"
   }
 
-  # ── 1. AI Inference Cluster (3x NVIDIA Tesla T4 GPU Nodes) ────────
+  # ── 1. AI Inference Cluster (NVIDIA L4 + Tesla T4 GPU Nodes) ──────
   ai-gpu-01 = {
-    instance_type = "g4dn.xlarge" # 4 vCPU, 16 GB RAM, 1x Tesla T4 16GB
-    vcpu          = 4
-    memory_gb     = 16
-    root_disk_gb  = 100
+    instance_type = "g6.2xlarge" # 8 vCPU, 32 GB RAM, 1x NVIDIA L4 24GB
+    vcpu          = 8
+    memory_gb     = 32
+    root_disk_gb  = 150
     ami_id        = "ami-00ffffe72a332c865"
     service_role  = "ai-webui"
-    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + bge-m3 + Kotaemon (:7860)"
+    description   = "AI Inference Primary - Ollama (:11434) + gemma4:12b + bge-m3 + Kotaemon (:7860)"
   }
   ai-gpu-02 = {
     instance_type = "g4dn.xlarge" # 4 vCPU, 16 GB RAM, 1x Tesla T4 16GB

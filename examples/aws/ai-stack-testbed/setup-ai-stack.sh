@@ -6,8 +6,8 @@ cd "$(dirname "$0")"
 # Remote AI Service Stack Setup Script for ai-gpu-01 (AIMX Kotaemon Reference)
 # ==============================================================================
 # Installs/verifies NVIDIA GPU runtime, Docker Compose v2, NVIDIA Container
-# Toolkit, deploys Ollama (:11434) + Kotaemon (:7860), pulls gemma4:e2b + bge-m3,
-# configures Ollama as default LLM/Embedding in Kotaemon sql.db, runs dual-model
+# Toolkit, deploys Ollama (:11434) + Kotaemon (:7860), pulls gemma4:12b + bge-m3,
+# configures Ollama & Korean RAG defaults in Kotaemon sql.db, runs dual-model
 # GPU warm-up, and normalizes file ownership for transx migration.
 #
 # Usage:
@@ -25,7 +25,7 @@ fi
 echo "🔍 Retrieving target VM ($VM_NAME) information from OpenTofu..."
 VM_IP=$(tofu output -json vm_public_ips | jq -r --arg k "$VM_NAME" '.[$k]')
 AI_ROOT=$(tofu output -json demo_endpoints | jq -r '.ai_service_root_dir // "/opt/aimx/ai-service"')
-AI_MODEL=$(tofu output -json demo_endpoints | jq -r '.ai_model_name // "gemma4:e2b"')
+AI_MODEL=$(tofu output -json demo_endpoints | jq -r '.ai_model_name // "gemma4:12b"')
 AI_EMBEDDING_MODEL=$(tofu output -json demo_endpoints | jq -r '.ai_embedding_model // "bge-m3"')
 
 if [[ -z "$VM_IP" || "$VM_IP" == "null" ]]; then
@@ -40,7 +40,7 @@ echo "   - LLM Model       : $AI_MODEL"
 echo "   - Embedding Model : $AI_EMBEDDING_MODEL"
 echo "============================================================"
 
-ssh -i "$PEM_FILE" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ubuntu@"$VM_IP" \
+ssh -i "$PEM_FILE" -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 ubuntu@"$VM_IP" \
     "AI_ROOT='$AI_ROOT' AI_MODEL='$AI_MODEL' AI_EMBEDDING_MODEL='$AI_EMBEDDING_MODEL' bash -s" << 'REMOTE_EOF'
 set -euo pipefail
 
@@ -127,7 +127,7 @@ sudo docker rm -f aimx-open-webui >/dev/null 2>&1 || true
 
 # 4. Deploy AIMX Docker Compose Stack (Ollama + Kotaemon)
 echo "▶ [4/6] Writing AIMX Docker Compose stack (Ollama + Kotaemon) in $AI_ROOT..."
-sudo mkdir -p "$AI_ROOT/ollama" "$AI_ROOT/ktem_app_data"
+sudo mkdir -p "$AI_ROOT/ollama/.nv" "$AI_ROOT/ktem_app_data/fasttext-langdetect"
 if [ "$AI_ROOT" != "/opt/ai-stack" ] && [ ! -e /opt/ai-stack ]; then
     sudo ln -s "$AI_ROOT" /opt/ai-stack
 fi
@@ -145,8 +145,10 @@ services:
       - OLLAMA_KEEP_ALIVE=30m
       - OLLAMA_MAX_LOADED_MODELS=2
       - OLLAMA_NUM_PARALLEL=2
+      - OLLAMA_CONTEXT_LENGTH=16384
     volumes:
       - ./ollama:/root/.ollama
+      - ./ollama/.nv:/root/.nv
     deploy:
       resources:
         reservations:
@@ -156,8 +158,8 @@ services:
               capabilities: [gpu]
 
   kotaemon:
-    # Lightweight image with built-in PDF viewer and citation highlighting.
-    image: ghcr.io/cinnamon/kotaemon:main-lite
+    # Full image (v0.12.0) with built-in PDF viewer, citation highlighting, and advanced document/table parsers.
+    image: ghcr.io/cinnamon/kotaemon:main-full
     container_name: aimx-kotaemon
     restart: unless-stopped
     ports:
@@ -165,6 +167,8 @@ services:
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
       - GRADIO_SERVER_PORT=7860
+      - KH_APP_VERSION=v0.12.0
+      - FTLANG_CACHE=/app/ktem_app_data/fasttext-langdetect
       - KH_OLLAMA_URL=http://ollama:11434/v1/
       - LOCAL_MODEL=$AI_MODEL
       - LOCAL_MODEL_EMBEDDINGS=$AI_EMBEDDING_MODEL
@@ -173,6 +177,13 @@ services:
       - KH_FEATURE_USER_MANAGEMENT_PASSWORD=admin
     volumes:
       - ./ktem_app_data:/app/ktem_app_data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     depends_on:
       - ollama
 COMPOSE_EOF
@@ -222,8 +233,8 @@ for MODEL_TAG in "$AI_MODEL" "$AI_EMBEDDING_MODEL"; do
     done
 done
 
-# 6. Start Kotaemon (:7860), Set Ollama as Default in sql.db, and Pre-warm Both Models in T4 VRAM
-echo "▶ [6/6] Starting Kotaemon (:7860) and activating Ollama defaults..."
+# 6. Start Kotaemon (:7860), Set Ollama & Korean RAG Defaults in sql.db, and Pre-warm Both Models in GPU VRAM
+echo "▶ [6/6] Starting Kotaemon (:7860) and activating Ollama & Korean RAG defaults..."
 echo "STARTING_KOTAEMON" | sudo tee /var/log/ai-stack-status.log >/dev/null
 for attempt in 1 2 3; do
     if sudo docker compose up -d; then
@@ -245,14 +256,20 @@ for i in $(seq 1 60); do
     sleep 5
 done
 
-# Activate 'ollama' as default LLM and Embedding model in Kotaemon sql.db so PDF indexing works out-of-the-box
+# Pre-populate fast-langdetect cache from bundled lid.176.ftz so Korean/CJK highlight matching never stalls on external SSL
+if [ ! -s "$AI_ROOT/ktem_app_data/fasttext-langdetect/lid.176.bin" ]; then
+    sudo docker cp aimx-kotaemon:/app/.venv/lib/python3.10/site-packages/fast_langdetect/resources/lid.176.ftz \
+        "$AI_ROOT/ktem_app_data/fasttext-langdetect/lid.176.bin" 2>/dev/null || true
+fi
+
+# Activate 'ollama' as default LLM/Embedding and pre-seed Korean RAG/Docling/Inline-Citation/Mindmap settings for 'admin'
 UPDATED_TABLES=$(sudo python3 - "$SQL_DB" << 'PY_EOF'
-import sqlite3, sys
+import json, sqlite3, sys, uuid
 db_path = sys.argv[1]
 conn = sqlite3.connect(db_path, timeout=10)
 cur = conn.cursor()
 changed = 0
-for table in ("llm", "embedding", "resources__llm", "resources__embedding"):
+for table in ("llm_table", "llm", "embedding", "resources__llm", "resources__embedding"):
     exists = cur.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
     ).fetchone()
@@ -269,6 +286,40 @@ for table in ("llm", "embedding", "resources__llm", "resources__embedding"):
             cur.execute(f'UPDATE "{table}" SET "default"=0')
             cur.execute(f'UPDATE "{table}" SET "default"=1 WHERE name=?', ("ollama",))
             changed += 1
+
+has_user = cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='user'").fetchone()
+has_settings = cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='settings'").fetchone()
+if has_user and has_settings:
+    admin_row = cur.execute("SELECT id FROM user WHERE lower(username)='admin'").fetchone()
+    if admin_row:
+        uid = admin_row[0]
+        desired_settings = {
+            "index.options.1.reader_mode": "docling",
+            "index.options.1.use_reranking": False,
+            "index.options.1.use_llm_reranking": False,
+            "reasoning.use": "simple",
+            "reasoning.lang": "ko",
+            "reasoning.options.simple.highlight_citation": "inline",
+            "reasoning.options.simple.create_mindmap": True,
+            "reasoning.options.complex.highlight_citation": "inline",
+            "reasoning.options.complex.create_mindmap": True,
+        }
+        s_row = cur.execute("SELECT id, setting FROM settings WHERE user=?", (uid,)).fetchone()
+        if s_row:
+            sid, raw = s_row
+            current = json.loads(raw) if isinstance(raw, str) and raw else {}
+            if any(current.get(k) != v for k, v in desired_settings.items()):
+                current.update(desired_settings)
+                cur.execute("UPDATE settings SET setting=? WHERE id=?", (json.dumps(current), sid))
+                changed += 1
+        else:
+            sid = uuid.uuid4().hex
+            cur.execute(
+                "INSERT INTO settings (id, user, setting) VALUES (?, ?, ?)",
+                (sid, uid, json.dumps(desired_settings)),
+            )
+            changed += 1
+
 conn.commit()
 conn.close()
 print(changed)
@@ -276,7 +327,7 @@ PY_EOF
 )
 
 if [[ "${UPDATED_TABLES:-0}" != "0" ]]; then
-    echo "  ✓ Activated 'ollama' as default LLM & Embedding in sql.db; restarting aimx-kotaemon..."
+    echo "  ✓ Activated 'ollama' defaults & Korean RAG settings in sql.db; restarting aimx-kotaemon..."
     sudo docker restart aimx-kotaemon >/dev/null
     for i in $(seq 1 45); do
         HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:7860/ || echo "000")
@@ -287,11 +338,11 @@ if [[ "${UPDATED_TABLES:-0}" != "0" ]]; then
     done
 fi
 
-echo "  🔥 Pre-warming $AI_MODEL and $AI_EMBEDDING_MODEL into Tesla T4 VRAM..."
-curl -sf http://localhost:11434/api/generate \
+echo "  🔥 Pre-warming $AI_MODEL and $AI_EMBEDDING_MODEL into GPU VRAM..."
+curl -sf --max-time 300 http://localhost:11434/api/generate \
     -H "Content-Type: application/json" \
-    -d "{\"model\":\"$AI_MODEL\",\"prompt\":\"Hello from AIMX Source GPU Node!\",\"stream\":false,\"keep_alive\":\"30m\"}" >/dev/null 2>&1 || true
-curl -sf http://localhost:11434/api/embed \
+    -d "{\"model\":\"$AI_MODEL\",\"prompt\":\"Hello!\",\"options\":{\"num_predict\":32},\"stream\":false,\"keep_alive\":\"30m\"}" >/dev/null 2>&1 || true
+curl -sf --max-time 300 http://localhost:11434/api/embed \
     -H "Content-Type: application/json" \
     -d "{\"model\":\"$AI_EMBEDDING_MODEL\",\"input\":\"Cloud-Barista conference presentation RAG migration\",\"keep_alive\":\"30m\"}" >/dev/null 2>&1 || true
 

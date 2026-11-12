@@ -72,7 +72,7 @@ variable "ai_service_root_dir" {
 variable "ai_model_name" {
   type        = string
   description = "Ollama LLM model tag to pull and serve on ai-gpu-01"
-  default     = "gemma4:e2b"
+  default     = "gemma4:12b"
 }
 
 variable "ai_embedding_model" {
@@ -119,13 +119,13 @@ variable "vm_configurations" {
 
     # ── 1. AI Inference Cluster (3 Source Nodes) ──────────────────────
     ai-gpu-01 = {
-      instance_type = "g4dn.xlarge" # 4 vCPU, 16 GiB RAM, 1x NVIDIA Tesla T4 (16GB VRAM)
-      vcpu          = 4
-      memory_gb     = 16
-      root_disk_gb  = 100
+      instance_type = "g6.2xlarge" # 8 vCPU, 32 GiB RAM, 1x NVIDIA L4 (24GB VRAM)
+      vcpu          = 8
+      memory_gb     = 32
+      root_disk_gb  = 150
       ami_id        = "ami-00ffffe72a332c865"
       service_role  = "ai-webui"
-      description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + bge-m3 + Kotaemon (:7860)"
+      description   = "AI Inference Primary - Ollama (:11434) + gemma4:12b + bge-m3 + Kotaemon (:7860)"
     }
     ai-gpu-02 = {
       instance_type = "t3.xlarge" # Full GPU profile: g4dn.xlarge
