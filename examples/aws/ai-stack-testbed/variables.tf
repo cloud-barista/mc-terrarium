@@ -65,7 +65,7 @@ variable "gpu_ami_id" {
 
 variable "ai_service_root_dir" {
   type        = string
-  description = "Root directory on ai-gpu-01 for AIMX AI service stack (docker-compose.yml, ollama/, open-webui/)"
+  description = "Root directory on ai-gpu-01 for AIMX AI service stack (docker-compose.yml, ollama/, ktem_app_data/)"
   default     = "/opt/aimx/ai-service"
 }
 
@@ -73,6 +73,12 @@ variable "ai_model_name" {
   type        = string
   description = "Ollama LLM model tag to pull and serve on ai-gpu-01"
   default     = "gemma4:e2b"
+}
+
+variable "ai_embedding_model" {
+  type        = string
+  description = "Ollama multilingual embedding model tag for Kotaemon RAG on ai-gpu-01"
+  default     = "bge-m3"
 }
 
 variable "allowed_cidr_blocks" {
@@ -119,7 +125,7 @@ variable "vm_configurations" {
       root_disk_gb  = 100
       ami_id        = "ami-00ffffe72a332c865"
       service_role  = "ai-webui"
-      description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + Open WebUI (:3000)"
+      description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + bge-m3 + Kotaemon (:7860)"
     }
     ai-gpu-02 = {
       instance_type = "t3.xlarge" # Full GPU profile: g4dn.xlarge

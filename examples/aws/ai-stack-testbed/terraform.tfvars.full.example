@@ -13,6 +13,7 @@ ami_id              = "ami-0f3a440bbcff3d043"
 gpu_ami_id          = "ami-00ffffe72a332c865"
 ai_service_root_dir = "/opt/aimx/ai-service"
 ai_model_name       = "gemma4:e2b"
+ai_embedding_model  = "bge-m3"
 
 allowed_cidr_blocks = [
   # "203.0.113.0/24",   # Example: Office network (RFC 5737)
@@ -38,7 +39,7 @@ vm_configurations = {
     root_disk_gb  = 100
     ami_id        = "ami-00ffffe72a332c865"
     service_role  = "ai-webui"
-    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + Open WebUI (:3000)"
+    description   = "AI Inference Primary - Ollama (:11434) + gemma4:e2b + bge-m3 + Kotaemon (:7860)"
   }
   ai-gpu-02 = {
     instance_type = "g4dn.xlarge" # 4 vCPU, 16 GB RAM, 1x Tesla T4 16GB

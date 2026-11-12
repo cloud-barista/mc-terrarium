@@ -80,10 +80,11 @@ output "demo_endpoints" {
     cm_honeybee_api_url       = try("http://${module.ai_stack_testbed.vm_summary["cloud-migrator"].public_ip}:8081/honeybee", null)
     source_ai_node_public_ip  = try(module.ai_stack_testbed.vm_summary["ai-gpu-01"].public_ip, null)
     source_ai_node_private_ip = try(module.ai_stack_testbed.vm_summary["ai-gpu-01"].private_ip, null)
-    source_openwebui_url      = try("http://${module.ai_stack_testbed.vm_summary["ai-gpu-01"].public_ip}:3000", null)
+    source_kotaemon_url       = try("http://${module.ai_stack_testbed.vm_summary["ai-gpu-01"].public_ip}:7860", null)
     source_ollama_api_url     = try("http://${module.ai_stack_testbed.vm_summary["ai-gpu-01"].public_ip}:11434/api/tags", null)
     ai_service_root_dir       = var.ai_service_root_dir
     ai_model_name             = var.ai_model_name
+    ai_embedding_model        = var.ai_embedding_model
   }
 }
 
